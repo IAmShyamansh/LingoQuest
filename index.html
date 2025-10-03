@@ -50,10 +50,15 @@
         .mode-card {
             transition: transform 0.3s ease, background-color 0.3s;
         }
-        .mode-card:hover {
+        .mode-card:not([disabled]):hover {
             transform: scale(1.05);
             background-color: rgba(255, 255, 255, 0.15);
         }
+        .mode-card[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
 
         .grad-1 { background-image: linear-gradient(to right, #4338ca, #6d28d9, #be185d); }
         .grad-2 { background-image: linear-gradient(to right, #059669, #1d4ed8, #4f46e5); }
@@ -1793,8 +1798,36 @@
             }
 
 
-            // --- Quiz Logic (shortened) ---
-            function startQuiz(words, originalTitle) {
+            // --- Quiz Logic ---
+            function showQuizOptions() {
+                const { words, title } = currentWordListData;
+
+                wordView.innerHTML = `
+                    <div class="pop-in glass-ui p-6 rounded-2xl mx-4">
+                        <h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Mode</h2>
+                        <div id="quiz-mode-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button class="mode-card p-4 rounded-xl text-left" data-mode="word-to-meaning">
+                                <h3 class="font-bold text-lg text-white">Choose the Correct Meaning</h3>
+                                <p class="text-sm text-slate-300">Guess the meaning of the word.</p>
+                            </button>
+                            <button class="mode-card p-4 rounded-xl text-left" data-mode="meaning-to-word">
+                                <h3 class="font-bold text-lg text-white">Choose the Correct Word</h3>
+                                <p class="text-sm text-slate-300">Guess the word from the meaning.</p>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('quiz-mode-selection').addEventListener('click', (e) => {
+                    const modeButton = e.target.closest('.mode-card');
+                    if (modeButton && !modeButton.disabled) {
+                        const mode = modeButton.dataset.mode;
+                        startQuiz(words, title, mode);
+                    }
+                });
+            }
+            
+            function startQuiz(words, originalTitle, quizType) {
                 let score = 0;
                 let currentQuestionIndex = 0;
                 const quizWords = [...words].sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -1810,28 +1843,34 @@
 
                     const questionItem = quizWords[currentQuestionIndex];
                     let questionText, correctAnswer;
+                    let options = [];
 
-                    if (isAntonymList) {
-                        questionText = `What is the antonym of "${questionItem.word}"?`;
-                        correctAnswer = questionItem.antonym;
-                    } else {
-                        questionText = isOneWordSub ? questionItem.meaning : questionItem.word;
-                        correctAnswer = isOneWordSub ? questionItem.word : questionItem.meaning;
+                    switch (quizType) {
+                        case 'meaning-to-word':
+                            questionText = isAntonymList ? `What word is the antonym of "${questionItem.antonym}"?` : (isOneWordSub ? questionItem.word : questionItem.meaning);
+                            correctAnswer = questionItem.word;
+                            options.push(correctAnswer);
+                            while (options.length < 4) {
+                                const randomItem = words[Math.floor(Math.random() * words.length)];
+                                if (randomItem.word && !options.includes(randomItem.word)) {
+                                    options.push(randomItem.word);
+                                }
+                            }
+                            break;
+                        default: // 'word-to-meaning'
+                            questionText = isAntonymList ? `What is the antonym of "${questionItem.word}"?` : (isOneWordSub ? questionItem.meaning : questionItem.word);
+                            correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : questionItem.meaning);
+                             options.push(correctAnswer);
+                            while (options.length < 4) {
+                                const randomItem = words[Math.floor(Math.random() * words.length)];
+                                let randomAnswer = isAntonymList ? randomItem.antonym : (isOneWordSub ? randomItem.word : randomItem.meaning);
+                                if (randomAnswer && !options.includes(randomAnswer)) {
+                                    options.push(randomAnswer);
+                                }
+                            }
+                            break;
                     }
-
-                    let options = [correctAnswer];
-                    while (options.length < 4) {
-                        const randomItem = words[Math.floor(Math.random() * words.length)];
-                        let randomAnswer;
-                        if (isAntonymList) {
-                            randomAnswer = randomItem.antonym;
-                        } else {
-                            randomAnswer = isOneWordSub ? randomItem.word : randomItem.meaning;
-                        }
-                        if (randomAnswer && !options.includes(randomAnswer)) {
-                            options.push(randomAnswer);
-                        }
-                    }
+                    
                     options.sort(() => 0.5 - Math.random());
 
                     wordView.innerHTML = `
@@ -1882,7 +1921,7 @@
                             </div>
                         </div>
                     `;
-                    document.getElementById('restart-quiz').onclick = () => startQuiz(words, originalTitle);
+                    document.getElementById('restart-quiz').onclick = () => showQuizOptions();
                     document.getElementById('return-to-list').onclick = () => renderWords(originalTitle, words);
                 }
                 
@@ -1934,7 +1973,7 @@
             });
             navQuizBtn.addEventListener('click', () => {
                 if(currentWordListData.words.length > 0) {
-                    startQuiz(currentWordListData.words, currentWordListData.title);
+                    showQuizOptions();
                 }
             });
             
@@ -2003,5 +2042,4 @@
     </script>
 </body>
 </html>
-"
 
