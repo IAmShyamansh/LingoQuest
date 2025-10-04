@@ -70,7 +70,7 @@
         .grad-nav { background-image: linear-gradient(to right, #4338ca, #be185d); }
 
 
-        .word-item, .flashcard {
+        .word-item {
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s;
             position: relative;
@@ -83,13 +83,13 @@
             transform: translateY(-2px) translateZ(0);
             box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
         }
-        .word-card-inner, .flashcard-inner {
+        .word-card-inner {
             display: grid;
             transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform-style: preserve-3d;
             width: 100%;
         }
-        .word-item.active .word-card-inner, .flashcard.active .flashcard-inner {
+        .word-item.active .word-card-inner {
             transform: rotateY(180deg);
         }
         
@@ -101,7 +101,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .word-content, .flashcard-content {
+        .word-content {
             grid-area: 1 / 1;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
@@ -1921,7 +1921,6 @@
             function renderCategories(categories, title = "LingoQuest", subtitle = "Your daily dose of vocabulary.") {
                 document.body.classList.remove('word-view-active');
                 appContainer.classList.add('p-4');
-                wordView.style.backgroundColor = '';
                 categoryGrid.innerHTML = '';
                 headerSubtitle.textContent = subtitle;
 
@@ -2410,6 +2409,33 @@
 
             // --- Quiz Logic ---
             function showQuizOptions() {
+                wordView.scrollTop = 0;
+                wordView.innerHTML = `
+                    <div class="pop-in glass-ui p-6 rounded-2xl mx-4">
+                        <h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2>
+                        <div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button class="mode-card p-4 rounded-xl text-left" data-length="short">
+                                <h3 class="font-bold text-lg text-white">Short Quiz</h3>
+                                <p class="text-sm text-slate-300">A quick quiz with 10 random words.</p>
+                            </button>
+                            <button class="mode-card p-4 rounded-xl text-left" data-length="long">
+                                <h3 class="font-bold text-lg text-white">Long Quiz</h3>
+                                <p class="text-sm text-slate-300">Test all words in this category.</p>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('quiz-length-selection').addEventListener('click', (e) => {
+                    const lengthButton = e.target.closest('.mode-card');
+                    if (lengthButton && !lengthButton.disabled) {
+                        const length = lengthButton.dataset.length;
+                        showQuizTypeOptions(length);
+                    }
+                });
+            }
+
+            function showQuizTypeOptions(quizLength) {
                 const { words, title } = currentWordListData;
                 wordView.scrollTop = 0;
                 wordView.innerHTML = `
@@ -2432,15 +2458,18 @@
                     const modeButton = e.target.closest('.mode-card');
                     if (modeButton && !modeButton.disabled) {
                         const mode = modeButton.dataset.mode;
-                        startQuiz(words, title, mode);
+                        startQuiz(words, title, mode, quizLength);
                     }
                 });
             }
             
-            function startQuiz(words, originalTitle, quizType) {
+            function startQuiz(words, originalTitle, quizType, quizLength) {
                 let score = 0;
                 let currentQuestionIndex = 0;
-                const quizWords = [...words].sort(() => 0.5 - Math.random()).slice(0, 10);
+                const quizWords = quizLength === 'short' 
+                    ? [...words].sort(() => 0.5 - Math.random()).slice(0, 10) 
+                    : [...words].sort(() => 0.5 - Math.random());
+
                 const totalQuestions = quizWords.length;
                 const isOneWordSub = originalTitle.includes('One Word Substitution');
                 const isAntonymList = originalTitle === 'Antonyms';
@@ -2457,7 +2486,11 @@
 
                     switch (quizType) {
                         case 'meaning-to-word':
-                            questionText = isAntonymList ? `What word is the antonym of "${questionItem.antonym}"?` : (isOneWordSub ? questionItem.word : questionItem.meaning);
+                            if (isAntonymList) {
+                                questionText = `What word is the antonym of "${questionItem.antonym}"?`;
+                            } else {
+                                questionText = questionItem.meaning;
+                            }
                             correctAnswer = questionItem.word;
                             options.push(correctAnswer);
                             while (options.length < 4) {
@@ -2660,4 +2693,5 @@
     </script>
 </body>
 </html>
+
 
