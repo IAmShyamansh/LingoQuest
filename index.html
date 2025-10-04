@@ -355,7 +355,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-4">About LingoQuest</h2>
-            <p class="text-slate-300 mb-6">This application was developed by Akash Sawle for the students of the British Institute Of English Language And P.D.</p>
+            <p class="text-slate-300 mb-6">This application was developed by and for the students of the British Institute Of English Language And P.D.</p>
             
             <div class="border-t border-white/20 pt-4 mb-6">
                 <h3 class="font-bold text-white mb-2">By:</h3>
@@ -364,7 +364,7 @@
                     987-A, Above Punjab National Bank, Sudama Nagar Sector-D, Near Footi Kothi Square, Indore. Madhyapradesh.
                 </p>
                 <p class="text-xs text-slate-400 mt-2">
-                    <strong>Cont. No. :</strong> +91-62323-60306, 0731-402-6644
+                    <strong>Cont. No. :</strong> +91-6232360306, 0731-402-6644
                 </p>
             </div>
 
@@ -394,6 +394,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+             if (history.scrollRestoration) {
+                history.scrollRestoration = 'manual';
+            }
+
              const detailedExplanations = {
                 "Affect vs. Effect": `
                     <h3 class="text-2xl font-bold mb-4">Affect vs. Effect</h3>
@@ -9851,6 +9855,7 @@
             // --- Functions ---
 
             function renderCategories(categories, title = "LingoQuest", subtitle = "Your daily dose of vocabulary.") {
+                wordView.scrollTop = 0; // Reset scroll position when returning to category view
                 document.body.classList.remove('word-view-active');
                 appContainer.classList.add('p-4');
                 categoryGrid.innerHTML = '';
@@ -9977,7 +9982,7 @@
                 
                 if (!appendTo) {
                     wordView.innerHTML = '';
-                    wordView.scrollTop = 0;
+                    wordView.scrollTop = 0; // Ensure scroll position is reset
                     document.body.classList.add('word-view-active');
                     appContainer.classList.remove('p-4');
                     wordView.classList.add('active');
@@ -10537,7 +10542,7 @@
                 
                 const voices = speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                    const selectedVoice = voices.find(voice => voice.lang === 'en-US' && /female|woman/i.test(voice.name)) || voices.find(voice => voice.lang === 'en-US');
+                    const selectedVoice = voices.find(voice => voice.lang === 'en-US' && /female|woman/i.test(voice.name)) || voices.find(_ => voice.lang === 'en-US');
                     if (selectedVoice) utterance.voice = selectedVoice;
                 }
                 
@@ -10641,5 +10646,3 @@
     </script>
 </body>
 </html>
-
-
