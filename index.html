@@ -183,8 +183,8 @@
             background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
             background-size: 1.5rem 1.5rem;
             overflow-y: auto;
-            padding-top: 0.5rem;
-            padding-bottom: 100px;
+            padding-top: 5rem;
+            padding-bottom: 6rem;
         }
         
         .favorite-btn.favorited svg {
@@ -10067,7 +10067,7 @@
                     section.appendChild(headerWrapper);
                 } else {
                     const headerWrapper = document.createElement('div');
-                    headerWrapper.className = 'sticky top-0 z-10 cursor-pointer';
+                    headerWrapper.className = 'fixed top-0 left-0 right-0 z-40 bg-[#1F2335] py-2';
                     headerWrapper.addEventListener('click', () => { wordView.scrollTo({ top: 0, behavior: 'smooth' }); });
                     const headerPill = document.createElement('div');
                     headerPill.className = 'grad-nav rounded-full flex justify-center items-center max-w-sm md:max-w-md mx-auto p-2';
