@@ -33,7 +33,7 @@
         }
 
         /* Use Inter for more readable text blocks */
-        .word-item p, #header-subtitle, #search-bar, .quiz-option, #search-suggestions div, .glass-ui h2, .dictionary-result, .mode-card p {
+        .word-item p, #header-subtitle, #search-bar, .quiz-option, #search-suggestions div, .glass-ui h2, .dictionary-result, .mode-card p, .explanation-card p {
              font-family: 'Inter', sans-serif;
         }
 
@@ -70,19 +70,27 @@
         .grad-nav { background-image: linear-gradient(to right, #4338ca, #be185d); }
 
 
-        .word-item {
+        .word-item, .explanation-card {
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s;
-            position: relative;
-            perspective: 1000px;
             border-radius: 0.75rem;
             will-change: transform;
+        }
+        .word-item {
+            position: relative;
+            perspective: 1000px;
             transform: translateZ(0);
         }
-        .word-item:hover {
+        .word-item:hover, .explanation-card:hover {
             transform: translateY(-2px) translateZ(0);
             box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
         }
+
+        .explanation-card {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+        }
+
         .word-card-inner {
             display: grid;
             transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -373,11 +381,1671 @@
         </div>
     </div>
 
+    <!-- Explanation Modal -->
+    <div id="explanation-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+            <button id="close-explanation-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div id="explanation-content" class="text-white"></div>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+             const detailedExplanations = {
+                "Affect vs. Effect": `
+            <h3 class="text-2xl font-bold mb-4">Affect vs. Effect</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Affect (Verb)</p>
+                    <p>Rule: "Affect" is an action word (a verb). It means "to influence" or "to change" something. Remember: <strong>A</strong>ffect is for <strong>A</strong>ction.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The cold weather <strong>affected</strong> the crops."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Effect (Noun)</p>
+                    <p>Rule: "Effect" is a thing (a noun). It is the result or consequence of an action. Remember: "effect" is the <strong>E</strong>nd result.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The cold weather had a negative <strong>effect</strong> on the crops."</p>
+                </div>
+                <div class="border-t border-white/20 pt-3">
+                    <p class="font-bold text-white">RAVEN Trick:</p>
+                    <p><strong>R</strong>emember, <strong>A</strong>ffect is a <strong>V</strong>erb, <strong>E</strong>ffect is a <strong>N</strong>oun.</p>
+                </div>
+            </div>
+        `,
+        "Their vs. There vs. They're": `
+            <h3 class="text-2xl font-bold mb-4">Their vs. There vs. They're</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Their (Possession)</p>
+                    <p>Rule: Shows ownership, that something belongs to a group. It has "heir" in it, and an heir inherits things.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The students left <strong>their</strong> books in the classroom."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">There (Place)</p>
+                    <p>Rule: Refers to a place or location. It has "here" in it, so you can point to the place.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The books are over <strong>there</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">They're (Contraction)</p>
+                    <p>Rule: It is a contraction of "they are." If you can say "they are" instead, then this is the word you need.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>They're</strong> going to the library."</p>
+                </div>
+            </div>
+        `,
+        "Your vs. You're": `
+            <h3 class="text-2xl font-bold mb-4">Your vs. You're</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Your (Possession)</p>
+                    <p>Rule: Shows ownership; something belongs to you.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Is that <strong>your</strong> car?"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">You're (Contraction)</p>
+                    <p>Rule: It is a contraction of "you are." If you can say "you are" in the sentence, then this is the word you need.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>You're</strong> going to be late."</p>
+                </div>
+            </div>
+        `,
+        "To vs. Too vs. Two": `
+            <h3 class="text-2xl font-bold mb-4">To vs. Too vs. Two</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">To (Preposition)</p>
+                    <p>Rule: A preposition used to indicate direction, destination, or purpose.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We are going <strong>to</strong> the store."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Too (Adverb)</p>
+                    <p>Rule: An adverb meaning "also," "in addition," or "excessively." Think of the extra 'o' meaning "more than enough."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I want to go, <strong>too</strong>." or "This jacket is <strong>too</strong> big."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Two (Number)</p>
+                    <p>Rule: The number 2.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I have <strong>two</strong> books."</p>
+                </div>
+            </div>
+        `,
+        "Its vs. It's": `
+            <h3 class="text-2xl font-bold mb-4">Its vs. It's</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Its (Possession)</p>
+                    <p>Rule: Shows ownership; something belongs to an inanimate object or animal.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The dog wagged <strong>its</strong> tail."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">It's (Contraction)</p>
+                    <p>Rule: It is a contraction of "it is" or "it has." If you can replace it with either of those phrases, then this is the word you need.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>It's</strong> a beautiful day."</p>
+                </div>
+            </div>
+        `,
+        "Accept vs. Except": `
+            <h3 class="text-2xl font-bold mb-4">Accept vs. Except</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Accept (Verb)</p>
+                    <p>Rule: A verb meaning "to receive" or "to agree to."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I <strong>accept</strong> your apology."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Except (Preposition/Conjunction)</p>
+                    <p>Rule: A preposition or conjunction meaning "not including" or "other than."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Everyone was invited <strong>except</strong> for John."</p>
+                </div>
+            </div>
+        `,
+        "Advice vs. Advise": `
+            <h3 class="text-2xl font-bold mb-4">Advice vs. Advise</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Advice (Noun)</p>
+                    <p>Rule: A noun meaning "guidance" or "recommendations."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She gave me some great <strong>advice</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Advise (Verb)</p>
+                    <p>Rule: A verb meaning "to give advice" or "to recommend."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I <strong>advise</strong> you to be careful."</p>
+                </div>
+            </div>
+        `,
+        "Allude vs. Elude": `
+            <h3 class="text-2xl font-bold mb-4">Allude vs. Elude</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Allude (Verb)</p>
+                    <p>Rule: To refer to something indirectly or to hint at it.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He <strong>alluded</strong> to a problem without mentioning it directly."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Elude (Verb)</p>
+                    <p>Rule: To escape from or to fail to be grasped or remembered by someone.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The criminal managed to <strong>elude</strong> the police."</p>
+                </div>
+            </div>
+        `,
+        "Allowed vs. Aloud": `
+            <h3 class="text-2xl font-bold mb-4">Allowed vs. Aloud</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Allowed (Verb)</p>
+                    <p>Rule: The past tense of "allow," meaning "permitted to do something."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We were <strong>allowed</strong> to leave early."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Aloud (Adverb)</p>
+                    <p>Rule: An adverb meaning "out loud" or "audibly."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He read the letter <strong>aloud</strong> to the class."</p>
+                </div>
+            </div>
+        `,
+        "Altogether vs. All together": `
+            <h3 class="text-2xl font-bold mb-4">Altogether vs. All together</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Altogether (Adverb)</p>
+                    <p>Rule: An adverb meaning "completely," "in total," or "on the whole."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I'm not <strong>altogether</strong> sure about the plan."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">All together (Phrase)</p>
+                    <p>Rule: A phrase meaning "everyone or everything in a group" or "at the same time."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We sang the song <strong>all together</strong>."</p>
+                </div>
+            </div>
+        `,
+        "A part vs. Apart": `
+            <h3 class="text-2xl font-bold mb-4">A part vs. Apart</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">A part (Noun Phrase)</p>
+                    <p>Rule: A noun phrase meaning "a piece of something" or "a component."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I want to be <strong>a part</strong> of the team."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Apart (Adverb)</p>
+                    <p>Rule: An adverb meaning "separated by a distance" or "into pieces."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The two friends live miles <strong>apart</strong>."</p>
+                </div>
+            </div>
+        `,
+        "A lot vs. Allot": `
+            <h3 class="text-2xl font-bold mb-4">A lot vs. Allot</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">A lot (Noun Phrase)</p>
+                    <p>Rule: A noun phrase meaning "a large amount" or "very often."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She has <strong>a lot</strong> of work to do."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Allot (Verb)</p>
+                    <p>Rule: A verb meaning "to give or apportion something to someone."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We need to <strong>allot</strong> funds for the project."</p>
+                </div>
+            </div>
+        `,
+        "Bare vs. Bear": `
+            <h3 class="text-2xl font-bold mb-4">Bare vs. Bear</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Bare (Adjective)</p>
+                    <p>Rule: An adjective meaning "uncovered" or "lacking something."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He walked outside with his <strong>bare</strong> feet."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Bear (Verb/Noun)</p>
+                    <p>Rule: A verb meaning "to carry," "to endure," or "to put up with." As a noun, it's the animal.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I can't <strong>bear</strong> the thought of leaving."</p>
+                </div>
+            </div>
+        `,
+        "Compliment vs. Complement": `
+            <h3 class="text-2xl font-bold mb-4">Compliment vs. Complement</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Compliment (Noun/Verb)</p>
+                    <p>Rule: A noun or verb for a polite expression of praise or admiration. Think of the "i" for "I like you."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She gave me a nice <strong>compliment</strong> on my new dress."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Complement (Noun/Verb)</p>
+                    <p>Rule: A noun or verb for something that completes or brings to perfection. Think of the "e" for "to complete."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The red wine will <strong>complement</strong> the steak well."</p>
+                </div>
+            </div>
+        `,
+        "Conscious vs. Conscience": `
+            <h3 class="text-2xl font-bold mb-4">Conscious vs. Conscience</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Conscious (Adjective)</p>
+                    <p>Rule: An adjective meaning "aware of" or "awake."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The patient was awake and fully <strong>conscious</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Conscience (Noun)</p>
+                    <p>Rule: A noun referring to an inner feeling or voice acting as a guide to the rightness or wrongness of one's behavior.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "His <strong>conscience</strong> told him to admit his mistake."</p>
+                </div>
+            </div>
+        `,
+        "Could have vs. Could of": `
+            <h3 class="text-2xl font-bold mb-4">Could have vs. Could of</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Could have (Verb Phrase)</p>
+                    <p>Rule: The correct verb phrase indicating a past possibility. Note that "could've" is the contraction.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We <strong>could have</strong> gone to the movie."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Could of (Incorrect)</p>
+                    <p>Rule: This is a common error and is never correct. The word "of" is never used after "could," "would," or "should."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I <strong>could have</strong> finished my homework." (Incorrect: "could of finished")</p>
+                </div>
+            </div>
+        `,
+        "Desert vs. Dessert": `
+            <h3 class="text-2xl font-bold mb-4">Desert vs. Dessert</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Desert (Noun/Verb)</p>
+                    <p>Rule: A noun for a dry, sandy region. A verb for "to abandon." Think of it having one 's', so it is less than "dessert."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The Sahara is a vast <strong>desert</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Dessert (Noun)</p>
+                    <p>Rule: A noun for a sweet course eaten at the end of a meal. Think of it having two 's's, so you want more of it.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "For <strong>dessert</strong>, we had chocolate cake."</p>
+                </div>
+            </div>
+        `,
+        "Discreet vs. Discrete": `
+            <h3 class="text-2xl font-bold mb-4">Discreet vs. Discrete</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Discreet (Adjective)</p>
+                    <p>Rule: An adjective meaning "careful in one's speech or actions" to avoid causing offense or revealing private information.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He made a <strong>discreet</strong> inquiry about the company's financial state."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Discrete (Adjective)</p>
+                    <p>Rule: An adjective meaning "individually separate and distinct."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The engine is composed of several <strong>discrete</strong> parts."</p>
+                </div>
+            </div>
+        `,
+        "Elicit vs. Illicit": `
+            <h3 class="text-2xl font-bold mb-4">Elicit vs. Illicit</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Elicit (Verb)</p>
+                    <p>Rule: A verb meaning "to evoke or draw out (a response or information) from someone."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The detective tried to <strong>elicit</strong> a confession from the suspect."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Illicit (Adjective)</p>
+                    <p>Rule: An adjective meaning "forbidden by law, rules, or custom."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The police seized a shipment of <strong>illicit</strong> drugs."</p>
+                </div>
+            </div>
+        `,
+        "Eminent vs. Imminent": `
+            <h3 class="text-2xl font-bold mb-4">Eminent vs. Imminent</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Eminent (Adjective)</p>
+                    <p>Rule: An adjective meaning "famous" or "respected" within a particular sphere.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "An <strong>eminent</strong> scholar from Harvard University will be speaking."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Imminent (Adjective)</p>
+                    <p>Rule: An adjective meaning "about to happen" or "approaching."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The dark clouds meant that a storm was <strong>imminent</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Envelop vs. Envelope": `
+            <h3 class="text-2xl font-bold mb-4">Envelop vs. Envelope</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Envelop (Verb)</p>
+                    <p>Rule: A verb meaning "to wrap," "cover," or "surround completely."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "A thick fog began to <strong>envelop</strong> the city."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Envelope (Noun)</p>
+                    <p>Rule: A noun for a flat paper container with a sealable flap, used for enclosing a letter or document.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please put the letter in this <strong>envelope</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Ensure vs. Insure": `
+            <h3 class="text-2xl font-bold mb-4">Ensure vs. Insure</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Ensure (Verb)</p>
+                    <p>Rule: A verb meaning "to make certain that something will occur."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I will take steps to <strong>ensure</strong> your safety."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Insure (Verb)</p>
+                    <p>Rule: A verb meaning "to arrange for compensation in case of damage or loss" by paying a premium.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "You need to <strong>insure</strong> your car against theft."</p>
+                </div>
+            </div>
+        `,
+        "Every day vs. Everyday": `
+            <h3 class="text-2xl font-bold mb-4">Every day vs. Everyday</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Every day (Adverbial Phrase)</p>
+                    <p>Rule: A phrase meaning "each day." If you can say "each day" instead, use this phrase.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I go for a run <strong>every day</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Everyday (Adjective)</p>
+                    <p>Rule: An adjective meaning "common," "ordinary," or "used daily." It describes a noun.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Getting stuck in traffic is an <strong>everyday</strong> occurrence."</p>
+                </div>
+            </div>
+        `,
+        "Farther vs. Further": `
+            <h3 class="text-2xl font-bold mb-4">Farther vs. Further</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Farther (Adverb/Adjective)</p>
+                    <p>Rule: Refers to a physical distance. Think of the word "far" inside it.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "How much <strong>farther</strong> is the finish line?"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Further (Adverb/Adjective)</p>
+                    <p>Rule: Refers to a metaphorical or non-physical distance, or "more" or "additionally."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We need to do <strong>further</strong> research."</p>
+                </div>
+            </div>
+        `,
+        "Fewer vs. Less": `
+            <h3 class="text-2xl font-bold mb-4">Fewer vs. Less</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Fewer (Adjective)</p>
+                    <p>Rule: Used for things you can count, or "countable nouns."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "There were <strong>fewer</strong> cars on the road today."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Less (Adjective)</p>
+                    <p>Rule: Used for things you can't count, or "uncountable nouns."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I have <strong>less</strong> patience than I used to."</p>
+                </div>
+            </div>
+        `,
+        "Good vs. Well": `
+            <h3 class="text-2xl font-bold mb-4">Good vs. Well</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Good (Adjective)</p>
+                    <p>Rule: An adjective used to describe a person, place, or thing. It answers the question "what kind?"</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She is a <strong>good</strong> swimmer."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Well (Adverb)</p>
+                    <p>Rule: An adverb used to describe how an action is performed. It answers the question "how?"</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She swims very <strong>well</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Lay vs. Lie": `
+            <h3 class="text-2xl font-bold mb-4">Lay vs. Lie</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Lay (Transitive Verb)</p>
+                    <p>Rule: Requires a direct object. It means "to put or place something down."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>lay</strong> the book on the table."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Lie (Intransitive Verb)</p>
+                    <p>Rule: Does not require a direct object. It means "to recline" or "to be in a horizontal position."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I need to go <strong>lie</strong> down."</p>
+                </div>
+            </div>
+        `,
+        "Loose vs. Lose": `
+            <h3 class="text-2xl font-bold mb-4">Loose vs. Lose</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Loose (Adjective)</p>
+                    <p>Rule: An adjective meaning "not tightly fitted" or "free from restraint."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "This shirt is too <strong>loose</strong> on me."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Lose (Verb)</p>
+                    <p>Rule: A verb meaning "to be deprived of," "to fail to win," or "to misplace something."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I don't want to <strong>lose</strong> the game."</p>
+                </div>
+            </div>
+        `,
+        "Principal vs. Principle": `
+            <h3 class="text-2xl font-bold mb-4">Principal vs. Principle</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Principal (Noun/Adjective)</p>
+                    <p>Rule: A noun for the head of a school. An adjective meaning "main" or "most important." Think of the "pal" in "principal" as your "pal" in school.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The school's <strong>principal</strong> is a great leader."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Principle (Noun)</p>
+                    <p>Rule: A noun for a fundamental truth, law, or belief.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He lives his life by a strict set of <strong>principles</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Site vs. Cite vs. Sight": `
+            <h3 class="text-2xl font-bold mb-4">Site vs. Cite vs. Sight</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Site (Noun)</p>
+                    <p>Rule: A noun for a location, a place, or a website.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The construction <strong>site</strong> is now closed."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Cite (Verb)</p>
+                    <p>Rule: A verb meaning "to quote" or "to reference" a source.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "You must <strong>cite</strong> your sources in the paper."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Sight (Noun/Verb)</p>
+                    <p>Rule: A noun for the ability to see or something that is seen. A verb meaning "to see."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The view from the top was a beautiful <strong>sight</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Stationary vs. Stationery": `
+            <h3 class="text-2xl font-bold mb-4">Stationary vs. Stationery</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Stationary (Adjective)</p>
+                    <p>Rule: An adjective meaning "not moving." Think of the 'a' in "stationary" for "staying."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The car remained <strong>stationary</strong> at the red light."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Stationery (Noun)</p>
+                    <p>Rule: A noun for writing materials, such as paper and envelopes. Think of the 'e' in "stationery" for "envelope."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I bought a new set of <strong>stationery</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Then vs. Than": `
+            <h3 class="text-2xl font-bold mb-4">Then vs. Than</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Then (Adverb)</p>
+                    <p>Rule: An adverb referring to time or sequence. Think of the 'e' in "then" for "time."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We ate dinner, and <strong>then</strong> we watched a movie."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Than (Conjunction)</p>
+                    <p>Rule: A conjunction used for comparison. Think of the 'a' in "than" for "comparison."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He is taller <strong>than</strong> me."</p>
+                </div>
+            </div>
+        `,
+        "Who's vs. Whose": `
+            <h3 class="text-2xl font-bold mb-4">Who's vs. Whose</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Who's (Contraction)</p>
+                    <p>Rule: A contraction of "who is" or "who has."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>Who's</strong> coming to the party?"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Whose (Possession)</p>
+                    <p>Rule: A possessive pronoun asking to whom something belongs.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>Whose</strong> jacket is this?"</p>
+                </div>
+            </div>
+        `,
+        "Led vs. Lead": `
+            <h3 class="text-2xl font-bold mb-4">Led vs. Lead</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Led (Verb)</p>
+                    <p>Rule: The past tense of the verb "to lead."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He <strong>led</strong> the team to victory."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Lead (Verb/Noun)</p>
+                    <p>Rule: As a verb, it means "to guide" or "to be in charge." As a noun, it's a type of metal (rhymes with "dead").</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He will <strong>lead</strong> the discussion."</p>
+                </div>
+            </div>
+        `,
+        "Past vs. Passed": `
+            <h3 class="text-2xl font-bold mb-4">Past vs. Passed</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Past (Noun/Adjective/Preposition)</p>
+                    <p>Rule: Refers to a time that has gone by or a location beyond something. It is not a verb.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "In the <strong>past</strong>, things were different."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Passed (Verb)</p>
+                    <p>Rule: The past tense of the verb "to pass." It means "to move by" or "to complete successfully."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She <strong>passed</strong> the test with a high score."</p>
+                </div>
+            </div>
+        `,
+        "Precede vs. Proceed": `
+            <h3 class="text-2xl font-bold mb-4">Precede vs. Proceed</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Precede (Verb)</p>
+                    <p>Rule: A verb meaning "to come before something in time or order."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The introduction will <strong>precede</strong> the main chapter."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Proceed (Verb)</p>
+                    <p>Rule: A verb meaning "to begin a course of action" or "to move forward."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We can now <strong>proceed</strong> with the next step."</p>
+                </div>
+            </div>
+        `,
+        "Raise vs. Rise": `
+            <h3 class="text-2xl font-bold mb-4">Raise vs. Rise</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Raise (Transitive Verb)</p>
+                    <p>Rule: Requires a direct object. It means "to lift something up."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>raise</strong> your hand if you have a question."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Rise (Intransitive Verb)</p>
+                    <p>Rule: Does not require a direct object. It means "to move upwards" on its own.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The sun will <strong>rise</strong> at dawn."</p>
+                </div>
+            </div>
+        `,
+        "Cereal vs. Serial": `
+            <h3 class="text-2xl font-bold mb-4">Cereal vs. Serial</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Cereal (Noun)</p>
+                    <p>Rule: A noun for a type of breakfast food made from grains.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I had a bowl of <strong>cereal</strong> for breakfast."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Serial (Adjective/Noun)</p>
+                    <p>Rule: An adjective describing things that come in a series. As a noun, a publication appearing in a series.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The show is a weekly <strong>serial</strong> drama."</p>
+                </div>
+            </div>
+        `,
+        "Patience vs. Patients": `
+            <h3 class="text-2xl font-bold mb-4">Patience vs. Patients</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Patience (Noun)</p>
+                    <p>Rule: A noun for the capacity to accept delay, trouble, or suffering without getting angry or upset.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "You need to have <strong>patience</strong> when teaching a child."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Patients (Noun)</p>
+                    <p>Rule: The plural form of the noun "patient," a person receiving medical care.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The doctor has three <strong>patients</strong> waiting."</p>
+                </div>
+            </div>
+        `,
+        "Weather vs. Whether": `
+            <h3 class="text-2xl font-bold mb-4">Weather vs. Whether</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Weather (Noun/Verb)</p>
+                    <p>Rule: A noun for the state of the atmosphere. A verb for "to wear away" or "to endure."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The <strong>weather</strong> is quite nice today."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Whether (Conjunction)</p>
+                    <p>Rule: A conjunction used to introduce a choice or possibility.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I don't know <strong>whether</strong> to go or stay."</p>
+                </div>
+            </div>
+        `,
+        "Rein vs. Reign vs. Rain": `
+            <h3 class="text-2xl font-bold mb-4">Rein vs. Reign vs. Rain</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Rein (Noun/Verb)</p>
+                    <p>Rule: A noun for a strap used to guide a horse. A verb meaning "to control" or "to hold back."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The rider pulled on the horse's <strong>rein</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Reign (Noun/Verb)</p>
+                    <p>Rule: A noun or verb referring to the period of rule of a monarch.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The queen's <strong>reign</strong> lasted for fifty years."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Rain (Noun/Verb)</p>
+                    <p>Rule: A noun or verb for precipitation falling from the sky.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I hope it doesn't <strong>rain</strong> tomorrow."</p>
+                </div>
+            </div>
+        `,
+        "Censor vs. Censure": `
+            <h3 class="text-2xl font-bold mb-4">Censor vs. Censure</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Censor (Verb/Noun)</p>
+                    <p>Rule: To examine and suppress unacceptable parts of a book, film, etc. As a noun, a person who does this.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The government tried to <strong>censor</strong> the news report."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Censure (Noun/Verb)</p>
+                    <p>Rule: To express severe disapproval of someone or something, especially in a formal statement.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The politician received an official <strong>censure</strong> from the committee."</p>
+                </div>
+            </div>
+        `,
+        "Climactic vs. Climatic": `
+            <h3 class="text-2xl font-bold mb-4">Climactic vs. Climatic</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Climactic (Adjective)</p>
+                    <p>Rule: Relating to the climax of a story or event; forming a climax.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The movie had a <strong>climactic</strong> battle scene at the end."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Climatic (Adjective)</p>
+                    <p>Rule: Relating to climate or weather conditions.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The region's <strong>climatic</strong> conditions are perfect for growing grapes."</p>
+                </div>
+            </div>
+        `,
+        "Council vs. Counsel": `
+            <h3 class="text-2xl font-bold mb-4">Council vs. Counsel</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Council (Noun)</p>
+                    <p>Rule: A noun for a group of people who meet to advise or decide on something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The city <strong>council</strong> approved the new park."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Counsel (Noun/Verb)</p>
+                    <p>Rule: A noun for advice or a person who gives legal advice (a lawyer). A verb for "to advise."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She sought legal <strong>counsel</strong> before making a decision."</p>
+                </div>
+            </div>
+        `,
+        "Defuse vs. Diffuse": `
+            <h3 class="text-2xl font-bold mb-4">Defuse vs. Diffuse</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Defuse (Verb)</p>
+                    <p>Rule: To remove the fuse from a bomb or to reduce tension in a difficult situation.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The diplomat worked to <strong>defuse</strong> the tense situation."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Diffuse (Verb/Adjective)</p>
+                    <p>Rule: To spread or scatter over a wide area. As an adjective, it means "spread out."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The scent of flowers will <strong>diffuse</strong> throughout the room."</p>
+                </div>
+            </div>
+        `,
+        "Deprecate vs. Depreciate": `
+            <h3 class="text-2xl font-bold mb-4">Deprecate vs. Depreciate</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Deprecate (Verb)</p>
+                    <p>Rule: To express disapproval of something; to protest against it.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He always <strong>deprecates</strong> his own achievements, even when he does well."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Depreciate (Verb)</p>
+                    <p>Rule: To diminish in value over a period of time.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The value of the car will <strong>depreciate</strong> as soon as you drive it off the lot."</p>
+                </div>
+            </div>
+        `,
+        "Flair vs. Flare": `
+            <h3 class="text-2xl font-bold mb-4">Flair vs. Flare</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Flair (Noun)</p>
+                    <p>Rule: A noun for a special or instinctive aptitude or a stylishness.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She has a natural <strong>flair</strong> for design."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Flare (Noun/Verb)</p>
+                    <p>Rule: A noun for a sudden burst of flame or light. A verb meaning "to burn with a sudden intensity" or "to widen."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The match <strong>flared</strong> brightly for a moment."</p>
+                </div>
+            </div>
+        `,
+        "Fiancé vs. Fiancée": `
+            <h3 class="text-2xl font-bold mb-4">Fiancé vs. Fiancée</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Fiancé (Noun)</p>
+                    <p>Rule: A noun for a man who is engaged to be married.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "My <strong>fiancé</strong> is a wonderful man."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Fiancée (Noun)</p>
+                    <p>Rule: A noun for a woman who is engaged to be married. Note the extra 'e' at the end.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He introduced his <strong>fiancée</strong> to his family."</p>
+                </div>
+            </div>
+        `,
+        "Forbear vs. Forebear": `
+            <h3 class="text-2xl font-bold mb-4">Forbear vs. Forebear</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Forbear (Verb)</p>
+                    <p>Rule: A verb meaning "to refrain from" or "to hold back."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>forbear</strong> from laughing at his mistake."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Forebear (Noun)</p>
+                    <p>Rule: A noun for an ancestor. Think of the "fore-" prefix meaning "before."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "My <strong>forebears</strong> came to this country in the 1800s."</p>
+                </div>
+            </div>
+        `,
+        "Foreword vs. Forward": `
+            <h3 class="text-2xl font-bold mb-4">Foreword vs. Forward</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Foreword (Noun)</p>
+                    <p>Rule: A noun for a short introduction to a book, usually by someone other than the author.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The book includes a <strong>foreword</strong> by a famous historian."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Forward (Adverb/Adjective)</p>
+                    <p>Rule: An adverb meaning "in the direction that one is facing."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please move <strong>forward</strong> in the line."</p>
+                </div>
+            </div>
+        `,
+        "Horde vs. Hoard": `
+            <h3 class="text-2xl font-bold mb-4">Horde vs. Hoard</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Horde (Noun)</p>
+                    <p>Rule: A noun for a large group of people.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "A <strong>horde</strong> of tourists descended on the museum."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Hoard (Noun/Verb)</p>
+                    <p>Rule: A noun for a stock or store of money or valuable objects. A verb meaning "to accumulate a large amount of something."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He has a large <strong>hoard</strong> of rare coins."</p>
+                </div>
+            </div>
+        `,
+        "Imply vs. Infer": `
+            <h3 class="text-2xl font-bold mb-4">Imply vs. Infer</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Imply (Verb)</p>
+                    <p>Rule: A verb meaning "to suggest something without stating it directly." The speaker or writer implies something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Are you <strong>implying</strong> that I was wrong?"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Infer (Verb)</p>
+                    <p>Rule: A verb meaning "to deduce or conclude from evidence and reasoning." The listener or reader infers something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "From her silence, I <strong>inferred</strong> that she was angry."</p>
+                </div>
+            </div>
+        `,
+        "Insure vs. Ensure vs. Assure": `
+            <h3 class="text-2xl font-bold mb-4">Insure vs. Ensure vs. Assure</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Insure (Verb)</p>
+                    <p>Rule: To provide financial protection against loss or damage.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "You need to <strong>insure</strong> your home."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Ensure (Verb)</p>
+                    <p>Rule: To make certain that something will happen.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>ensure</strong> all the doors are locked."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Assure (Verb)</p>
+                    <p>Rule: To promise or tell someone that something is certain to happen, to remove their doubts.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I <strong>assure</strong> you that everything will be fine."</p>
+                </div>
+            </div>
+        `,
+        "Ingenious vs. Ingenuous": `
+            <h3 class="text-2xl font-bold mb-4">Ingenious vs. Ingenuous</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Ingenious (Adjective)</p>
+                    <p>Rule: An adjective meaning "clever," "inventive," or "resourceful."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The engineer created an <strong>ingenious</strong> solution to the problem."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Ingenuous (Adjective)</p>
+                    <p>Rule: An adjective meaning "innocent" or "naive."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Her <strong>ingenuous</strong> nature made her easy to deceive."</p>
+                </div>
+            </div>
+        `,
+        "Literal vs. Literally": `
+            <h3 class="text-2xl font-bold mb-4">Literal vs. Literally</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Literal (Adjective)</p>
+                    <p>Rule: An adjective meaning "exactly as stated," "without metaphor."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The <strong>literal</strong> meaning of the word is its dictionary definition."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Literally (Adverb)</p>
+                    <p>Rule: An adverb meaning "in a literal or exact sense." (Note: It is often used informally as an intensifier, but this is technically incorrect.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I was <strong>literally</strong> starving after the long hike."</p>
+                </div>
+            </div>
+        `,
+        "Palate vs. Pallet vs. Palette": `
+            <h3 class="text-2xl font-bold mb-4">Palate vs. Pallet vs. Palette</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Palate (Noun)</p>
+                    <p>Rule: A noun for the roof of the mouth or a person's sense of taste.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The chef's dish was pleasing to the American <strong>palate</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Pallet (Noun)</p>
+                    <p>Rule: A noun for a flat wooden structure used for storing and moving goods.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The boxes were stacked on a wooden <strong>pallet</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Palette (Noun)</p>
+                    <p>Rule: A noun for a thin board on which an artist arranges and mixes paints.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She squeezed a dollop of red paint onto her <strong>palette</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Pore vs. Pour": `
+            <h3 class="text-2xl font-bold mb-4">Pore vs. Pour</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Pore (Noun/Verb)</p>
+                    <p>Rule: A noun for a tiny opening on the skin. A verb meaning "to be absorbed in the study of something."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She spent hours <strong>poring</strong> over the ancient manuscript."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Pour (Verb)</p>
+                    <p>Rule: A verb meaning "to flow rapidly" or "to cause a liquid to flow."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>pour</strong> me a glass of water."</p>
+                </div>
+            </div>
+        `,
+        "Practicable vs. Practical": `
+            <h3 class="text-2xl font-bold mb-4">Practicable vs. Practical</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Practicable (Adjective)</p>
+                    <p>Rule: An adjective meaning "able to be done or put into practice; feasible."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The plan is <strong>practicable</strong>, but we still need funding."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Practical (Adjective)</p>
+                    <p>Rule: An adjective meaning "sensible and realistic" or "useful and convenient."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "It's a very <strong>practical</strong> car for a large family."</p>
+                </div>
+            </div>
+        `,
+        "Prescribe vs. Proscribe": `
+            <h3 class="text-2xl font-bold mb-4">Prescribe vs. Proscribe</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Prescribe (Verb)</p>
+                    <p>Rule: A verb meaning "to recommend a course of action" or "to authorize the use of medicine."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The doctor will <strong>prescribe</strong> a new medication."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Proscribe (Verb)</p>
+                    <p>Rule: A verb meaning "to forbid" or "to prohibit."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The new law will <strong>proscribe</strong> the use of certain chemicals."</p>
+                </div>
+            </div>
+        `,
+        "Reticent vs. Reluctant": `
+            <h3 class="text-2xl font-bold mb-4">Reticent vs. Reluctant</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Reticent (Adjective)</p>
+                    <p>Rule: An adjective meaning "not revealing one's thoughts or feelings; reserved."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He was <strong>reticent</strong> to discuss his personal life."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Reluctant (Adjective)</p>
+                    <p>Rule: An adjective meaning "unwilling" and hesitant to do something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I was <strong>reluctant</strong> to get out of bed on a cold morning."</p>
+                </div>
+            </div>
+        `,
+        "Sleight vs. Slight": `
+            <h3 class="text-2xl font-bold mb-4">Sleight vs. Slight</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Sleight (Noun)</p>
+                    <p>Rule: A noun meaning "the use of dexterity or cunning, especially in performing a trick." It's almost always used in the phrase "sleight of hand."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The magician used <strong>sleight</strong> of hand to make the card disappear."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Slight (Adjective/Verb)</p>
+                    <p>Rule: An adjective meaning "small in degree" or "thin." As a verb, "to insult someone."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "There was only a <strong>slight</strong> change in the temperature."</p>
+                </div>
+            </div>
+        `,
+        "Sympathy vs. Empathy": `
+            <h3 class="text-2xl font-bold mb-4">Sympathy vs. Empathy</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Sympathy (Noun)</p>
+                    <p>Rule: The feeling of pity or sorrow for someone else's misfortune. It's feeling FOR someone.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "I felt a lot of <strong>sympathy</strong> for the victims of the fire."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Empathy (Noun)</p>
+                    <p>Rule: The ability to understand and share the feelings of another person. It's feeling WITH someone.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Because she had gone through a similar experience, she had a lot of <strong>empathy</strong> for her friend."</p>
+                </div>
+            </div>
+        `,
+        "Wreak vs. Wreck": `
+            <h3 class="text-2xl font-bold mb-4">Wreak vs. Wreck</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Wreak (Verb)</p>
+                    <p>Rule: A verb meaning "to cause or inflict." Almost always used in the phrase "wreak havoc."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The hurricane will <strong>wreak</strong> havoc on the coastline."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Wreck (Verb/Noun)</p>
+                    <p>Rule: A verb meaning "to destroy or ruin." As a noun, a damaged car or ship.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He accidentally <strong>wrecked</strong> his car."</p>
+                </div>
+            </div>
+        `,
+        "Yoke vs. Yolk": `
+            <h3 class="text-2xl font-bold mb-4">Yoke vs. Yolk</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Yoke (Noun/Verb)</p>
+                    <p>Rule: A noun for a wooden crosspiece fastened over the necks of two oxen. A verb meaning "to join together."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The farmer put a <strong>yoke</strong> on the oxen."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Yolk (Noun)</p>
+                    <p>Rule: The yellow, nutrient-rich part of an egg.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Separate the egg white from the <strong>yolk</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Complementary vs. Complimentary": `
+            <h3 class="text-2xl font-bold mb-4">Complementary vs. Complimentary</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Complementary (Adjective)</p>
+                    <p>Rule: An adjective meaning "combining in such a way as to enhance or improve each other."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The two colors are <strong>complementary</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Complimentary (Adjective)</p>
+                    <p>Rule: An adjective meaning "expressing a compliment" or "given free of charge."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The hotel offered us a <strong>complimentary</strong> breakfast."</p>
+                </div>
+            </div>
+        `,
+        "Dependant vs. Dependent": `
+            <h3 class="text-2xl font-bold mb-4">Dependant vs. Dependent</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Dependant (Noun)</p>
+                    <p>Rule: A noun for a person who relies on another for financial support. (Commonly used in British English.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He has two young children who are his <strong>dependants</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Dependent (Adjective)</p>
+                    <p>Rule: An adjective meaning "contingent on or determined by." (Used in both American and British English.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The project's success is <strong>dependent</strong> on funding."</p>
+                </div>
+            </div>
+        `,
+        "Elicit vs. Illicit": `
+            <h3 class="text-2xl font-bold mb-4">Elicit vs. Illicit</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Elicit (Verb)</p>
+                    <p>Rule: To evoke or draw out (a response or information) from someone.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The reporter's questions failed to <strong>elicit</strong> a response."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Illicit (Adjective)</p>
+                    <p>Rule: Forbidden by law, rules, or custom.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He was arrested for selling <strong>illicit</strong> goods."</p>
+                </div>
+            </div>
+        `,
+        "Faze vs. Phase": `
+            <h3 class="text-2xl font-bold mb-4">Faze vs. Phase</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Faze (Verb)</p>
+                    <p>Rule: To disturb or disconcert (someone).</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The criticism didn't seem to <strong>faze</strong> him at all."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Phase (Noun/Verb)</p>
+                    <p>Rule: A noun for a stage of development. A verb meaning "to carry out in gradual stages."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The project is in its final <strong>phase</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Fiscal vs. Physical": `
+            <h3 class="text-2xl font-bold mb-4">Fiscal vs. Physical</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Fiscal (Adjective)</p>
+                    <p>Rule: An adjective relating to government revenue, or to financial matters.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The company is in a good <strong>fiscal</strong> state."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Physical (Adjective)</p>
+                    <p>Rule: An adjective relating to the body as opposed to the mind; relating to matter.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The job requires a lot of <strong>physical</strong> strength."</p>
+                </div>
+            </div>
+        `,
+        "Gibe vs. Jibe vs. Gybe": `
+            <h3 class="text-2xl font-bold mb-4">Gibe vs. Jibe vs. Gybe</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Gibe (Verb)</p>
+                    <p>Rule: To utter taunting words; to jeer or mock.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He would often <strong>gibe</strong> at his opponent's lack of experience."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Jibe (Verb)</p>
+                    <p>Rule: To be in agreement or to correspond with something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The numbers on the report don't <strong>jibe</strong> with our records."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Gybe (Verb)</p>
+                    <p>Rule: To change a sailboat's direction by swinging the sail across the wind. (Mostly used in sailing.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We will have to <strong>gybe</strong> to get around the buoy."</p>
+                </div>
+            </div>
+        `,
+        "Illegible vs. Unreadable": `
+            <h3 class="text-2xl font-bold mb-4">Illegible vs. Unreadable</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Illegible (Adjective)</p>
+                    <p>Rule: (Of handwriting or print) Not clear enough to be read.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The doctor's handwriting was completely <strong>illegible</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Unreadable (Adjective)</p>
+                    <p>Rule: (Of a book or text) Too boring or difficult to be read; not interesting.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The textbook was so dense and boring that it was practically <strong>unreadable</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Impactful vs. Impact": `
+            <h3 class="text-2xl font-bold mb-4">Impactful vs. Impact</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Impactful (Adjective)</p>
+                    <p>Rule: Having a major impact or effect. (Often considered jargon in formal writing, but widely used informally.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The new marketing campaign was very <strong>impactful</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Impact (Noun/Verb)</p>
+                    <p>Rule: A noun for a strong effect or influence. A verb for "to have a strong effect on." (A more traditional and formal choice.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The report had a significant <strong>impact</strong> on the board."</p>
+                </div>
+            </div>
+        `,
+        "Jive vs. Gibe": `
+            <h3 class="text-2xl font-bold mb-4">Jive vs. Gibe</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Jive (Verb)</p>
+                    <p>Rule: To agree or to fit together with something. (An informal synonym for "jibe".)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "His account of the accident doesn't <strong>jive</strong> with the police report."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Gibe (Verb)</p>
+                    <p>Rule: To utter taunting words; to jeer or mock.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He would often <strong>gibe</strong> at his opponent's lack of experience."</p>
+                </div>
+            </div>
+        `,
+        "Moot vs. Mute": `
+            <h3 class="text-2xl font-bold mb-4">Moot vs. Mute</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Moot (Adjective)</p>
+                    <p>Rule: An adjective meaning "subject to debate, dispute, or uncertainty." Often used in the phrase "a moot point."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The issue is now a <strong>moot</strong> point, as the law has been changed."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Mute (Adjective/Verb)</p>
+                    <p>Rule: An adjective meaning "unable to speak." A verb meaning "to silence."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Please <strong>mute</strong> the television when you leave."</p>
+                </div>
+            </div>
+        `,
+        "Oral vs. Verbal": `
+            <h3 class="text-2xl font-bold mb-4">Oral vs. Verbal</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Oral (Adjective)</p>
+                    <p>Rule: An adjective meaning "spoken" or "of the mouth."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "They made an <strong>oral</strong> agreement, not a written one."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Verbal (Adjective)</p>
+                    <p>Rule: An adjective meaning "relating to words," whether spoken or written.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She has a great <strong>verbal</strong> ability."</p>
+                </div>
+            </div>
+        `,
+        "Personal vs. Personnel": `
+            <h3 class="text-2xl font-bold mb-4">Personal vs. Personnel</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Personal (Adjective)</p>
+                    <p>Rule: An adjective meaning "of, for, or belonging to a particular person."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "This is my <strong>personal</strong> laptop."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Personnel (Noun)</p>
+                    <p>Rule: A noun for the people employed in an organization or military force.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The company's <strong>personnel</strong> are very dedicated."</p>
+                </div>
+            </div>
+        `,
+        "Rout vs. Route": `
+            <h3 class="text-2xl font-bold mb-4">Rout vs. Route</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Rout (Noun/Verb)</p>
+                    <p>Rule: A noun for a disorderly retreat of defeated troops. A verb meaning "to defeat and cause to retreat."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The army suffered a total <strong>rout</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Route (Noun/Verb)</p>
+                    <p>Rule: A noun for a way or course taken in getting from a starting point to a destination. A verb meaning "to send along a particular path."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We took a different <strong>route</strong> to avoid traffic."</p>
+                </div>
+            </div>
+        `,
+        "Sheath vs. Sheathe": `
+            <h3 class="text-2xl font-bold mb-4">Sheath vs. Sheathe</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Sheath (Noun)</p>
+                    <p>Rule: A noun for a cover for the blade of a knife or sword.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He slid his dagger into its leather <strong>sheath</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Sheathe (Verb)</p>
+                    <p>Rule: A verb meaning "to put a sword or knife into a sheath."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The knight was told to <strong>sheathe</strong> his sword."</p>
+                </div>
+            </div>
+        `,
+        "Staid vs. Stayed": `
+            <h3 class="text-2xl font-bold mb-4">Staid vs. Stayed</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Staid (Adjective)</p>
+                    <p>Rule: An adjective meaning "sedate, respectable, and unadventurous."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The bank manager was a very <strong>staid</strong> and serious person."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Stayed (Verb)</p>
+                    <p>Rule: The past tense of the verb "to stay."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "We <strong>stayed</strong> at a hotel last night."</p>
+                </div>
+            </div>
+        `,
+        "Tractable vs. Tractible": `
+            <h3 class="text-2xl font-bold mb-4">Tractable vs. Tractible</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Tractable (Adjective)</p>
+                    <p>Rule: An adjective meaning "(of a person or animal) easy to control or influence."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The wild horse became more <strong>tractable</strong> after training."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Tractible (Adjective)</p>
+                    <p>Rule: This is not a standard English word. "Tractable" is the correct term.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The problem was easily solved because it was <strong>tractable</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Uninterested vs. Disinterested": `
+            <h3 class="text-2xl font-bold mb-4">Uninterested vs. Disinterested</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Uninterested (Adjective)</p>
+                    <p>Rule: An adjective meaning "not interested or curious; indifferent."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She was completely <strong>uninterested</strong> in the movie."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Disinterested (Adjective)</p>
+                    <p>Rule: An adjective meaning "not biased or influenced by self-interest; impartial."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "A judge must remain <strong>disinterested</strong> in the case to be fair."</p>
+                </div>
+            </div>
+        `,
+        "Venal vs. Venial": `
+            <h3 class="text-2xl font-bold mb-4">Venal vs. Venial</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Venal (Adjective)</p>
+                    <p>Rule: An adjective meaning "susceptible to bribery; corrupt."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The <strong>venal</strong> official accepted bribes for government contracts."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Venial (Adjective)</p>
+                    <p>Rule: An adjective meaning "(of a fault or sin) excusable or minor; not very serious."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Telling a white lie is a <strong>venial</strong> sin."</p>
+                </div>
+            </div>
+        `,
+        "Wary vs. Weary": `
+            <h3 class="text-2xl font-bold mb-4">Wary vs. Weary</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Wary (Adjective)</p>
+                    <p>Rule: An adjective meaning "feeling or showing caution about possible dangers or problems."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He was <strong>wary</strong> of strangers who approached him."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Weary (Adjective)</p>
+                    <p>Rule: An adjective meaning "feeling or showing tiredness."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The long journey made the travelers feel <strong>weary</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Who vs. Whom": `
+            <h3 class="text-2xl font-bold mb-4">Who vs. Whom</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Who (Pronoun)</p>
+                    <p>Rule: A subject pronoun, like "he" or "she." Use "who" to refer to the person performing the action.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "<strong>Who</strong> ate the last cookie?"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Whom (Pronoun)</p>
+                    <p>Rule: An object pronoun, like "him" or "her." Use "whom" to refer to the person receiving the action.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "To <strong>whom</strong> did you give the book?"</p>
+                </div>
+                <div class="border-t border-white/20 pt-3">
+                    <p class="font-bold text-white">He/Him Trick:</p>
+                    <p>If you can replace the word with "he" or "she", use <strong>who</strong>. If you can replace it with "him" or "her", use <strong>whom</strong>.</p>
+                </div>
+            </div>
+        `,
+        "Admittance vs. Admission": `
+            <h3 class="text-2xl font-bold mb-4">Admittance vs. Admission</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Admittance (Noun)</p>
+                    <p>Rule: A noun referring to the right or permission to enter a place. It's about physically entering.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The sign said, 'No <strong>admittance</strong> without a ticket.'"</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Admission (Noun)</p>
+                    <p>Rule: A noun for the act of entering or a fee to enter. It can also mean a confession or acknowledgment.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The student gained <strong>admission</strong> to the university."</p>
+                </div>
+            </div>
+        `,
+        "Adverse vs. Averse": `
+            <h3 class="text-2xl font-bold mb-4">Adverse vs. Averse</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Adverse (Adjective)</p>
+                    <p>Rule: An adjective meaning "unfavorable" or "harmful." It is used to describe an external force or event.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The storm caused <strong>adverse</strong> weather conditions."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Averse (Adjective)</p>
+                    <p>Rule: An adjective meaning "having a strong dislike of or opposition to something." It is a personal feeling.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He is not <strong>averse</strong> to hard work."</p>
+                </div>
+            </div>
+        `,
+        "Amoral vs. Immoral": `
+            <h3 class="text-2xl font-bold mb-4">Amoral vs. Immoral</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Amoral (Adjective)</p>
+                    <p>Rule: An adjective meaning "not concerned with or not having moral principles." It's a lack of a moral sense.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The villain was a completely <strong>amoral</strong> character."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Immoral (Adjective)</p>
+                    <p>Rule: An adjective meaning "not conforming to accepted standards of morality." It's actively going against a moral sense.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Cheating on a test is considered an <strong>immoral</strong> act."</p>
+                </div>
+            </div>
+        `,
+        "Anxiety vs. Fear": `
+            <h3 class="text-2xl font-bold mb-4">Anxiety vs. Fear</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Anxiety (Noun)</p>
+                    <p>Rule: A feeling of worry, nervousness, or unease about an uncertain future event.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He felt a lot of <strong>anxiety</strong> about his upcoming exam."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Fear (Noun)</p>
+                    <p>Rule: An unpleasant emotion caused by the belief that someone or something is dangerous, a direct threat.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She felt a sudden <strong>fear</strong> when she saw the bear in the woods."</p>
+                </div>
+            </div>
+        `,
+        "Cease vs. Seize": `
+            <h3 class="text-2xl font-bold mb-4">Cease vs. Seize</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Cease (Verb)</p>
+                    <p>Rule: A verb meaning "to stop" or "to come to an end."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The company will <strong>cease</strong> operations next month."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Seize (Verb)</p>
+                    <p>Rule: A verb meaning "to take hold of something suddenly and forcibly."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The police will <strong>seize</strong> the suspect's property."</p>
+                </div>
+            </div>
+        `,
+        "Cologne vs. Colon": `
+            <h3 class="text-2xl font-bold mb-4">Cologne vs. Colon</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Cologne (Noun)</p>
+                    <p>Rule: A noun for a type of men's perfume or aftershave.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He splashed on some <strong>cologne</strong> before going out."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Colon (Noun)</p>
+                    <p>Rule: A noun for a punctuation mark (:) or a part of the large intestine.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Use a <strong>colon</strong> before a list."</p>
+                </div>
+            </div>
+        `,
+        "Contemptible vs. Contemptuous": `
+            <h3 class="text-2xl font-bold mb-4">Contemptible vs. Contemptuous</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Contemptible (Adjective)</p>
+                    <p>Rule: An adjective meaning "deserving contempt; despicable."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "His actions were utterly <strong>contemptible</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Contemptuous (Adjective)</p>
+                    <p>Rule: An adjective meaning "showing contempt; scornful."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He gave a <strong>contemptuous</strong> look to his rival."</p>
+                </div>
+            </div>
+        `,
+        "Corpus vs. Corpse": `
+            <h3 class="text-2xl font-bold mb-4">Corpus vs. Corpse</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Corpus (Noun)</p>
+                    <p>Rule: A noun for a body of a person or a collection of written texts.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The researchers built a large <strong>corpus</strong> of English texts."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Corpse (Noun)</p>
+                    <p>Rule: A noun for a dead body, especially of a human being.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The detective found a <strong>corpse</strong> in the alley."</p>
+                </div>
+            </div>
+        `,
+        "Credible vs. Credulous": `
+            <h3 class="text-2xl font-bold mb-4">Credible vs. Credulous</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Credible (Adjective)</p>
+                    <p>Rule: An adjective meaning "able to be believed; convincing."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The witness gave a <strong>credible</strong> account of the event."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Credulous (Adjective)</p>
+                    <p>Rule: An adjective meaning "having or showing too great a readiness to believe things."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The con artist took advantage of the <strong>credulous</strong> investor."</p>
+                </div>
+            </div>
+        `,
+        "Elude vs. Allude": `
+            <h3 class="text-2xl font-bold mb-4">Elude vs. Allude</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Elude (Verb)</p>
+                    <p>Rule: To escape from or to fail to be grasped by someone or something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The criminal managed to <strong>elude</strong> the police."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Allude (Verb)</p>
+                    <p>Rule: To refer to something indirectly or to hint at it.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "She <strong>alluded</strong> to a secret without revealing it."</p>
+                </div>
+            </div>
+        `,
+        "Esoteric vs. Exoteric": `
+            <h3 class="text-2xl font-bold mb-4">Esoteric vs. Exoteric</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Esoteric (Adjective)</p>
+                    <p>Rule: Intended for or likely to be understood by only a small number of people with a specialized knowledge or interest.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The book was filled with <strong>esoteric</strong> philosophical concepts."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Exoteric (Adjective)</p>
+                    <p>Rule: Intended for or likely to be understood by the general public.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He explained the complex theory in a simple, <strong>exoteric</strong> way."</p>
+                </div>
+            </div>
+        `,
+        "Exalt vs. Exult": `
+            <h3 class="text-2xl font-bold mb-4">Exalt vs. Exult</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Exalt (Verb)</p>
+                    <p>Rule: To hold (someone or something) in very high regard; to praise.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The students <strong>exalted</strong> their teacher as a genius."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Exult (Verb)</p>
+                    <p>Rule: To feel or show triumphant joy; to rejoice.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The team <strong>exulted</strong> in their victory."</p>
+                </div>
+            </div>
+        `,
+        "Expat vs. Exile": `
+            <h3 class="text-2xl font-bold mb-4">Expat vs. Exile</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Expat (Noun)</p>
+                    <p>Rule: A shortened term for "expatriate," a person who lives outside their native country voluntarily.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He is an American <strong>expat</strong> living in Tokyo."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Exile (Noun/Verb)</p>
+                    <p>Rule: A noun for being barred from one's native country, often for political reasons. A verb meaning "to banish."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The king lived in political <strong>exile</strong> for ten years."</p>
+                </div>
+            </div>
+        `,
+        "Fascism vs. Nazism": `
+            <h3 class="text-2xl font-bold mb-4">Fascism vs. Nazism</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Fascism (Noun)</p>
+                    <p>Rule: A political system led by a dictator, emphasizing aggressive nationalism and often racism, and forcibly suppressing opposition and criticism.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Mussolini's rule in Italy was a form of <strong>fascism</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Nazism (Noun)</p>
+                    <p>Rule: The political principles of the National Socialist German Workers' Party. It's a specific form of fascism that includes a belief in racial superiority.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The German military was heavily influenced by the ideas of <strong>Nazism</strong>."</p>
+                </div>
+            </div>
+        `,
+        "Fortuitous vs. Fortunate": `
+            <h3 class="text-2xl font-bold mb-4">Fortuitous vs. Fortunate</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Fortuitous (Adjective)</p>
+                    <p>Rule: An adjective meaning "happening by chance rather than intention."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "It was a <strong>fortuitous</strong> meeting that led to a business deal."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Fortunate (Adjective)</p>
+                    <p>Rule: An adjective meaning "happening by good luck; lucky."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "You are so <strong>fortunate</strong> to have such a great job."</p>
+                </div>
+            </div>
+        `,
+        "Historic vs. Historical": `
+            <h3 class="text-2xl font-bold mb-4">Historic vs. Historical</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Historic (Adjective)</p>
+                    <p>Rule: An adjective meaning "famous or important in history."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The moon landing was a <strong>historic</strong> event."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Historical (Adjective)</p>
+                    <p>Rule: An adjective meaning "of or concerning history or past events."</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He writes books about <strong>historical</strong> figures."</p>
+                </div>
+            </div>
+        `,
+        "Immanent vs. Imminent vs. Eminent": `
+            <h3 class="text-2xl font-bold mb-4">Immanent vs. Imminent vs. Eminent</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Immanent (Adjective)</p>
+                    <p>Rule: Existing or operating within; inherent.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The professor spoke about the divine spirit as being <strong>immanent</strong> in all nature."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Imminent (Adjective)</p>
+                    <p>Rule: About to happen.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The dark clouds meant that a storm was <strong>imminent</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Eminent (Adjective)</p>
+                    <p>Rule: Famous and respected within a particular sphere.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "An <strong>eminent</strong> scholar from Harvard University will be speaking."</p>
+                </div>
+            </div>
+        `,
+        "Inflammable vs. Flammable": `
+            <h3 class="text-2xl font-bold mb-4">Inflammable vs. Flammable</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Inflammable (Adjective)</p>
+                    <p>Rule: Easily set on fire; flammable. (Note: The "in" prefix here means "in" or "into," not "not.")</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Gasoline is highly <strong>inflammable</strong>."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Flammable (Adjective)</p>
+                    <p>Rule: Easily set on fire; flammable. (This is the more common and less confusing term.)</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "Do not put <strong>flammable</strong> materials near the fireplace."</p>
+                </div>
+            </div>
+        `,
+        "Jibe vs. Gibe": `
+            <h3 class="text-2xl font-bold mb-4">Jibe vs. Gibe</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Jibe (Verb)</p>
+                    <p>Rule: To be in agreement or to correspond with something.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The numbers on the report don't <strong>jibe</strong> with our records."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Gibe (Verb)</p>
+                    <p>Rule: To utter taunting words; to jeer or mock.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He would often <strong>gibe</strong> at his opponent's lack of experience."</p>
+                </div>
+            </div>
+        `,
+        "Laid vs. Lain": `
+            <h3 class="text-2xl font-bold mb-4">Laid vs. Lain</h3>
+            <div class="space-y-4 text-slate-300 font-sans">
+                <div>
+                    <p class="font-bold text-lg text-white">Laid (Verb)</p>
+                    <p>Rule: The past tense and past participle of "lay." It requires a direct object.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "He <strong>laid</strong> the book on the table."</p>
+                </div>
+                <div>
+                    <p class="font-bold text-lg text-white">Lain (Verb)</p>
+                    <p>Rule: The past participle of "lie." It does not require a direct object.</p>
+                    <p class="mt-1 text-sm italic"><strong>Example:</strong> "The book has <strong>lain</strong> on the table for weeks."</p>
+                </div>
+            </div>
+                `,
+                 "port": `
+                    <h3 class="text-2xl font-bold mb-4">Root: 'port'</h3>
+                    <div class="space-y-4 text-slate-300 font-sans">
+                        <div>
+                            <p><strong class="text-white">Origin:</strong> Latin</p>
+                            <p><strong class="text-white">Meaning:</strong> "to carry"</p>
+                        </div>
+                        <p>This root forms words related to carrying something from one place to another.</p>
+                        <div>
+                            <p class="font-bold text-lg text-white">Examples:</p>
+                            <ul class="list-disc list-inside text-sm space-y-1 mt-1">
+                                <li><strong>trans'port':</strong> To carry people or goods <em>across</em> a distance.</li>
+                                <li><strong>im'port':</strong> To carry goods <em>into</em> a country.</li>
+                                <li><strong>ex'port':</strong> To carry goods <em>out of</em> a country.</li>
+                                <li><strong>'port'er:</strong> A person who carries luggage.</li>
+                                <li><strong>re'port':</strong> To carry information back to someone.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                 "spect": `
+                    <h3 class="text-2xl font-bold mb-4">Root: 'spect'</h3>
+                    <div class="space-y-4 text-slate-300 font-sans">
+                        <div>
+                            <p><strong class="text-white">Origin:</strong> Latin</p>
+                            <p><strong class="text-white">Meaning:</strong> "to see" or "to look"</p>
+                        </div>
+                        <p>This root is used in words related to seeing or observing.</p>
+                        <div>
+                            <p class="font-bold text-lg text-white">Examples:</p>
+                            <ul class="list-disc list-inside text-sm space-y-1 mt-1">
+                                <li><strong>in'spect':</strong> To look <em>into</em> something carefully.</li>
+                                <li><strong>'spect'acle:</strong> A visually striking performance or display.</li>
+                                <li><strong>retro'spect':</strong> To look <em>back</em> on past events.</li>
+                                <li><strong>'spect'ator:</strong> A person who watches something.</li>
+                                <li><strong>per'spect'ive:</strong> A particular way of looking at something.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            };
             const vocabularyData = {
-                 "Basic Vocabulary": [{"word":"INFLATION","meaning":"महंगाई","example":"Inflation is a major concern for the economy."},{"word":"BREAK / PLUCK","meaning":"तोड़ना","example":"Don't break the stick / Please pluck a flower from the garden."},{"word":"ADULTRATE","meaning":"मिलावट करना","example":"Some vendors adulterate milk with water to increase their profit."},{"word":"REPAIR / MEND","meaning":"सुधारना","example":"He needs to repair his car / Can you help me mend my torn jacket?"},{"word":"APOLOGISE","meaning":"माफी मांगना","example":"You should apologise for your mistake."},{"word":"LEAVE","meaning":"छोड़ना","example":"I have to leave now to catch my flight."},{"word":"FORGIVE","meaning":"माफ करना","example":"Please forgive me for my error."},{"word":"DROP","meaning":"घर छोड़ना/गिराना","example":"She asked me to drop her at the station / Be careful not to drop that glass."},{"word":"BEG / ASK FOR","meaning":"माँगना","example":"He had to beg for food on the street / I am going to ask for a raise."},{"word":"APPLY / FIX","meaning":"लगाना","example":"You should apply for a new job / I need to fix the broken chair."},{"word":"BORROW","meaning":"उधार लेना","example":"Can I borrow your pen for a moment?"},{"word":"LOSE","meaning":"हारना","example":"I don't want to lose this game."},{"word":"LEND","meaning":"उधार देना","example":"I can lend you my book if you need it."},{"word":"DEFEAT/ BEAT","meaning":"हराना","example":"Our team managed to defeat the rival team / Don't let him beat you."},{"word":"TENANT","meaning":"किरायेदार","example":"The tenant paid the rent on time."},{"word":"BEAT","meaning":"पिटना/ मारना","example":"The boxer will beat his opponent / He was afraid his father would beat him."},{"word":"LANDLORD","meaning":"मकान मालिक","example":"The landlord is coming to inspect the apartment tomorrow."},{"word":"KILL","meaning":"जान से मारना","example":"The hunter had to kill the wild animal to protect his family."},{"word":"LANDLADY","meaning":"मकान मालकिन","example":"The landlady is very strict about noise after 10 PM."},{"word":"MURDER / SLAY","meaning":"कत्ल करना","example":"The police are investigating the murder case / The knight will slay the dragon."},{"word":"KEEP / PUT","meaning":"रखना","example":"You should always keep your promises / Please put the book on the table."},{"word":"STARE / GAZE","meaning":"घूरना","example":"It is rude to stare at people / I like to gaze at the stars at night."},{"word":"BRING","meaning":"लाना","example":"Bring me a glass of water, please."},{"word":"GLANCE / GLIMPSE","meaning":"झलक","example":"He took a quick glance at the clock / I caught a glimpse of a deer in the forest."},{"word":"TAKE / CARRY","meaning":"ले जाना","example":"Take your time to make a decision / Can you help me carry this heavy box?"},{"word":"MISUNDERSTANDING","meaning":"गलतफहमी","example":"There was a misunderstanding about the meeting time."},{"word":"GET DOWN","meaning":"नीचे उतरना","example":"Get down from the tree before you fall."},{"word":"GROOM","meaning":"दूल्हा","example":"The groom looked very happy on his wedding day."},{"word":"GET ON","meaning":"ऊपर चढ़ना","example":"Get on the bus quickly before it leaves."},{"word":"BRIDE","meaning":"दुल्हन","example":"The bride wore a beautiful white dress."},{"word":"DOWNSTAIR","meaning":"निचे","example":"The living room is downstairs."},{"word":"GARLAND","meaning":"फूलो की माला","example":"The guests offered a flower garland to the statue."},{"word":"UPSTAIRS","meaning":"उपर","example":"My bedroom is upstairs."},{"word":"PROCESSION","meaning":"बारात / जुलुस","example":"The wedding procession was very long."},{"word":"REMOVE","meaning":"हटाना","example":"Remove your shoes before entering the house."},{"word":"IMPRISON","meaning":"बंदी बना लेना","example":"The king decided to imprison the traitor."},{"word":"WIPE","meaning":"पोछना","example":"Wipe the table clean with a cloth."},{"word":"PRAISE / ADMIRE / APPRECIATE / COMPLIMENT","meaning":"तारीफ करना","example":"We should praise her for her hard work / I admire your dedication / We appreciate your effort / He gave me a nice compliment on my outfit."},{"word":"SWEEP","meaning":"पोछा लगाना","example":"Sweep the floor before you mop it."},{"word":"CRITICIZE","meaning":"बुराई करना","example":"It's not fair to criticize others without offering a solution."},{"word":"OPEN / UNTIE","meaning":"खोलना","example":"Open the window, it's hot in here / Can you help me untie this knot?"},{"word":"LISTEN / HEAR","meaning":"सुनना","example":"Listen to me carefully / I can't hear you over the noise."},{"word":"CLOSE / SHUT","meaning":"बंद करना","example":"Close the door behind you / Shut the window, it's getting cold."},{"word":"NARRATE (PARAGRAPH) / RECITE (POETRY)","meaning":"सुनाना","example":"He narrated the story with great passion / The child will recite a poem for the class."},{"word":"TIE","meaning":"बाँधना","example":"Please tie your shoelaces before you trip."},{"word":"GREED","meaning":"लालच","example":"His greed led him to steal the money."},{"word":"RIOTS","meaning":"दंगे","example":"The city was in chaos due to the riots."},{"word":"GREEDY","meaning":"लालची","example":"The greedy king wanted all the gold for himself."},{"word":"AGITATE","meaning":"आंदोलन करना","example":"They decided to agitate against the new law."},{"word":"SIN","meaning":"पाप","example":"Stealing is a sin in many religions."},{"word":"PROVOKE","meaning":"उकसाना/ भड़काना","example":"Don't try to provoke me into an argument."},{"word":"SINNER","meaning":"पापी","example":"The priest told the sinner to repent and seek forgiveness."},{"word":"RUMOUR","meaning":"अफ़वाह","example":"There is a strange rumour going around about him."},{"word":"RECOGNIZE / IDENTIFY","meaning":"पहचानना","example":"I didn't recognize you in your new outfit / The police tried to identify the suspect."},{"word":"ILLUSION","meaning":"भ्रम/ छलावा","example":"The magician created an illusion of a floating ball."},{"word":"VANITY","meaning":"घमंड","example":"Her vanity prevented her from accepting any help."},{"word":"INDICATE","meaning":"इशारा करना","example":"The sign will indicate the direction to the city."},{"word":"AUSPICIOUS","meaning":"शुभ","example":"The priest declared it an auspicious day for the wedding."},{"word":"THROW","meaning":"फेंкना","example":"Throw the ball to me."},{"word":"UNAUSPICIOUS","meaning":"अशुभ","example":"Breaking a mirror is considered an unauspicious sign by some people."},{"word":"MARTYR","meaning":"शहीद","example":"The soldier became a martyr for his country."},{"word":"CONSPIRE","meaning":"साज़िश करना","example":"The rebels conspired to overthrow the government."},{"word":"HELPLESS","meaning":"लाचार / बेबस / बेचारा","example":"The little bird was helpless without its mother."},{"word":"CONSPIRACY","meaning":"साज़िश / षडयंत्र","example":"They uncovered a conspiracy against the king."},{"word":"HUM","meaning":"गुंगुनाना","example":"He began to hum a tune while he worked."},{"word":"IMITATE","meaning":"नकल करना","example":"Children often imitate their parents' behavior."},{"word":"PROVERB / ADAGE","meaning":"कहावत/ मुहावरे","example":"'An apple a day keeps the doctor away' is a well-known proverb / The old adage rings true even today."},{"word":"THEIST","meaning":"आस्तिक","example":"A theist believes in God."},{"word":"IGNORE/ AVOID","meaning":"नज़र अंदाज़ करना","example":"Just ignore him, he's just trying to get a reaction / I try to avoid traffic by leaving early."},{"word":"ATHEIST","meaning":"नास्तिक","example":"An atheist does not believe in God."},{"word":"WISH/ DESIRE","meaning":"इच्छा","example":"I wish you a happy birthday / My greatest desire is to travel the world."},{"word":"SPEND","meaning":"खर्च करना/ बिताना","example":"How do you spend your free time? I spend too much money on coffee."},{"word":"REASON/ CAUSE","meaning":"कारण","example":"What is the reason for your absence / The storm was the cause of the power outage."},{"word":"REMEMBER","meaning":"याद रखना/ याद करना","example":"Remember to lock the door before you leave."},{"word":"HIDE","meaning":"छिपना/ छिपाना","example":"The squirrel will hide its nuts for winter."},{"word":"MEMORIZE","meaning":"याद रखना/ याद करना","example":"She had to memorize a whole poem for the play."},{"word":"SEARCH/ FIND/ LOOK FOR / SEEK","meaning":"ढूँढना","example":"I need to search for my lost keys / Did you find your wallet? / I'm looking for a new job / They seek refuge from the storm."},{"word":"MEMORY","meaning":"याद","example":"She has a good memory for names."},{"word":"ORPHAN","meaning":"अनाथ","example":"The little boy became an orphan after the accident."},{"word":"REMIND","meaning":"याद दिलाना","example":"Can you remind me to call my mother later?"},{"word":"ORPHANGE","meaning":"अनायालय","example":"The baby was adopted from an orphanage."},{"word":"FORGET","meaning":"भूल जाना","example":"I always forget where I put my keys."},{"word":"SHOUT (IN ANGER) / SCREAM (IN PAIN/ WHEN SCARED)","meaning":"चिखना","example":"He began to shout at his brother when he saw what he did / She began to scream when she saw the spider on the wall."},{"word":"FORGETFUL","meaning":"भुलक्कड़","example":"I'm so forgetful, I forgot my own birthday!"},{"word":"SCOLD","meaning":"डांटना","example":"My mom will scold me if I don't finish my homework."},{"word":"BURDEN","meaning":"बोझ","example":"His family's problems became a huge burden on him."},{"word":"ADDICTION","meaning":"लत","example":"He has a serious addiction to video games."},{"word":"BEAR/ TOLERATE","meaning":"सहना","example":"I can no longer bear this pain / I can't tolerate such rude behavior."},{"word":"OUTSPOKEN","meaning":"मुहफत","example":"She is very outspoken and always says what's on her mind."},{"word":"PERSUADE","meaning":"मनाना","example":"We tried to persuade him to join our team."},{"word":"MISER","meaning":"कंजूस","example":"He's such a miser that he never spends any money."},{"word":"GET READY","meaning":"तैयार होना","example":"We need to get ready to leave for the party now."},{"word":"DRIVE/ RIDE/ RUN / OPERATE","meaning":"चलाना","example":"I will drive you to the station / We ride our bikes to school / The car's engine runs smoothly / She will operate the machine."},{"word":"TAKE BATH","meaning":"नहाना","example":"I take a bath every morning before going to work."},{"word":"CURSE","meaning":"श्राप","example":"The witch put a curse on the village."},{"word":"DELAY","meaning":"देर करना/ टालना","example":"The traffic caused a delay / Don't delay your work."},{"word":"BOON","meaning":"वरदान","example":"This new technology is a boon for humanity."},{"word":"FAILURE","meaning":"असफलता","example":"His business was a complete failure."},{"word":"REBIRTH/ REINCARNATION","meaning":"पुर्नजन्म","example":"Many religions believe in rebirth / Hindus believe in reincarnation."},{"word":"SITUATION/ CONDITION","meaning":"स्थिती","example":"The current situation is very difficult / My health condition is stable now."},{"word":"MARTYR","meaning":"שहीद","example":"A martyr is someone who dies for their beliefs or country."},{"word":"CIRCUMSTANCES","meaning":"परिस्थितियाँ","example":"Due to unforeseen circumstances, the event was canceled."},{"word":"DACOIT","meaning":"लुटेरा / डाकू","example":"The police arrested the notorious dacoit."},{"word":"GROW/ INCREASE","meaning":"बढ़ना/ बढ़ाना","example":"Children grow very quickly / The population will increase next year."},{"word":"THIEF/ BURGLAR","meaning":"चोर","example":"The thief stole my wallet / A burglar broke into the house last night."},{"word":"DECREASE","meaning":"घटना/ घटाना","example":"The price of oil will decrease soon."},{"word":"STEAL","meaning":"चोरी करना","example":"He tried to steal a car."},{"word":"ENEMY/ FOE/ RIVAL","meaning":"दुश्मन","example":"They became a formidable enemy / The two teams are old foes / She is my main rival at work."},{"word":"SNATCH","meaning":"छीनना","example":"The thief tried to snatch her purse."},{"word":"ENMITY/ RIVALRY","meaning":"दुश्मनी","example":"The enmity between the two families goes back generations / The rivalry between the two teams is intense."},{"word":"FREEZE","meaning":"जमना / जमाना","example":"The water will freeze in this cold weather."},{"word":"JOY/ HAPPINESS","meaning":"खुशी","example":"The birth of his child brought him great joy / We wish you all the happiness in the world."},{"word":"SHIVER","meaning":"कांपना","example":"I began to shiver from the cold."},{"word":"PLEASE","meaning":"खुश करना","example":"He will do anything to please his parents."},{"word":"TREMBLE","meaning":"घबराकर कांपना","example":"His hands began to tremble with fear."},{"word":"FRAGRANCE/ AROMA","meaning":"खुशबू","example":"The fragrance of roses filled the room / The aroma of coffee is wonderful."},{"word":"INNOCENT","meaning":"निर्दोष","example":"The jury declared him innocent."},{"word":"STINK/ ODOUR","meaning":"बदबू","example":"That garbage has a terrible stink / The room had a musty odour."},{"word":"GUILTY","meaning":"दोषी","example":"He was found guilty of the crime."},{"word":"SMELL","meaning":"सूँघना","example":"I can smell fresh bread baking in the oven."},{"word":"LAZY/ LETHARGIC","meaning":"आलसी","example":"Don't be so lazy! / He felt lethargic after a heavy meal."},{"word":"BOTHER","meaning":"परेशान करना","example":"Don't bother me while I'm working."},{"word":"AUCTION","meaning":"निलाम करना","example":"The rare painting will be sold at auction."},{"word":"TEASE","meaning":"छेढ़ना","example":"The older brother loves to tease his sister."},{"word":"STUBBORN/ OBSTINATE","meaning":"जिददी","example":"He is too stubborn to admit he was wrong / The obstinate child refused to eat his vegetables."},{"word":"ANNOY/ IRRITATE","meaning":"चिड़ाना","example":"The constant noise began to annoy me / His rude comments irritate me."},{"word":"DECEIVE/ BETRAY","meaning":"धोखा देना","example":"Don't deceive your friends with lies / He was betrayed by his closest ally."},{"word":"MURMUR/ BLABBER/ MUTTER","meaning":"बड़बड़ाना","example":"They murmured quietly during the meeting / He started to blabber incoherently / He would often mutter to himself."},{"word":"FAKE / ARTIFICIAL","meaning":"नकली","example":"He showed me a fake passport / The flowers look completely artificial."},{"word":"CRY (LOUDLY)","meaning":"रोना","example":"The baby started to cry when it was hungry."},{"word":"REFUSE / DENY","meaning":"मना करना","example":"I refuse to accept that offer / He will deny everything."},{"word":"WEEP (SILENTLY)","meaning":"रोना","example":"She began to weep silently at the sad news."},{"word":"WANDER/ ROAM","meaning":"भटकना","example":"The dog began to wander the streets / We roam the countryside on weekends."},{"word":"SOB","meaning":"सिसकना","example":"I could hear her sob softly in the next room."},{"word":"WANDERER/ ROAMER","meaning":"घूमककढ़","example":"He was a lonely wanderer with no home / He lives the life of a roamer."},{"word":"DO MISCHIEF","meaning":"मस्ती करना","example":"The children love to do mischief when no one is watching."},{"word":"ARGUE","meaning":"बहс करना","example":"My siblings always argue with each other over small things."},{"word":"SCOLD/ CHIDE","meaning":"डाँटना","example":"My mom will scold me if I don't finish my homework / The teacher chided the students for being late."},{"word":"GET TO KNOW/ COME to KNOW","meaning":"पता चलना/ पता करना","example":"I hope to get to know you better / I came to know about the plan yesterday."},{"word":"QUARREL","meaning":"झगड़ा करना","example":"They had a small quarrel over a trivial matter."},{"word":"FAINT","meaning":"बेहोश होना","example":"I feel dizzy; I think I might faint from the heat."},{"word":"FIGHT","meaning":"लड़ाई करना / हाथापाई","example":"They decided to fight for their rights / The two boys started a fight in the playground."},{"word":"COURAGE/ DARE","meaning":"साहс","example":"She showed great courage in the face of danger / I dare you to jump from the wall."},{"word":"ENVY","meaning":"जलना/ ईर्ष्या करना","example":"He couldn't hide his envy of his friend's success."},{"word":"BRAVE/ COURAGEOUS","meaning":"बाहादुर/ साहसी","example":"He was a brave soldier / She is a very courageous woman."},{"word":"SNORE","meaning":"खरराटे लेना","example":"He snores so loudly that I can't sleep."},{"word":"COWARD/ TIMID","meaning":"डरपोक / कायर","example":"Don't be such a coward / The timid mouse hid from the cat."},{"word":"EARTHEN POT","meaning":"मटका","example":"We stored water in a large earthen pot."},{"word":"YAWN","meaning":"उबासी लेना","example":"He can't stop yawning, he must be tired."},{"word":"EARTHEN LAMP","meaning":"दीपक","example":"An earthen lamp was lit to celebrate the festival."},{"word":"SNEEZE","meaning":"छिकना","example":"I think I'm allergic to dust, I always sneeze around it."},{"word":"WRAP","meaning":"लपेटना","example":"Wrap the gift in colorful paper."},{"word":"COUGH","meaning":"खाँसना","example":"He had a terrible cough and couldn't stop."},{"word":"NOD","meaning":"सिर हिलना","example":"He will nod his head in agreement."},{"word":"STALE","meaning":"बाँसी","example":"This bread is stale, we can't eat it."},{"word":"EXPRESSION","meaning":"हाव भाव","example":"Her expression was a mix of surprise and confusion."},{"word":"BLAME / ACCUSE","meaning":"आरोप लगाना","example":"Don't blame me for your mistakes / They accuse him of theft."},{"word":"SPOIL","meaning":"खराब करना / बिगाड़ना","example":"Don't spoil your dinner by eating candy."},{"word":"LEFT OVER FOOD","meaning":"बचा हुआ खाना","example":"We put the left over food in the fridge."},{"word":"ROT","meaning":"सड़ना","example":"The fruit will rot if you don't eat it soon."},{"word":"STAMMER/ STUTTER","meaning":"हकलाना","example":"He tends to stammer when he's nervous / The child would stutter when he got excited."},{"word":"SORROW/ GRIEF","meaning":"दुख / तकलीफ","example":"He felt great sorrow after his pet died / The family was filled with grief."},{"word":"LISP","meaning":"तुतलाना","example":"The child had a slight lisp when he pronounced the letter 's'."},{"word":"SPREAD","meaning":"फेलना/ फेलाना","example":"Spread the news to everyone."},{"word":"RAIN","meaning":"बारिश होना","example":"It will rain heavily tomorrow, so you should take an umbrella." }
+                 "Basic Vocabulary": [{"word":"INFLATION","meaning":"महंगाई","example":"Inflation is a major concern for the economy."},{"word":"BREAK / PLUCK","meaning":"तोड़ना","example":"Don't break the stick / Please pluck a flower from the garden."},{"word":"ADULTERATE","meaning":"मिलावट करना","example":"Some vendors adulterate milk with water to increase their profit."},{"word":"REPAIR / MEND","meaning":"सुधारना","example":"He needs to repair his car / Can you help me mend my torn jacket?"},{"word":"APOLOGISE","meaning":"माफी मांगना","example":"You should apologise for your mistake."},{"word":"LEAVE","meaning":"छोड़ना","example":"I have to leave now to catch my flight."},{"word":"FORGIVE","meaning":"माफ करना","example":"Please forgive me for my error."},{"word":"DROP","meaning":"घर छोड़ना/गिराना","example":"She asked me to drop her at the station / Be careful not to drop that glass."},{"word":"BEG / ASK FOR","meaning":"माँगना","example":"He had to beg for food on the street / I am going to ask for a raise."},{"word":"APPLY / FIX","meaning":"लगाना","example":"You should apply for a new job / I need to fix the broken chair."},{"word":"BORROW","meaning":"उधार लेना","example":"Can I borrow your pen for a moment?"},{"word":"LOSE","meaning":"हारना","example":"I don't want to lose this game."},{"word":"LEND","meaning":"उधार देना","example":"I can lend you my book if you need it."},{"word":"DEFEAT/ BEAT","meaning":"हराना","example":"Our team managed to defeat the rival team / Don't let him beat you."},{"word":"TENANT","meaning":"किरायेदार","example":"The tenant paid the rent on time."},{"word":"BEAT","meaning":"पिटना/ मारना","example":"The boxer will beat his opponent / He was afraid his father would beat him."},{"word":"LANDLORD","meaning":"मकान मालिक","example":"The landlord is coming to inspect the apartment tomorrow."},{"word":"KILL","meaning":"जान से मारना","example":"The hunter had to kill the wild animal to protect his family."},{"word":"LANDLADY","meaning":"मकान मालकिन","example":"The landlady is very strict about noise after 10 PM."},{"word":"MURDER / SLAY","meaning":"कत्ल करना","example":"The police are investigating the murder case / The knight will slay the dragon."},{"word":"KEEP / PUT","meaning":"रखना","example":"You should always keep your promises / Please put the book on the table."},{"word":"STARE / GAZE","meaning":"घूरना","example":"It is rude to stare at people / I like to gaze at the stars at night."},{"word":"BRING","meaning":"लाना","example":"Bring me a glass of water, please."},{"word":"GLANCE / GLIMPSE","meaning":"झलक","example":"He took a quick glance at the clock / I caught a glimpse of a deer in the forest."},{"word":"TAKE / CARRY","meaning":"ले जाना","example":"Take your time to make a decision / Can you help me carry this heavy box?"},{"word":"MISUNDERSTANDING","meaning":"गलतफहमी","example":"There was a misunderstanding about the meeting time."},{"word":"GET DOWN","meaning":"नीचे उतरना","example":"Get down from the tree before you fall."},{"word":"GROOM","meaning":"दूल्हा","example":"The groom looked very happy on his wedding day."},{"word":"GET ON","meaning":"ऊपर चढ़ना","example":"Get on the bus quickly before it leaves."},{"word":"BRIDE","meaning":"दुल्हन","example":"The bride wore a beautiful white dress."},{"word":"DOWNSTAIR","meaning":"निचे","example":"The living room is downstairs."},{"word":"GARLAND","meaning":"फूलो की माला","example":"The guests offered a flower garland to the statue."},{"word":"UPSTAIRS","meaning":"उपर","example":"My bedroom is upstairs."},{"word":"PROCESSION","meaning":"बारात / जुलुस","example":"The wedding procession was very long."},{"word":"REMOVE","meaning":"हटाना","example":"Remove your shoes before entering the house."},{"word":"IMPRISON","meaning":"बंदी बना लेना","example":"The king decided to imprison the traitor."},{"word":"WIPE","meaning":"पोछना","example":"Wipe the table clean with a cloth."},{"word":"PRAISE / ADMIRE / APPRECIATE / COMPLIMENT","meaning":"तारीफ करना","example":"We should praise her for her hard work / I admire your dedication / We appreciate your effort / He gave me a nice compliment on my outfit."},{"word":"SWEEP","meaning":"पोछा लगाना","example":"Sweep the floor before you mop it."},{"word":"CRITICIZE","meaning":"बुराई करना","example":"It's not fair to criticize others without offering a solution."},{"word":"OPEN / UNTIE","meaning":"खोलना","example":"Open the window, it's hot in here / Can you help me untie this knot?"},{"word":"LISTEN / HEAR","meaning":"सुनना","example":"Listen to me carefully / I can't hear you over the noise."},{"word":"CLOSE / SHUT","meaning":"बंद करना","example":"Close the door behind you / Shut the window, it's getting cold."},{"word":"NARRATE (PARAGRAPH) / RECITE (POETRY)","meaning":"सुनाना","example":"He narrated the story with great passion / The child will recite a poem for the class."},{"word":"TIE","meaning":"बाँधना","example":"Please tie your shoelaces before you trip."},{"word":"GREED","meaning":"लालच","example":"His greed led him to steal the money."},{"word":"RIOTS","meaning":"दंगे","example":"The city was in chaos due to the riots."},{"word":"GREEDY","meaning":"लालची","example":"The greedy king wanted all the gold for himself."},{"word":"AGITATE","meaning":"आंदोलन करना","example":"They decided to agitate against the new law."},{"word":"SIN","meaning":"पाप","example":"Stealing is a sin in many religions."},{"word":"PROVOKE","meaning":"उकसाना/ भड़काना","example":"Don't try to provoke me into an argument."},{"word":"SINNER","meaning":"पापी","example":"The priest told the sinner to repent and seek forgiveness."},{"word":"RUMOUR","meaning":"अफ़वाह","example":"There is a strange rumour going around about him."},{"word":"RECOGNIZE / IDENTIFY","meaning":"पहचानना","example":"I didn't recognize you in your new outfit / The police tried to identify the suspect."},{"word":"ILLUSION","meaning":"भ्रम/ छलावा","example":"The magician created an illusion of a floating ball."},{"word":"VANITY","meaning":"घमंड","example":"Her vanity prevented her from accepting any help."},{"word":"INDICATE","meaning":"इशारा करना","example":"The sign will indicate the direction to the city."},{"word":"AUSPICIOUS","meaning":"शुभ","example":"The priest declared it an auspicious day for the wedding."},{"word":"THROW","meaning":"फेंкना","example":"Throw the ball to me."},{"word":"UNAUSPICIOUS","meaning":"अशुभ","example":"Breaking a mirror is considered an unauspicious sign by some people."},{"word":"MARTYR","meaning":"शहीद","example":"The soldier became a martyr for his country."},{"word":"CONSPIRE","meaning":"साज़िश करना","example":"The rebels conspired to overthrow the government."},{"word":"HELPLESS","meaning":"लाचार / बेबस / बेचारा","example":"The little bird was helpless without its mother."},{"word":"CONSPIRACY","meaning":"साज़िश / षडयंत्र","example":"They uncovered a conspiracy against the king."},{"word":"HUM","meaning":"गुंगुनाना","example":"He began to hum a tune while he worked."},{"word":"IMITATE","meaning":"नकल करना","example":"Children often imitate their parents' behavior."},{"word":"PROVERB / ADAGE","meaning":"कहावत/ मुहावरे","example":"'An apple a day keeps the doctor away' is a well-known proverb / The old adage rings true even today."},{"word":"THEIST","meaning":"आस्तिक","example":"A theist believes in God."},{"word":"IGNORE/ AVOID","meaning":"नज़र अंदाज़ करना","example":"Just ignore him, he's just trying to get a reaction / I try to avoid traffic by leaving early."},{"word":"ATHEIST","meaning":"नास्तिक","example":"An atheist does not believe in God."},{"word":"WISH/ DESIRE","meaning":"इच्छा","example":"I wish you a happy birthday / My greatest desire is to travel the world."},{"word":"SPEND","meaning":"खर्च करना/ बिताना","example":"How do you spend your free time? I spend too much money on coffee."},{"word":"REASON/ CAUSE","meaning":"कारण","example":"What is the reason for your absence / The storm was the cause of the power outage."},{"word":"REMEMBER","meaning":"याद रखना/ याद करना","example":"Remember to lock the door before you leave."},{"word":"HIDE","meaning":"छिपना/ छिपाना","example":"The squirrel will hide its nuts for winter."},{"word":"MEMORIZE","meaning":"याद रखना/ याद करना","example":"She had to memorize a whole poem for the play."},{"word":"SEARCH/ FIND/ LOOK FOR / SEEK","meaning":"ढूँढना","example":"I need to search for my lost keys / Did you find your wallet? / I'm looking for a new job / They seek refuge from the storm."},{"word":"MEMORY","meaning":"याद","example":"She has a good memory for names."},{"word":"ORPHAN","meaning":"अनाथ","example":"The little boy became an orphan after the accident."},{"word":"REMIND","meaning":"याद दिलाना","example":"Can you remind me to call my mother later?"},{"word":"ORPHANGE","meaning":"अनायालय","example":"The baby was adopted from an orphanage."},{"word":"FORGET","meaning":"भूल जाना","example":"I always forget where I put my keys."},{"word":"SHOUT (IN ANGER) / SCREAM (IN PAIN/ WHEN SCARED)","meaning":"चिखना","example":"He began to shout at his brother when he saw what he did / She began to scream when she saw the spider on the wall."},{"word":"FORGETFUL","meaning":"भुलक्कड़","example":"I'm so forgetful, I forgot my own birthday!"},{"word":"SCOLD","meaning":"डांटना","example":"My mom will scold me if I don't finish my homework."},{"word":"BURDEN","meaning":"बोझ","example":"His family's problems became a huge burden on him."},{"word":"ADDICTION","meaning":"लत","example":"He has a serious addiction to video games."},{"word":"BEAR/ TOLERATE","meaning":"सहना","example":"I can no longer bear this pain / I can't tolerate such rude behavior."},{"word":"OUTSPOKEN","meaning":"मुहफत","example":"She is very outspoken and always says what's on her mind."},{"word":"PERSUADE","meaning":"मनाना","example":"We tried to persuade him to join our team."},{"word":"MISER","meaning":"कंजूस","example":"He's such a miser that he never spends any money."},{"word":"GET READY","meaning":"तैयार होना","example":"We need to get ready to leave for the party now."},{"word":"DRIVE/ RIDE/ RUN / OPERATE","meaning":"चलाना","example":"I will drive you to the station / We ride our bikes to school / The car's engine runs smoothly / She will operate the machine."},{"word":"TAKE BATH","meaning":"नहाना","example":"I take a bath every morning before going to work."},{"word":"CURSE","meaning":"श्राप","example":"The witch put a curse on the village."},{"word":"DELAY","meaning":"देर करना/ टालना","example":"The traffic caused a delay / Don't delay your work."},{"word":"BOON","meaning":"वरदान","example":"This new technology is a boon for humanity."},{"word":"FAILURE","meaning":"असफलता","example":"His business was a complete failure."},{"word":"REBIRTH/ REINCARNATION","meaning":"पुर्नजन्म","example":"Many religions believe in rebirth / Hindus believe in reincarnation."},{"word":"SITUATION/ CONDITION","meaning":"स्थिती","example":"The current situation is very difficult / My health condition is stable now."},{"word":"MARTYR","meaning":"שहीद","example":"A martyr is someone who dies for their beliefs or country."},{"word":"CIRCUMSTANCES","meaning":"परिस्थितियाँ","example":"Due to unforeseen circumstances, the event was canceled."},{"word":"DACOIT","meaning":"लुटेरा / डाकू","example":"The police arrested the notorious dacoit."},{"word":"GROW/ INCREASE","meaning":"बढ़ना/ बढ़ाना","example":"Children grow very quickly / The population will increase next year."},{"word":"THIEF/ BURGLAR","meaning":"चोर","example":"The thief stole my wallet / A burglar broke into the house last night."},{"word":"DECREASE","meaning":"घटना/ घटाना","example":"The price of oil will decrease soon."},{"word":"STEAL","meaning":"चोरी करना","example":"He tried to steal a car."},{"word":"ENEMY/ FOE/ RIVAL","meaning":"दुश्मन","example":"They became a formidable enemy / The two teams are old foes / She is my main rival at work."},{"word":"SNATCH","meaning":"छीनना","example":"The thief tried to snatch her purse."},{"word":"ENMITY/ RIVALRY","meaning":"दुश्मनी","example":"The enmity between the two families goes back generations / The rivalry between the two teams is intense."},{"word":"FREEZE","meaning":"जमना / जमाना","example":"The water will freeze in this cold weather."},{"word":"JOY/ HAPPINESS","meaning":"खुशी","example":"The birth of his child brought him great joy / We wish you all the happiness in the world."},{"word":"SHIVER","meaning":"कांपना","example":"I began to shiver from the cold."},{"word":"PLEASE","meaning":"खुश करना","example":"He will do anything to please his parents."},{"word":"TREMBLE","meaning":"घबराकर कांपना","example":"His hands began to tremble with fear."},{"word":"FRAGRANCE/ AROMA","meaning":"खुशबू","example":"The fragrance of roses filled the room / The aroma of coffee is wonderful."},{"word":"INNOCENT","meaning":"निर्दोष","example":"The jury declared him innocent."},{"word":"STINK/ ODOUR","meaning":"बदबू","example":"That garbage has a terrible stink / The room had a musty odour."},{"word":"GUILTY","meaning":"दोषी","example":"He was found guilty of the crime."},{"word":"SMELL","meaning":"सूँघना","example":"I can smell fresh bread baking in the oven."},{"word":"LAZY/ LETHARGIC","meaning":"आलसी","example":"Don't be so lazy! / He felt lethargic after a heavy meal."},{"word":"BOTHER","meaning":"परेशान करना","example":"Don't bother me while I'm working."},{"word":"AUCTION","meaning":"निलाम करना","example":"The rare painting will be sold at auction."},{"word":"TEASE","meaning":"छेढ़ना","example":"The older brother loves to tease his sister."},{"word":"STUBBORN/ OBSTINATE","meaning":"जिददी","example":"He is too stubborn to admit he was wrong / The obstinate child refused to eat his vegetables."},{"word":"ANNOY/ IRRITATE","meaning":"चिड़ाना","example":"The constant noise began to annoy me / His rude comments irritate me."},{"word":"DECEIVE/ BETRAY","meaning":"धोखा देना","example":"Don't deceive your friends with lies / He was betrayed by his closest ally."},{"word":"MURMUR/ BLABBER/ MUTTER","meaning":"बड़बड़ाना","example":"They murmured quietly during the meeting / He started to blabber incoherently / He would often mutter to himself."},{"word":"FAKE / ARTIFICIAL","meaning":"नकली","example":"He showed me a fake passport / The flowers look completely artificial."},{"word":"CRY (LOUDLY)","meaning":"रोना","example":"The baby started to cry when it was hungry."},{"word":"REFUSE / DENY","meaning":"मना करना","example":"I refuse to accept that offer / He will deny everything."},{"word":"WEEP (SILENTLY)","meaning":"रोना","example":"She began to weep silently at the sad news."},{"word":"WANDER/ ROAM","meaning":"भटकना","example":"The dog began to wander the streets / We roam the countryside on weekends."},{"word":"SOB","meaning":"सिसकना","example":"I could hear her sob softly in the next room."},{"word":"WANDERER/ ROAMER","meaning":"घूमककढ़","example":"He was a lonely wanderer with no home / He lives the life of a roamer."},{"word":"DO MISCHIEF","meaning":"मस्ती करना","example":"The children love to do mischief when no one is watching."},{"word":"ARGUE","meaning":"बहс करना","example":"My siblings always argue with each other over small things."},{"word":"SCOLD/ CHIDE","meaning":"डाँटना","example":"My mom will scold me if I don't finish my homework / The teacher chided the students for being late."},{"word":"GET TO KNOW/ COME to KNOW","meaning":"पता चलना/ पता करना","example":"I hope to get to know you better / I came to know about the plan yesterday."},{"word":"QUARREL","meaning":"झगड़ा करना","example":"They had a small quarrel over a trivial matter."},{"word":"FAINT","meaning":"बेहोश होना","example":"I feel dizzy; I think I might faint from the heat."},{"word":"FIGHT","meaning":"लड़ाई करना / हाथापाई","example":"They decided to fight for their rights / The two boys started a fight in the playground."},{"word":"COURAGE/ DARE","meaning":"साहс","example":"She showed great courage in the face of danger / I dare you to jump from the wall."},{"word":"ENVY","meaning":"जलना/ ईर्ष्या करना","example":"He couldn't hide his envy of his friend's success."},{"word":"BRAVE/ COURAGEOUS","meaning":"बाहादुर/ साहसी","example":"He was a brave soldier / She is a very courageous woman."},{"word":"SNORE","meaning":"खरराटे लेना","example":"He snores so loudly that I can't sleep."},{"word":"COWARD/ TIMID","meaning":"डरपोक / कायर","example":"Don't be such a coward / The timid mouse hid from the cat."},{"word":"EARTHEN POT","meaning":"मटका","example":"We stored water in a large earthen pot."},{"word":"YAWN","meaning":"उबासी लेना","example":"He can't stop yawning, he must be tired."},{"word":"EARTHEN LAMP","meaning":"दीपक","example":"An earthen lamp was lit to celebrate the festival."},{"word":"SNEEZE","meaning":"छिकना","example":"I think I'm allergic to dust, I always sneeze around it."},{"word":"WRAP","meaning":"लपेटना","example":"Wrap the gift in colorful paper."},{"word":"COUGH","meaning":"खाँसना","example":"He had a terrible cough and couldn't stop."},{"word":"NOD","meaning":"सिर हिलना","example":"He will nod his head in agreement."},{"word":"STALE","meaning":"बाँसी","example":"This bread is stale, we can't eat it."},{"word":"EXPRESSION","meaning":"हाव भाव","example":"Her expression was a mix of surprise and confusion."},{"word":"BLAME / ACCUSE","meaning":"आरोप लगाना","example":"Don't blame me for your mistakes / They accuse him of theft."},{"word":"SPOIL","meaning":"खराब करना / बिगाड़ना","example":"Don't spoil your dinner by eating candy."},{"word":"LEFT OVER FOOD","meaning":"बचा हुआ खाना","example":"We put the left over food in the fridge."},{"word":"ROT","meaning":"सड़ना","example":"The fruit will rot if you don't eat it soon."},{"word":"STAMMER/ STUTTER","meaning":"हकलाना","example":"He tends to stammer when he's nervous / The child would stutter when he got excited."},{"word":"SORROW/ GRIEF","meaning":"दुख / तकलीफ","example":"He felt great sorrow after his pet died / The family was filled with grief."},{"word":"LISP","meaning":"तुतलाना","example":"The child had a slight lisp when he pronounced the letter 's'."},{"word":"SPREAD","meaning":"फेलना/ फेलाना","example":"Spread the news to everyone."},{"word":"RAIN","meaning":"बारिश होना","example":"It will rain heavily tomorrow, so you should take an umbrella." }
                 ],
                 "Daily Actions and Verbs": [
                     { "word": "Get up", "meaning": "उठना", "example": "I get up early every morning." },
@@ -922,7 +2590,120 @@
     {"word":"Hopefulness","meaning":"A feeling of optimism and encouragement (आशावाद)","example":"Despite the difficulties, she remained filled with hopefulness."},
     {"word":"Resentment","meaning":"Bitter indignation at having been treated unfairly (नाराजगी)","example":"He felt a growing resentment towards his boss for the unfair promotion."}
                 ],
-                "Phrases And Idioms": {
+                "Confusing Words": [
+                    { "title": "Affect vs. Effect", "type": "explanation" },
+        { "title": "Their vs. There vs. They're", "type": "explanation" },
+        { "title": "Your vs. You're", "type": "explanation" },
+        { "title": "To vs. Too vs. Two", "type": "explanation" },
+        { "title": "Its vs. It's", "type": "explanation" },
+        { "title": "Accept vs. Except", "type": "explanation" },
+        { "title": "Advice vs. Advise", "type": "explanation" },
+        { "title": "Allude vs. Elude", "type": "explanation" },
+        { "title": "Allowed vs. Aloud", "type": "explanation" },
+        { "title": "Altogether vs. All together", "type": "explanation" },
+        { "title": "A part vs. Apart", "type": "explanation" },
+        { "title": "A lot vs. Allot", "type": "explanation" },
+        { "title": "Bare vs. Bear", "type": "explanation" },
+        { "title": "Compliment vs. Complement", "type": "explanation" },
+        { "title": "Conscious vs. Conscience", "type": "explanation" },
+        { "title": "Could have vs. Could of", "type": "explanation" },
+        { "title": "Desert vs. Dessert", "type": "explanation" },
+        { "title": "Discreet vs. Discrete", "type": "explanation" },
+        { "title": "Elicit vs. Illicit", "type": "explanation" },
+        { "title": "Eminent vs. Imminent", "type": "explanation" },
+        { "title": "Envelop vs. Envelope", "type": "explanation" },
+        { "title": "Ensure vs. Insure", "type": "explanation" },
+        { "title": "Every day vs. Everyday", "type": "explanation" },
+        { "title": "Farther vs. Further", "type": "explanation" },
+        { "title": "Fewer vs. Less", "type": "explanation" },
+        { "title": "Good vs. Well", "type": "explanation" },
+        { "title": "Lay vs. Lie", "type": "explanation" },
+        { "title": "Loose vs. Lose", "type": "explanation" },
+        { "title": "Principal vs. Principle", "type": "explanation" },
+        { "title": "Site vs. Cite vs. Sight", "type": "explanation" },
+        { "title": "Stationary vs. Stationery", "type": "explanation" },
+        { "title": "Then vs. Than", "type": "explanation" },
+        { "title": "Who's vs. Whose", "type": "explanation" },
+        { "title": "Led vs. Lead", "type": "explanation" },
+        { "title": "Past vs. Passed", "type": "explanation" },
+        { "title": "Precede vs. Proceed", "type": "explanation" },
+        { "title": "Raise vs. Rise", "type": "explanation" },
+        { "title": "Cereal vs. Serial", "type": "explanation" },
+        { "title": "Patience vs. Patients", "type": "explanation" },
+        { "title": "Weather vs. Whether", "type": "explanation" },
+        { "title": "Rein vs. Reign vs. Rain", "type": "explanation" },
+        { "title": "Censor vs. Censure", "type": "explanation" },
+        { "title": "Climactic vs. Climatic", "type": "explanation" },
+        { "title": "Council vs. Counsel", "type": "explanation" },
+        { "title": "Defuse vs. Diffuse", "type": "explanation" },
+        { "title": "Deprecate vs. Depreciate", "type": "explanation" },
+        { "title": "Flair vs. Flare", "type": "explanation" },
+        { "title": "Fiancé vs. Fiancée", "type": "explanation" },
+        { "title": "Forbear vs. Forebear", "type": "explanation" },
+        { "title": "Foreword vs. Forward", "type": "explanation" },
+        { "title": "Horde vs. Hoard", "type": "explanation" },
+        { "title": "Imply vs. Infer", "type": "explanation" },
+        { "title": "Insure vs. Ensure vs. Assure", "type": "explanation" },
+        { "title": "Ingenious vs. Ingenuous", "type": "explanation" },
+        { "title": "Literal vs. Literally", "type": "explanation" },
+        { "title": "Palate vs. Pallet vs. Palette", "type": "explanation" },
+        { "title": "Pore vs. Pour", "type": "explanation" },
+        { "title": "Practicable vs. Practical", "type": "explanation" },
+        { "title": "Prescribe vs. Proscribe", "type": "explanation" },
+        { "title": "Reticent vs. Reluctant", "type": "explanation" },
+        { "title": "Sleight vs. Slight", "type": "explanation" },
+        { "title": "Sympathy vs. Empathy", "type": "explanation" },
+        { "title": "Wreak vs. Wreck", "type": "explanation" },
+        { "title": "Yoke vs. Yolk", "type": "explanation" },
+        { "title": "Complementary vs. Complimentary", "type": "explanation" },
+        { "title": "Dependant vs. Dependent", "type": "explanation" },
+        { "title": "Elicit vs. Illicit", "type": "explanation" },
+        { "title": "Faze vs. Phase", "type": "explanation" },
+        { "title": "Fiscal vs. Physical", "type": "explanation" },
+        { "title": "Gibe vs. Jibe vs. Gybe", "type": "explanation" },
+        { "title": "Illegible vs. Unreadable", "type": "explanation" },
+        { "title": "Impactful vs. Impact", "type": "explanation" },
+        { "title": "Jive vs. Gibe", "type": "explanation" },
+        { "title": "Moot vs. Mute", "type": "explanation" },
+        { "title": "Oral vs. Verbal", "type": "explanation" },
+        { "title": "Personal vs. Personnel", "type": "explanation" },
+        { "title": "Rout vs. Route", "type": "explanation" },
+        { "title": "Sheath vs. Sheathe", "type": "explanation" },
+        { "title": "Staid vs. Stayed", "type": "explanation" },
+        { "title": "Tractable vs. Tractible", "type": "explanation" },
+        { "title": "Uninterested vs. Disinterested", "type": "explanation" },
+        { "title": "Venal vs. Venial", "type": "explanation" },
+        { "title": "Wary vs. Weary", "type": "explanation" },
+        { "title": "Who vs. Whom", "type": "explanation" },
+        { "title": "Admittance vs. Admission", "type": "explanation" },
+        { "title": "Adverse vs. Averse", "type": "explanation" },
+        { "title": "Amoral vs. Immoral", "type": "explanation" },
+        { "title": "Anxiety vs. Fear", "type": "explanation" },
+        { "title": "Cease vs. Seize", "type": "explanation" },
+        { "title": "Cologne vs. Cologne", "type": "explanation" },
+        { "title": "Contemptible vs. Contemptuous", "type": "explanation" },
+        { "title": "Corpus vs. Corpse", "type": "explanation" },
+        { "title": "Credible vs. Credulous", "type": "explanation" },
+        { "title": "Elude vs. Allude", "type": "explanation" },
+        { "title": "Esoteric vs. Exoteric", "type": "explanation" },
+        { "title": "Exalt vs. Exult", "type": "explanation" },
+        { "title": "Expat vs. Exile", "type": "explanation" },
+        { "title": "Fascism vs. Nazism", "type": "explanation" },
+        { "title": "Fortuitous vs. Fortunate", "type": "explanation" },
+        { "title": "Historic vs. Historical", "type": "explanation" },
+        { "title": "Immanent vs. Imminent vs. Eminent", "type": "explanation" },
+        { "title": "Inflammable vs. Flammable", "type": "explanation" },
+        { "title": "Jibe vs. Gibe", "type": "explanation" },
+        { "title": "Laid vs. Lain", "type": "explanation" }
+                ],
+                "Word Roots (Etymology)": {
+                    "Latin Roots": [
+                        { title: "port", meaning: "to carry", type: 'root' },
+                        { title: "spect", meaning: "to see", type: 'root' }
+                    ],
+                    "Greek Roots": []
+                },
+                "Phrases & Idioms": {
                     "Body Parts Idioms": [{"word":"Be all ears","meaning":"Listen attentively","example":"Tell me your story - I'm all ears."},{"word":"Be at each other’s throats","meaning":"Constantly fighting","example":"My siblings were at each other's throats the entire holiday."},{"word":"Have your back to the wall","meaning":"Be in a desperate situation","example":"With his funds cut off, he had his back to the wall."},{"word":"Talk behind someone’s back","meaning":"Speak secretly about someone","example":"I hate it when I hear people talking behind my back."},{"word":"Break a leg","meaning":"Wish good luck","example":"'Break a leg!' she shouted to the actors before the play."},{"word":"Get cold feet","meaning":"Lose confidence suddenly","example":"He was going to ask her out, but he got cold feet."},{"word":"Cost an arm and a leg","meaning":"Be very expensive","example":"That new car must have cost an arm and a leg."},{"word":"Cry your heart out","meaning":"Cry intensely","example":"She cried her heart out after watching the sad movie."},{"word":"Cross your fingers","meaning":"Hope for luck","example":"Cross your fingers that we win the lottery!"},{"word":"See eye to eye","meaning":"Agree completely","example":"We finally see eye to eye on this issue."},{"word":"Have elbow room","meaning":"Have enough space","example":"I like this new apartment; there's plenty of elbow room."},{"word":"Face the music","meaning":"Accept consequences","example":"After failing the exam, he had to face the music at home."},{"word":"Foot the bill","meaning":"Pay the expenses","example":"Don't worry about dinner; I'll foot the bill tonight."},{"word":"Give a hand","meaning":"Help someone","example":"Could you give me a hand with this heavy box?"},{"word":"Have eyes in the back of your head","meaning":"Be very aware","example":"The teacher seems to have eyes in the back of her head."},{"word":"Have a sweet tooth","meaning":"Like sweets","example":"I can't resist cake; I have a real sweet tooth."},{"word":"Be in over your head","meaning":"Be in something too difficult","example":"He took on too much work and is now in over his head."},{"word":"Keep an eye on","meaning":"Watch carefully","example":"Can you keep an eye on my bag for a minute?"},{"word":"Keep your chin up","meaning":"Stay positive","example":"Keep your chin up! Things will get better soon."},{"word":"Lend an ear","meaning":"Listen carefully","example":"If you need to talk, I'm always here to lend an ear."},{"word":"Lose face","meaning":"Suffer humiliation","example":"He didn't want to lose face by admitting his mistake."},{"word":"Be mouth-watering","meaning":"Look/taste delicious","example":"The smell of the baking bread was mouth-watering."},{"word":"Say “my hands are tied”","meaning":"Be unable to act","example":"I'd like to help, but my hands are tied by the rules."},{"word":"Be neck and neck","meaning":"Be in close competition","example":"The two runners were neck and neck as they approached the finish line."},{"word":"Say “off the top of my head”","meaning":"Speak without much thought","example":"Off the top of my head, I think there are about ten people coming."},{"word":"Have it on the tip of your tongue","meaning":"Almost remember","example":"I know his name! It's right on the tip of my tongue."},{"word":"Say “over my dead body”","meaning":"Refuse strongly","example":"You'll sell this house over my dead body!"},{"word":"Pull someone’s leg","meaning":"Joke or tease","example":"Don't worry, I'm just pulling your leg."},{"word":"Put your best foot forward","meaning":"Do your best","example":"You need to put your best foot forward in the interview."},{"word":"Use the rule of thumb","meaning":"Follow a practical rule","example":"As a rule of thumb, you should add the pasta to boiling water."},{"word":"Shake a leg","meaning":"Hurry up","example":"Shake a leg, or we'll be late for the movie!"},{"word":"Be a shoulder to cry on","meaning":"Be someone supportive","example":"She was a real shoulder to cry on when I was going through a tough time."},{"word":"Sit on your hands","meaning":"Avoid taking action","example":"The committee just sat on their hands and did nothing."},{"word":"Stick your neck out","meaning":"Take a risk","example":"He really stuck his neck out for his friend."},{"word":"Toe the line","meaning":"Obey rules strictly","example":"In this job, you're expected to toe the line."},{"word":"Be tongue-tied","meaning":"Unable to speak","example":"I was so nervous that I became completely tongue-tied."},{"word":"Turn a blind eye","meaning":"Pretend not to notice","example":"The teacher turned a blind eye to the student's minor mistake."},{"word":"Be up to your neck","meaning":"Be deeply involved","example":"I'm up to my neck in paperwork this week."},{"word":"Wash your hands of something","meaning":"Refuse involvement","example":"After the argument, he washed his hands of the whole project."},{"word":"Go weak at the knees","meaning":"Feel nervous or afraid","example":"The sight of the huge spider made me go weak at the knees."},{"word":"Bite your tongue","meaning":"Stop yourself from speaking","example":"I had to bite my tongue to keep from saying what I really thought."},{"word":"Be a sight for sore eyes","meaning":"Be a welcome sight","example":"After a long day of hiking, that cozy cabin was a sight for sore eyes."},{"word":"Be a pain in the neck","meaning":"Be very annoying","example":"This constant paperwork is a real pain in the neck."},{"word":"Play it by ear","meaning":"Adapt as things happen","example":"We don't have a fixed plan; we'll just play it by ear."},{"word":"Put words in someone’s mouth","meaning":"Misrepresent what was said","example":"Stop putting words in my mouth; that's not what I meant."},{"word":"Be thick-skinned","meaning":"Not easily offended","example":"You need to be thick-skinned to be a politician."},{"word":"Be thin-skinned","meaning":"Easily hurt","example":"He's too thin-skinned to handle criticism."},{"word":"Give someone the cold shoulder","meaning":"Ignore someone","example":"She gave him the cold shoulder at the party."},{"word":"Eyeball it","meaning":"Estimate roughly","example":"I don't have a measuring cup, so I'll just eyeball it."},{"word":"Pay lip service","meaning":"Show insincere support","example":"The company pays lip service to environmental issues but does little to help."},{"word":"Turn the other cheek","meaning":"Ignore insult","example":"When he insulted me, I just decided to turn the other cheek."},{"word":"Get off someone’s back","meaning":"Stop criticizing","example":"I wish my boss would get off my back about the deadline."},{"word":"Be an old hand","meaning":"Be very experienced","example":"He's an old hand at this, so you can trust his advice."},{"word":"Have a strong stomach","meaning":"Tolerate unpleasant things","example":"You need a strong stomach to be a surgeon."},{"word":"Bite the hand that feeds you","meaning":"Harm someone who helps","example":"He was fired for biting the hand that feeds him by insulting his boss."},{"word":"Have a heart of gold","meaning":"Be very kind","example":"My grandmother has a heart of gold and would help anyone."},{"word":"Have a heart of stone","meaning":"Be unfeeling","example":"The villain in the movie had a heart of stone."},{"word":"Pour your heart out","meaning":"Share your feelings","example":"She poured her heart out to her best friend."},{"word":"Learn by heart","meaning":"Memorize","example":"I had to learn the poem by heart for school."},{"word":"Have a change of heart","meaning":"Change opinion","example":"I was going to sell my car, but I had a change of heart."},{"word":"Say “my heart skipped a beat”","meaning":"Feel excited/nervous","example":"My heart skipped a beat when I saw the surprise."},{"word":"Know by heart","meaning":"Know from memory","example":"She knows all her lines by heart."},{"word":"Wear your heart on your sleeve","meaning":"Show emotions openly","example":"He's not afraid to cry; he wears his heart on his sleeve."},{"word":"Have a gut feeling","meaning":"Trust intuition","example":"I have a gut feeling that something is wrong."},{"word":"Let success go to your head","meaning":"Become arrogant","example":"Don't let a little success go to your head."},{"word":"Use your head","meaning":"Think carefully","example":"You'll solve the puzzle if you just use your head."},{"word":"Have your head in the clouds","meaning":"Daydream","example":"He's always got his head in the clouds and never pays attention."},{"word":"Fall head over heels","meaning":"Be deeply in love","example":"They fell head over heels for each other on their first date."},{"word":"Say “two heads are better than one”","meaning":"Teamwork works better","example":"Let's work together on this; two heads are better than one."},{"word":"Keep your head above water","meaning":"Just manage to survive","example":"With all these bills, it's hard to keep my head above water."},{"word":"Bite someone’s head off","meaning":"Reply angrily","example":"I only asked a simple question, and he bit my head off!"},{"word":"Lose your head","meaning":"Panic","example":"When the fire alarm went off, everyone lost their heads."},{"word":"Turn heads","meaning":"Attract attention","example":"Her stunning dress turned heads at the party."},{"word":"Keep your eyes peeled","meaning":"Watch carefully","example":"Keep your eyes peeled for any signs of the lost dog."},{"word":"Happen in the blink of an eye","meaning":"Happen very quickly","example":"The accident happened in the blink of an eye."},{"word":"Have an eagle eye","meaning":"Be very observant","example":"The editor has an eagle eye for typos."},{"word":"Feast your eyes on","meaning":"Look with admiration","example":"Feast your eyes on this beautiful sunset!"},{"word":"Keep an eye out","meaning":"Watch for something","example":"Keep an eye out for a good place to have lunch."},{"word":"Be the apple of someone’s eye","meaning":"Be very precious","example":"His youngest daughter is the apple of his eye."},{"word":"Catch someone's eye","meaning":"Attract attention","example":"The shiny red car in the window caught my eye."},{"word":"Give someone the eye","meaning":"Look flirtatiously","example":"I think that person across the room is giving you the eye."},{"word":"Pull the wool over someone’s eyes","meaning":"Deceive someone","example":"The salesman tried to pull the wool over my eyes, but I knew the car had problems."},{"word":"Be eye candy","meaning":"Be attractive but not useful","example":"The actor was just eye candy in the movie; his role was very small."},{"word":"Cry your eyes out","meaning":"Cry a lot","example":"She cried her eyes out when her pet went missing."},{"word":"Be starry-eyed","meaning":"Be naive/idealistic","example":"He was a starry-eyed young actor hoping for fame."},{"word":"Run your mouth","meaning":"Talk too much","example":"He's always running his mouth without thinking."},{"word":"Spread by word of mouth","meaning":"Spread verbally","example":"The restaurant became popular by word of mouth."},{"word":"Foam at the mouth","meaning":"Be extremely angry","example":"He was foaming at the mouth when he saw the broken vase."},{"word":"Zip your lip","meaning":"Stop talking","example":"Zip your lip! You're going to give away the surprise."},{"word":"Put your foot in your mouth","meaning":"Say something embarrassing","example":"I really put my foot in my mouth when I asked about her ex-husband."},{"word":"Have a big mouth","meaning":"Talk too much","example":"Don't tell her any secrets; she has a big mouth."},{"word":"Escape by the skin of your teeth","meaning":"Barely succeed","example":"We escaped the storm by the skin of our teeth."},{"word":"Grit your teeth","meaning":"Show determination","example":"You just have to grit your teeth and get through this tough time."},{"word":"Be long in the tooth","meaning":"Be old/aging","example":"He's a bit long in the tooth to be starting a new career."},{"word":"Set your teeth on edge","meaning":"Annoy or irritate","example":"The sound of scratching on a chalkboard sets my teeth on edge."},{"word":"Keep your nose clean","meaning":"Stay out of trouble","example":"He's been trying to keep his nose clean since he got out of jail."},{"word":"Stick your nose into something","meaning":"Interfere in others’ matters","example":"I wish my neighbor would stop sticking her nose into my business."},{"word":"Keep a stiff upper lip","meaning":"Stay brave in hardship","example":"He kept a stiff upper lip throughout the ordeal."},{"word":"Give someone a pat on the back","meaning":"Praise or congratulate","example":"The boss gave her a pat on the back for a job well done."},{"word":"Put your money where your mouth is","meaning":"Act on your words","example":"If you think you can do better, then put your money where your mouth is."}],
                     "Nature & Environment idioms": [{"word":"Every cloud has a silver lining","meaning":"Good comes after bad","example":"I lost my job, but the silver lining is I have more time for family."},{"word":"Steal someone’s thunder","meaning":"Take credit for another’s idea","example":"She announced my news before I could, completely stealing my thunder."},{"word":"Under the weather","meaning":"Feeling ill","example":"I'm feeling a bit under the weather today, so I'm staying home."},{"word":"Come rain or shine","meaning":"No matter the circumstances","example":"I'll be at your game, come rain or shine."},{"word":"Storm in a teacup","meaning":"Big fuss over nothing","example":"Their argument was just a storm in a teacup; they're friends again now."},{"word":"Chase rainbows","meaning":"Pursue unrealistic goals","example":"He's trying to become a famous actor, but I think he's chasing rainbows."},{"word":"Save for a rainy day","meaning":"Save money for hard times","example":"It's wise to save a little money for a rainy day."},{"word":"Fair-weather friend","meaning":"A friend only in good times","example":"He disappeared when I had problems; he's just a fair-weather friend."},{"word":"Weather the storm","meaning":"Survive difficulties","example":"Our company managed to weather the storm of the economic crisis."},{"word":"Throw caution to the wind","meaning":"Take a risk","example":"She threw caution to the wind and quit her job to travel."},{"word":"Head in the clouds","meaning":"Daydreaming","example":"He's got his head in the clouds if he thinks he can pass without studying."},{"word":"Cloud nine","meaning":"Extremely happy","example":"She's been on cloud nine since she got engaged."},{"word":"Storm out","meaning":"Leave angrily","example":"He stormed out of the room after their disagreement."},{"word":"Lightning fast","meaning":"Very quick","example":"The new computer is lightning fast."},{"word":"Calm before the storm","meaning":"Quiet period before trouble","example":"The peaceful afternoon was the calm before the storm of the holiday rush."},{"word":"It never rains but it pours","meaning":"Troubles come together","example":"First my car broke down, then I lost my wallet. It never rains but it pours."},{"word":"Take by storm","meaning":"Overwhelm or succeed suddenly","example":"The new band has taken the music world by storm."},{"word":"Make hay while the sun shines","meaning":"Take advantage of opportunity","example":"We should make hay while the sun shines and finish the project early."},{"word":"Snowed under","meaning":"Overwhelmed with work","example":"I'm completely snowed under with emails this week."},{"word":"Break the ice","meaning":"Start a conversation","example":"He told a joke to break the ice at the start of the meeting."},{"word":"Tip of the iceberg","meaning":"Small part of a bigger problem","example":"These issues are just the tip of the iceberg."},{"word":"Stormy relationship","meaning":"Troubled relationship","example":"They have a very stormy relationship, always arguing."},{"word":"Full of hot air","meaning":"Talking nonsense","example":"Don't listen to him; he's full of hot air."},{"word":"On thin ice","meaning":"In a risky situation","example":"You're on thin ice with the boss after being late again."},{"word":"A ray of sunshine","meaning":"Something cheerful","example":"Her positive attitude is a ray of sunshine in the office."},{"word":"Chase the clouds away","meaning":"Make someone happier","example":"A good song can always chase the clouds away."},{"word":"Ride the storm","meaning":"Endure hardship","example":"We just have to ride the storm until the economy improves."},{"word":"Lightning never strikes twice","meaning":"Rare things don’t repeat","example":"He won the lottery, but lightning never strikes twice."},{"word":"Blow hot and cold","meaning":"Change opinions often","example":"She blows hot and cold about the plan; I don't know if she supports it."},{"word":"Cloud over","meaning":"Become gloomy","example":"His face clouded over when he heard the bad news."},{"word":"Take a rain check","meaning":"Postpone an invitation","example":"I can't come tonight, but can I take a rain check?"},{"word":"Snowball effect","meaning":"Rapidly growing impact","example":"The small success created a snowball effect of new opportunities."},{"word":"Weather vane","meaning":"Person who changes opinions easily","example":"He's such a weather vane; you never know what he'll think next."},{"word":"Cold day in July","meaning":"Something impossible","example":"He'll apologize when it's a cold day in July."},{"word":"Storm clouds gathering","meaning":"Trouble is coming","example":"With all the arguments, you can see the storm clouds gathering."},{"word":"In the eye of the storm","meaning":"In the center of trouble","example":"She remained calm, even in the eye of the storm."},{"word":"Weather-beaten","meaning":"Worn down by hardship","example":"The old sailor had a weather-beaten face."},{"word":"Under a cloud","meaning":"Suspected or in disgrace","example":"He's been under a cloud since the money went missing."},{"word":"Rain cats and dogs","meaning":"Rain heavily","example":"I'm soaked! It's raining cats and dogs out there."},{"word":"A bolt from the blue","meaning":"Unexpected event","example":"The news of her resignation came as a bolt from the blue."},{"word":"In a fog","meaning":"Confused","example":"I was in a fog for the first few days at my new job."},{"word":"Cast a cloud over","meaning":"Spoil something","example":"His sad news cast a cloud over the celebration."},{"word":"Calm as a millpond","meaning":"Very calm","example":"The lake was as calm as a millpond this morning."},{"word":"Cold snap","meaning":"Sudden cold weather","example":"We're expecting a cold snap this weekend."},{"word":"Wind of change","meaning":"Sign of new developments","example":"There's a wind of change blowing through the company."},{"word":"Go with the wind","meaning":"Disappear quickly","example":"His promises went with the wind."},{"word":"Get wind of","meaning":"Hear rumors of something","example":"I got wind of their secret plan."},{"word":"Whirlwind romance","meaning":"Fast, intense romance","example":"They had a whirlwind romance and got married in a month."},{"word":"Blow off steam","meaning":"Release anger","example":"He went for a run to blow off steam."},{"word":"In the heat of the moment","meaning":"React emotionally without thinking","example":"I'm sorry for what I said in the heat of the moment."},{"word":"Cold shoulder","meaning":"Ignore someone","example":"She gave him the cold shoulder after their argument."},{"word":"Hot under the collar","meaning":"Very angry","example":"He gets hot under the collar when people question his authority."},{"word":"Like greased lightning","meaning":"Extremely fast","example":"She finished the race like greased lightning."},{"word":"Fire and brimstone","meaning":"Passionate religious warnings","example":"The preacher delivered a sermon full of fire and brimstone."},{"word":"Freeze out","meaning":"Exclude someone","example":"They tried to freeze him out of the conversation."},{"word":"Snowed in","meaning":"Stuck due to snow","example":"We were snowed in for three days during the blizzard."},{"word":"Cold comfort","meaning":"Small or no consolation","example":"The apology was cold comfort after what he had done."},{"word":"Ice-cold","meaning":"Very cold or unemotional","example":"He gave me an ice-cold stare."},{"word":"Break like the dawn","meaning":"Begin anew","example":"Hope broke like the dawn after a long night of despair."},{"word":"Catch lightning in a bottle","meaning":"Achieve something rare","example":"Their first album was a hit; they caught lightning in a bottle."},{"word":"Cloud the issue","meaning":"Make something unclear","example":"His irrelevant comments only clouded the issue."},{"word":"Dry spell","meaning":"Period without progress","example":"The author is going through a dry spell and can't write."},{"word":"Chilling effect","meaning":"Discouraging outcome","example":"The new law had a chilling effect on free speech."},{"word":"Sunshine and roses","meaning":"Happy times","example":"Marriage isn't all sunshine and roses."},{"word":"Blow over","meaning":"Pass without serious effect","example":"Don't worry, this argument will soon blow over."},{"word":"On cloud cuckoo land","meaning":"Unrealistic ideas","example":"He's on cloud cuckoo land if he thinks that plan will work."},{"word":"Cold fish","meaning":"Unemotional person","example":"She's a bit of a cold fish; it's hard to know what she's thinking."},{"word":"Sunny side up","meaning":"Cheerful perspective","example":"She always looks on the sunny side up of life."},{"word":"Hot air balloon","meaning":"Big talk, little substance","example":"His promises are like a hot air balloon – big but empty."},{"word":"Weather-worn","meaning":"Old and exhausted","example":"The old book looked weather-worn."},{"word":"Freeze in your tracks","meaning":"Stop suddenly in fear","example":"I froze in my tracks when I saw the snake."},{"word":"Under ice","meaning":"Hidden or suppressed","example":"The project has been under ice for months."},{"word":"Hail from","meaning":"Come from a place","example":"She hails from a small town in the mountains."},{"word":"Catch the sun","meaning":"Get sunburned","example":"Don't forget sunscreen, or you'll catch the sun."},{"word":"Throw shade","meaning":"Insult subtly","example":"He's always throwing shade at his colleagues."},{"word":"Blow out of proportion","meaning":"Exaggerate","example":"The media blew the story out of proportion."},{"word":"Put on ice","meaning":"Delay something","example":"They decided to put the project on ice until they had more funding."},{"word":"In the dark","meaning":"Uninformed","example":"I was kept in the dark about the decision."},{"word":"Hail storm of criticism","meaning":"Heavy criticism","example":"The movie received a hail storm of criticism from reviewers."},{"word":"Storm off","meaning":"Leave angrily","example":"She stormed off without saying a word."},{"word":"As right as rain","meaning":"Healthy again","example":"After a few days of rest, I'll be as right as rain."},{"word":"Rain or shine","meaning":"Regardless of conditions","example":"We'll have the picnic, rain or shine."},{"word":"Spit in the wind","meaning":"Do something pointless","example":"Arguing with him is like spitting in the wind."},{"word":"Blow someone away","meaning":"Greatly impress","example":"The concert blew me away."},{"word":"Cold as ice","meaning":"Extremely cold or unfeeling","example":"His stare was as cold as ice."},{"word":"Storm-tossed","meaning":"Troubled by difficulties","example":"It was a storm-tossed period in the country's history."},{"word":"Brainstorm","meaning":"Generate ideas","example":"Let's brainstorm some ideas for the new project."},{"word":"In the clouds","meaning":"Unrealistic thinking","example":"He's in the clouds if he thinks that's a good idea."},{"word":"Heat up","meaning":"Become more intense","example":"The competition is starting to heat up."},{"word":"Chilling to the bone","meaning":"Extremely cold","example":"The wind was chilling to the bone."},{"word":"A snowball’s chance in hell","meaning":"No chance at all","example":"He has a snowball's chance in hell of winning."},{"word":"Walk on air","meaning":"Feel very happy","example":"She was walking on air after getting the job."},{"word":"A perfect storm","meaning":"Worst possible situation","example":"The company faced a perfect storm of economic and political problems."},{"word":"Come out of the fog","meaning":"Become clear-minded","example":"After some rest, I started to come out of the fog."},{"word":"Eye of the hurricane","meaning":"Calm center of chaos","example":"In the eye of the hurricane, he remained surprisingly calm."},{"word":"Whiteout","meaning":"Complete loss of visibility (snow)","example":"The blizzard caused a complete whiteout on the roads."},{"word":"Blowing smoke","meaning":"Pretending, deceiving","example":"He's just blowing smoke; he doesn't know what he's talking about."},{"word":"Gone with the wind","meaning":"Vanished, disappeared","example":"All my savings are gone with the wind."},{"word":"When it rains, it pours","meaning":"Problems come all at once","example":"First I lost my keys, then my phone broke. When it rains, it pours."},{"word":"Jack Frost","meaning":"Personification of cold","example":"Jack Frost had been busy overnight, covering everything in ice."}],
                     "Animal Idioms": [
@@ -1028,7 +2809,7 @@
                         { "word": "Take the bait", "meaning":"Fall for a trap","example":"He took the bait and clicked on the phishing link." }
                     ],
 
-    "Common Idiomatic Expressions": [
+    "Common Idiomtic Expressions": [
         {"word":"Backbite","meaning":"Speak badly about someone behind their back","example":"She realized her coworkers were backbiting her."},
         {"word":"Chit-chat","meaning":"Light, casual talk","example":"We had a little chit-chat before the meeting."},
         {"word":"Small talk","meaning":"Polite conversation about unimportant topics","example":"He hates small talk at parties."},
@@ -2012,6 +3793,9 @@
             const aboutBtn = document.getElementById('about-btn');
             const aboutModal = document.getElementById('about-modal');
             const closeAboutModal = document.getElementById('close-about-modal');
+            const explanationModal = document.getElementById('explanation-modal');
+            const closeExplanationModal = document.getElementById('close-explanation-modal');
+            const explanationContent = document.getElementById('explanation-content');
 
             // --- State ---
             let activeWordItem = null;
@@ -2266,10 +4050,28 @@
                 }
 
                 if (!isSynonymSublist) bottomNav.classList.remove('hidden');
-                const quizPossible = words.length >= 4;
+                const hasFlippableWords = words.some(w => !w.type);
+                const quizPossible = hasFlippableWords && words.length >= 4;
                 navQuizBtn.disabled = !quizPossible;
 
                 words.forEach(item => {
+                    // Handle new explanation/root card type
+                    if (item.type === 'explanation' || item.type === 'root') {
+                        const explanationItem = document.createElement('div');
+                        explanationItem.className = 'explanation-card p-3 sm:p-4';
+                        
+                        let cardContent = `<p class="text-sm sm:text-base font-semibold">${item.title}</p>`;
+                        if (item.meaning) {
+                            cardContent += `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>`;
+                        }
+                        
+                        explanationItem.innerHTML = cardContent;
+                        explanationItem.addEventListener('click', () => showExplanationModal(item.title));
+                        list.appendChild(explanationItem);
+                        return; // Continue to next item in loop
+                    }
+
+                    // --- Existing flip-card logic ---
                     const wordItem = document.createElement('div');
                     wordItem.className = "word-item";
                     
@@ -2359,7 +4161,7 @@
             function flattenVocabulary(data) {
                 let words = [];
                 for (const key in data) {
-                    if (key === 'Synonyms') continue; // Handled separately
+                    if (key === 'Synonyms' || key === 'Confusing Words' || key === 'Word Roots (Etymology)') continue;
                     const value = data[key];
                     if (Array.isArray(value)) {
                         words = words.concat(value);
@@ -2435,21 +4237,11 @@
                     
                     const resultContainer = document.getElementById('dictionary-result-container');
                     
-                    // Show loader by replacing the content
-                    resultContainer.innerHTML = `
-                        <div class="flex justify-center items-center py-8">
-                            <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </div>
-                    `;
+                    resultContainer.innerHTML = `<div class="flex justify-center items-center py-8"><svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>`;
 
                     try {
                         const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-                        if (!response.ok) {
-                            throw new Error('Word not found');
-                        }
+                        if (!response.ok) throw new Error('Word not found');
                         const data = await response.json();
                         displayDictionaryResult(data[0]);
                     } catch (error) {
@@ -2459,15 +4251,13 @@
 
                 searchBtn.addEventListener('click', searchWord);
                 searchInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        searchWord();
-                    }
+                    if (e.key === 'Enter') searchWord();
                 });
             }
 
             function displayDictionaryResult(data) {
                 const resultContainer = document.getElementById('dictionary-result-container');
-                resultContainer.innerHTML = ''; // Clear loader
+                resultContainer.innerHTML = '';
                 let audioSrc = data.phonetics.find(p => p.audio)?.audio;
 
                 let meaningsHTML = data.meanings.map(meaning => `
@@ -2495,11 +4285,7 @@
                             <h3 class="text-3xl font-bold text-slate-800">${data.word}</h3>
                             <p class="text-slate-500">${data.phonetic || ''}</p>
                         </div>
-                        ${audioSrc ? `
-                        <button id="dict-audio-btn" class="p-3 rounded-full bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
-                        </button>
-                        ` : ''}
+                        ${audioSrc ? `<button id="dict-audio-btn" class="p-3 rounded-full bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>` : ''}
                     </div>
                     <div class="space-y-6">${meaningsHTML}</div>
                 `;
@@ -2510,6 +4296,14 @@
                     document.getElementById('dict-audio-btn').addEventListener('click', () => {
                         new Audio(audioSrc).play();
                     });
+                }
+            }
+
+            function showExplanationModal(title) {
+                const content = detailedExplanations[title];
+                if (content) {
+                    explanationContent.innerHTML = content;
+                    explanationModal.classList.remove('hidden');
                 }
             }
 
@@ -2573,9 +4367,12 @@
             function startQuiz(words, originalTitle, quizType, quizLength) {
                 let score = 0;
                 let currentQuestionIndex = 0;
+                // Filter out non-quizzable items
+                const quizzableWords = words.filter(w => !w.type);
+                
                 const quizWords = quizLength === 'short' 
-                    ? [...words].sort(() => 0.5 - Math.random()).slice(0, 10) 
-                    : [...words].sort(() => 0.5 - Math.random());
+                    ? [...quizzableWords].sort(() => 0.5 - Math.random()).slice(0, 10) 
+                    : [...quizzableWords].sort(() => 0.5 - Math.random());
 
                 const totalQuestions = quizWords.length;
                 const isOneWordSub = originalTitle.includes('One Word Substitution');
@@ -2601,7 +4398,7 @@
                             correctAnswer = questionItem.word;
                             options.push(correctAnswer);
                             while (options.length < 4) {
-                                const randomItem = words[Math.floor(Math.random() * words.length)];
+                                const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)];
                                 if (randomItem.word && !options.includes(randomItem.word)) {
                                     options.push(randomItem.word);
                                 }
@@ -2612,7 +4409,7 @@
                             correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : questionItem.meaning);
                              options.push(correctAnswer);
                             while (options.length < 4) {
-                                const randomItem = words[Math.floor(Math.random() * words.length)];
+                                const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)];
                                 let randomAnswer = isAntonymList ? randomItem.antonym : (isOneWordSub ? randomItem.word : randomItem.meaning);
                                 if (randomAnswer && !options.includes(randomAnswer)) {
                                     options.push(randomAnswer);
@@ -2679,27 +4476,24 @@
             }
             
             function speakWord(textToSpeak) {
-                // "Wake-up" call for mobile browsers. This is the most reliable method.
                 if (!isTtsInitialized && 'speechSynthesis' in window) {
-                    speechSynthesis.cancel(); // Clear any previous attempts.
+                    speechSynthesis.cancel();
                     const dummyUtterance = new SpeechSynthesisUtterance('');
                     dummyUtterance.volume = 0;
                     speechSynthesis.speak(dummyUtterance);
                     isTtsInitialized = true;
                 }
 
-                speechSynthesis.cancel(); // Cancel any ongoing speech.
+                speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(textToSpeak.split('/')[0].trim());
                 
                 const voices = speechSynthesis.getVoices();
                 if (voices.length > 0) {
                     const selectedVoice = voices.find(voice => voice.lang === 'en-US' && /female|woman/i.test(voice.name)) || voices.find(voice => voice.lang === 'en-US');
-                    if (selectedVoice) {
-                        utterance.voice = selectedVoice;
-                    }
+                    if (selectedVoice) utterance.voice = selectedVoice;
                 }
                 
-                utterance.lang = 'en-US'; // Fallback language
+                utterance.lang = 'en-US';
                 speechSynthesis.speak(utterance);
             }
 
@@ -2710,7 +4504,6 @@
                 }
             };
             const goHome = () => {
-                // Clear the nav stack
                 navStack.length = 0;
                 renderCategories(vocabularyData);
             };
@@ -2764,9 +4557,12 @@
             aboutBtn.addEventListener('click', () => aboutModal.classList.remove('hidden'));
             closeAboutModal.addEventListener('click', () => aboutModal.classList.add('hidden'));
             aboutModal.addEventListener('click', (e) => {
-                if (e.target === aboutModal) {
-                    aboutModal.classList.add('hidden');
-                }
+                if (e.target === aboutModal) aboutModal.classList.add('hidden');
+            });
+
+            closeExplanationModal.addEventListener('click', () => explanationModal.classList.add('hidden'));
+            explanationModal.addEventListener('click', (e) => {
+                if (e.target === explanationModal) explanationModal.classList.add('hidden');
             });
 
             const synonymsCategoryFunction = (gradientClass) => {
@@ -2775,7 +4571,6 @@
             vocabularyData["Synonyms"] = synonymsCategoryFunction;
 
             function init() {
-                // Splash Screen Logic
                 setTimeout(() => {
                     splashScreen.classList.add('splash-out');
                     splashScreen.addEventListener('animationend', () => {
@@ -2791,8 +4586,6 @@
                 allWords = [...new Set(allWords)];
 
                 renderCategories(vocabularyData);
-                
-                // We no longer need to pre-load voices here, the "wake-up" call handles it.
             }
 
             init();
