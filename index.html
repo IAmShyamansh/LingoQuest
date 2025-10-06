@@ -188,8 +188,7 @@
             background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
             background-size: 1.5rem 1.5rem;
             overflow-y: auto;
-            padding-top: 5rem;
-            padding-bottom: 6rem;
+            /* Remove padding from the scrolling container itself */
         }
         
         .favorite-btn.favorited svg {
@@ -334,7 +333,7 @@
     </div>
 
     <!-- Bottom Navigation Bar -->
-    <nav id="bottom-nav" class="hidden">
+    <nav id="bottom-nav" class="hidden bg-[#1F2335]">
         <div class="max-w-2xl lg:max-w-5xl mx-auto p-1">
             <div class="grad-nav rounded-full flex justify-around items-center p-1">
                 <button id="nav-back" class="p-1 rounded-full hover:bg-white/20 transition-colors text-white" aria-label="Back">
@@ -360,7 +359,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-4">About LingoQuest</h2>
-            <p class="text-slate-300 mb-6">This application was developed by Akash Sawle, for the students of the British Institute Of English Language And P.D.</p>
+            <p class="text-slate-300 mb-6">This application was developed by and for the students of the British Institute Of English Language And P.D.</p>
             
             <div class="border-t border-white/20 pt-4 mb-6">
                 <h3 class="font-bold text-white mb-2">By:</h3>
@@ -8260,7 +8259,8 @@
                 }
 
                 const listContainer = document.createElement('div');
-                listContainer.className = 'p-4 max-w-2xl mx-auto';
+                // Add padding here, inside the scrollable area
+                listContainer.className = 'p-4 max-w-2xl mx-auto pt-20 pb-24';
                 const list = document.createElement('div');
                 list.className = "space-y-4";
                 listContainer.appendChild(list);
@@ -8828,4 +8828,3 @@
     </script>
 </body>
 </html>
-
