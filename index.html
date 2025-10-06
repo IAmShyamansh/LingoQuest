@@ -164,6 +164,11 @@
         }
 
         #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
         #bottom-nav.hidden {
@@ -183,8 +188,8 @@
             background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
             background-size: 1.5rem 1.5rem;
             overflow-y: auto;
-            padding-top: 0.5rem;
-            padding-bottom: 100px;
+            padding-top: 5rem;
+            padding-bottom: 6rem;
         }
         
         .favorite-btn.favorited svg {
@@ -329,7 +334,7 @@
     </div>
 
     <!-- Bottom Navigation Bar -->
-    <nav id="bottom-nav" class="hidden fixed bottom-0 left-0 right-0 z-50">
+    <nav id="bottom-nav" class="hidden">
         <div class="max-w-2xl lg:max-w-5xl mx-auto p-1">
             <div class="grad-nav rounded-full flex justify-around items-center p-1">
                 <button id="nav-back" class="p-1 rounded-full hover:bg-white/20 transition-colors text-white" aria-label="Back">
@@ -393,6 +398,11 @@
 
 
     <script>
+        // Force manual scroll restoration to prevent browser from interfering
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
              const detailedExplanations = {
                 "Affect vs. Effect": `
@@ -7026,7 +7036,7 @@
                         { "word": "Take the bait", "meaning":"Fall for a trap","example":"He took the bait and clicked on the phishing link." }
                     ],
 
-    "Common Idiomtic Expressions": [
+    "Common Phrases/Idiomatic Expressions": [
         {"word":"Backbite","meaning":"Speak badly about someone behind their back","example":"She realized her coworkers were backbiting her."},
         {"word":"Chit-chat","meaning":"Light, casual talk","example":"We had a little chit-chat before the meeting."},
         {"word":"Small talk","meaning":"Polite conversation about unimportant topics","example":"He hates small talk at parties."},
@@ -8015,7 +8025,6 @@
 
             // --- State ---
             let activeWordItem = null;
-            let isTtsInitialized = false;
             const navStack = [];
             const gradients = ['grad-1', 'grad-2', 'grad-3', 'grad-4', 'grad-5', 'grad-6'];
             let currentWordListData = { title: null, words: [] };
@@ -8026,6 +8035,7 @@
             // --- Functions ---
 
             function renderCategories(categories, title = "LingoQuest", subtitle = "Your daily dose of vocabulary.") {
+                setTimeout(() => { wordView.scrollTop = 0; }, 0); // Defer scroll reset
                 document.body.classList.remove('word-view-active');
                 appContainer.classList.add('p-4');
                 categoryGrid.innerHTML = '';
@@ -8092,7 +8102,7 @@
 
             function renderAlphabetGrid(gradientClass) {
                 wordView.innerHTML = '';
-                wordView.scrollTop = 0;
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
                 document.body.classList.add('word-view-active');
                 appContainer.classList.remove('p-4');
                 wordView.classList.add('active');
@@ -8152,7 +8162,7 @@
                 
                 if (!appendTo) {
                     wordView.innerHTML = '';
-                    wordView.scrollTop = 0;
+                    setTimeout(() => { wordView.scrollTop = 0; }, 0); // Defer scroll reset
                     document.body.classList.add('word-view-active');
                     appContainer.classList.remove('p-4');
                     wordView.classList.add('active');
@@ -8237,7 +8247,7 @@
                     section.appendChild(headerWrapper);
                 } else {
                     const headerWrapper = document.createElement('div');
-                    headerWrapper.className = 'sticky top-0 z-10 cursor-pointer';
+                    headerWrapper.className = 'fixed top-0 left-0 right-0 z-40 bg-[#1F2335] py-2';
                     headerWrapper.addEventListener('click', () => { wordView.scrollTo({ top: 0, behavior: 'smooth' }); });
                     const headerPill = document.createElement('div');
                     headerPill.className = 'grad-nav rounded-full flex justify-center items-center max-w-sm md:max-w-md mx-auto p-2';
@@ -8310,7 +8320,7 @@
                         <div class="flex justify-between items-center w-full gap-4">
                             <div class="text-left flex-grow">
                                 <p class="text-sm sm:text-base font-semibold">${frontWord}</p>
-                                ${ (item.meaning && !isPhraseList && !isOneWordSub && !isAntonymList) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : '' }
+                                ${ (item.meaning && !isPhraseList && !isOneWordSub) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : '' }
                             </div>
                             <button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
@@ -8323,7 +8333,14 @@
                     `;
                      backContent.innerHTML = `
                         <div class="flex justify-between items-center w-full gap-4">
+                            ${ isAntonymList ? `
+                            <div class="text-left flex-grow">
+                                <p class="text-white font-semibold">${item.antonym}</p>
+                                <p class="text-xs text-slate-300">${item.antonym_meaning}</p>
+                            </div>
+                            ` : `
                             <p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>
+                            `}
                             ${ isAntonymList ? `<div class="speak-button flex-shrink-0" data-speak="${item.antonym}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : '' }
                             ${ isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : '' }
                         </div>`;
@@ -8417,7 +8434,7 @@
                 document.body.classList.add('word-view-active');
                 appContainer.classList.remove('p-4');
                 wordView.innerHTML = '';
-                wordView.scrollTop = 0;
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
                 categoryView.classList.add('hidden');
                 document.getElementById('home-features').classList.add('hidden');
                 wordView.classList.add('active');
@@ -8692,25 +8709,27 @@
             }
             
             function speakWord(textToSpeak) {
-                if (!isTtsInitialized && 'speechSynthesis' in window) {
-                    speechSynthesis.cancel();
-                    const dummyUtterance = new SpeechSynthesisUtterance('');
-                    dummyUtterance.volume = 0;
-                    speechSynthesis.speak(dummyUtterance);
-                    isTtsInitialized = true;
-                }
-
+                // Stop any speech that is currently active or stuck in the queue.
                 speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(textToSpeak.split('/')[0].trim());
+
+                // Replace "/" with a comma and space for a natural pause.
+                const formattedText = textToSpeak.replace(/\s*\/\s*/g, ', ');
+                const utterance = new SpeechSynthesisUtterance(formattedText);
                 
                 const voices = speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                    const selectedVoice = voices.find(voice => voice.lang === 'en-US' && /female|woman/i.test(voice.name)) || voices.find(voice => voice.lang === 'en-US');
-                    if (selectedVoice) utterance.voice = selectedVoice;
+                    const selectedVoice = voices.find(v => v.lang === 'en-US' && /female|woman/i.test(v.name)) || voices.find(v => v.lang === 'en-US');
+                    if (selectedVoice) {
+                        utterance.voice = selectedVoice;
+                    }
                 }
                 
-                utterance.lang = 'en-US';
-                speechSynthesis.speak(utterance);
+                utterance.lang = 'en-US'; // Set language as a fallback.
+
+                // Use a tiny timeout to ensure the 'cancel' command has processed.
+                setTimeout(() => {
+                    speechSynthesis.speak(utterance);
+                }, 50);
             }
 
             const goBack = () => {
@@ -8809,4 +8828,3 @@
     </script>
 </body>
 </html>
-
