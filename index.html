@@ -33,7 +33,7 @@
         }
 
         /* Use Inter for more readable text blocks */
-        .word-item p, #header-subtitle, #search-bar, .quiz-option, #search-suggestions div, .glass-ui h2, .dictionary-result, .mode-card p, .explanation-card p {
+        .word-item p, #header-subtitle, #search-bar, .quiz-option, #search-suggestions div, .glass-ui h2, .dictionary-result, .mode-card p, .explanation-card p, .lesson-content {
              font-family: 'Inter', sans-serif;
         }
 
@@ -66,6 +66,7 @@
         .grad-4 { background-image: linear-gradient(to right, #ea580c, #c026d3, #7e22ce); }
         .grad-5 { background-image: linear-gradient(to right, #16a34a, #0284c7, #4f46e5); }
         .grad-6 { background-image: linear-gradient(to right, #be123c, #b91c1c, #7f1d1d); }
+        .grad-7 { background-image: linear-gradient(to right, #1d4ed8, #0ea5e9, #0284c7); } /* Study Hall Gradient */
         .grad-fav { background-image: linear-gradient(to right, #f59e0b, #facc15, #eab308); }
         .grad-nav { background-image: linear-gradient(to right, #4338ca, #be185d); }
         
@@ -227,6 +228,105 @@
         }
         .splash-out {
             animation: pinchOut 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+
+        /* --- Study Hall Styles --- */
+        .lesson-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-pink);
+            padding-bottom: 0.25rem;
+        }
+        .lesson-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .lesson-content p {
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .lesson-content .example {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--accent-green);
+            margin: 1rem 0;
+        }
+         .lesson-content .example p {
+             margin-bottom: 0;
+             font-style: italic;
+             color: var(--text-light);
+         }
+        .lesson-content .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        .lesson-content .comparison-table th,
+        .lesson-content .comparison-table td {
+            text-align: left;
+            padding: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+         .lesson-content .comparison-table th {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+         }
+        .lesson-content ul.bullet-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+         .lesson-content ul.bullet-list li {
+            margin-bottom: 0.5rem;
+         }
+         #subtopic-section {
+            padding-top: 1rem;
+         }
+
+        /* Styles for mobile-responsive tables */
+        @media screen and (max-width: 640px) {
+            .lesson-content .comparison-table {
+                border: 0;
+            }
+            .lesson-content .comparison-table thead {
+                display: none;
+            }
+            .lesson-content .comparison-table tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+            .lesson-content .comparison-table td {
+                display: block;
+                text-align: left;
+                padding: 0.75rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .lesson-content .comparison-table td:last-child {
+                border-bottom: 0;
+            }
+            .lesson-content .comparison-table td::before {
+                content: attr(data-label);
+                display: block;
+                font-weight: bold;
+                color: white;
+                margin-bottom: 0.25rem;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                opacity: 0.6;
+            }
         }
 
     </style>
@@ -6059,6 +6159,802 @@
                 `
             };
             const vocabularyData = {
+                 "Study Hall": {
+                    "Parts of Speech": {
+                        "title": "Parts of Speech",
+                        "subtitle": "The fundamental building blocks of English sentences.",
+                        "subtopics": {
+                            "Noun": {
+                                "title": "Noun",
+  "subtitle": "A word that names a person, place, thing, or idea.",
+  "content": [
+    {
+      "type": "paragraph",
+      "text": "A noun is a fundamental part of speech that serves as the name for a specific person, place, thing, or idea. Nouns act as the subject of a sentence, the object of a verb, or the object of a preposition. Essentially, they are the words we use to identify the 'who' and 'what' in our language."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>Teacher</strong> (person), <strong>school</strong> (place), <strong>book</strong> (thing), <strong>education</strong> (idea).</p>"
+    },
+    {
+      "type": "heading",
+      "text": "Types of Nouns"
+    },
+    {
+      "type": "subheading",
+      "text": "Proper Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A proper noun names a *specific*, unique person, place, organization, or thing. The most important rule for proper nouns is that they **always begin with a capital letter**, no matter where they appear in a sentence."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>Persons:</strong> `Mahatma Gandhi`, `William Shakespeare`<br><strong>Places:</strong> `India`, `Paris`<br><strong>Organizations:</strong> `Google`, `the United Nations`<br><strong>Days, Months, Holidays:</strong> `Monday`, `October`, `Diwali`</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Common Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A common noun is the generic name for a person, place, thing, or idea. It refers to a general category rather than a specific individual. Common nouns are **not capitalized** unless they are the first word of a sentence."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>Examples (Contrasted with Proper Nouns):</strong><br>`man` (vs. `Mahatma Gandhi`)<br>`city` (vs. `Paris`)<br>`company` (vs. `Google`)</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Concrete Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A concrete noun refers to anything that can be perceived through at least one of the five physical senses: sight, hearing, touch, taste, or smell. If you can physically interact with it or observe it, it's a concrete noun."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>Sight:</strong> `rainbow`, `mountain`<br><strong>Hearing:</strong> `music`, `thunder`<br><strong>Touch:</strong> `sand`, `velvet`<br><strong>Taste:</strong> `pizza`, `lemon`</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Abstract Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "An abstract noun is the opposite of a concrete noun. It names ideas, concepts, qualities, feelings, and states of being—things that have no physical existence and cannot be perceived by the five senses."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>Emotions:</strong> `love`, `courage`, `fear`<br><strong>Concepts:</strong> `freedom`, `justice`<br><strong>Qualities:</strong> `honesty`, `beauty`<br><strong>States of Being:</strong> `childhood`, `friendship`</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Count (or Countable) Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A count noun refers to something that can be counted as individual, separate units. These nouns have both singular and plural forms and can be used with numbers (like `three dogs`) and articles like `a` or `an` (`a dog`)."
+    },
+    {
+      "type": "example",
+      "text": "<p>`book` / `books`<br>`chair` / `chairs`<br>`idea` / `ideas`<br>`friend` / `friends`</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Mass (or Non-Countable) Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A mass noun names things that are treated as a whole and cannot be separated into individual, countable units. They usually do not have a plural form and require a 'counter' or a unit of measurement to be quantified."
+    },
+    {
+      "type": "example",
+      "text": "<p>`water` (quantified as `a glass of water`)<br>`rice` (quantified as `a bowl of rice`)<br>`information` (quantified as `a piece of information`)<br><strong>Other examples:</strong> `air`, `sugar`, `advice`</p>"
+    },
+    {
+      "type": "subheading",
+      "text": "Collective Noun"
+    },
+    {
+      "type": "paragraph",
+      "text": "A collective noun is a word that names a group of people, animals, or things, but is treated as a single entity. It can take either a singular or plural verb, depending on context."
+    },
+    {
+      "type": "example",
+      "text": "<p><strong>People:</strong> `team`, `family`, `committee`<br><strong>Animals:</strong> a `flock` of birds, a `herd` of elephants<br><strong>Things:</strong> a `bunch` of keys, a `fleet` of ships</p>"
+    },
+    {
+      "type": "practice_quiz",
+      "title": "Noun Practice",
+      "questions": [
+        {
+          "question": "Which of the following is an Abstract Noun?",
+          "options": ["Book", "Happiness", "Water", "Chair"],
+          "correct_answer": "Happiness"
+        },
+        {
+          "question": "Identify the Proper Noun in the sentence: 'Priya went to London.'",
+          "options": ["went", "to", "London", "sentence"],
+          "correct_answer": "London"
+        },
+        {
+          "question": "Which of the following is a Collective Noun?",
+          "options": ["Player", "Audience", "Star", "Car"],
+          "correct_answer": "Audience"
+        },
+        {
+          "question": "Which of the following is a Mass Noun?",
+          "options": ["Bottle", "Furniture", "Coin", "Desk"],
+          "correct_answer": "Furniture"
+        },
+        {
+          "question": "In the sentence 'The Eiffel Tower is a famous landmark', which is the Common Noun?",
+          "options": ["Eiffel Tower", "famous", "landmark", "is"],
+          "correct_answer": "landmark" }
+                                    ]}
+                                ]
+                            },
+                            "Pronoun": {
+                                "title": "Pronoun",
+                                "subtitle": "A word that is used in place of a noun.",
+                                "content": [
+                                    { "type": "paragraph", "text": "A pronoun is a part of a speech which functions as a replacement for a noun." },
+                                    { "type": "example", "text": "<p>Janice is a very stubborn child. <strong>She</strong> just stared at me when I told her to stop.<br>The largest slice is <strong>mine</strong>.<br><strong>We</strong> are number one.</p>" },
+                                    { "type": "practice_quiz", "title": "Pronoun Practice", "questions": [
+                                        { "question": "In 'Priya loves her new scooter', which word is the pronoun?", "options": ["Priya", "loves", "her", "scooter"], "correct_answer": "her" },
+                                        { "question": "Which pronoun would replace 'the students' in 'The students did their homework.'?", "options": ["He", "She", "It", "They"], "correct_answer": "They" }
+                                    ]}
+                                ]
+                            },
+                            "Verb": {
+                                "title": "Verb",
+                                "subtitle": "A word that expresses an action or a state of being.",
+                                "content": [
+                                    { "type": "paragraph", "text": "A verb is a word that shows an action (physical or mental) or state of being of the subject in a sentence. It is the most important part of a speech, for without a verb, a sentence would not exist." },
+                                    { "type": "example", "text": "<p>As usual, the Stormtroopers <strong>missed</strong> their shot.<br>They <strong>are</strong> always prepared in emergencies.</p>" },
+                                     { "type": "practice_quiz", "title": "Verb Practice", "questions": [
+                                        { "question": "Which word is the action verb in 'The children play in the park'?", "options": ["The", "children", "play", "park"], "correct_answer": "play" },
+                                        { "question": "Identify the linking verb: 'The soup smells delicious.'", "options": ["soup", "The", "smells", "delicious"], "correct_answer": "smells" }
+                                     ]}
+                                ]
+                            },
+                             "Adjective": {
+                                "title": "Adjective",
+                                "subtitle": "A word that describes a noun or pronoun.",
+                                "content": [
+                                    { "type": "paragraph", "text": "An adjective is a part of speech that describes a noun or a pronoun. It can specify the quality, size, and number of nouns or pronouns." },
+                                    { "type": "example", "text": "<p>The carvings are <strong>intricate</strong>.<br>I have <strong>two</strong> hamsters.<br>Wow! That doughnut is <strong>huge</strong>!</p>" },
+                                     { "type": "practice_quiz", "title": "Adjective Practice", "questions": [
+                                        { "question": "Identify the adjective in 'She wore a beautiful saree.'", "options": ["She", "wore", "beautiful", "saree"], "correct_answer": "beautiful" },
+                                        { "question": "Which word describes the noun in 'He is a brave soldier.'?", "options": ["He", "is", "a", "brave"], "correct_answer": "brave" }
+                                     ]}
+                                ]
+                            },
+                            "Adverb": {
+                                "title": "Adverb",
+                                "subtitle": "A word that modifies a verb, adjective, or another adverb.",
+                                "content": [
+                                    { "type": "paragraph", "text": "An adverb is a part of speech that describes a verb, an adjective, or another adverb." },
+                                     { "type": "list", "items": [
+                                        "<strong>Adverb of Manner:</strong> This describes how an action is done. e.g., 'Annie danced <strong>gracefully</strong>.'",
+                                        "<strong>Adverb of Time:</strong> This indicates when something happens. e.g., 'She came <strong>yesterday</strong>.'",
+                                        "<strong>Adverb of Place:</strong> This indicates where an action occurs. e.g., 'I looked <strong>everywhere</strong>!'",
+                                        "<strong>Adverb of Degree:</strong> This describes the intensity of something. e.g., 'The child is <strong>very</strong> talented.'"
+                                    ]},
+                                    { "type": "practice_quiz", "title": "Adverb Practice", "questions": [
+                                        { "question": "Which word is the adverb in 'The train arrived early'?", "options": ["train", "The", "arrived", "early"], "correct_answer": "early" },
+                                        { "question": "Identify the adverb that modifies an adjective in 'It was an extremely difficult test.'", "options": ["was", "an", "extremely", "test"], "correct_answer": "extremely" }
+                                    ]}
+                                ]
+                            },
+                            "Preposition": {
+                                "title": "Preposition",
+                                "subtitle": "A word that shows a relationship between words.",
+                                "content": [
+                                    { "type": "paragraph", "text": "A preposition is a part of speech that refers to words that specify location or a location in time. Examples include: above, below, throughout, outside, before, near, and since." },
+                                    { "type": "example", "text": "<p>Micah is hiding <strong>under</strong> the bed.<br><strong>During</strong> the game, the audience never stopped cheering for their team.</p>" },
+                                    { "type": "practice_quiz", "title": "Preposition Practice", "questions": [
+                                        { "question": "Find the preposition in 'The book is on the desk.'", "options": ["book", "is", "on", "desk"], "correct_answer": "on" },
+                                        { "question": "Which word shows a relationship in 'She walked through the door.'?", "options": ["She", "walked", "through", "door"], "correct_answer": "through" }
+                                    ]}
+                                ]
+                            },
+                            "Conjunction": {
+                                "title": "Conjunction",
+                                "subtitle": "A word that joins words, phrases, or clauses.",
+                                "content": [
+                                    { "type": "paragraph", "text": "A conjunction is a part of speech that joins words, phrases, or clauses together. Examples are: and, yet, but, for, nor, or, and so." },
+                                    { "type": "example", "text": "<p>This cup of tea is delicious <strong>and</strong> very soothing.<br>Kiyoko has to start all over again <strong>because</strong> she didn't follow the professor's instructions.</p>" },
+                                    { "type": "practice_quiz", "title": "Conjunction Practice", "questions": [
+                                        { "question": "Which is the conjunction in 'He is clever but lazy'?", "options": ["He", "is", "clever", "but"], "correct_answer": "but" },
+                                        { "question": "Find the conjunction in 'I will wait until you finish.'", "options": ["I", "will", "wait", "until"], "correct_answer": "until" }
+                                    ]}
+                                ]
+                            },
+                            "Interjection": {
+                                "title": "Interjection",
+                                "subtitle": "A word that expresses strong emotion.",
+                                "content": [
+                                    { "type": "paragraph", "text": "An interjection is a part of speech that expresses emotions. Interjections are often used to convey strong emotions and are typically followed by an exclamation point." },
+                                    { "type": "example", "text": "<p><strong>Ouch!</strong> That must have hurt.<br><strong>Hurray,</strong> we won!</p>" },
+                                    { "type": "practice_quiz", "title": "Interjection Practice", "questions": [
+                                        { "question": "Which of these words is an interjection?", "options": ["Run", "Quickly", "Alas", "The"], "correct_answer": "Alas" },
+                                        { "question": "Identify the interjection in 'Hey! What are you doing?'", "options": ["Hey", "What", "are", "you"], "correct_answer": "Hey" }
+                                    ]}
+                                ]
+                            }
+                        }
+                    },
+                    "Sentence Structure": {
+                        "title": "Sentence Structure",
+                        "subtitle": "The six fundamental sentence forms.",
+                        "content": [
+                            { "type": "heading", "text": "The Basic Building Blocks" },
+                            { "type": "paragraph", "text": "Every complete sentence contains a subject (who/what the sentence is about) and a verb (the action or state of being)." },
+                            { "type": "heading", "text": "The Six Sentence Forms" },
+                            { "type": "paragraph", "text": "Sentences can be structured in six primary ways to make statements, ask questions, and express negation. Let's see how a simple statement 'He is sleeping' can be transformed." },
+                            { "type": "comparison", "data": {
+                                "headers": ["Form", "Structure", "Example"],
+                                "rows": [
+                                    ["1. Affirmative", "Subject + HV + Main Verb + Object", "He is sleeping."],
+                                    ["2. Negative", "Subject + HV + not + Main Verb + Object", "He is not sleeping."],
+                                    ["3. Interrogative", "HV + Subject + Main Verb + Object?", "Is he sleeping?"],
+                                    ["4. Interrogative-Negative", "HV + Subject + not + Main Verb + Object?", "Is he not sleeping?"],
+                                    ["5. Double Interrogative", "Wh-word + HV + Subject + Main Verb + Object?", "Why is he sleeping?"],
+                                    ["6. Double Interrogative-Negative", "Wh-word + HV + Subject + not + Main Verb + Object?", "Why is he not sleeping?"]
+                                ]
+                            }},
+                            {
+                                "type": "jumbled_quiz",
+                                "title": "Sentence Scramble",
+                                "questions": [
+                                    { "jumbled": ["the", "dog", "barks", "loudly"], "correct": "The dog barks loudly" },
+    { "jumbled": ["not", "eat", "I", "do", "broccoli"], "correct": "I do not eat broccoli" },
+    { "jumbled": ["?", "you", "Are", "coming", "the", "to", "party"], "correct": "Are you coming to the party?" },
+    { "jumbled": ["not", "he", "tired", "Is", "?", "feeling"], "correct": "Is he not feeling tired?" },
+    { "jumbled": ["did", "Where", "you", "go", "?", "yesterday"], "correct": "Where did you go yesterday?" },
+    { "jumbled": ["not", "Why", "are", "listening", "they", "?", "to", "me"], "correct": "Why are they not listening to me?" },
+    { "jumbled": ["to", "She", "used", "live", "in", "Paris"], "correct": "She used to live in Paris" },
+    { "jumbled": ["not", "use", "He", "did", "to", "smoke"], "correct": "He did not use to smoke" },
+    { "jumbled": ["?", "Did", "you", "use", "to", "here", "work"], "correct": "Did you use to work here?" },
+    { "jumbled": ["not", "she", "Did", "to", "use", "have", "pets", "?", "any"], "correct": "Did she not use to have any pets?" },
+    { "jumbled": ["you", "to", "did", "use", "live", "Where", "?"], "correct": "Where did you use to live?" },
+    { "jumbled": ["not", "Why", "he", "use", "did", "?", "to", "the", "join", "club"], "correct": "Why did he not use to join the club?" },
+    { "jumbled": ["You", "have", "got", "to", "this", "finish"], "correct": "You have got to finish this" },
+    { "jumbled": ["not", "We", "got", "have", "to", "now", "leave"], "correct": "We have not got to leave now" },
+    { "jumbled": ["got", "she", "Has", "to", "be", "there", "early", "?", "to"], "correct": "Has she got to be there early?" },
+    { "jumbled": ["not", "Have", "you", "got", "to", "the", "?", "report", "complete"], "correct": "Have you not got to complete the report?" },
+    { "jumbled": ["have", "What", "?", "we", "got", "to", "do", "next"], "correct": "What have we got to do next?" },
+    { "jumbled": ["not", "Why", "he", "has", "got", "to", "help", "?", "us"], "correct": "Why has he not got to help us?" },
+    { "jumbled": ["He", "had", "got", "to", "tell", "the", "truth"], "correct": "He had got to tell the truth" },
+    { "jumbled": ["not", "had", "They", "got", "to", "so", "wait", "long"], "correct": "They had not got to wait so long" },
+    { "jumbled": ["Had", "she", "?", "got", "the", "tickets", "to", "buy"], "correct": "Had she got to buy the tickets?" },
+    { "jumbled": ["he", "not", "Had", "got", "to", "the", "rules", "?", "follow"], "correct": "Had he not got to follow the rules?" },
+    { "jumbled": ["had", "When", "you", "got", "to", "be", "there", "?", "back"], "correct": "When had you got to be back there?" },
+    { "jumbled": ["Why", "not", "had", "we", "got", "to", "the", "warning", "heed", "?"], "correct": "Why had we not got to heed the warning?" },
+    { "jumbled": ["She", "has", "to", "study", "for", "her", "exam"], "correct": "She has to study for her exam" },
+    { "jumbled": ["do", "not", "I", "have", "to", "work", "today"], "correct": "I do not have to work today" },
+    { "jumbled": ["you", "Do", "have", "to", "go", "now", "?", "so"], "correct": "Do you have to go now?" },
+    { "jumbled": ["Does", "not", "he", "have", "?", "to", "the", "meeting", "attend"], "correct": "Does he not have to attend the meeting?" },
+    { "jumbled": ["What", "do", "I", "have", "to", "bring", "?", "with", "me"], "correct": "What do I have to bring with me?" },
+    { "jumbled": ["Why", "don't", "you", "have", "to", "your", "room", "clean", "?"], "correct": "Why don't you have to clean your room?" },
+    { "jumbled": ["They", "had", "to", "cancel", "the", "trip"], "correct": "They had to cancel the trip" },
+    { "jumbled": ["did", "We", "not", "have", "to", "pay", "for", "it"], "correct": "We did not have to pay for it" },
+    { "jumbled": ["Did", "she", "have", "?", "to", "wait", "in", "line"], "correct": "Did she have to wait in line?" },
+    { "jumbled": ["not", "Did", "you", "have", "to", "the", "form", "fill", "out", "?"], "correct": "Did you not have to fill out the form?" },
+    { "jumbled": ["did", "When", "he", "have", "to", "leave", "?", "the", "city"], "correct": "When did he have to leave the city?" },
+    { "jumbled": ["Why", "not", "did", "they", "have", "to", "the", "story", "explain", "?", "their"], "correct": "Why did they not have to explain their story?" },
+    { "jumbled": ["He", "is", "about", "to", "arrive"], "correct": "He is about to arrive" },
+    { "jumbled": ["not", "am", "I", "about", "to", "give", "up"], "correct": "I am not about to give up" },
+    { "jumbled": ["they", "Are", "about", "to", "start", "the", "show", "?"], "correct": "Are they about to start the show?" },
+    { "jumbled": ["she", "Is", "not", "about", "to", "make", "a", "speech", "?", "big"], "correct": "Is she not about to make a big speech?" },
+    { "jumbled": ["What", "are", "you", "about", "to", "do", "?", "next"], "correct": "What are you about to do next?" },
+    { "jumbled": ["Why", "is", "he", "not", "about", "to", "join", "the", "team", "?"], "correct": "Why is he not about to join the team?" },
+    { "jumbled": ["I", "was", "about", "to", "call", "you"], "correct": "I was about to call you" },
+    { "jumbled": ["They", "were", "not", "about", "to", "admit", "defeat"], "correct": "They were not about to admit defeat" },
+    { "jumbled": ["Were", "you", "about", "to", "leave", "?", "without", "me"], "correct": "Were you about to leave without me?" },
+    { "jumbled": ["he", "Was", "not", "about", "to", "the", "secret", "reveal", "?", ], "correct": "Was he not about to reveal the secret?" },
+    { "jumbled": ["were", "What", "you", "about", "to", "say", "?", "to", "her"], "correct": "What were you about to say to her?" },
+    { "jumbled": ["Why", "were", "they", "not", "about", "to", "the", "offer", "accept", "?", "generous"], "correct": "Why were they not about to accept the generous offer?" },
+    { "jumbled": ["She", "is", "reading", "a", "book"], "correct": "She is reading a book" },
+    { "jumbled": ["He", "is", "not", "watching", "TV"], "correct": "He is not watching TV" },
+    { "jumbled": ["Are", "you", "listening", "?", "to", "the", "music"], "correct": "Are you listening to the music?" },
+    { "jumbled": ["not", "Is", "it", "raining", "outside", "?", "heavily"], "correct": "Is it not raining heavily outside?" },
+    { "jumbled": ["are", "What", "they", "building", "in", "the", "backyard", "?", ], "correct": "What are they building in the backyard?" },
+    { "jumbled": ["Why", "is", "she", "not", "her", "homework", "doing", "?", ], "correct": "Why is she not doing her homework?" },
+    { "jumbled": ["They", "were", "playing", "chess"], "correct": "They were playing chess" },
+    { "jumbled": ["I", "was", "not", "sleeping", "at", "that", "time"], "correct": "I was not sleeping at that time" },
+    { "jumbled": ["Were", "you", "studying", "when", "I", "called", "?", "last", "night"], "correct": "Were you studying when I called last night?" },
+    { "jumbled": ["he", "Was", "not", "paying", "attention", "during", "the", "lecture", "?", ], "correct": "Was he not paying attention during the lecture?" },
+    { "jumbled": ["were", "What", "you", "talking", "about", "?", "with", "him"], "correct": "What were you talking about with him?" },
+    { "jumbled": ["Why", "were", "they", "not", "the", "rules", "following", "?", "of", "the", "game"], "correct": "Why were they not following the rules of the game?" },
+    { "jumbled": ["I", "have", "been", "working", "for", "three", "hours"], "correct": "I have been working for three hours" },
+    { "jumbled": ["She", "has", "not", "been", "feeling", "well", "since", "morning"], "correct": "She has not been feeling well since morning" },
+    { "jumbled": ["Have", "you", "been", "waiting", "here", "for", "a", "long", "time", "?", ], "correct": "Have you been waiting here for a long time?" },
+    { "jumbled": ["not", "Has", "he", "been", "practicing", "the", "piano", "daily", "?", ], "correct": "Has he not been practicing the piano daily?" },
+    { "jumbled": ["How", "long", "have", "you", "been", "learning", "Spanish", "?", ], "correct": "How long have you been learning Spanish?" },
+    { "jumbled": ["Why", "have", "they", "not", "been", "responding", "to", "my", "emails", "?", ], "correct": "Why have they not been responding to my emails?" },
+    { "jumbled": ["He", "had", "been", "driving", "all", "night", "before", "he", "arrived"], "correct": "He had been driving all night before he arrived" },
+    { "jumbled": ["She", "had", "not", "been", "studying", "before", "the", "exam"], "correct": "She had not been studying before the exam" },
+    { "jumbled": ["Had", "you", "been", "living", "there", "for", "long", "before", "you", "moved", "?", ], "correct": "Had you been living there for long before you moved?" },
+    { "jumbled": ["not", "Had", "they", "been", "working", "on", "the", "project", "before", "it", "was", "cancelled", "?", ], "correct": "Had they not been working on the project before it was cancelled?" },
+    { "jumbled": ["What", "had", "she", "been", "doing", "before", "the", "power", "went", "out", "?", ], "correct": "What had she been doing before the power went out?" },
+    { "jumbled": ["Why", "had", "he", "not", "been", "taking", "his", "medicine", "before", "he", "got", "sicker", "?", ], "correct": "Why had he not been taking his medicine before he got sicker?" },
+    { "jumbled": ["They", "have", "finished", "the", "project"], "correct": "They have finished the project" },
+    { "jumbled": ["I", "have", "not", "seen", "that", "movie", "yet"], "correct": "I have not seen that movie yet" },
+    { "jumbled": ["Have", "you", "eaten", "breakfast", "?", "already"], "correct": "Have you already eaten breakfast?" },
+    { "jumbled": ["she", "Has", "not", "called", "you", "back", "?", ], "correct": "Has she not called you back?" },
+    { "jumbled": ["have", "What", "you", "done", "with", "the", "keys", "?", ], "correct": "What have you done with the keys?" },
+    { "jumbled": ["Why", "has", "he", "not", "his", "homework", "completed", "?", ], "correct": "Why has he not completed his homework?" },
+    { "jumbled": ["She", "had", "left", "before", "I", "arrived"], "correct": "She had left before I arrived" },
+    { "jumbled": ["He", "had", "not", "realized", "his", "mistake"], "correct": "He had not realized his mistake" },
+    { "jumbled": ["Had", "you", "met", "him", "before", "the", "party", "?", ], "correct": "Had you met him before the party?" },
+    { "jumbled": ["not", "Had", "they", "been", "informed", "about", "the", "changes", "?", ], "correct": "Had they not been informed about the changes?" },
+    { "jumbled": ["had", "What", "she", "said", "to", "make", "him", "so", "angry", "?", ], "correct": "What had she said to make him so angry?" },
+    { "jumbled": ["Why", "had", "you", "not", "the", "door", "locked", "?", "before", "leaving"], "correct": "Why had you not locked the door before leaving?" },
+    { "jumbled": ["He", "went", "to", "the", "store", "yesterday"], "correct": "He went to the store yesterday" },
+    { "jumbled": ["She", "did", "not", "understand", "the", "question"], "correct": "She did not understand the question" },
+    { "jumbled": ["Did", "you", "enjoy", "the", "concert", "?", "last", "night"], "correct": "Did you enjoy the concert last night?" },
+    { "jumbled": ["not", "Did", "they", "receive", "the", "invitation", "?", ], "correct": "Did they not receive the invitation?" },
+    { "jumbled": ["did", "Where", "you", "find", "that", "beautiful", "dress", "?", ], "correct": "Where did you find that beautiful dress?" },
+    { "jumbled": ["Why", "did", "he", "not", "the", "truth", "tell", "?", "us"], "correct": "Why did he not tell us the truth?" },
+    { "jumbled": ["She", "can", "speak", "French", "fluently"], "correct": "She can speak French fluently" },
+    { "jumbled": ["I", "cannot", "believe", "what", "happened"], "correct": "I cannot believe what happened" },
+    { "jumbled": ["Can", "you", "help", "me", "with", "this", "?", "problem"], "correct": "Can you help me with this problem?" },
+    { "jumbled": ["not", "Can", "we", "take", "a", "break", "now", "?", ], "correct": "Can we not take a break now?" },
+    { "jumbled": ["can", "How", "I", "improve", "my", "English", "?", "skills"], "correct": "How can I improve my English skills?" },
+    { "jumbled": ["Why", "can't", "you", "be", "on", "time", "for", "once", "?", ], "correct": "Why can't you be on time for once?" },
+    { "jumbled": ["He", "could", "run", "very", "fast", "when", "he", "was", "young"], "correct": "He could run very fast when he was young" },
+    { "jumbled": ["I", "could", "not", "hear", "what", "you", "said"], "correct": "I could not hear what you said" },
+    { "jumbled": ["Could", "you", "pass", "the", "salt", "please", "?", ], "correct": "Could you pass the salt, please?" },
+    { "jumbled": ["not", "Could", "you", "have", "been", "a", "little", "quieter", "?", ], "correct": "Could you not have been a little quieter?" },
+    { "jumbled": ["How", "could", "she", "solve", "the", "puzzle", "so", "quickly", "?", ], "correct": "How could she solve the puzzle so quickly?" },
+    { "jumbled": ["Why", "couldn't", "they", "come", "to", "the", "event", "?", "yesterday"], "correct": "Why couldn't they come to the event yesterday?" },
+    { "jumbled": ["You", "could", "have", "won", "the", "race"], "correct": "You could have won the race" },
+    { "jumbled": ["He", "could", "not", "have", "known", "the", "answer"], "correct": "He could not have known the answer" },
+    { "jumbled": ["Could", "she", "have", "made", "a", "mistake", "?", "in", "her", "calculations"], "correct": "Could she have made a mistake in her calculations?" },
+    { "jumbled": ["not", "Could", "you", "have", "told", "me", "earlier", "?", "about", "this"], "correct": "Could you not have told me earlier about this?" },
+    { "jumbled": ["What", "else", "could", "we", "have", "done", "in", "that", "situation", "?", ], "correct": "What else could we have done in that situation?" },
+    { "jumbled": ["Why", "couldn't", "he", "have", "been", "more", "careful", "?", "with", "the", "vase"], "correct": "Why couldn't he have been more careful with the vase?" },
+    { "jumbled": ["You", "should", "apologize", "for", "your", "behavior"], "correct": "You should apologize for your behavior" },
+    { "jumbled": ["He", "should", "not", "waste", "his", "time"], "correct": "He should not waste his time" },
+    { "jumbled": ["Should", "I", "wear", "the", "blue", "shirt", "or", "the", "red", "one", "?", ], "correct": "Should I wear the blue shirt or the red one?" },
+    { "jumbled": ["not", "Should", "we", "be", "more", "environmentally", "conscious", "?", ], "correct": "Should we not be more environmentally conscious?" },
+    { "jumbled": ["What", "should", "I", "do", "to", "prepare", "for", "the", "interview", "?", ], "correct": "What should I do to prepare for the interview?" },
+    { "jumbled": ["Why", "shouldn't", "she", "get", "a", "second", "chance", "?", ], "correct": "Why shouldn't she get a second chance?" },
+    { "jumbled": ["He", "should", "have", "listened", "to", "my", "advice"], "correct": "He should have listened to my advice" },
+    { "jumbled": ["You", "should", "not", "have", "said", "that", "to", "her"], "correct": "You should not have said that to her" },
+    { "jumbled": ["Should", "I", "have", "called", "you", "before", "coming", "?", ], "correct": "Should I have called you before coming?" },
+    { "jumbled": ["not", "Should", "they", "have", "been", "notified", "in", "advance", "?", ], "correct": "Should they not have been notified in advance?" },
+    { "jumbled": ["What", "should", "he", "have", "done", "differently", "?", "to", "avoid", "the", "accident"], "correct": "What should he have done differently to avoid the accident?" },
+    { "jumbled": ["Why", "shouldn't", "we", "have", "taken", "the", "other", "road", "?", ], "correct": "Why shouldn't we have taken the other road?" },
+    { "jumbled": ["I", "will", "see", "you", "tomorrow"], "correct": "I will see you tomorrow" },
+    { "jumbled": ["She", "will", "not", "be", "attending", "the", "meeting"], "correct": "She will not be attending the meeting" },
+    { "jumbled": ["Will", "you", "be", "at", "home", "tonight", "?", ], "correct": "Will you be at home tonight?" },
+    { "jumbled": ["not", "Will", "he", "be", "joining", "us", "for", "dinner", "?", ], "correct": "Will he not be joining us for dinner?" },
+    { "jumbled": ["When", "will", "the", "train", "arrive", "?", "at", "the", "station"], "correct": "When will the train arrive at the station?" },
+    { "jumbled": ["Why", "won't", "you", "tell", "me", "the", "secret", "?", ], "correct": "Why won't you tell me the secret?" },
+    { "jumbled": ["You", "will", "have", "to", "finish", "this", "by", "Friday"], "correct": "You will have to finish this by Friday" },
+    { "jumbled": ["He", "will", "not", "have", "to", "work", "on", "the", "weekend"], "correct": "He will not have to work on the weekend" },
+    { "jumbled": ["Will", "I", "have", "to", "bring", "my", "own", "laptop", "?", ], "correct": "Will I have to bring my own laptop?" },
+    { "jumbled": ["not", "Will", "she", "have", "to", "get", "a", "visa", "for", "the", "trip", "?", ], "correct": "Will she not have to get a visa for the trip?" },
+    { "jumbled": ["What", "time", "will", "we", "have", "to", "be", "at", "the", "airport", "?", ], "correct": "What time will we have to be at the airport?" },
+    { "jumbled": ["Why", "won't", "they", "have", "to", "retake", "the", "test", "?", ], "correct": "Why won't they have to retake the test?" },
+    { "jumbled": ["She", "will", "be", "able", "to", "drive", "soon"], "correct": "She will be able to drive soon" },
+    { "jumbled": ["I", "will", "not", "be", "able", "to", "attend", "the", "party"], "correct": "I will not be able to attend the party" },
+    { "jumbled": ["Will", "you", "be", "able", "to", "help", "me", "move", "the", "furniture", "?", ], "correct": "Will you be able to help me move the furniture?" },
+    { "jumbled": ["not", "Will", "he", "be", "able", "to", "fix", "the", "computer", "?", ], "correct": "Will he not be able to fix the computer?" },
+    { "jumbled": ["When", "will", "she", "be", "able", "to", "start", "her", "new", "job", "?", ], "correct": "When will she be able to start her new job?" },
+    { "jumbled": ["Why", "won't", "you", "be", "able", "to", "make", "it", "on", "time", "?", ], "correct": "Why won't you be able to make it on time?" },
+    { "jumbled": ["By", "next", "year", "I", "will", "have", "graduated", "from", "college"], "correct": "By next year, I will have graduated from college" },
+    { "jumbled": ["He", "will", "not", "have", "finished", "the", "book", "by", "tonight"], "correct": "He will not have finished the book by tonight" },
+    { "jumbled": ["Will", "you", "have", "completed", "the", "assignment", "by", "the", "deadline", "?", ], "correct": "Will you have completed the assignment by the deadline?" },
+    { "jumbled": ["not", "Will", "they", "have", "arrived", "by", "the", "time", "we", "get", "there", "?", ], "correct": "Will they not have arrived by the time we get there?" },
+    { "jumbled": ["How", "many", "pages", "will", "you", "have", "read", "by", "the", "end", "of", "the", "day", "?", ], "correct": "How many pages will you have read by the end of the day?" },
+    { "jumbled": ["Why", "won't", "she", "have", "received", "the", "package", "by", "Friday", "?", ], "correct": "Why won't she have received the package by Friday?" },
+    { "jumbled": ["This", "time", "tomorrow", "we", "will", "be", "flying", "to", "Hawaii"], "correct": "This time tomorrow, we will be flying to Hawaii" },
+    { "jumbled": ["He", "will", "not", "be", "working", "at", "this", "time", "next", "week"], "correct": "He will not be working at this time next week" },
+    { "jumbled": ["Will", "you", "be", "watching", "the", "game", "tonight", "?", ], "correct": "Will you be watching the game tonight?" },
+    { "jumbled": ["not", "Will", "they", "be", "waiting", "for", "us", "at", "the", "station", "?", ], "correct": "Will they not be waiting for us at the station?" },
+    { "jumbled": ["What", "will", "you", "be", "doing", "at", "8", "PM", "this", "evening", "?", ], "correct": "What will you be doing at 8 PM this evening?" },
+    { "jumbled": ["Why", "won't", "she", "be", "joining", "the", "celebration", "?", "tonight"], "correct": "Why won't she be joining the celebration tonight?" },
+    { "jumbled": ["By", "2030", "I", "will", "have", "been", "working", "here", "for", "ten", "years"], "correct": "By 2030, I will have been working here for ten years" },
+    { "jumbled": ["She", "will", "not", "have", "been", "studying", "long", "enough", "to", "pass", "the", "exam"], "correct": "She will not have been studying long enough to pass the exam" },
+    { "jumbled": ["Will", "you", "have", "been", "living", "in", "this", "city", "for", "five", "years", "by", "next", "month", "?", ], "correct": "Will you have been living in this city for five years by next month?" },
+    { "jumbled": ["not", "Will", "he", "have", "been", "playing", "the", "guitar", "for", "a", "decade", "by", "his", "next", "birthday", "?", ], "correct": "Will he not have been playing the guitar for a decade by his next birthday?" },
+    { "jumbled": ["How", "long", "will", "they", "have", "been", "traveling", "by", "the", "time", "they", "reach", "their", "destination", "?", ], "correct": "How long will they have been traveling by the time they reach their destination?" },
+    { "jumbled": ["Why", "won't", "you", "have", "been", "practicing", "enough", "before", "the", "competition", "?", ], "correct": "Why won't you have been practicing enough before the competition?" },
+    { "jumbled": ["It", "might", "rain", "this", "afternoon"], "correct": "It might rain this afternoon" },
+    { "jumbled": ["He", "might", "not", "come", "to", "the", "party"], "correct": "He might not come to the party" },
+    { "jumbled": ["I", "might", "ask", "a", "question"], "correct": "I might ask a question" },
+    { "jumbled": ["They", "might", "not", "need", "our", "help"], "correct": "They might not need our help" },
+    { "jumbled": ["Something", "might", "happen", "if", "we", "are", "late"], "correct": "Something might happen if we are late" },
+    { "jumbled": ["She", "might", "not", "want", "to", "go", "to", "the", "concert"], "correct": "She might not want to go to the concert" },
+    { "jumbled": ["She", "might", "have", "forgotten", "about", "our", "meeting"], "correct": "She might have forgotten about our meeting" },
+    { "jumbled": ["He", "might", "not", "have", "received", "your", "message"], "correct": "He might not have received your message" },
+    { "jumbled": ["They", "might", "have", "taken", "the", "wrong", "turn"], "correct": "They might have taken the wrong turn" },
+    { "jumbled": ["He", "might", "not", "have", "understood", "the", "instructions"], "correct": "He might not have understood the instructions" },
+    { "jumbled": ["She", "might", "have", "lost", "the", "documents"], "correct": "She might have lost the documents" },
+    { "jumbled": ["They", "might", "not", "have", "called", "us", "back"], "correct": "They might not have called us back" },
+    { "jumbled": ["She", "might", "be", "sleeping", "right", "now"], "correct": "She might be sleeping right now" },
+    { "jumbled": ["He", "might", "not", "be", "watching", "the", "movie", "with", "us"], "correct": "He might not be watching the movie with us" },
+    { "jumbled": ["They", "might", "be", "waiting", "at", "the", "cafe"], "correct": "They might be waiting at the cafe" },
+    { "jumbled": ["She", "might", "not", "be", "feeling", "well", "today"], "correct": "She might not be feeling well today" },
+    { "jumbled": ["He", "might", "be", "thinking", "about", "the", "problem"], "correct": "He might be thinking about the problem" },
+    { "jumbled": ["They", "might", "not", "be", "participating", "in", "the", "discussion"], "correct": "They might not be participating in the discussion" },
+    { "jumbled": ["He", "might", "have", "been", "working", "late", "last", "night"], "correct": "He might have been working late last night" },
+    { "jumbled": ["They", "might", "not", "have", "been", "paying", "attention", "during", "the", "meeting"], "correct": "They might not have been paying attention during the meeting" },
+    { "jumbled": ["She", "might", "have", "been", "studying", "all", "week"], "correct": "She might have been studying all week" },
+    { "jumbled": ["He", "might", "not", "have", "been", "feeling", "well"], "correct": "He might not have been feeling well" },
+    { "jumbled": ["They", "might", "have", "been", "discussing", "a", "secret"], "correct": "They might have been discussing a secret" },
+    { "jumbled": ["She", "might", "not", "have", "been", "telling", "the", "truth"], "correct": "She might not have been telling the truth" },
+    { "jumbled": ["The", "sun", "rises", "in", "the", "east"], "correct": "The sun rises in the east" },
+    { "jumbled": ["Cats", "do", "not", "like", "water"], "correct": "Cats do not like water" },
+    { "jumbled": ["you", "Do", "like", "chocolate", "ice", "cream", "?", ], "correct": "Do you like chocolate ice cream?" },
+    { "jumbled": ["he", "Does", "not", "live", "in", "this", "neighborhood", "?", ], "correct": "Does he not live in this neighborhood?" },
+    { "jumbled": ["What", "time", "does", "the", "store", "open", "?", ], "correct": "What time does the store open?" },
+    { "jumbled": ["Why", "don't", "we", "go", "for", "a", "walk", "in", "the", "park", "?", ], "correct": "Why don't we go for a walk in the park?" },
+    { "jumbled": ["I", "used", "to", "play", "the", "guitar", "in", "a", "band"], "correct": "I used to play the guitar in a band" },
+    { "jumbled": ["She", "did", "not", "use", "to", "enjoy", "spicy", "food"], "correct": "She did not use to enjoy spicy food" },
+    { "jumbled": ["Did", "they", "use", "to", "be", "classmates", "?", "in", "high", "school"], "correct": "Did they use to be classmates in high school?" },
+    { "jumbled": ["not", "Did", "he", "use", "to", "have", "a", "beard", "?", ], "correct": "Did he not use to have a beard?" },
+    { "jumbled": ["What", "kind", "of", "music", "did", "you", "use", "to", "listen", "to", "?", ], "correct": "What kind of music did you use to listen to?" },
+    { "jumbled": ["Why", "didn't", "she", "use", "to", "participate", "in", "sports", "?", ], "correct": "Why didn't she use to participate in sports?" },
+    { "jumbled": ["We", "have", "got", "to", "leave", "in", "five", "minutes"], "correct": "We have got to leave in five minutes" },
+    { "jumbled": ["He", "has", "not", "got", "to", "worry", "about", "that"], "correct": "He has not got to worry about that" },
+    { "jumbled": ["Have", "you", "got", "to", "work", "on", "Saturday", "?", ], "correct": "Have you got to work on Saturday?" },
+    { "jumbled": ["not", "Has", "she", "got", "to", "finish", "the", "report", "by", "tomorrow", "?", ], "correct": "Has she not got to finish the report by tomorrow?" },
+    { "jumbled": ["When", "have", "we", "got", "to", "submit", "our", "application", "?", ], "correct": "When have we got to submit our application?" },
+    { "jumbled": ["Why", "haven't", "you", "got", "to", "be", "at", "the", "rehearsal", "?", ], "correct": "Why haven't you got to be at the rehearsal?" },
+    { "jumbled": ["She", "had", "got", "to", "make", "a", "difficult", "decision"], "correct": "She had got to make a difficult decision" },
+    { "jumbled": ["They", "had", "not", "got", "to", "travel", "far", "for", "the", "conference"], "correct": "They had not got to travel far for the conference" },
+    { "jumbled": ["Had", "he", "got", "to", "be", "at", "the", "airport", "so", "early", "?", ], "correct": "Had he got to be at the airport so early?" },
+    { "jumbled": ["not", "Had", "you", "got", "to", "prepare", "a", "presentation", "?", "for", "the", "meeting"], "correct": "Had you not got to prepare a presentation for the meeting?" },
+    { "jumbled": ["Where", "had", "they", "got", "to", "go", "after", "the", "show", "?", ], "correct": "Where had they got to go after the show?" },
+    { "jumbled": ["Why", "hadn't", "she", "got", "to", "inform", "her", "supervisor", "?", ], "correct": "Why hadn't she got to inform her supervisor?" },
+    { "jumbled": ["I", "have", "to", "wake", "up", "early", "tomorrow"], "correct": "I have to wake up early tomorrow" },
+    { "jumbled": ["He", "does", "not", "have", "to", "wear", "a", "uniform", "at", "work"], "correct": "He does not have to wear a uniform at work" },
+    { "jumbled": ["Do", "we", "have", "to", "book", "tickets", "in", "advance", "?", ], "correct": "Do we have to book tickets in advance?" },
+    { "jumbled": ["not", "Does", "she", "have", "to", "bring", "anything", "to", "the", "potluck", "?", ], "correct": "Does she not have to bring anything to the potluck?" },
+    { "jumbled": ["What", "do", "you", "have", "to", "do", "to", "get", "a", "license", "?", ], "correct": "What do you have to do to get a license?" },
+    { "jumbled": ["Why", "don't", "they", "have", "to", "follow", "the", "same", "rules", "?", ], "correct": "Why don't they have to follow the same rules?" },
+    { "jumbled": ["I", "had", "to", "work", "late", "last", "night"], "correct": "I had to work late last night" },
+    { "jumbled": ["She", "did", "not", "have", "to", "cook", "dinner", "yesterday"], "correct": "She did not have to cook dinner yesterday" },
+    { "jumbled": ["Did", "you", "have", "to", "take", "a", "detour", "?", "because", "of", "the", "traffic"], "correct": "Did you have to take a detour because of the traffic?" },
+    { "jumbled": ["not", "Did", "he", "have", "to", "wait", "for", "a", "long", "time", "?", ], "correct": "Did he not have to wait for a long time?" },
+    { "jumbled": ["How", "far", "did", "they", "have", "to", "walk", "to", "reach", "the", "summit", "?", ], "correct": "How far did they have to walk to reach the summit?" },
+    { "jumbled": ["Why", "didn't", "you", "have", "to", "show", "your", "ID", "?", "at", "the", "entrance"], "correct": "Why didn't you have to show your ID at the entrance?" },
+    { "jumbled": ["The", "train", "is", "about", "to", "depart"], "correct": "The train is about to depart" },
+    { "jumbled": ["We", "are", "not", "about", "to", "miss", "this", "opportunity"], "correct": "We are not about to miss this opportunity" },
+    { "jumbled": ["Is", "he", "about", "to", "announce", "the", "winner", "?", ], "correct": "Is he about to announce the winner?" },
+    { "jumbled": ["not", "Are", "they", "about", "to", "cancel", "the", "event", "?", ], "correct": "Are they not about to cancel the event?" },
+    { "jumbled": ["What", "is", "she", "about", "to", "perform", "?", "on", "stage"], "correct": "What is she about to perform on stage?" },
+    { "jumbled": ["Why", "aren't", "you", "about", "to", "get", "ready", "for", "the", "party", "?", ], "correct": "Why aren't you about to get ready for the party?" },
+    { "jumbled": ["The", "cat", "was", "about", "to", "pounce", "on", "the", "mouse"], "correct": "The cat was about to pounce on the mouse" },
+    { "jumbled": ["We", "were", "not", "about", "to", "argue", "with", "the", "decision"], "correct": "We were not about to argue with the decision" },
+    { "jumbled": ["Was", "she", "about", "to", "burst", "into", "tears", "?", ], "correct": "Was she about to burst into tears?" },
+    { "jumbled": ["not", "Were", "they", "about", "to", "reveal", "the", "surprise", "?", ], "correct": "Were they not about to reveal the surprise?" },
+    { "jumbled": ["What", "was", "he", "about", "to", "add", "to", "his", "speech", "?", ], "correct": "What was he about to add to his speech?" },
+    { "jumbled": ["Why", "weren't", "you", "about", "to", "warn", "us", "about", "the", "danger", "?", ], "correct": "Why weren't you about to warn us about the danger?" },
+    { "jumbled": ["My", "friend", "is", "learning", "Japanese"], "correct": "My friend is learning Japanese" },
+    { "jumbled": ["The", "kids", "are", "not", "making", "any", "noise"], "correct": "The kids are not making any noise" },
+    { "jumbled": ["Is", "your", "brother", "working", "on", "a", "new", "project", "?", ], "correct": "Is your brother working on a new project?" },
+    { "jumbled": ["not", "Is", "the", "printer", "printing", "correctly", "?", ], "correct": "Is the printer not printing correctly?" },
+    { "jumbled": ["What", "are", "you", "cooking", "for", "dinner", "?", "tonight"], "correct": "What are you cooking for dinner tonight?" },
+    { "jumbled": ["Why", "is", "he", "not", "wearing", "his", "coat", "?", "it's", "cold", "outside"], "correct": "Why is he not wearing his coat? It's cold outside" },
+    { "jumbled": ["The", "birds", "were", "singing", "outside", "my", "window"], "correct": "The birds were singing outside my window" },
+    { "jumbled": ["I", "was", "not", "expecting", "to", "see", "you", "here"], "correct": "I was not expecting to see you here" },
+    { "jumbled": ["Were", "the", "children", "playing", "in", "the", "garden", "when", "it", "started", "to", "rain", "?", ], "correct": "Were the children playing in the garden when it started to rain?" },
+    { "jumbled": ["not", "Was", "he", "listening", "to", "the", "instructions", "carefully", "?", ], "correct": "Was he not listening to the instructions carefully?" },
+    { "jumbled": ["What", "were", "they", "discussing", "in", "the", "meeting", "?", "yesterday"], "correct": "What were they discussing in the meeting yesterday?" },
+    { "jumbled": ["Why", "wasn't", "she", "feeling", "well", "during", "the", "trip", "?", ], "correct": "Why wasn't she feeling well during the trip?" },
+    { "jumbled": ["Our", "team", "has", "been", "practicing", "hard", "for", "the", "championship"], "correct": "Our team has been practicing hard for the championship" },
+    { "jumbled": ["I", "have", "not", "been", "getting", "enough", "sleep", "lately"], "correct": "I have not been getting enough sleep lately" },
+    { "jumbled": ["Has", "she", "been", "taking", "her", "vitamins", "regularly", "?", ], "correct": "Has she been taking her vitamins regularly?" },
+    { "jumbled": ["not", "Have", "they", "been", "following", "the", "news", "about", "the", "election", "?", ], "correct": "Have they not been following the news about the election?" },
+    { "jumbled": ["How", "long", "has", "he", "been", "waiting", "for", "the", "bus", "?", ], "correct": "How long has he been waiting for the bus?" },
+    { "jumbled": ["Why", "haven't", "you", "been", "answering", "your", "phone", "?", "all", "day"], "correct": "Why haven't you been answering your phone all day?" },
+    { "jumbled": ["The", "detective", "had", "been", "investigating", "the", "case", "for", "months"], "correct": "The detective had been investigating the case for months" },
+    { "jumbled": ["She", "had", "not", "been", "expecting", "any", "visitors", "that", "day"], "correct": "She had not been expecting any visitors that day" },
+    { "jumbled": ["Had", "they", "been", "planning", "the", "surprise", "party", "for", "a", "long", "time", "?", ], "correct": "Had they been planning the surprise party for a long time?" },
+    { "jumbled": ["not", "Had", "he", "been", "feeling", "sick", "before", "the", "performance", "?", ], "correct": "Had he not been feeling sick before the performance?" },
+    { "jumbled": ["What", "had", "you", "been", "working", "on", "before", "you", "switched", "projects", "?", ], "correct": "What had you been working on before you switched projects?" },
+    { "jumbled": ["Why", "hadn't", "she", "been", "wearing", "her", "glasses", "if", "she", "couldn't", "see", "clearly", "?", ], "correct": "Why hadn't she been wearing her glasses if she couldn't see clearly?" },
+    { "jumbled": ["My", "parents", "have", "visited", "many", "countries"], "correct": "My parents have visited many countries" },
+    { "jumbled": ["She", "has", "not", "decided", "on", "a", "career", "path", "yet"], "correct": "She has not decided on a career path yet" },
+    { "jumbled": ["Have", "you", "ever", "tried", "sushi", "?", ], "correct": "Have you ever tried sushi?" },
+    { "jumbled": ["not", "Has", "he", "returned", "the", "library", "books", "?", ], "correct": "Has he not returned the library books?" },
+    { "jumbled": ["Which", "movies", "have", "you", "seen", "this", "year", "?", ], "correct": "Which movies have you seen this year?" },
+    { "jumbled": ["Why", "hasn't", "the", "mail", "arrived", "yet", "?", ], "correct": "Why hasn't the mail arrived yet?" },
+    { "jumbled": ["The", "guests", "had", "already", "arrived", "when", "we", "got", "there"], "correct": "The guests had already arrived when we got there" },
+    { "jumbled": ["I", "had", "not", "thought", "about", "that", "possibility"], "correct": "I had not thought about that possibility" },
+    { "jumbled": ["Had", "she", "finished", "her", "chores", "before", "her", "friends", "came", "over", "?", ], "correct": "Had she finished her chores before her friends came over?" },
+    { "jumbled": ["not", "Had", "they", "ever", "traveled", "outside", "their", "country", "before", "that", "trip", "?", ], "correct": "Had they not ever traveled outside their country before that trip?" },
+    { "jumbled": ["What", "had", "he", "accomplished", "before", "he", "turned", "thirty", "?", ], "correct": "What had he accomplished before he turned thirty?" },
+    { "jumbled": ["Why", "hadn't", "you", "told", "me", "about", "the", "problem", "sooner", "?", ], "correct": "Why hadn't you told me about the problem sooner?" },
+    { "jumbled": ["The", "artist", "painted", "a", "beautiful", "landscape"], "correct": "The artist painted a beautiful landscape" },
+    { "jumbled": ["We", "did", "not", "go", "to", "the", "beach", "because", "of", "the", "rain"], "correct": "We did not go to the beach because of the rain" },
+    { "jumbled": ["Did", "she", "buy", "the", "dress", "she", "was", "looking", "at", "?", ], "correct": "Did she buy the dress she was looking at?" },
+    { "jumbled": ["not", "Did", "they", "like", "the", "food", "at", "the", "new", "restaurant", "?", ], "correct": "Did they not like the food at the new restaurant?" },
+    { "jumbled": ["When", "did", "the", "Roman", "Empire", "fall", "?", ], "correct": "When did the Roman Empire fall?" },
+    { "jumbled": ["Why", "didn't", "he", "answer", "his", "phone", "when", "you", "called", "?", ], "correct": "Why didn't he answer his phone when you called?" },
+    { "jumbled": ["The", "chef", "can", "create", "amazing", "dishes"], "correct": "The chef can create amazing dishes" },
+    { "jumbled": ["I", "cannot", "find", "my", "glasses", "anywhere"], "correct": "I cannot find my glasses anywhere" },
+    { "jumbled": ["Can", "we", "reschedule", "our", "appointment", "for", "next", "week", "?", ], "correct": "Can we reschedule our appointment for next week?" },
+    { "jumbled": ["not", "Can", "you", "be", "more", "specific", "about", "what", "you", "need", "?", ], "correct": "Can you not be more specific about what you need?" },
+    { "jumbled": ["How", "can", "we", "reduce", "our", "carbon", "footprint", "?", ], "correct": "How can we reduce our carbon footprint?" },
+    { "jumbled": ["Why", "can't", "they", "agree", "on", "a", "solution", "?", ], "correct": "Why can't they agree on a solution?" },
+    { "jumbled": ["The", "old", "man", "could", "tell", "fascinating", "stories"], "correct": "The old man could tell fascinating stories" },
+    { "jumbled": ["We", "could", "not", "see", "the", "stars", "because", "of", "the", "city", "lights"], "correct": "We could not see the stars because of the city lights" },
+    { "jumbled": ["Could", "you", "please", "speak", "a", "little", "louder", "?", ], "correct": "Could you please speak a little louder?" },
+    { "jumbled": ["not", "Could", "she", "understand", "the", "directions", "you", "gave", "her", "?", ], "correct": "Could she not understand the directions you gave her?" },
+    { "jumbled": ["How", "could", "he", "forget", "such", "an", "important", "anniversary", "?", ], "correct": "How could he forget such an important anniversary?" },
+    { "jumbled": ["Why", "couldn't", "we", "find", "a", "parking", "spot", "closer", "to", "the", "entrance", "?", ], "correct": "Why couldn't we find a parking spot closer to the entrance?" },
+    { "jumbled": ["The", "team", "could", "have", "performed", "better", "with", "more", "practice"], "correct": "The team could have performed better with more practice" },
+    { "jumbled": ["I", "could", "not", "have", "done", "it", "without", "your", "help"], "correct": "I could not have done it without your help" },
+    { "jumbled": ["Could", "he", "have", "been", "mistaken", "about", "the", "time", "?", ], "correct": "Could he have been mistaken about the time?" },
+    { "jumbled": ["not", "Could", "they", "have", "prevented", "the", "accident", "?", ], "correct": "Could they not have prevented the accident?" },
+    { "jumbled": ["What", "more", "could", "she", "have", "said", "to", "convince", "them", "?", ], "correct": "What more could she have said to convince them?" },
+    { "jumbled": ["Why", "couldn't", "you", "have", "warned", "me", "about", "the", "traffic", "?", ], "correct": "Why couldn't you have warned me about the traffic?" },
+    { "jumbled": ["The", "students", "should", "review", "their", "notes", "before", "the", "test"], "correct": "The students should review their notes before the test" },
+    { "jumbled": ["You", "should", "not", "hesitate", "to", "ask", "for", "help"], "correct": "You should not hesitate to ask for help" },
+    { "jumbled": ["Should", "we", "take", "the", "scenic", "route", "or", "the", "highway", "?", ], "correct": "Should we take the scenic route or the highway?" },
+    { "jumbled": ["not", "Should", "he", "be", "more", "careful", "with", "his", "words", "?", ], "correct": "Should he not be more careful with his words?" },
+    { "jumbled": ["What", "should", "we", "bring", "to", "the", "picnic", "?", ], "correct": "What should we bring to the picnic?" },
+    { "jumbled": ["Why", "shouldn't", "I", "apply", "for", "that", "job", "?", ], "correct": "Why shouldn't I apply for that job?" },
+    { "jumbled": ["I", "should", "have", "started", "studying", "earlier"], "correct": "I should have started studying earlier" },
+    { "jumbled": ["She", "should", "not", "have", "ignored", "the", "doctor's", "advice"], "correct": "She should not have ignored the doctor's advice" },
+    { "jumbled": ["Should", "they", "have", "consulted", "us", "before", "making", "the", "decision", "?", ], "correct": "Should they have consulted us before making the decision?" },
+    { "jumbled": ["not", "Should", "he", "have", "been", "more", "honest", "about", "his", "experience", "?", ], "correct": "Should he not have been more honest about his experience?" },
+    { "jumbled": ["How", "should", "we", "have", "handled", "that", "difficult", "situation", "?", ], "correct": "How should we have handled that difficult situation?" },
+    { "jumbled": ["Why", "shouldn't", "she", "have", "been", "given", "the", "promotion", "?", ], "correct": "Why shouldn't she have been given the promotion?" },
+    { "jumbled": ["The", "company", "will", "launch", "a", "new", "product", "next", "month"], "correct": "The company will launch a new product next month" },
+    { "jumbled": ["I", "will", "not", "forget", "your", "kindness"], "correct": "I will not forget your kindness" },
+    { "jumbled": ["Will", "they", "announce", "the", "results", "tomorrow", "?", ], "correct": "Will they announce the results tomorrow?" },
+    { "jumbled": ["not", "Will", "she", "be", "able", "to", "attend", "the", "conference", "?", ], "correct": "Will she not be able to attend the conference?" },
+    { "jumbled": ["What", "will", "you", "do", "after", "you", "graduate", "?", ], "correct": "What will you do after you graduate?" },
+    { "jumbled": ["Why", "won't", "the", "car", "start", "?", ], "correct": "Why won't the car start?" },
+    { "jumbled": ["We", "will", "have", "to", "postpone", "the", "meeting"], "correct": "We will have to postpone the meeting" },
+    { "jumbled": ["You", "will", "not", "have", "to", "pay", "any", "extra", "fees"], "correct": "You will not have to pay any extra fees" },
+    { "jumbled": ["Will", "he", "have", "to", "get", "a", "new", "passport", "?", ], "correct": "Will he have to get a new passport?" },
+    { "jumbled": ["not", "Will", "they", "have", "to", "move", "to", "a", "different", "city", "?", ], "correct": "Will they not have to move to a different city?" },
+    { "jumbled": ["How", "much", "will", "we", "have", "to", "invest", "in", "this", "project", "?", ], "correct": "How much will we have to invest in this project?" },
+    { "jumbled": ["Why", "won't", "she", "have", "to", "take", "the", "entrance", "exam", "?", ], "correct": "Why won't she have to take the entrance exam?" },
+    { "jumbled": ["The", "new", "software", "will", "be", "able", "to", "translate", "languages", "instantly"], "correct": "The new software will be able to translate languages instantly" },
+    { "jumbled": ["I", "will", "not", "be", "able", "to", "join", "you", "for", "lunch"], "correct": "I will not be able to join you for lunch" },
+    { "jumbled": ["Will", "you", "be", "able", "to", "finish", "the", "work", "by", "5", "PM", "?", ], "correct": "Will you be able to finish the work by 5 PM?" },
+    { "jumbled": ["not", "Will", "he", "be", "able", "to", "recover", "from", "his", "injury", "before", "the", "match", "?", ], "correct": "Will he not be able to recover from his injury before the match?" },
+    { "jumbled": ["When", "will", "they", "be", "able", "to", "give", "us", "an", "update", "?", ], "correct": "When will they be able to give us an update?" },
+    { "jumbled": ["Why", "won't", "we", "be", "able", "to", "access", "the", "website", "?", ], "correct": "Why won't we be able to access the website?" },
+    { "jumbled": ["By", "the", "time", "you", "arrive", "I", "will", "have", "cooked", "dinner"], "correct": "By the time you arrive, I will have cooked dinner" },
+    { "jumbled": ["She", "will", "not", "have", "saved", "enough", "money", "for", "the", "trip", "by", "next", "summer"], "correct": "She will not have saved enough money for the trip by next summer" },
+    { "jumbled": ["Will", "they", "have", "repaired", "the", "road", "by", "the", "end", "of", "the", "month", "?", ], "correct": "Will they have repaired the road by the end of the month?" },
+    { "jumbled": ["not", "Will", "he", "have", "learned", "how", "to", "swim", "by", "the", "end", "of", "the", "course", "?", ], "correct": "Will he not have learned how to swim by the end of the course?" },
+    { "jumbled": ["How", "many", "chapters", "will", "you", "have", "written", "by", "the", "end", "of", "the", "week", "?", ], "correct": "How many chapters will you have written by the end of the week?" },
+    { "jumbled": ["Why", "won't", "they", "have", "delivered", "the", "furniture", "by", "Saturday", "?", ], "correct": "Why won't they have delivered the furniture by Saturday?" },
+    { "jumbled": ["At", "midnight", "I", "will", "be", "sleeping"], "correct": "At midnight, I will be sleeping" },
+    { "jumbled": ["She", "will", "not", "be", "participating", "in", "the", "marathon", "this", "year"], "correct": "She will not be participating in the marathon this year" },
+    { "jumbled": ["Will", "you", "be", "using", "your", "car", "this", "afternoon", "?", ], "correct": "Will you be using your car this afternoon?" },
+    { "jumbled": ["not", "Will", "they", "be", "traveling", "during", "the", "holidays", "?", ], "correct": "Will they not be traveling during the holidays?" },
+    { "jumbled": ["What", "will", "you", "be", "wearing", "to", "the", "wedding", "?", ], "correct": "What will you be wearing to the wedding?" },
+    { "jumbled": ["Why", "won't", "he", "be", "attending", "the", "training", "session", "?", ], "correct": "Why won't he be attending the training session?" },
+    { "jumbled": ["In", "April", "she", "will", "have", "been", "living", "abroad", "for", "three", "years"], "correct": "In April, she will have been living abroad for three years" },
+    { "jumbled": ["By", "next", "week", "he", "will", "not", "have", "been", "working", "on", "the", "project", "for", "very", "long"], "correct": "By next week, he will not have been working on the project for very long" },
+    { "jumbled": ["Will", "they", "have", "been", "dating", "for", "a", "year", "by", "their", "anniversary", "?", ], "correct": "Will they have been dating for a year by their anniversary?" },
+    { "jumbled": ["not", "Will", "you", "have", "been", "studying", "at", "this", "university", "for", "four", "years", "when", "you", "graduate", "?", ], "correct": "Will you not have been studying at this university for four years when you graduate?" },
+    { "jumbled": ["How", "long", "will", "she", "have", "been", "teaching", "at", "this", "school", "by", "the", "end", "of", "the", "term", "?", ], "correct": "How long will she have been teaching at this school by the end of the term?" },
+    { "jumbled": ["Why", "won't", "they", "have", "been", "living", "in", "their", "new", "house", "for", "a", "month", "by", "Christmas", "?", ], "correct": "Why won't they have been living in their new house for a month by Christmas?" },
+    { "jumbled": ["The", "weather", "forecast", "says", "it", "might", "snow", "tomorrow"], "correct": "The weather forecast says it might snow tomorrow" },
+    { "jumbled": ["I", "might", "not", "be", "able", "to", "finish", "this", "today"], "correct": "I might not be able to finish this today" },
+    { "jumbled": ["We", "might", "see", "dolphins", "during", "the", "trip"], "correct": "We might see dolphins during the trip" },
+    { "jumbled": ["He", "might", "not", "change", "his", "mind"], "correct": "He might not change his mind" },
+    { "jumbled": ["There", "might", "be", "consequences", "to", "this", "decision"], "correct": "There might be consequences to this decision" },
+    { "jumbled": ["She", "might", "not", "be", "the", "best", "candidate"], "correct": "She might not be the best candidate" },
+    { "jumbled": ["The", "package", "might", "have", "been", "delivered", "to", "the", "wrong", "address"], "correct": "The package might have been delivered to the wrong address" },
+    { "jumbled": ["He", "might", "not", "have", "heard", "the", "doorbell"], "correct": "He might not have heard the doorbell" },
+    { "jumbled": ["They", "might", "have", "misunderstood", "us"], "correct": "They might have misunderstood us" },
+    { "jumbled": ["She", "might", "not", "have", "left", "her", "wallet"], "correct": "She might not have left her wallet" },
+    { "jumbled": ["A", "storm", "might", "have", "caused", "the", "outage"], "correct": "A storm might have caused the outage" },
+    { "jumbled": ["He", "might", "not", "have", "replied", "to", "your", "email"], "correct": "He might not have replied to your email" },
+    { "jumbled": ["Don't", "call", "him", "now", "he", "might", "be", "driving"], "correct": "Don't call him now; he might be driving" },
+    { "jumbled": ["She", "might", "not", "be", "feeling", "confident", "about", "the", "exam"], "correct": "She might not be feeling confident about the exam" },
+    { "jumbled": ["They", "might", "be", "planning", "a", "surprise"], "correct": "They might be planning a surprise" },
+    { "jumbled": ["He", "might", "not", "be", "telling", "the", "truth"], "correct": "He might not be telling the truth" },
+    { "jumbled": ["The", "children", "might", "be", "reading", "upstairs"], "correct": "The children might be reading upstairs" },
+    { "jumbled": ["She", "might", "not", "be", "interested", "in", "the", "club"], "correct": "She might not be interested in the club" },
+    { "jumbled": ["When", "you", "called", "he", "might", "have", "been", "sleeping"], "correct": "When you called, he might have been sleeping" },
+    { "jumbled": ["She", "might", "not", "have", "been", "listening", "when", "you", "were", "explaining", "the", "rules"], "correct": "She might not have been listening when you were explaining the rules" },
+    { "jumbled": ["They", "might", "have", "been", "experiencing", "difficulties"], "correct": "They might have been experiencing difficulties" },
+    { "jumbled": ["He", "might", "not", "have", "been", "feeling", "well", "lately"], "correct": "He might not have been feeling well lately" },
+    { "jumbled": ["They", "might", "have", "been", "arguing", "about", "money"], "correct": "They might have been arguing about money" },
+    { "jumbled": ["She", "might", "not", "have", "been", "working", "on", "the", "report"], "correct": "She might not have been working on the report" },
+    { "jumbled": ["The", "team", "celebrated", "their", "victory"], "correct": "The team celebrated their victory" },
+    { "jumbled": ["not", "did", "He", "attend", "the", "ceremony"], "correct": "He did not attend the ceremony" },
+    { "jumbled": ["you", "Will", "?", "be", "able", "to", "see", "the", "show"], "correct": "Will you be able to see the show?" },
+    { "jumbled": ["not", "Will", "he", "be", "able", "to", "the", "deadline", "meet", "?"], "correct": "Will he not be able to meet the deadline?" },
+    { "jumbled": ["can", "How", "we", "improve", "this", "process", "?"], "correct": "How can we improve this process?" },
+    { "jumbled": ["couldn't", "Why", "you", "find", "your", "keys", "this", "morning", "?"], "correct": "Why couldn't you find your keys this morning?" },
+    { "jumbled": ["We", "will", "have", "to", "find", "another", "route"], "correct": "We will have to find another route" },
+    { "jumbled": ["not", "will", "She", "have", "to", "work", "so", "late"], "correct": "She will not have to work so late" },
+    { "jumbled": ["Should", "I", "have", "bought", "the", "other", "one", "?"], "correct": "Should I have bought the other one?" },
+    { "jumbled": ["not", "Should", "they", "have", "been", "more", "prepared", "?"], "correct": "Should they not have been more prepared?" },
+    { "jumbled": ["had", "What", "you", "eaten", "before", "the", "movie", "?"], "correct": "What had you eaten before the movie?" },
+    { "jumbled": ["Why", "wasn't", "the", "dog", "barking", "at", "the", "stranger", "?"], "correct": "Why wasn't the dog barking at the stranger?" },
+    { "jumbled": ["She", "could", "have", "taken", "a", "different", "path"], "correct": "She could have taken a different path" },
+    { "jumbled": ["not", "have", "could", "We", "predicted", "that", "outcome"], "correct": "We could not have predicted that outcome" },
+    { "jumbled": ["the", "storm", "about", "to", "hit", "Was", "?", ], "correct": "Was the storm about to hit?" },
+    { "jumbled": ["not", "the", "band", "about", "to", "play", "Is", "?", "next"], "correct": "Is the band not about to play next?" },
+    { "jumbled": ["will", "Who", "have", "finished", "the", "race", "by", "then", "?"], "correct": "Who will have finished the race by then?" },
+    { "jumbled": ["Why", "won't", "he", "be", "joining", "the", "call", "later", "?"], "correct": "Why won't he be joining the call later?" },
+    { "jumbled": ["Next", "month", "we", "will", "have", "been", "living", "here", "for", "a", "year"], "correct": "Next month we will have been living here for a year" },
+    { "jumbled": ["not", "have", "will", "He", "been", "practicing", "for", "long"], "correct": "He will not have been practicing for long" },
+    { "jumbled": ["she", "Had", "been", "waiting", "for", "a", "while", "?", ], "correct": "Had she been waiting for a while?" },
+    { "jumbled": ["not", "Had", "they", "been", "considering", "the", "risks", "?"], "correct": "Had they not been considering the risks?" },
+    { "jumbled": ["How", "long", "has", "it", "been", "raining", "?", ], "correct": "How long has it been raining?" },
+    { "jumbled": ["Why", "hasn't", "she", "been", "taking", "her", "classes", "seriously", "?"], "correct": "Why hasn't she been taking her classes seriously?" },
+    { "jumbled": ["The", "detective", "had", "got", "to", "solve", "the", "mystery"], "correct": "The detective had got to solve the mystery" },
+    { "jumbled": ["not", "had", "We", "got", "to", "worry", "about", "the", "details"], "correct": "We had not got to worry about the details" },
+    { "jumbled": ["Did", "you", "have", "to", "work", "overtime", "?", ], "correct": "Did you have to work overtime?" },
+    { "jumbled": ["not", "Does", "he", "have", "to", "be", "there", "in", "person", "?"], "correct": "Does he not have to be there in person?" },
+    { "jumbled": ["did", "What", "you", "use", "to", "do", "for", "fun", "?"], "correct": "What did you use to do for fun?" },
+    { "jumbled": ["Why", "didn't", "they", "use", "to", "lock", "their", "doors", "?"], "correct": "Why didn't they use to lock their doors?" },
+    { "jumbled": ["He", "might", "have", "been", "feeling", "a", "little", "shy"], "correct": "He might have been feeling a little shy" },
+    { "jumbled": ["She", "might", "not", "be", "coming", "after", "all"], "correct": "She might not be coming after all" }
+                                ]
+                            }
+                        ]
+                    },
+                    "Tenses": {
+                        "title": "Understanding Tenses",
+                        "subtitle": "Expressing when an action takes place.",
+                        "content": [
+                            { "type": "heading", "text": "Simple Tenses" },
+                            { "type": "paragraph", "text": "Simple tenses describe actions without specifying if they are completed or ongoing." },
+                            { "type": "comparison", "data": {
+                                "headers": ["Tense", "Use", "Example"],
+                                "rows": [
+                                    ["Simple Present", "Habits, facts, regular actions", "He plays football every day."],
+                                    ["Simple Past", "Completed actions in the past", "He played football yesterday."],
+                                    ["Simple Future", "Actions that will happen", "He will play football tomorrow."]
+                                ]
+                            }},
+                            { "type": "heading", "text": "Continuous (Progressive) Tenses" },
+                            { "type": "paragraph", "text": "Continuous tenses describe ongoing actions." },
+                             { "type": "comparison", "data": {
+                                "headers": ["Tense", "Use", "Example"],
+                                "rows": [
+                                    ["Present Continuous", "Actions happening now", "He is playing football right now."],
+                                    ["Past Continuous", "Ongoing actions in the past", "He was playing football when I called."],
+                                    ["Future Continuous", "Ongoing actions in the future", "He will be playing football at this time tomorrow."]
+                                ]
+                            }},
+                            { "type": "heading", "text": "Perfect Tenses" },
+                            { "type": "paragraph", "text": "Perfect tenses describe completed actions, often in relation to another point in time." },
+                             { "type": "comparison", "data": {
+                                "headers": ["Tense", "Use", "Example"],
+                                "rows": [
+                                    ["Present Perfect", "Actions completed recently or with relevance to the present", "He has just played football."],
+                                    ["Past Perfect", "An action completed before another past action", "He had played football before he went home."],
+                                    ["Future Perfect", "An action that will be completed by a certain time in the future", "He will have played football by 6 PM."]
+                                ]
+                            }},
+                            { "type": "heading", "text": "Perfect Continuous Tenses" },
+                            { "type": "paragraph", "text": "Perfect continuous tenses describe actions that were in progress over a period of time." },
+                             { "type": "comparison", "data": {
+                                "headers": ["Tense", "Use", "Example"],
+                                "rows": [
+                                    ["Present Perfect Continuous", "An action that started in the past and is still continuing", "He has been playing football for two hours."],
+                                    ["Past Perfect Continuous", "An action that was ongoing before another past action occurred", "He had been playing football before it started to rain."],
+                                    ["Future Perfect Continuous", "An ongoing action that will be completed at a specified time in the future", "By next year, he will have been playing football for a decade."]
+                                ]
+                            }}
+                        ]
+                    },
+                    "Subject-Verb Agreement": {
+                        "title": "Subject-Verb Agreement",
+                        "subtitle": "Making subjects and verbs match in number.",
+                        "content": [
+                            { "type": "heading", "text": "The Basic Rule" },
+                            { "type": "paragraph", "text": "A singular subject takes a singular verb, while a plural subject takes a plural verb." },
+                            { "type": "example", "text": "<p><strong>Singular:</strong> The <strong>dog barks</strong>.<br><strong>Plural:</strong> The <strong>dogs bark</strong>.</p>" },
+                            { "type": "heading", "text": "Key Rules to Remember" },
+                            { "type": "list", "items": [
+                                "<strong>Compound Subjects:</strong> Subjects joined by 'and' are usually plural. <em>(e.g., 'Rohan and Priya <strong>are</strong> friends.')</em>",
+                                "<strong>Subjects Joined by Or/Nor:</strong> The verb agrees with the subject closer to it. <em>(e.g., 'Neither the students nor the teacher <strong>is</strong> happy.')</em>",
+                                "<strong>Indefinite Pronouns:</strong> Pronouns like 'each', 'everyone', 'anybody' are singular. <em>(e.g., '<strong>Everyone wants</strong> to win.')</em>",
+                                "<strong>Collective Nouns:</strong> Nouns like 'team', 'family', 'group' can be singular or plural, depending on whether they act as a single unit or as individuals. <em>(e.g., 'The <strong>team is</strong> winning.' vs 'The <strong>team are</strong> arguing.')</em>"
+                            ]}
+                        ]
+                    },
+                    "Articles & Determiners": {
+                        "title": "Articles & Determiners",
+                        "subtitle": "Specifying and identifying nouns.",
+                        "content": [
+                             { "type": "heading", "text": "What are Articles?" },
+                             { "type": "paragraph", "text": "Articles are a type of determiner that specify the grammatical definiteness of a noun." },
+                             { "type": "comparison", "data": {
+                                "headers": ["Article", "Use", "Example"],
+                                "rows": [
+                                    ["A", "Before a singular noun beginning with a consonant sound.", "a book, a university"],
+                                    ["An", "Before a singular noun beginning with a vowel sound.", "an apple, an hour"],
+                                    ["The", "To refer to a specific or particular noun.", "The sun is bright. The book on the table is mine."]
+                                ]
+                            }},
+                             { "type": "heading", "text": "Other Determiners" },
+                             { "type": "paragraph", "text": "Determiners are words placed before a noun to clarify what the noun refers to." },
+                             { "type": "list", "items": [
+                                "<strong>Demonstratives:</strong> this, that, these, those. <em>(e.g., '<strong>This</strong> apple is red.')</em>",
+                                "<strong>Possessives:</strong> my, your, his, her, its, our, their. <em>(e.g., '<strong>My</strong> car is new.')</em>",
+                                "<strong>Quantifiers:</strong> some, any, much, many, a few, a lot of. <em>(e.g., 'There are <strong>many</strong> students.')</em>"
+                             ]}
+                        ]
+                    },
+                    "Active & Passive Voice": {
+                        "title": "Active & Passive Voice",
+                        "subtitle": "Changing the focus of a sentence.",
+                        "content": [
+                            { "type": "heading", "text": "What is Voice?" },
+                            { "type": "paragraph", "text": "Voice describes the relationship between the action (the verb) and the participants (the subject and object). The two main voices are active and passive." },
+                            { "type": "subheading", "text": "Active Voice" },
+                            { "type": "paragraph", "text": "In the active voice, the subject of the sentence performs the action. Most sentences are written in this voice as it is direct and clear." },
+                            { "type": "example", "text": "<p>Structure: Subject + Verb + Object<br>Example: <strong>Rohan</strong> wrote the letter.</p>" },
+                            { "type": "subheading", "text": "Passive Voice" },
+                            { "type": "paragraph", "text": "In the passive voice, the subject receives the action. The focus shifts from who did the action to what the action was done to." },
+                            { "type": "example", "text": "<p>Structure: Object + Helping Verb + Past Participle + by + Subject<br>Example: The <strong>letter</strong> was written by Rohan.</p>" },
+                            { "type": "heading", "text": "When to Use the Passive Voice" },
+                             { "type": "list", "items": [
+                                "When the actor is unknown: 'My car <strong>was stolen</strong>.'",
+                                "When the actor is unimportant: 'The bridge <strong>was built</strong> in 1998.'",
+                                "To be more formal or polite: 'An error <strong>was made</strong>.'"
+                             ]}
+                        ]
+                    },
+                    "Modals": {
+                        "title": "Modals",
+                        "subtitle": "Verbs for ability, possibility, and obligation.",
+                        "content": [
+                            { "type": "paragraph", "text": "Modals (or modal auxiliary verbs) are helping verbs used to express ability, permission, possibility, necessity, or advice. They are always followed by the base form of the main verb." },
+                            { "type": "comparison", "data": {
+                                "headers": ["Modal", "Primary Use", "Example"],
+                                "rows": [
+                                    ["Can", "Ability, permission", "I <strong>can</strong> speak English."],
+                                    ["Could", "Past ability, polite request", "I <strong>could</strong> swim when I was young."],
+                                    ["May", "Permission, possibility", "<strong>May</strong> I come in?"],
+                                    ["Might", "Possibility (less certain)", "It <strong>might</strong> rain today."],
+                                    ["Will", "Future intention, promise", "I <strong>will</strong> call you tomorrow."],
+                                    ["Would", "Polite request, hypothetical", "<strong>Would</strong> you help me?"],
+                                    ["Shall", "Suggestion, formal future", "<strong>Shall</strong> we begin?"],
+                                    ["Should", "Advice, recommendation", "You <strong>should</strong> see a doctor."],
+                                    ["Must", "Obligation, necessity", "You <strong>must</strong> finish your homework."]
+                                ]
+                            }}
+                        ]
+                    },
+                     "Punctuation": {
+                        "title": "Punctuation",
+                        "subtitle": "The signs and symbols of writing.",
+                        "content": [
+                            { "type": "paragraph", "text": "Punctuation helps to structure sentences and make their meaning clear." },
+                            { "type": "heading", "text": "Common Punctuation Marks" },
+                            { "type": "subheading", "text": "1. Period (.)" },
+                            { "type": "paragraph", "text": "Used at the end of a declarative sentence (a statement)." },
+                            { "type": "example", "text": "<p>The sky is blue<strong>.</strong></p>" },
+                            { "type": "subheading", "text": "2. Comma (,)" },
+                            { "type": "paragraph", "text": "Used to separate items in a list, separate clauses, and after introductory phrases." },
+                            { "type": "example", "text": "<p>I need to buy apples<strong>,</strong> bananas<strong>,</strong> and oranges.</p>" },
+                            { "type": "subheading", "text": "3. Question Mark (?)" },
+                            { "type": "paragraph", "text": "Used at the end of a direct question." },
+                            { "type": "example", "text": "<p>What is your name<strong>?</strong></p>" },
+                            { "type": "subheading", "text": "4. Exclamation Mark (!)" },
+                            { "type": "paragraph", "text": "Used to express strong emotion or emphasis." },
+                            { "type": "example", "text": "<p>That's amazing<strong>!</strong></p>" },
+                            { "type": "subheading", "text": "5. Quotation Marks ( \" \" )" },
+                            { "type": "paragraph", "text": "Used to enclose direct speech or to indicate a title." },
+                            { "type": "example", "text": "<p>She said, <strong>\"</strong>Let's go.<strong>\"</strong></p>" }
+                        ]
+                    }
+                },
                  "Basic Vocabulary": [{"word":"INFLATION","meaning":"महंगाई","example":"Inflation is a major concern for the economy."},{"word":"BREAK / PLUCK","meaning":"तोड़ना","example":"Don't break the stick / Please pluck a flower from the garden."},{"word":"ADULTERATE","meaning":"मिलावट करना","example":"Some vendors adulterate milk with water to increase their profit."},{"word":"REPAIR / MEND","meaning":"सुधारना","example":"He needs to repair his car / Can you help me mend my torn jacket?"},{"word":"APOLOGISE","meaning":"माफी मांगना","example":"You should apologise for your mistake."},{"word":"LEAVE","meaning":"छोड़ना","example":"I have to leave now to catch my flight."},{"word":"FORGIVE","meaning":"माफ करना","example":"Please forgive me for my error."},{"word":"DROP","meaning":"घर छोड़ना/गिराना","example":"She asked me to drop her at the station / Be careful not to drop that glass."},{"word":"BEG / ASK FOR","meaning":"माँगना","example":"He had to beg for food on the street / I am going to ask for a raise."},{"word":"APPLY / FIX","meaning":"लगाना","example":"You should apply for a new job / I need to fix the broken chair."},{"word":"BORROW","meaning":"उधार लेना","example":"Can I borrow your pen for a moment?"},{"word":"LOSE","meaning":"हारना","example":"I don't want to lose this game."},{"word":"LEND","meaning":"उधार देना","example":"I can lend you my book if you need it."},{"word":"DEFEAT/ BEAT","meaning":"हराना","example":"Our team managed to defeat the rival team / Don't let him beat you."},{"word":"TENANT","meaning":"किरायेदार","example":"The tenant paid the rent on time."},{"word":"BEAT","meaning":"पिटना/ मारना","example":"The boxer will beat his opponent / He was afraid his father would beat him."},{"word":"LANDLORD","meaning":"मकान मालिक","example":"The landlord is coming to inspect the apartment tomorrow."},{"word":"KILL","meaning":"जान से मारना","example":"The hunter had to kill the wild animal to protect his family."},{"word":"LANDLADY","meaning":"मकान मालकिन","example":"The landlady is very strict about noise after 10 PM."},{"word":"MURDER / SLAY","meaning":"कत्ल करना","example":"The police are investigating the murder case / The knight will slay the dragon."},{"word":"KEEP / PUT","meaning":"रखना","example":"You should always keep your promises / Please put the book on the table."},{"word":"STARE / GAZE","meaning":"घूरना","example":"It is rude to stare at people / I like to gaze at the stars at night."},{"word":"BRING","meaning":"लाना","example":"Bring me a glass of water, please."},{"word":"GLANCE / GLIMPSE","meaning":"झलक","example":"He took a quick glance at the clock / I caught a glimpse of a deer in the forest."},{"word":"TAKE / CARRY","meaning":"ले जाना","example":"Take your time to make a decision / Can you help me carry this heavy box?"},{"word":"MISUNDERSTANDING","meaning":"गलतफहमी","example":"There was a misunderstanding about the meeting time."},{"word":"GET DOWN","meaning":"नीचे उतरना","example":"Get down from the tree before you fall."},{"word":"GROOM","meaning":"दूल्हा","example":"The groom looked very happy on his wedding day."},{"word":"GET ON","meaning":"ऊपर चढ़ना","example":"Get on the bus quickly before it leaves."},{"word":"BRIDE","meaning":"दुल्हन","example":"The bride wore a beautiful white dress."},{"word":"DOWNSTAIR","meaning":"निचे","example":"The living room is downstairs."},{"word":"GARLAND","meaning":"फूलो की माला","example":"The guests offered a flower garland to the statue."},{"word":"UPSTAIRS","meaning":"उपर","example":"My bedroom is upstairs."},{"word":"PROCESSION","meaning":"बारात / जुलुस","example":"The wedding procession was very long."},{"word":"REMOVE","meaning":"हटाना","example":"Remove your shoes before entering the house."},{"word":"IMPRISON","meaning":"बंदी बना लेना","example":"The king decided to imprison the traitor."},{"word":"WIPE","meaning":"पोछना","example":"Wipe the table clean with a cloth."},{"word":"PRAISE / ADMIRE / APPRECIATE / COMPLIMENT","meaning":"तारीफ करना","example":"We should praise her for her hard work / I admire your dedication / We appreciate your effort / He gave me a nice compliment on my outfit."},{"word":"SWEEP","meaning":"पोछा लगाना","example":"Sweep the floor before you mop it."},{"word":"CRITICIZE","meaning":"बुराई करना","example":"It's not fair to criticize others without offering a solution."},{"word":"OPEN / UNTIE","meaning":"खोलना","example":"Open the window, it's hot in here / Can you help me untie this knot?"},{"word":"LISTEN / HEAR","meaning":"सुनना","example":"Listen to me carefully / I can't hear you over the noise."},{"word":"CLOSE / SHUT","meaning":"बंद करना","example":"Close the door behind you / Shut the window, it's getting cold."},{"word":"NARRATE (PARAGRAPH) / RECITE (POETRY)","meaning":"सुनाना","example":"He narrated the story with great passion / The child will recite a poem for the class."},{"word":"TIE","meaning":"बाँधना","example":"Please tie your shoelaces before you trip."},{"word":"GREED","meaning":"लालच","example":"His greed led him to steal the money."},{"word":"RIOTS","meaning":"दंगे","example":"The city was in chaos due to the riots."},{"word":"GREEDY","meaning":"लालची","example":"The greedy king wanted all the gold for himself."},{"word":"AGITATE","meaning":"आंदोलन करना","example":"They decided to agitate against the new law."},{"word":"SIN","meaning":"पाप","example":"Stealing is a sin in many religions."},{"word":"PROVOKE","meaning":"उकसाना/ भड़काना","example":"Don't try to provoke me into an argument."},{"word":"SINNER","meaning":"पापी","example":"The priest told the sinner to repent and seek forgiveness."},{"word":"RUMOUR","meaning":"अफ़वाह","example":"There is a strange rumour going around about him."},{"word":"RECOGNIZE / IDENTIFY","meaning":"पहचानना","example":"I didn't recognize you in your new outfit / The police tried to identify the suspect."},{"word":"ILLUSION","meaning":"भ्रम/ छलावा","example":"The magician created an illusion of a floating ball."},{"word":"VANITY","meaning":"घमंड","example":"Her vanity prevented her from accepting any help."},{"word":"INDICATE","meaning":"इशारा करना","example":"The sign will indicate the direction to the city."},{"word":"AUSPICIOUS","meaning":"शुभ","example":"The priest declared it an auspicious day for the wedding."},{"word":"THROW","meaning":"फेंкना","example":"Throw the ball to me."},{"word":"UNAUSPICIOUS","meaning":"अशुभ","example":"Breaking a mirror is considered an unauspicious sign by some people."},{"word":"MARTYR","meaning":"शहीद","example":"The soldier became a martyr for his country."},{"word":"CONSPIRE","meaning":"साज़िश करना","example":"The rebels conspired to overthrow the government."},{"word":"HELPLESS","meaning":"लाचार / बेबस / बेचारा","example":"The little bird was helpless without its mother."},{"word":"CONSPIRACY","meaning":"साज़िश / षडयंत्र","example":"They uncovered a conspiracy against the king."},{"word":"HUM","meaning":"गुंगुनाना","example":"He began to hum a tune while he worked."},{"word":"IMITATE","meaning":"नकल करना","example":"Children often imitate their parents' behavior."},{"word":"PROVERB / ADAGE","meaning":"कहावत/ मुहावरे","example":"'An apple a day keeps the doctor away' is a well-known proverb / The old adage rings true even today."},{"word":"THEIST","meaning":"आस्तिक","example":"A theist believes in God."},{"word":"IGNORE/ AVOID","meaning":"नज़र अंदाज़ करना","example":"Just ignore him, he's just trying to get a reaction / I try to avoid traffic by leaving early."},{"word":"ATHEIST","meaning":"नास्तिक","example":"An atheist does not believe in God."},{"word":"WISH/ DESIRE","meaning":"इच्छा","example":"I wish you a happy birthday / My greatest desire is to travel the world."},{"word":"SPEND","meaning":"खर्च करना/ बिताना","example":"How do you spend your free time? I spend too much money on coffee."},{"word":"REASON/ CAUSE","meaning":"कारण","example":"What is the reason for your absence / The storm was the cause of the power outage."},{"word":"REMEMBER","meaning":"याद रखना/ याद करना","example":"Remember to lock the door before you leave."},{"word":"HIDE","meaning":"छिपना/ छिपाना","example":"The squirrel will hide its nuts for winter."},{"word":"MEMORIZE","meaning":"याद रखना/ याद करना","example":"She had to memorize a whole poem for the play."},{"word":"SEARCH/ FIND/ LOOK FOR / SEEK","meaning":"ढूँढना","example":"I need to search for my lost keys / Did you find your wallet? / I'm looking for a new job / They seek refuge from the storm."},{"word":"MEMORY","meaning":"याद","example":"She has a good memory for names."},{"word":"ORPHAN","meaning":"अनाथ","example":"The little boy became an orphan after the accident."},{"word":"REMIND","meaning":"याद दिलाना","example":"Can you remind me to call my mother later?"},{"word":"ORPHANGE","meaning":"अनायालय","example":"The baby was adopted from an orphanage."},{"word":"FORGET","meaning":"भूल जाना","example":"I always forget where I put my keys."},{"word":"SHOUT (IN ANGER) / SCREAM (IN PAIN/ WHEN SCARED)","meaning":"चिखना","example":"He began to shout at his brother when he saw what he did / She began to scream when she saw the spider on the wall."},{"word":"FORGETFUL","meaning":"भुलक्कड़","example":"I'm so forgetful, I forgot my own birthday!"},{"word":"SCOLD","meaning":"डांटना","example":"My mom will scold me if I don't finish my homework."},{"word":"BURDEN","meaning":"बोझ","example":"His family's problems became a huge burden on him."},{"word":"ADDICTION","meaning":"लत","example":"He has a serious addiction to video games."},{"word":"BEAR/ TOLERATE","meaning":"सहना","example":"I can no longer bear this pain / I can't tolerate such rude behavior."},{"word":"OUTSPOKEN","meaning":"मुहफत","example":"She is very outspoken and always says what's on her mind."},{"word":"PERSUADE","meaning":"मनाना","example":"We tried to persuade him to join our team."},{"word":"MISER","meaning":"कंजूस","example":"He's such a miser that he never spends any money."},{"word":"GET READY","meaning":"तैयार होना","example":"We need to get ready to leave for the party now."},{"word":"DRIVE/ RIDE/ RUN / OPERATE","meaning":"चलाना","example":"I will drive you to the station / We ride our bikes to school / The car's engine runs smoothly / She will operate the machine."},{"word":"TAKE BATH","meaning":"नहाना","example":"I take a bath every morning before going to work."},{"word":"CURSE","meaning":"श्राप","example":"The witch put a curse on the village."},{"word":"DELAY","meaning":"देर करना/ टालना","example":"The traffic caused a delay / Don't delay your work."},{"word":"BOON","meaning":"वरदान","example":"This new technology is a boon for humanity."},{"word":"FAILURE","meaning":"असफलता","example":"His business was a complete failure."},{"word":"REBIRTH/ REINCARNATION","meaning":"पुर्नजन्म","example":"Many religions believe in rebirth / Hindus believe in reincarnation."},{"word":"SITUATION/ CONDITION","meaning":"स्थिती","example":"The current situation is very difficult / My health condition is stable now."},{"word":"MARTYR","meaning":"שहीद","example":"A martyr is someone who dies for their beliefs or country."},{"word":"CIRCUMSTANCES","meaning":"परिस्थितियाँ","example":"Due to unforeseen circumstances, the event was canceled."},{"word":"DACOIT","meaning":"लुटेरा / डाकू","example":"The police arrested the notorious dacoit."},{"word":"GROW/ INCREASE","meaning":"बढ़ना/ बढ़ाना","example":"Children grow very quickly / The population will increase next year."},{"word":"THIEF/ BURGLAR","meaning":"चोर","example":"The thief stole my wallet / A burglar broke into the house last night."},{"word":"DECREASE","meaning":"घटना/ घटाना","example":"The price of oil will decrease soon."},{"word":"STEAL","meaning":"चोरी करना","example":"He tried to steal a car."},{"word":"ENEMY/ FOE/ RIVAL","meaning":"दुश्मन","example":"They became a formidable enemy / The two teams are old foes / She is my main rival at work."},{"word":"SNATCH","meaning":"छीनना","example":"The thief tried to snatch her purse."},{"word":"ENMITY/ RIVALRY","meaning":"दुश्मनी","example":"The enmity between the two families goes back generations / The rivalry between the two teams is intense."},{"word":"FREEZE","meaning":"जमना / जमाना","example":"The water will freeze in this cold weather."},{"word":"JOY/ HAPPINESS","meaning":"खुशी","example":"The birth of his child brought him great joy / We wish you all the happiness in the world."},{"word":"SHIVER","meaning":"कांपना","example":"I began to shiver from the cold."},{"word":"PLEASE","meaning":"खुश करना","example":"He will do anything to please his parents."},{"word":"TREMBLE","meaning":"घबराकर कांपना","example":"His hands began to tremble with fear."},{"word":"FRAGRANCE/ AROMA","meaning":"खुशबू","example":"The fragrance of roses filled the room / The aroma of coffee is wonderful."},{"word":"INNOCENT","meaning":"निर्दोष","example":"The jury declared him innocent."},{"word":"STINK/ ODOUR","meaning":"बदबू","example":"That garbage has a terrible stink / The room had a musty odour."},{"word":"GUILTY","meaning":"दोषी","example":"He was found guilty of the crime."},{"word":"SMELL","meaning":"सूँघना","example":"I can smell fresh bread baking in the oven."},{"word":"LAZY/ LETHARGIC","meaning":"आलसी","example":"Don't be so lazy! / He felt lethargic after a heavy meal."},{"word":"BOTHER","meaning":"परेशान करना","example":"Don't bother me while I'm working."},{"word":"AUCTION","meaning":"निलाम करना","example":"The rare painting will be sold at auction."},{"word":"TEASE","meaning":"छेढ़ना","example":"The older brother loves to tease his sister."},{"word":"STUBBORN/ OBSTINATE","meaning":"जिददी","example":"He is too stubborn to admit he was wrong / The obstinate child refused to eat his vegetables."},{"word":"ANNOY/ IRRITATE","meaning":"चिड़ाना","example":"The constant noise began to annoy me / His rude comments irritate me."},{"word":"DECEIVE/ BETRAY","meaning":"धोखा देना","example":"Don't deceive your friends with lies / He was betrayed by his closest ally."},{"word":"MURMUR/ BLABBER/ MUTTER","meaning":"बड़बड़ाना","example":"They murmured quietly during the meeting / He started to blabber incoherently / He would often mutter to himself."},{"word":"FAKE / ARTIFICIAL","meaning":"नकली","example":"He showed me a fake passport / The flowers look completely artificial."},{"word":"CRY (LOUDLY)","meaning":"रोना","example":"The baby started to cry when it was hungry."},{"word":"REFUSE / DENY","meaning":"मना करना","example":"I refuse to accept that offer / He will deny everything."},{"word":"WEEP (SILENTLY)","meaning":"रोना","example":"She began to weep silently at the sad news."},{"word":"WANDER/ ROAM","meaning":"भटकना","example":"The dog began to wander the streets / We roam the countryside on weekends."},{"word":"SOB","meaning":"सिसकना","example":"I could hear her sob softly in the next room."},{"word":"WANDERER/ ROAMER","meaning":"घूमककढ़","example":"He was a lonely wanderer with no home / He lives the life of a roamer."},{"word":"DO MISCHIEF","meaning":"मस्ती करना","example":"The children love to do mischief when no one is watching."},{"word":"ARGUE","meaning":"बहс करना","example":"My siblings always argue with each other over small things."},{"word":"SCOLD/ CHIDE","meaning":"डाँटना","example":"My mom will scold me if I don't finish my homework / The teacher chided the students for being late."},{"word":"GET TO KNOW/ COME to KNOW","meaning":"पता चलना/ पता करना","example":"I hope to get to know you better / I came to know about the plan yesterday."},{"word":"QUARREL","meaning":"झगड़ा करना","example":"They had a small quarrel over a trivial matter."},{"word":"FAINT","meaning":"बेहोश होना","example":"I feel dizzy; I think I might faint from the heat."},{"word":"FIGHT","meaning":"लड़ाई करना / हाथापाई","example":"They decided to fight for their rights / The two boys started a fight in the playground."},{"word":"COURAGE/ DARE","meaning":"साहс","example":"She showed great courage in the face of danger / I dare you to jump from the wall."},{"word":"ENVY","meaning":"जलना/ ईर्ष्या करना","example":"He couldn't hide his envy of his friend's success."},{"word":"BRAVE/ COURAGEOUS","meaning":"बाहादुर/ साहसी","example":"He was a brave soldier / She is a very courageous woman."},{"word":"SNORE","meaning":"खरराटे लेना","example":"He snores so loudly that I can't sleep."},{"word":"COWARD/ TIMID","meaning":"डरपोक / कायर","example":"Don't be such a coward / The timid mouse hid from the cat."},{"word":"EARTHEN POT","meaning":"मटका","example":"We stored water in a large earthen pot."},{"word":"YAWN","meaning":"उबासी लेना","example":"He can't stop yawning, he must be tired."},{"word":"EARTHEN LAMP","meaning":"दीपक","example":"An earthen lamp was lit to celebrate the festival."},{"word":"SNEEZE","meaning":"छिकना","example":"I think I'm allergic to dust, I always sneeze around it."},{"word":"WRAP","meaning":"लपेटना","example":"Wrap the gift in colorful paper."},{"word":"COUGH","meaning":"खाँसना","example":"He had a terrible cough and couldn't stop."},{"word":"NOD","meaning":"सिर हिलना","example":"He will nod his head in agreement."},{"word":"STALE","meaning":"बाँसी","example":"This bread is stale, we can't eat it."},{"word":"EXPRESSION","meaning":"हाव भाव","example":"Her expression was a mix of surprise and confusion."},{"word":"BLAME / ACCUSE","meaning":"आरोप लगाना","example":"Don't blame me for your mistakes / They accuse him of theft."},{"word":"SPOIL","meaning":"खराब करना / बिगाड़ना","example":"Don't spoil your dinner by eating candy."},{"word":"LEFT OVER FOOD","meaning":"बचा हुआ खाना","example":"We put the left over food in the fridge."},{"word":"ROT","meaning":"सड़ना","example":"The fruit will rot if you don't eat it soon."},{"word":"STAMMER/ STUTTER","meaning":"हकलाना","example":"He tends to stammer when he's nervous / The child would stutter when he got excited."},{"word":"SORROW/ GRIEF","meaning":"दुख / तकलीफ","example":"He felt great sorrow after his pet died / The family was filled with grief."},{"word":"LISP","meaning":"तुतलाना","example":"The child had a slight lisp when he pronounced the letter 's'."},{"word":"SPREAD","meaning":"फेलना/ फेलाना","example":"Spread the news to everyone."},{"word":"RAIN","meaning":"बारिश होना","example":"It will rain heavily tomorrow, so you should take an umbrella." }
                 ],
                 "Daily Actions and Verbs": [
@@ -8025,7 +8921,7 @@
             // --- State ---
             let activeWordItem = null;
             const navStack = [];
-            const gradients = ['grad-1', 'grad-2', 'grad-3', 'grad-4', 'grad-5', 'grad-6'];
+            const gradients = ['grad-1', 'grad-2', 'grad-3', 'grad-4', 'grad-5', 'grad-6', 'grad-7'];
             let currentWordListData = { title: null, words: [] };
             let favorites = [];
             let allWords = [];
@@ -8062,9 +8958,13 @@
                     const card = document.createElement('div');
                     const isFav = categoryName === 'Favorites';
                     const isDict = categoryName === 'Dictionary';
+                    const isStudyHall = categoryName === 'Study Hall';
+
                     let gradClass = gradients[i % gradients.length];
                     if (isFav) gradClass = 'grad-fav';
                     if (isDict) gradClass = 'grad-5';
+                    if (isStudyHall) gradClass = 'grad-7';
+
 
                     card.className = `category-card p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${gradClass}`;
                     card.style.animationDelay = `${i * 60}ms`;
@@ -8081,7 +8981,12 @@
                             data(gradClass);
                         } else if (Array.isArray(data)) {
                             renderWords(categoryName, data, false, gradClass, { isFavorites: isFav });
-                        } else {
+                        } else if (data.content && Array.isArray(data.content)) { // This is a Study Hall lesson
+                            renderStudyHallLesson(data.title, data.subtitle, data.content);
+                        } else if (data.subtopics) { // This is a Study Hall category with subtopics
+                            renderSubtopicSelection(data.title, data.subtitle, data.subtopics);
+                        }
+                        else {
                             renderCategories(data, categoryName, "Select a sub-category");
                         }
                     });
@@ -8100,6 +9005,369 @@
                     bottomNav.classList.remove('hidden');
                     navQuizBtn.disabled = true;
                 }
+            }
+
+            function renderSubtopicSelection(title, subtitle, subtopics) {
+                wordView.innerHTML = '';
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
+                document.body.classList.add('view-active');
+                appContainer.classList.remove('p-4');
+                wordView.classList.add('active');
+
+                const section = document.createElement('section');
+                section.className = "pop-in p-4 max-w-3xl mx-auto pb-24";
+
+                const header = document.createElement('div');
+                header.className = 'text-center mb-8';
+                header.innerHTML = `
+                    <h1 class="text-3xl font-bold text-white">${title}</h1>
+                    <p class="text-slate-300 mt-1">${subtitle}</p>
+                `;
+                section.appendChild(header);
+
+                const subtopicGrid = document.createElement('div');
+                subtopicGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                for (const key in subtopics) {
+                    const subtopic = subtopics[key];
+                    const card = document.createElement('button');
+                    card.className = 'mode-card p-4 rounded-xl text-left';
+                    card.innerHTML = `
+                        <h3 class="font-bold text-lg text-white">${subtopic.title}</h3>
+                        <p class="text-sm text-slate-300">${subtopic.subtitle}</p>
+                    `;
+                    card.addEventListener('click', () => {
+                        navStack.push({ renderFunc: renderSubtopicSelection, args: [title, subtitle, subtopics] });
+                        renderStudyHallLesson(subtopic.title, subtopic.subtitle, subtopic.content);
+                    });
+                    subtopicGrid.appendChild(card);
+                }
+
+                section.appendChild(subtopicGrid);
+                wordView.appendChild(section);
+
+                categoryView.classList.add('hidden');
+                wordView.classList.remove('hidden');
+                document.getElementById('home-features').classList.add('hidden');
+                bottomNav.classList.remove('hidden');
+                navQuizBtn.disabled = true;
+            }
+
+            function renderStudyHallLesson(title, subtitle, content) {
+                wordView.innerHTML = '';
+                wordView.classList.remove('flex', 'items-center', 'justify-center');
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
+                document.body.classList.add('view-active');
+                appContainer.classList.remove('p-4');
+                wordView.classList.add('active');
+
+                const section = document.createElement('section');
+                section.className = "pop-in p-4 max-w-3xl mx-auto pb-24";
+                
+                const header = document.createElement('div');
+                header.className = 'text-center mb-8';
+                header.innerHTML = `
+                    <h1 class="text-3xl font-bold text-white">${title}</h1>
+                    <p class="text-slate-300 mt-1">${subtitle}</p>
+                `;
+                section.appendChild(header);
+
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'glass-ui p-6 rounded-2xl lesson-content';
+
+                content.forEach(item => {
+                    let element;
+                    switch (item.type) {
+                        case 'heading':
+                            element = document.createElement('h2');
+                            element.innerHTML = item.text;
+                            break;
+                        case 'subheading':
+                            element = document.createElement('h3');
+                            element.innerHTML = item.text;
+                            break;
+                        case 'paragraph':
+                            element = document.createElement('p');
+                            element.innerHTML = item.text;
+                            break;
+                        case 'example':
+                            element = document.createElement('div');
+                            element.className = 'example';
+                            element.innerHTML = item.text;
+                            break;
+                        case 'list':
+                             element = document.createElement('ul');
+                             element.className = 'bullet-list';
+                             item.items.forEach(liText => {
+                                const li = document.createElement('li');
+                                li.innerHTML = liText;
+                                element.appendChild(li);
+                             });
+                             break;
+                        case 'comparison':
+                            const table = document.createElement('table');
+                            table.className = 'comparison-table';
+                            const thead = document.createElement('thead');
+                            const tbody = document.createElement('tbody');
+
+                            // Create header row
+                            const headerTr = document.createElement('tr');
+                            item.data.headers.forEach(headerText => {
+                                const th = document.createElement('th');
+                                th.textContent = headerText;
+                                headerTr.appendChild(th);
+                            });
+                            thead.appendChild(headerTr);
+
+                            // Create body rows
+                            item.data.rows.forEach(row => {
+                                const bodyTr = document.createElement('tr');
+                                row.forEach((cellContent, index) => {
+                                    const td = document.createElement('td');
+                                    td.innerHTML = cellContent;
+                                    td.setAttribute('data-label', item.data.headers[index]);
+                                    bodyTr.appendChild(td);
+                                });
+                                tbody.appendChild(bodyTr);
+                            });
+
+                            table.appendChild(thead);
+                            table.appendChild(tbody);
+                            
+                            element = table;
+                            break;
+                         case 'practice_quiz':
+                            element = document.createElement('div');
+                            element.className = 'mt-8';
+                            const startQuizBtn = document.createElement('button');
+                            startQuizBtn.className = 'mode-card grad-nav text-white font-bold p-4 rounded-xl w-full text-center';
+                            startQuizBtn.innerHTML = `<h3 class="text-lg">Practice Your Knowledge</h3><p class="text-sm font-normal text-slate-200">Start a quick quiz on ${title}.</p>`;
+                            startQuizBtn.onclick = () => {
+                                startPracticeQuiz(item.questions, { title, subtitle, content });
+                            };
+                            element.appendChild(startQuizBtn);
+                            break;
+                        case 'jumbled_quiz':
+                            element = document.createElement('div');
+                            element.className = 'mt-8';
+                            const startJumbledQuizBtn = document.createElement('button');
+                            startJumbledQuizBtn.className = 'mode-card grad-nav text-white font-bold p-4 rounded-xl w-full text-center';
+                            startJumbledQuizBtn.innerHTML = `<h3 class="text-lg">${item.title}</h3><p class="text-sm font-normal text-slate-200">Unscramble the sentences to test your knowledge.</p>`;
+                            startJumbledQuizBtn.onclick = () => {
+                                startJumbledQuiz(item.questions, { title, subtitle, content });
+                            };
+                            element.appendChild(startJumbledQuizBtn);
+                            break;
+                    }
+                    if (element) contentContainer.appendChild(element);
+                });
+                
+                section.appendChild(contentContainer);
+                wordView.appendChild(section);
+
+                categoryView.classList.add('hidden');
+                wordView.classList.remove('hidden');
+                document.getElementById('home-features').classList.add('hidden');
+                bottomNav.classList.remove('hidden');
+                navQuizBtn.disabled = true;
+            }
+
+            function startJumbledQuiz(questions, lessonData) {
+                let score = 0;
+                let currentQuestionIndex = 0;
+                const shuffledJumbledQuestions = [...questions].sort(() => 0.5 - Math.random());
+                const totalQuestions = shuffledJumbledQuestions.length;
+
+                function displayJumbledQuestion() {
+                    if (currentQuestionIndex >= totalQuestions) {
+                        displayJumbledResults();
+                        return;
+                    }
+
+                    const q = shuffledJumbledQuestions[currentQuestionIndex];
+                    const shuffledWords = [...q.jumbled].sort(() => 0.5 - Math.random());
+
+                    wordView.innerHTML = `
+                        <div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl my-auto w-full">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-white">Unscramble the Sentence</h2>
+                                <p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p>
+                            </div>
+                            
+                            <div id="jumbled-answer" class="bg-black/20 p-4 rounded-lg min-h-[6rem] mb-4 flex flex-wrap gap-2 items-center">
+                                <!-- User's answer will go here -->
+                            </div>
+
+                            <div id="jumbled-bank" class="p-4 rounded-lg min-h-[6rem] flex flex-wrap gap-2 items-center justify-center border-2 border-dashed border-white/20">
+                                ${shuffledWords.map(word => `<button class="jumbled-word bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full transition-transform duration-200 ease-in-out">${word}</button>`).join('')}
+                            </div>
+
+                            <div id="jumbled-feedback" class="mt-4 min-h-[2rem]"></div>
+                            
+                            <div class="mt-4 flex justify-end gap-4">
+                                <button id="undo-jumbled-btn" class="mode-card bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-full disabled:opacity-50" disabled>Undo</button>
+                                <button id="check-jumbled-btn" class="mode-card bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full">Check</button>
+                                <button id="next-jumbled-btn" class="hidden mode-card bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full">Next</button>
+                            </div>
+                        </div>
+                    `;
+
+                    const answerContainer = document.getElementById('jumbled-answer');
+                    const bankContainer = document.getElementById('jumbled-bank');
+                    const feedbackContainer = document.getElementById('jumbled-feedback');
+                    const checkBtn = document.getElementById('check-jumbled-btn');
+                    const nextBtn = document.getElementById('next-jumbled-btn');
+                    const undoBtn = document.getElementById('undo-jumbled-btn');
+
+                    const updateUndoButtonState = () => {
+                        undoBtn.disabled = answerContainer.children.length === 0;
+                    };
+
+                    const moveWord = (e) => {
+                        if (e.target.classList.contains('jumbled-word')) {
+                            if (e.target.parentElement === bankContainer) {
+                                answerContainer.appendChild(e.target);
+                            } else {
+                                bankContainer.appendChild(e.target);
+                            }
+                            updateUndoButtonState();
+                        }
+                    };
+                    
+                    bankContainer.addEventListener('click', moveWord);
+                    answerContainer.addEventListener('click', moveWord);
+
+                    undoBtn.addEventListener('click', () => {
+                        const lastWord = answerContainer.lastElementChild;
+                        if (lastWord) {
+                            bankContainer.appendChild(lastWord);
+                            updateUndoButtonState();
+                        }
+                    });
+
+                    checkBtn.addEventListener('click', () => {
+                        const words = Array.from(answerContainer.children).map(btn => btn.textContent);
+                        const userAnswer = words.join(' ').replace(/\s\?/g, '?');
+                        
+                        bankContainer.removeEventListener('click', moveWord);
+                        answerContainer.removeEventListener('click', moveWord);
+                        bankContainer.style.opacity = 0.5;
+                        
+                        const wasCorrect = userAnswer.trim().toLowerCase() === q.correct.trim().toLowerCase();
+
+                        if (wasCorrect) {
+                            feedbackContainer.innerHTML = `<p class="text-green-400 font-bold text-center">Correct!</p>`;
+                            score++;
+                        } else {
+                            feedbackContainer.innerHTML = `<p class="text-red-400 font-bold text-center">Not quite. The correct answer is: "${q.correct}"</p>`;
+                        }
+                        checkBtn.classList.add('hidden');
+                        undoBtn.classList.add('hidden');
+                        nextBtn.classList.remove('hidden');
+                    });
+
+                    nextBtn.addEventListener('click', () => {
+                        currentQuestionIndex++;
+                        displayJumbledQuestion();
+                    });
+                }
+                
+                function displayJumbledResults() {
+                    wordView.innerHTML = `
+                        <div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
+                            <h2 class="text-2xl font-bold text-white mb-4">Practice Complete!</h2>
+                            <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
+                            <div class="flex justify-center gap-4">
+                                <button id="restart-jumbled" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full">Try Again</button>
+                                <button id="return-to-lesson" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-full">Back to Lesson</button>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('restart-jumbled').onclick = () => startJumbledQuiz(questions, lessonData);
+                    document.getElementById('return-to-lesson').onclick = () => renderStudyHallLesson(lessonData.title, lessonData.subtitle, lessonData.content);
+                }
+                
+                wordView.innerHTML = '';
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
+                wordView.classList.add('active', 'flex', 'items-center', 'justify-center');
+                displayJumbledQuestion();
+            }
+
+            function startPracticeQuiz(questions, lessonData) {
+                let score = 0;
+                let currentQuestionIndex = 0;
+                
+                const shuffledQuestions = [...questions].sort(() => 0.5 - Math.random());
+                const totalQuestions = shuffledQuestions.length;
+
+                function displayPracticeQuestion() {
+                    if (currentQuestionIndex >= totalQuestions) {
+                        displayPracticeResults();
+                        return;
+                    }
+
+                    const q = shuffledQuestions[currentQuestionIndex];
+                    const shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
+                    wordView.innerHTML = `
+                        <div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl my-auto">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-xl font-bold text-white">Concept Check!</h2>
+                                <p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p>
+                            </div>
+                            <p class="text-2xl font-bold mb-6 text-center text-white">${q.question}</p>
+                            <div class="grid grid-cols-1 gap-4">
+                                ${shuffledOptions.map(option => `<button class="quiz-option p-4 rounded-xl text-left">${option}</button>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    wordView.querySelectorAll('.quiz-option').forEach(button => {
+                        button.addEventListener('click', (e) => handlePracticeAnswer(button.textContent, q.correct_answer, e.target));
+                    });
+                }
+
+                function handlePracticeAnswer(selectedAnswer, correctAnswer, button) {
+                    const allOptions = wordView.querySelectorAll('.quiz-option');
+                    allOptions.forEach(btn => btn.disabled = true);
+                    
+                    const wasCorrect = selectedAnswer === correctAnswer;
+
+                    if (wasCorrect) {
+                        button.classList.add('correct', 'celebrate');
+                        button.addEventListener('animationend', () => button.classList.remove('celebrate'), { once: true });
+                        score++;
+                    } else {
+                        button.classList.add('incorrect');
+                        allOptions.forEach(btn => {
+                            if (btn.textContent === correctAnswer) btn.classList.add('correct');
+                        });
+                    }
+                    
+                    setTimeout(() => {
+                        currentQuestionIndex++;
+                        displayPracticeQuestion();
+                    }, 1500);
+                }
+
+                function displayPracticeResults() {
+                    wordView.innerHTML = `
+                        <div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
+                            <h2 class="text-2xl font-bold text-white mb-4">Practice Complete!</h2>
+                            <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
+                            <div class="flex justify-center gap-4">
+                                <button id="restart-practice" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full">Try Again</button>
+                                <button id="return-to-lesson" class="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-full">Back to Lesson</button>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('restart-practice').onclick = () => startPracticeQuiz(questions, lessonData);
+                    document.getElementById('return-to-lesson').onclick = () => renderStudyHallLesson(lessonData.title, lessonData.subtitle, lessonData.content);
+                }
+
+                wordView.innerHTML = '';
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
+                wordView.classList.add('active', 'flex', 'items-center', 'justify-center');
+                displayPracticeQuestion();
             }
 
             function renderAlphabetGrid(gradientClass) {
@@ -8393,7 +9661,7 @@
             function flattenVocabulary(data) {
                 let words = [];
                 for (const key in data) {
-                    if (key === 'Synonyms' || key === 'Confusing Words' || key === 'Word Roots (Etymology)') continue;
+                    if (key === 'Synonyms' || key === 'Confusing Words' || key === 'Word Roots (Etymology)' || key === 'Study Hall') continue;
                     const value = data[key];
                     if (Array.isArray(value)) {
                         words = words.concat(value);
@@ -8670,18 +9938,23 @@
                 }
                 
                 function handleAnswer(selectedAnswer, correctAnswer, button) {
-                    document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
-                    if (selectedAnswer === correctAnswer) {
+                    const allOptions = document.querySelectorAll('.quiz-option');
+                    allOptions.forEach(btn => btn.disabled = true);
+
+                    const wasCorrect = selectedAnswer === correctAnswer;
+
+                    if (wasCorrect) {
                         button.classList.add('correct');
                         button.classList.add('celebrate');
                         button.addEventListener('animationend', () => button.classList.remove('celebrate'), { once: true });
                         score++;
                     } else {
                         button.classList.add('incorrect');
-                        document.querySelectorAll('.quiz-option').forEach(btn => {
+                        allOptions.forEach(btn => {
                             if (btn.textContent === correctAnswer) btn.classList.add('correct');
                         });
                     }
+
                     setTimeout(() => {
                         currentQuestionIndex++;
                         displayQuestion();
@@ -8832,4 +10105,3 @@
     </script>
 </body>
 </html>
-
