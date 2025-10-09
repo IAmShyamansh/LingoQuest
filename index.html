@@ -5,25 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LingoQuest</title>
 
-    <!-- App Icons and Theme Color -->
+    <!-- App Icons, Manifest, and Theme Color -->
     <meta name="theme-color" content="#1F2335">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="LingoQuest">
 
-    <!-- A more robust and direct set of icon links to avoid caching issues -->
+    <!-- 1. The Web App Manifest (Primary method for modern Android) -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICAgIm5hbWUiOiAiTGluZ29RdWVzdCIsCiAgICAic2hvcnRfbmFtZSI6ICJMaW5nb1F1ZXN0IiwKICAgICJzdGFydF91cmwiOiAiLiIsCiAgICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAgICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxRjIzMzUiLAogICAgInRoZW1lX2NvbG9yIjogIiMxRjIzMzUiLAogICAgImRlc2NyaXB0aW9uIjogIllvdXIgZGFpbHkgZG9zZSBvZiB2b2NhYnVsYXJ5LiIsCiAgICAiaWNvbnMiOiBbCiAgICAgIHsKICAgICAgICAgICJzcmMiOiAiaHR0cHM6Ly9pLmliYi5jby90WjVXZG5iL0xpbmdvLVF1ZXN0LUxvZ28tMi5wbmciLAogICAgICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgICB9LAogICAgICB7CiAgICAgICAgICAic3JjIjogImh0dHBzOi8vaS5pYmIuY28vMlprNndNNC9MaW5nby1RdWVzdC1Mb2dvLTMucG5nIiwKICAgICAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgICAgICJ0eXBlIjogImltYWdlL3BuZyIKICAgICAgfQogICAgXQogIH0=">
+
+    <!-- 2. Fallback for iOS and older browsers -->
+    <!-- Apple Touch Icon for iOS (180x180) -->
+    <link rel="apple-touch-icon" href="https://i.ibb.co/PNSc0k7/Lingo-Quest-Logo-1.png?v=5">
     
-    <!-- Favicon for Desktop Browsers -->
-    <link rel="icon" type="image/png" sizes="32x32" href="https://i.ibb.co/2Y40d5c/Lingo-Quest-Logo.png?v=4">
-    
-    <!-- Icon for Android "Add to Home Screen" (192x192) -->
-    <link rel="icon" type="image/png" sizes="192x192" href="https://i.ibb.co/tZ5Wdnb/Lingo-Quest-Logo-2.png?v=4">
-    
-    <!-- Icon for iOS "Add to Home Screen" (180x180) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://i.ibb.co/PNSc0k7/Lingo-Quest-Logo-1.png?v=4">
-    
-    <!-- High-resolution icon for other devices (512x512) -->
-    <link rel="icon" type="image/png" sizes="512x512" href="https://i.ibb.co/2Zk6wM4/Lingo-Quest-Logo-3.png?v=4">
+    <!-- Favicon for desktop browsers (32x32) -->
+    <link rel="icon" href="https://i.ibb.co/2Y40d5c/Lingo-Quest-Logo.png?v=5">
 
 
     <script src="https://cdn.tailwindcss.com"></script>
