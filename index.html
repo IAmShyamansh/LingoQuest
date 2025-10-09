@@ -293,6 +293,36 @@
             padding-top: 1rem;
          }
 
+        /* --- Profile Styles --- */
+        .quiz-history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .quiz-history-item:last-child {
+            border-bottom: none;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        .focus-card {
+             background: rgba(255, 255, 255, 0.05);
+             padding: 1rem;
+             border-radius: 0.75rem;
+             text-align: center;
+             cursor: pointer;
+             transition: background-color 0.2s;
+        }
+        .focus-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+
         /* Styles for mobile-responsive tables */
         @media screen and (max-width: 640px) {
             .lesson-content .comparison-table {
@@ -328,7 +358,6 @@
                 opacity: 0.6;
             }
         }
-
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -370,43 +399,44 @@
 
         <!-- Main View for Categories -->
         <div id="category-view">
-             <header id="main-header" class="text-center mb-6 relative z-10 pt-8 px-4">
-                <button id="about-btn" class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors" aria-label="About this app">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                </button>
-                <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" class="mx-auto max-w-[220px] sm:max-w-xs h-auto">
-                    <defs>
-                        <linearGradient id="logo-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#4338ca"/>
-                            <stop offset="100%" stop-color="#6d28d9"/>
-                        </linearGradient>
-                        <linearGradient id="logo-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#be185d"/>
-                            <stop offset="100%" stop-color="#ec4899"/>
-                        </linearGradient>
-                    </defs>
-                    <g transform="translate(10, 0)">
-                        <!-- Lingo Text -->
-                        <text x="5" y="45" font-family="Nunito, sans-serif" font-size="30" font-weight="900" fill="url(#logo-gradient-1)">Lingo</text>
-                        
-                        <!-- Quest Text -->
-                        <text x="85" y="45" font-family="Nunito, sans-serif" font-size="30" font-weight="900" fill="url(#logo-gradient-2)">Quest</text>
-                    
-                        <!-- Magnifying Glass -->
-                        <g transform="translate(135, 15) scale(0.8)">
-                            <circle cx="12" cy="12" r="8" stroke="url(#logo-gradient-2)" stroke-width="2.5" fill="none"/>
-                            <line x1="17" y1="17" x2="22" y2="22" stroke="url(#logo-gradient-2)" stroke-width="2.5" stroke-linecap="round"/>
-                            
-                            <!-- Inner details -->
-                            <path d="M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" fill="#fff"/>
-                            <path d="M12 14.5a2.5 2.5 0 0 0 0-5" fill="#fff"/>
-                            <circle cx="9.5" cy="12" r="1" fill="url(#logo-gradient-1)"/>
-                            <circle cx="14.5" cy="12" r="1" fill="url(#logo-gradient-2)"/>
+             <header id="main-header" class="relative z-10 pt-6 px-4 mb-6">
+                <!-- Top bar for buttons -->
+                <div class="flex justify-between items-center mb-4">
+                    <button id="profile-btn" class="hidden p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors" aria-label="My Profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </button>
+                    <button id="about-btn" class="p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-white transition-colors" aria-label="About this app">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </button>
+                </div>
+                <!-- Logo container -->
+                <div class="text-center">
+                    <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" class="mx-auto max-w-[220px] sm:max-w-xs h-auto">
+                        <defs>
+                            <linearGradient id="logo-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#4338ca"/>
+                                <stop offset="100%" stop-color="#6d28d9"/>
+                            </linearGradient>
+                            <linearGradient id="logo-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#be185d"/>
+                                <stop offset="100%" stop-color="#ec4899"/>
+                            </linearGradient>
+                        </defs>
+                        <g transform="translate(10, 0)">
+                            <text x="5" y="45" font-family="Nunito, sans-serif" font-size="30" font-weight="900" fill="url(#logo-gradient-1)">Lingo</text>
+                            <text x="85" y="45" font-family="Nunito, sans-serif" font-size="30" font-weight="900" fill="url(#logo-gradient-2)">Quest</text>
+                            <g transform="translate(135, 15) scale(0.8)">
+                                <circle cx="12" cy="12" r="8" stroke="url(#logo-gradient-2)" stroke-width="2.5" fill="none"/>
+                                <line x1="17" y1="17" x2="22" y2="22" stroke="url(#logo-gradient-2)" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" fill="#fff"/>
+                                <path d="M12 14.5a2.5 2.5 0 0 0 0-5" fill="#fff"/>
+                                <circle cx="9.5" cy="12" r="1" fill="url(#logo-gradient-1)"/>
+                                <circle cx="14.5" cy="12" r="1" fill="url(#logo-gradient-2)"/>
+                            </g>
                         </g>
-                    </g>
-                </svg>
-
-                <p id="header-subtitle" class="text-base text-slate-300 mt-2 relative">Your daily dose of vocabulary.</p>
+                    </svg>
+                    <p id="header-subtitle" class="text-base text-slate-300 mt-2">Your daily dose of vocabulary.</p>
+                </div>
             </header>
             
             <!-- Search -->
@@ -459,7 +489,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-4">About LingoQuest</h2>
-            <p class="text-slate-300 mb-6">This application was developed by Akash Sawle, for the students of the British Institute Of English Language And P.D.</p>
+            <p class="text-slate-300 mb-6">This application was developed by and for the students of the British Institute Of English Language And P.D.</p>
             
             <div class="border-t border-white/20 pt-4 mb-6">
                 <h3 class="font-bold text-white mb-2">By:</h3>
@@ -492,6 +522,33 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <div id="explanation-content" class="text-white"></div>
+        </div>
+    </div>
+    
+    <!-- Profile Setup Modal -->
+    <div id="profile-setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+             <h2 class="text-2xl font-bold text-white mb-2 text-center">Welcome to LingoQuest!</h2>
+             <p class="text-slate-300 text-center mb-6">Let's set up your profile.</p>
+
+             <div class="mb-4">
+                 <label for="username-input" class="block text-sm font-bold text-slate-200 mb-2">Enter your name:</label>
+                 <input type="text" id="username-input" placeholder="Your Name" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+             </div>
+
+             <button id="save-profile-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50" disabled>Let's Go!</button>
+        </div>
+    </div>
+    
+    <!-- User Profile Modal -->
+    <div id="user-profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+            <button id="close-user-profile-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+             <div id="user-profile-content" class="text-white">
+                <!-- User profile details will be injected here -->
+             </div>
         </div>
     </div>
 
@@ -6397,12 +6454,12 @@
                             { "type": "comparison", "data": {
                                 "headers": ["Form", "Structure", "Example"],
                                 "rows": [
-                                    ["1. Affirmative", "Sub + H.V. + M.V. + Obj", "He is sleeping."],
-                                    ["2. Negative", "Sub + H.V. + Not + M.V. + Obj", "He is not sleeping."],
-                                    ["3. Simple Interrogative", "H.V. + Sub + M.V. + Obj?", "Is he sleeping?"],
-                                    ["4. Simple Interrogative-Negative", "H.V. + Sub + Not + M.V. + Obj?", "Is he not sleeping?"],
-                                    ["5. Double Interrogative", "Q.W. + H.V. + Sub + M.V. + Obj?", "Why is he sleeping?"],
-                                    ["6. Double Interrogative-Negative", "Q.W. + H.V. + Sub + Not + M.V. + Obj?", "Why is he not sleeping?"]
+                                    ["1. Affirmative", "Subject + HV + Main Verb + Object", "He is sleeping."],
+                                    ["2. Negative", "Subject + HV + not + Main Verb + Object", "He is not sleeping."],
+                                    ["3. Interrogative", "HV + Subject + Main Verb + Object?", "Is he sleeping?"],
+                                    ["4. Interrogative-Negative", "HV + Subject + not + Main Verb + Object?", "Is he not sleeping?"],
+                                    ["5. Double Interrogative", "Wh-word + HV + Subject + Main Verb + Object?", "Why is he sleeping?"],
+                                    ["6. Double Interrogative-Negative", "Wh-word + HV + Subject + not + Main Verb + Object?", "Why is he not sleeping?"]
                                 ]
                             }},
                             {
@@ -6881,38 +6938,38 @@
     { "jumbled": ["the", "rules", "following", "?", "not", "they", "were", "Why"], "correct": "Why were they not following the rules?" },
     { "jumbled": ["time", "a", "long", "for", "waiting", "been", "have", "I"], "correct": "I have been waiting for a long time" },
     { "jumbled": ["lately", "well", "feeling", "not", "been", "has", "She"], "correct": "She has not been feeling well lately" },
-    { "jumbled": ["project", "this", "on", "working", "for", "weeks", "?", "you", "been", "Have"], "correct": "Have you been working on this project for weeks?" },
-    { "jumbled": ["the", "piano", "practicing", "lately", "?", "not", "he", "been", "Has"], "correct": "Has he not been practicing the piano lately?" },
+    { "jumbled": ["project", "this", "on", "working", "for", "weeks", "?", "you", "been", "have", "Have"], "correct": "Have you been working on this project for weeks?" },
+    { "jumbled": ["the", "piano", "practicing", "lately", "?", "not", "he", "been", "has", "Has"], "correct": "Has he not been practicing the piano lately?" },
     { "jumbled": ["French", "learning", "been", "?", "you", "have", "long", "How"], "correct": "How long have you been learning French?" },
     { "jumbled": ["my", "calls", "to", "responding", "all", "week", "?", "not", "they", "been", "have", "Why"], "correct": "Why have they not been responding to my calls all week?" },
     { "jumbled": ["for", "weeks", "traveling", "been", "had", "He"], "correct": "He had been traveling for weeks" },
     { "jumbled": ["well", "sleeping", "not", "been", "had", "She", "for", "days"], "correct": "She had not been sleeping well for days" },
-    { "jumbled": ["time", "a", "long", "for", "there", "living", "?", "you", "been", "Had"], "correct": "Had you been living there for a long time?" },
-    { "jumbled": ["the", "problem", "on", "working", "all", "night", "?", "not", "they", "been", "Had"], "correct": "Had they not been working on the problem all night?" },
+    { "jumbled": ["time", "a", "long", "for", "there", "living", "?", "you", "been", "had", "Had"], "correct": "Had you been living there for a long time?" },
+    { "jumbled": ["the", "problem", "on", "working", "all", "night", "?", "not", "they", "been", "had", "Had"], "correct": "Had they not been working on the problem all night?" },
     { "jumbled": ["day", "all", "doing", "?", "she", "been", "had", "What"], "correct": "What had she been doing all day?" },
     { "jumbled": ["his", "medication", "taking", "regularly", "?", "not", "he", "been", "had", "Why"], "correct": "Why had he not been taking his medication regularly?" },
     { "jumbled": ["the", "task", "completed", "have", "They"], "correct": "They have completed the task" },
     { "jumbled": ["yet", "meal", "my", "finished", "not", "have", "I"], "correct": "I have not finished my meal yet" },
-    { "jumbled": ["the", "new", "exhibit", "seen", "?", "you", "Have"], "correct": "Have you seen the new exhibit?" },
-    { "jumbled": ["back", "you", "called", "?", "not", "she", "Has"], "correct": "Has she not called you back?" },
+    { "jumbled": ["the", "new", "exhibit", "seen", "?", "you", "have", "Have"], "correct": "Have you seen the new exhibit?" },
+    { "jumbled": ["back", "you", "called", "?", "not", "she", "has", "Has"], "correct": "Has she not called you back?" },
     { "jumbled": ["the", "book", "with", "done", "?", "you", "have", "What"], "correct": "What have you done with the book?" },
     { "jumbled": ["his", "assignment", "completed", "?", "not", "he", "has", "Why"], "correct": "Why has he not completed his assignment?" },
     { "jumbled": ["early", "work", "her", "finished", "had", "She"], "correct": "She had finished her work early" },
     { "jumbled": ["the", "instructions", "understood", "not", "had", "He"], "correct": "He had not understood the instructions" },
-    { "jumbled": ["before", "him", "met", "?", "you", "Had"], "correct": "Had you met him before?" },
+    { "jumbled": ["before", "him", "met", "?", "you", "had", "Had"], "correct": "Had you met him before?" },
     { "jumbled": ["the", "meeting", "about", "informed", "?", "not", "they", "been", "Had"], "correct": "Had they not been informed about the meeting?" },
     { "jumbled": ["upset", "him", "make", "to", "said", "?", "she", "had", "What"], "correct": "What had she said to make him upset?" },
     { "jumbled": ["the", "door", "locked", "?", "not", "you", "had", "Why"], "correct": "Why had you not locked the door?" },
     { "jumbled": ["week", "last", "his", "grandparents", "visited", "He"], "correct": "He visited his grandparents last week" },
     { "jumbled": ["the", "movie", "enjoy", "not", "did", "She"], "correct": "She did not enjoy the movie" },
-    { "jumbled": ["the", "concert", "like", "?", "you", "Did"], "correct": "Did you like the concert?" },
-    { "jumbled": ["the", "package", "receive", "?", "not", "they", "Did"], "correct": "Did they not receive the package?" },
+    { "jumbled": ["the", "concert", "like", "?", "you", "did", "Did"], "correct": "Did you like the concert?" },
+    { "jumbled": ["the", "package", "receive", "?", "not", "they", "did", "Did"], "correct": "Did they not receive the package?" },
     { "jumbled": ["that", "necklace", "find", "?", "you", "did", "Where"], "correct": "Where did you find that necklace?" },
     { "jumbled": ["the", "truth", "us", "tell", "?", "not", "he", "did", "Why"], "correct": "Why did he not tell us the truth?" },
     { "jumbled": ["marathon", "a", "run", "can", "She"], "correct": "She can run a marathon" },
     { "jumbled": ["puzzle", "this", "solve", "cannot", "I"], "correct": "I cannot solve this puzzle" },
     { "jumbled": ["this", "bag", "with", "me", "help", "?", "you", "Can"], "correct": "Can you help me with this bag?" },
-    { "jumbled": ["a", "short", "break", "take", "?", "not", "we", "Can"], "correct": "Can we not take a short break?" },
+    { "jumbled": ["a", "short", "break", "take", "?", "not", "we", "can", "Can"], "correct": "Can we not take a short break?" },
     { "jumbled": ["my", "skills", "improve", "?", "I", "can", "How"], "correct": "How can I improve my skills?" },
     { "jumbled": ["time", "on", "be", "?", "you", "can't", "Why"], "correct": "Why can't you be on time?" },
     { "jumbled": ["languages", "three", "speak", "could", "He"], "correct": "He could speak three languages" },
@@ -6923,56 +6980,56 @@
     { "jumbled": ["the", "event", "attend", "?", "they", "couldn't", "Why"], "correct": "Why couldn't they attend the event?" },
     { "jumbled": ["earlier", "me", "called", "have", "could", "You"], "correct": "You could have called me earlier" },
     { "jumbled": ["secret", "the", "known", "have", "not", "could", "He"], "correct": "He could not have known the secret" },
-    { "jumbled": ["a", "mistake", "made", "have", "?", "she", "Could"], "correct": "Could she have made a mistake?" },
+    { "jumbled": ["a", "mistake", "made", "have", "?", "she", "could", "Could"], "correct": "Could she have made a mistake?" },
     { "jumbled": ["sooner", "me", "told", "have", "?", "not", "you", "Could"], "correct": "Could you not have told me sooner?" },
     { "jumbled": ["done", "have", "we", "What", "could", "else", "?"], "correct": "What else could we have done?" },
     { "jumbled": ["more", "careful", "been", "have", "?", "he", "couldn't", "Why"], "correct": "Why couldn't he have been more careful?" },
     { "jumbled": ["rest", "some", "get", "should", "You"], "correct": "You should get some rest" },
     { "jumbled": ["so", "rudely", "behave", "not", "should", "He"], "correct": "He should not behave so rudely" },
     { "jumbled": ["one", "the", "blue", "take", "?", "I", "Should"], "correct": "Should I take the blue one?" },
-    { "jumbled": ["generous", "more", "be", "?", "not", "we", "Should"], "correct": "Should we not be more generous?" },
+    { "jumbled": ["generous", "more", "be", "?", "not", "we", "should", "Should"], "correct": "Should we not be more generous?" },
     { "jumbled": ["prepare", "to", "do", "?", "I", "should", "What"], "correct": "What should I do to prepare?" },
     { "jumbled": ["chance", "another", "get", "?", "not", "she", "shouldn't", "Why"], "correct": "Why shouldn't she get another chance?" },
     { "jumbled": ["more", "cautious", "been", "have", "should", "He"], "correct": "He should have been more cautious" },
     { "jumbled": ["that", "said", "have", "not", "should", "You"], "correct": "You should not have said that" },
     { "jumbled": ["before", "called", "have", "?", "I", "Should", "you", "came"], "correct": "Should I have called before you came?" },
-    { "jumbled": ["notified", "been", "have", "?", "not", "they", "Should"], "correct": "Should they not have been notified?" },
+    { "jumbled": ["notified", "been", "have", "?", "not", "they", "should", "Should"], "correct": "Should they not have been notified?" },
     { "jumbled": ["instead", "done", "have", "?", "he", "should", "What"], "correct": "What should he have done instead?" },
     { "jumbled": ["the", "other", "path", "taken", "have", "?", "not", "we", "shouldn't", "Why"], "correct": "Why shouldn't we have taken the other path?" },
     { "jumbled": ["later", "you", "call", "will", "I"], "correct": "I will call you later" },
     { "jumbled": ["conference", "the", "attend", "not", "will", "She"], "correct": "She will not attend the conference" },
-    { "jumbled": ["party", "the", "at", "be", "?", "you", "Will"], "correct": "Will you be at the party?" },
-    { "jumbled": ["us", "joining", "be", "?", "not", "he", "Will"], "correct": "Will he not be joining us?" },
+    { "jumbled": ["party", "the", "at", "be", "?", "you", "will", "Will"], "correct": "Will you be at the party?" },
+    { "jumbled": ["us", "joining", "be", "?", "not", "he", "will", "Will"], "correct": "Will he not be joining us?" },
     { "jumbled": ["arrive", "the", "bus", "When", "?", "will"], "correct": "When will the bus arrive?" },
     { "jumbled": ["the", "answer", "me", "tell", "?", "not", "you", "won't", "Why"], "correct": "Why won't you tell me the answer?" },
     { "jumbled": ["in", "line", "wait", "to", "have", "will", "You"], "correct": "You will have to wait in line" },
     { "jumbled": ["on", "Sunday", "work", "to", "have", "not", "will", "He"], "correct": "He will not have to work on Sunday" },
-    { "jumbled": ["my", "ID", "bring", "to", "have", "?", "I", "Will"], "correct": "Will I have to bring my ID?" },
-    { "jumbled": ["a", "ticket", "get", "to", "have", "?", "not", "she", "Will"], "correct": "Will she not have to get a ticket?" },
+    { "jumbled": ["my", "ID", "bring", "to", "have", "?", "I", "will", "Will"], "correct": "Will I have to bring my ID?" },
+    { "jumbled": ["a", "ticket", "get", "to", "have", "?", "not", "she", "will", "Will"], "correct": "Will she not have to get a ticket?" },
     { "jumbled": ["station", "the", "at", "be", "to", "have", "?", "we", "time", "What", "will"], "correct": "What time will we have to be at the station?" },
     { "jumbled": ["the", "exam", "retake", "to", "have", "?", "not", "they", "won't", "Why"], "correct": "Why won't they have to retake the exam?" },
     { "jumbled": ["soon", "swim", "to", "be", "able", "will", "She"], "correct": "She will be able to swim soon" },
     { "jumbled": ["the", "event", "to", "come", "to", "be", "able", "not", "will", "I"], "correct": "I will not be able to come to the event" },
-    { "jumbled": ["that", "box", "lift", "to", "be", "able", "?", "you", "Will"], "correct": "Will you be able to lift that box?" },
-    { "jumbled": ["the", "car", "fix", "to", "be", "able", "?", "not", "he", "Will"], "correct": "Will he not be able to fix the car?" },
+    { "jumbled": ["that", "box", "lift", "to", "be", "able", "?", "you", "will", "Will"], "correct": "Will you be able to lift that box?" },
+    { "jumbled": ["the", "car", "fix", "to", "be", "able", "?", "not", "he", "will", "Will"], "correct": "Will he not be able to fix the car?" },
     { "jumbled": ["the", "new", "job", "start", "to", "be", "able", "?", "she", "will", "When"], "correct": "When will she be able to start the new job?" },
     { "jumbled": ["on", "time", "it", "make", "to", "be", "able", "?", "not", "you", "won't", "Why"], "correct": "Why won't you be able to make it on time?" },
     { "jumbled": ["the", "project", "finished", "have", "will", "I", "By", "next", "week"], "correct": "By next week I will have finished the project" },
     { "jumbled": ["by", "then", "read", "the", "book", "have", "not", "will", "He"], "correct": "He will not have read the book by then" },
-    { "jumbled": ["by", "Friday", "the", "assignment", "completed", "have", "?", "you", "Will"], "correct": "Will you have completed the assignment by Friday?" },
+    { "jumbled": ["by", "Friday", "the", "assignment", "completed", "have", "?", "you", "will", "Will"], "correct": "Will you have completed the assignment by Friday?" },
     { "jumbled": ["we", "there", "get", "the", "time", "by", "arrived", "have", "?", "not", "they", "Will"], "correct": "Will they not have arrived by the time we get there?" },
     { "jumbled": ["the", "month", "of", "end", "the", "by", "read", "have", "chapters", "?", "you", "many", "How", "will"], "correct": "How many chapters will you have read by the end of the month?" },
     { "jumbled": ["by", "Monday", "the", "letter", "received", "have", "?", "not", "she", "won't", "Why"], "correct": "Why won't she have received the letter by Monday?" },
     { "jumbled": ["to", "Rome", "flying", "be", "will", "I", "This", "time", "tomorrow"], "correct": "This time tomorrow I will be flying to Rome" },
     { "jumbled": ["year", "next", "time", "this", "at", "working", "be", "not", "will", "He"], "correct": "He will not be working at this time next year" },
     { "jumbled": ["tonight", "the", "match", "watching", "be", "?", "you", "Will"], "correct": "Will you be watching the match tonight?" },
-    { "jumbled": ["us", "for", "waiting", "be", "?", "not", "they", "Will"], "correct": "Will they not be waiting for us?" },
+    { "jumbled": ["us", "for", "waiting", "be", "?", "not", "they", "will", "Will"], "correct": "Will they not be waiting for us?" },
     { "jumbled": ["PM", "10", "at", "doing", "be", "?", "you", "will", "What"], "correct": "What will you be doing at 10 PM?" },
     { "jumbled": ["the", "party", "joining", "be", "?", "not", "she", "won't", "Why"], "correct": "Why won't she be joining the party?" },
     { "jumbled": ["ten", "years", "for", "here", "living", "been", "have", "will", "I"], "correct": "I will have been living here for ten years" },
     { "jumbled": ["enough", "long", "studying", "been", "have", "not", "will", "She"], "correct": "She will not have been studying long enough" },
-    { "jumbled": ["five", "years", "for", "here", "working", "been", "have", "?", "you", "Will"], "correct": "Will you have been working here for five years?" },
-    { "jumbled": ["time", "a", "long", "for", "tennis", "playing", "been", "have", "?", "not", "he", "Will"], "correct": "Will he not have been playing tennis for a long time?" },
+    { "jumbled": ["five", "years", "for", "here", "working", "been", "have", "?", "you", "will", "Will"], "correct": "Will you have been working here for five years?" },
+    { "jumbled": ["time", "a", "long", "for", "tennis", "playing", "been", "have", "?", "not", "he", "will", "Will"], "correct": "Will he not have been playing tennis for a long time?" },
     { "jumbled": ["by", "then", "traveling", "been", "have", "they", "How", "long", "?", "will"], "correct": "How long will they have been traveling by then?" },
     { "jumbled": ["enough", "practicing", "been", "have", "?", "not", "you", "won't", "Why"], "correct": "Why won't you have been practicing enough?" },
     { "jumbled": ["tonight", "cold", "be", "might", "It"], "correct": "It might be cold tonight" },
@@ -7019,13 +7076,13 @@
     { "jumbled": ["the", "conference", "call", "joining", "be", "?", "not", "he", "won't", "Why"], "correct": "Why won't he be joining the conference call?" },
     { "jumbled": ["a", "decade", "for", "married", "been", "have", "we", "will", "Next", "year"], "correct": "Next year we will have been married for a decade" },
     { "jumbled": ["for", "long", "training", "been", "have", "not", "will", "He"], "correct": "He will not have been training for long" },
-    { "jumbled": ["a", "long", "time", "for", "waiting", "been", "?", "she", "Had"], "correct": "Had she been waiting for a long time?" },
-    { "jumbled": ["all", "the", "options", "considering", "been", "?", "not", "they", "Had"], "correct": "Had they not been considering all the options?" },
+    { "jumbled": ["a", "long", "time", "for", "waiting", "been", "?", "she", "had", "Had"], "correct": "Had she been waiting for a long time?" },
+    { "jumbled": ["all", "the", "options", "considering", "been", "?", "not", "they", "had", "Had"], "correct": "Had they not been considering all the options?" },
     { "jumbled": ["crying", "been", "has", "the", "baby", "How", "long", "?"], "correct": "How long has the baby been crying?" },
     { "jumbled": ["seriously", "her", "studies", "taking", "been", "?", "not", "she", "hasn't", "Why"], "correct": "Why hasn't she been taking her studies seriously?" },
     { "jumbled": ["the", "princess", "rescue", "to", "got", "had", "The", "knight"], "correct": "The knight had got to rescue the princess" },
     { "jumbled": ["the", "small", "things", "about", "worry", "to", "got", "not", "had", "We"], "correct": "We had not got to worry about the small things" },
-    { "jumbled": ["the", "weekend", "on", "work", "to", "have", "?", "you", "Did"], "correct": "Did you have to work on the weekend?" },
+    { "jumbled": ["the", "weekend", "on", "work", "to", "have", "?", "you", "did", "Did"], "correct": "Did you have to work on the weekend?" },
     { "jumbled": ["the", "morning", "in", "there", "be", "to", "have", "?", "not", "he", "Does"], "correct": "Does he not have to be there in the morning?" },
     { "jumbled": ["entertainment", "for", "do", "to", "use", "?", "you", "did", "What"], "correct": "What did you use to do for entertainment?" },
     { "jumbled": ["their", "windows", "lock", "to", "use", "?", "not", "they", "didn't", "Why"], "correct": "Why didn't they use to lock their windows?" },
@@ -7033,14 +7090,14 @@
     { "jumbled": ["all", "after", "joining", "us", "be", "not", "might", "She"], "correct": "She might not be joining us after all" },
     { "jumbled": ["the", "beach", "on", "a", "sandcastle", "built", "He"], "correct": "He built a sandcastle on the beach" },
     { "jumbled": ["the", "warning", "sign", "see", "not", "did", "I"], "correct": "I did not see the warning sign" },
-    { "jumbled": ["the", "door", "lock", "to", "remember", "?", "you", "Did"], "correct": "Did you remember to lock the door?" },
-    { "jumbled": ["the", "memo", "get", "?", "not", "she", "Did"], "correct": "Did she not get the memo?" },
+    { "jumbled": ["the", "door", "lock", "to", "remember", "?", "you", "did", "Did"], "correct": "Did you remember to lock the door?" },
+    { "jumbled": ["the", "memo", "get", "?", "not", "she", "did", "Did"], "correct": "Did she not get the memo?" },
     { "jumbled": ["the", "performance", "of", "think", "?", "you", "did", "What"], "correct": "What did you think of the performance?" },
     { "jumbled": ["the", "situation", "explain", "?", "not", "he", "did", "Why"], "correct": "Why did he not explain the situation?" },
     { "jumbled": ["the", "library", "in", "quiet", "be", "to", "have", "We"], "correct": "We have to be quiet in the library" },
     { "jumbled": ["the", "optional", "session", "attend", "to", "have", "not", "does", "She"], "correct": "She does not have to attend the optional session" },
-    { "jumbled": ["my", "passport", "bring", "to", "have", "?", "I", "Do"], "correct": "Do I have to bring my passport?" },
-    { "jumbled": ["a", "suit", "wear", "to", "have", "?", "not", "he", "Does"], "correct": "Does he not have to wear a suit?" },
+    { "jumbled": ["my", "passport", "bring", "to", "have", "?", "I", "do", "Do"], "correct": "Do I have to bring my passport?" },
+    { "jumbled": ["a", "suit", "wear", "to", "have", "?", "not", "he", "does", "Does"], "correct": "Does he not have to wear a suit?" },
     { "jumbled": ["the", "trip", "for", "prepare", "to", "have", "?", "we", "do", "What"], "correct": "What do we have to prepare for the trip?" },
     { "jumbled": ["early", "arrive", "to", "have", "?", "not", "you", "don't", "Why"], "correct": "Why don't you have to arrive early?" },
     { "jumbled": ["the", "race", "start", "to", "about", "were", "They"], "correct": "They were about to start the race" },
@@ -7052,7 +7109,7 @@
     { "jumbled": ["a", "special", "dish", "preparing", "is", "The", "chef"], "correct": "The chef is preparing a special dish" },
     { "jumbled": ["right", "now", "hungry", "feeling", "not", "am", "I"], "correct": "I am not feeling hungry right now" },
     { "jumbled": ["the", "park", "to", "us", "with", "coming", "?", "you", "Are"], "correct": "Are you coming with us to the park?" },
-    { "jumbled": ["his", "assignment", "on", "working", "?", "not", "he", "Is"], "correct": "Is he not working on his assignment?" },
+    { "jumbled": ["his", "assignment", "on", "working", "?", "not", "he", "is", "Is"], "correct": "Is he not working on his assignment?" },
     { "jumbled": ["television", "on", "watching", "?", "you", "are", "What"], "correct": "What are you watching on television?" },
     { "jumbled": ["her", "jacket", "wearing", "?", "not", "she", "is", "Why"], "correct": "Why is she not wearing her jacket?" },
     { "jumbled": ["more", "carefully", "listened", "have", "should", "I"], "correct": "I should have listened more carefully" },
@@ -7063,22 +7120,22 @@
     { "jumbled": ["informed", "been", "have", "?", "not", "they", "shouldn't", "Why"], "correct": "Why shouldn't they have been informed?" },
     { "jumbled": ["an", "hour", "in", "set", "will", "The", "sun"], "correct": "The sun will set in an hour" },
     { "jumbled": ["the", "results", "with", "disappointed", "be", "not", "will", "We"], "correct": "We will not be disappointed with the results" },
-    { "jumbled": ["tomorrow", "available", "be", "?", "you", "Will"], "correct": "Will you be available tomorrow?" },
-    { "jumbled": ["dinner", "for", "us", "join", "?", "not", "she", "Will"], "correct": "Will she not join us for dinner?" },
+    { "jumbled": ["tomorrow", "available", "be", "?", "you", "will", "Will"], "correct": "Will you be available tomorrow?" },
+    { "jumbled": ["dinner", "for", "us", "join", "?", "not", "she", "will", "Will"], "correct": "Will she not join us for dinner?" },
     { "jumbled": ["class", "after", "do", "?", "you", "will", "What"], "correct": "What will you do after class?" },
     { "jumbled": ["our", "help", "accept", "?", "not", "he", "won't", "Why"], "correct": "Why won't he accept our help?" },
     { "jumbled": ["we", "called", "when", "asleep", "been", "have", "might", "She"], "correct": "She might have been asleep when we called" },
     { "jumbled": ["the", "meeting", "of", "aware", "been", "have", "not", "might", "He"], "correct": "He might not have been aware of the meeting" },
     { "jumbled": ["ages", "for", "trip", "this", "planning", "been", "have", "had", "We"], "correct": "We had been planning this trip for ages" },
     { "jumbled": ["her", "instrument", "practicing", "been", "have", "not", "had", "She", "all", "month"], "correct": "She had not been practicing her instrument all month" },
-    { "jumbled": ["long", "waiting", "been", "have", "?", "you", "Had"], "correct": "Had you been waiting long?" },
-    { "jumbled": ["well", "feeling", "been", "have", "?", "not", "he", "Had", "for", "a", "while"], "correct": "Had he not been feeling well for a while?" },
+    { "jumbled": ["long", "waiting", "been", "have", "?", "you", "had", "Had"], "correct": "Had you been waiting long?" },
+    { "jumbled": ["well", "feeling", "been", "have", "?", "not", "he", "had", "Had", "for", "a", "while"], "correct": "Had he not been feeling well for a while?" },
     { "jumbled": ["their", "backyard", "in", "building", "been", "?", "they", "had", "What", "all", "summer"], "correct": "What had they been building in their backyard all summer?" },
     { "jumbled": ["the", "lectures", "attending", "been", "?", "not", "she", "had", "Why", "this", "semester"], "correct": "Why had she not been attending the lectures this semester?" },
     { "jumbled": ["the", "news", "me", "told", "have", "could", "You"], "correct": "You could have told me the news" },
     { "jumbled": ["alone", "the", "problem", "solved", "have", "not", "could", "She"], "correct": "She could not have solved the problem alone" },
-    { "jumbled": ["a", "different", "train", "taken", "have", "?", "he", "Could"], "correct": "Could he have taken a different train?" },
-    { "jumbled": ["something", "different", "done", "have", "?", "not", "we", "Could"], "correct": "Could we not have done something different?" },
+    { "jumbled": ["a", "different", "train", "taken", "have", "?", "he", "could", "Could"], "correct": "Could he have taken a different train?" },
+    { "jumbled": ["something", "different", "done", "have", "?", "not", "we", "could", "Could"], "correct": "Could we not have done something different?" },
     { "jumbled": ["done", "have", "they", "What", "could", "else", "?"], "correct": "What else could they have done?" },
     { "jumbled": ["earlier", "me", "informed", "have", "?", "not", "you", "couldn't", "Why"], "correct": "Why couldn't you have informed me earlier?" }
                                 ]
@@ -9197,6 +9254,15 @@
             const explanationModal = document.getElementById('explanation-modal');
             const closeExplanationModal = document.getElementById('close-explanation-modal');
             const explanationContent = document.getElementById('explanation-content');
+            // Profile Elements
+            const profileSetupModal = document.getElementById('profile-setup-modal');
+            const usernameInput = document.getElementById('username-input');
+            const saveProfileBtn = document.getElementById('save-profile-btn');
+            const profileBtn = document.getElementById('profile-btn');
+            const userProfileModal = document.getElementById('user-profile-modal');
+            const userProfileContent = document.getElementById('user-profile-content');
+            const closeUserProfileModal = document.getElementById('close-user-profile-modal');
+
 
             // --- State ---
             let activeWordItem = null;
@@ -9205,10 +9271,236 @@
             let currentWordListData = { title: null, words: [] };
             let favorites = [];
             let allWords = [];
+            let allCategoriesMap = new Map();
             const originalSynonymsData = vocabularyData["Synonyms"];
             let synthVoices = [];
+            let userProfile = null;
             
             // --- Functions ---
+            
+            // --- Profile Functions ---
+            function loadProfile() {
+                const savedProfile = localStorage.getItem('lingoProfile');
+                if (savedProfile) {
+                    userProfile = JSON.parse(savedProfile);
+                    // Check streak on load
+                    updateStreak(false); // don't increment, just check if it's broken
+                    profileBtn.classList.remove('hidden');
+                    return true;
+                }
+                return false;
+            }
+
+            function saveProfile(profile) {
+                userProfile = profile;
+                localStorage.setItem('lingoProfile', JSON.stringify(userProfile));
+            }
+            
+            function isSameDay(date1, date2) {
+                if (!date1 || !date2) return false;
+                const d1 = new Date(date1);
+                const d2 = new Date(date2);
+                return d1.getFullYear() === d2.getFullYear() &&
+                       d1.getMonth() === d2.getMonth() &&
+                       d1.getDate() === d2.getDate();
+            }
+
+            function isYesterday(date1, date2) {
+                 if (!date1 || !date2) return false;
+                const yesterday = new Date(date2);
+                yesterday.setDate(yesterday.getDate() - 1);
+                return isSameDay(date1, yesterday);
+            }
+
+            function updateStreak(increment = true) {
+                if (!userProfile) return;
+
+                const now = new Date();
+                const lastQuizDate = userProfile.lastQuizDate ? new Date(userProfile.lastQuizDate) : null;
+                
+                if (increment) {
+                    if (lastQuizDate && isYesterday(lastQuizDate, now)) {
+                        userProfile.streak = (userProfile.streak || 0) + 1;
+                    } else if (!lastQuizDate || !isSameDay(lastQuizDate, now)) {
+                         userProfile.streak = 1;
+                    }
+                    userProfile.lastQuizDate = now.toISOString();
+                } else { // Just check if streak is broken
+                    if (lastQuizDate && !isSameDay(lastQuizDate, now) && !isYesterday(lastQuizDate, now)) {
+                        userProfile.streak = 0;
+                    }
+                }
+                saveProfile(userProfile);
+            }
+
+
+            function checkProfileFormState() {
+                const name = usernameInput.value.trim();
+                saveProfileBtn.disabled = !name;
+            }
+
+            function showProfileSetup() {
+                usernameInput.addEventListener('input', checkProfileFormState);
+                profileSetupModal.classList.remove('hidden');
+            }
+
+            function saveAndApplyProfile() {
+                const name = usernameInput.value.trim();
+                const newProfile = { 
+                    name, 
+                    quizHistory: [],
+                    streak: 0,
+                    lastQuizDate: null
+                };
+                
+                saveProfile(newProfile);
+                profileBtn.classList.remove('hidden');
+                profileSetupModal.classList.add('hidden');
+                
+                // Continue to app
+                renderCategories(vocabularyData);
+            }
+            
+            function getFocusArea() {
+                if (!userProfile || userProfile.quizHistory.length < 5) {
+                    return null; // Not enough data
+                }
+                
+                const categoryScores = userProfile.quizHistory.reduce((acc, result) => {
+                    const category = result.title.replace(' Quiz', '');
+                    if (!acc[category]) {
+                        acc[category] = { totalScore: 0, totalPossible: 0, count: 0 };
+                    }
+                    acc[category].totalScore += result.score;
+                    acc[category].totalPossible += result.total;
+                    acc[category].count++;
+                    return acc;
+                }, {});
+
+                let lowestAvg = 101;
+                let focusCategory = null;
+
+                for(const category in categoryScores) {
+                    const avg = (categoryScores[category].totalScore / categoryScores[category].totalPossible) * 100;
+                    if (avg < lowestAvg) {
+                        lowestAvg = avg;
+                        focusCategory = category;
+                    }
+                }
+
+                return focusCategory;
+            }
+            
+            function navigateToCategory(categoryName) {
+                const categoryData = allCategoriesMap.get(categoryName);
+                if (categoryData) {
+                    navStack.push({ renderFunc: renderCategories, args: [vocabularyData, "LingoQuest", "Your daily dose of vocabulary."] });
+                    
+                    if (typeof categoryData.data === 'function') {
+                         categoryData.data(categoryData.gradClass);
+                    } else if (Array.isArray(categoryData.data)) {
+                        renderWords(categoryName, categoryData.data, false, categoryData.gradClass);
+                    } else {
+                        renderCategories(categoryData.data, categoryName, "Select a sub-category");
+                    }
+                    userProfileModal.classList.add('hidden');
+                }
+            }
+
+
+            function displayProfileModal() {
+                if (!userProfile) return;
+                
+                // --- Calculate Stats ---
+                const totalQuizzes = userProfile.quizHistory.length;
+                let totalScore = 0;
+                let totalPossibleScore = 0;
+
+                if (totalQuizzes > 0) {
+                    userProfile.quizHistory.forEach(result => {
+                        totalScore += result.score;
+                        totalPossibleScore += result.total;
+                    });
+                }
+                
+                const overallAccuracy = totalPossibleScore > 0 ? ((totalScore / totalPossibleScore) * 100).toFixed(0) : 0;
+                
+                // --- Get Focus Area ---
+                const focusArea = getFocusArea();
+                let focusAreaHTML;
+                if (focusArea) {
+                     focusAreaHTML = `
+                        <div class="focus-card" data-category="${focusArea}">
+                            <h3 class="text-sm font-bold text-slate-300 uppercase">Focus Area</h3>
+                            <p class="text-lg font-bold text-white mt-2">${focusArea}</p>
+                            <p class="text-xs text-amber-400">Click to practice</p>
+                        </div>
+                     `;
+                } else {
+                     focusAreaHTML = `
+                        <div class="stat-card">
+                            <h3 class="text-sm font-bold text-slate-300 uppercase">Focus Area</h3>
+                            <p class="text-xs font-normal text-slate-400 mt-2">Take a few more quizzes to unlock this!</p>
+                        </div>
+                     `;
+                }
+
+                // --- Get Last 5 Test Results ---
+                const recentHistoryHTML = userProfile.quizHistory.slice(0, 5).map(r => `
+                    <div class="quiz-history-item font-sans">
+                        <div>
+                            <p class="font-semibold text-white">${r.title}</p>
+                            <p class="text-xs text-slate-400">${new Date(r.date).toLocaleDateString()}</p>
+                        </div>
+                        <p class="font-bold text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</p>
+                    </div>
+                `).join('');
+
+                userProfileContent.innerHTML = `
+                    <div class="text-center mb-6">
+                        <p class="text-xs text-slate-400">Welcome back,</p>
+                        <h2 class="text-3xl font-bold text-white">${userProfile.name}</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="stat-card">
+                            <h3 class="text-sm font-bold text-slate-300 uppercase">Streak</h3>
+                             <p class="text-3xl font-extrabold text-amber-400 mt-1 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="mr-1"><path d="M11.996 1.1a1 1 0 0 0-.915.584l-2.062 4.122a1 1 0 0 1-.741.51l-4.551.652a1 1 0 0 0-.555 1.706l3.293 3.21a1 1 0 0 1 .288.885l-.778 4.533a1 1 0 0 0 1.451 1.054l4.07-2.14a1 1 0 0 1 .932 0l4.07 2.14a1 1 0 0 0 1.451-1.054l-.778-4.533a1 1 0 0 1 .288-.885l3.293-3.21a1 1 0 0 0-.555-1.706l-4.55-.652a1 1 0 0 1-.741-.51l-2.063-4.122A1 1 0 0 0 11.996 1.1zM11.996 1.1a1 1 0 0 0-.915.584l-2.062 4.122a1 1 0 0 1-.741.51l-4.551.652a1 1 0 0 0-.555 1.706l3.293 3.21a1 1 0 0 1 .288.885l-.778 4.533a1 1 0 0 0 1.451 1.054l4.07-2.14a1 1 0 0 1 .932 0l4.07 2.14a1 1 0 0 0 1.451-1.054l-.778-4.533a1 1 0 0 1 .288-.885l3.293-3.21a1 1 0 0 0-.555-1.706l-4.55-.652a1 1 0 0 1-.741-.51l-2.063-4.122A1 1 0 0 0 11.996 1.1z"></path></svg>
+                                ${userProfile.streak || 0}
+                            </p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 class="text-sm font-bold text-slate-300 uppercase">Accuracy</h3>
+                            <p class="text-3xl font-extrabold text-white mt-1">${overallAccuracy}%</p>
+                        </div>
+                        ${focusAreaHTML}
+                    </div>
+
+                    <h3 class="text-xl font-bold text-white mb-2 border-b border-white/20 pb-2">Recent Scores</h3>
+                    <div class="space-y-2 max-h-64 overflow-y-auto pr-2">
+                        ${recentHistoryHTML || '<p class="text-center text-slate-400 font-sans py-4">No quiz history yet. Take a quiz to see your results!</p>'}
+                    </div>
+                `;
+                userProfileModal.classList.remove('hidden');
+
+                const focusCard = userProfileContent.querySelector('.focus-card');
+                if (focusCard) {
+                    focusCard.addEventListener('click', () => {
+                        navigateToCategory(focusCard.dataset.category);
+                    });
+                }
+            }
+
+
+            function addQuizResult(title, score, total) {
+                if (!userProfile) return;
+                const result = { title, score, total, date: new Date().toISOString() };
+                userProfile.quizHistory = [result, ...userProfile.quizHistory];
+                updateStreak(true);
+                saveProfile(userProfile);
+            }
+
 
             function renderCategories(categories, title = "LingoQuest", subtitle = "Your daily dose of vocabulary.") {
                 setTimeout(() => { wordView.scrollTop = 0; }, 0); 
@@ -9244,6 +9536,10 @@
                     if (isFav) gradClass = 'grad-fav';
                     if (isDict) gradClass = 'grad-5';
                     if (isStudyHall) gradClass = 'grad-7';
+                    
+                    if(title === "LingoQuest") {
+                        allCategoriesMap.set(categoryName, { data: displayCategories[categoryName], gradClass: gradClass });
+                    }
 
 
                     card.className = `category-card p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${gradClass}`;
@@ -9561,6 +9857,7 @@
                 }
                 
                 function displayJumbledResults() {
+                    addQuizResult(lessonData.title, score, totalQuestions);
                     clearQuizState(quizId);
                     wordView.innerHTML = `
                         <div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
@@ -9644,6 +9941,7 @@
                 }
 
                 function displayPracticeResults() {
+                    addQuizResult(lessonData.title, score, totalQuestions);
                     clearQuizState(quizId);
                     wordView.innerHTML = `
                         <div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
@@ -9824,7 +10122,7 @@
                 }
 
                 const listContainer = document.createElement('div');
-                listContainer.className = 'p-4 max-w-2xl mx-auto pt-20 pb-24';
+                listContainer.className = 'p-4 max-w-2xl mx-auto pt-24 pb-24';
                 const list = document.createElement('div');
                 list.className = "space-y-4";
                 listContainer.appendChild(list);
@@ -9953,19 +10251,21 @@
             }
 
             // --- Other Logic ---
-            function flattenVocabulary(data) {
+            function flattenVocabulary(data, path = []) {
                 let words = [];
                 for (const key in data) {
+                    const newPath = [...path, key];
                     if (key === 'Synonyms' || key === 'Confusing Words' || key === 'Word Roots (Etymology)' || key === 'Study Hall') continue;
                     const value = data[key];
                     if (Array.isArray(value)) {
-                        words = words.concat(value);
+                        words = words.concat(value.map(v => ({...v, category: newPath.join(' > ')})));
                     } else if (typeof value === 'object' && value !== null) {
-                        words = words.concat(flattenVocabulary(value));
+                        words = words.concat(flattenVocabulary(value, newPath));
                     }
                 }
                 return words;
             }
+
             
             function displaySuggestions(suggestions) {
                 searchSuggestions.innerHTML = '';
@@ -10303,6 +10603,7 @@
                 }
 
                 function displayResults() {
+                    addQuizResult(`${originalTitle} Quiz`, score, totalQuestions);
                     clearQuizState(quizId);
                     wordView.innerHTML = `
                         <div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4">
@@ -10360,6 +10661,7 @@
                 renderCategories(vocabularyData);
             };
 
+            // --- Event Listeners ---
             navBackBtn.addEventListener('click', goBack);
             navHomeBtn.addEventListener('click', goHome);
             navFavoritesBtn.addEventListener('click', () => {
@@ -10416,6 +10718,14 @@
             explanationModal.addEventListener('click', (e) => {
                 if (e.target === explanationModal) explanationModal.classList.add('hidden');
             });
+            
+            profileBtn.addEventListener('click', displayProfileModal);
+            closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
+            userProfileModal.addEventListener('click', (e) => {
+                if (e.target === userProfileModal) userProfileModal.classList.add('hidden');
+            });
+
+            saveProfileBtn.addEventListener('click', saveAndApplyProfile);
 
             const synonymsCategoryFunction = (gradientClass) => {
                 renderAlphabetGrid(gradientClass);
@@ -10428,6 +10738,14 @@
                     splashScreen.addEventListener('animationend', () => {
                         splashScreen.style.display = 'none';
                         appContainer.classList.remove('opacity-0');
+
+                        // Check for profile after splash screen animation
+                        if (!loadProfile()) {
+                            showProfileSetup();
+                        } else {
+                            renderCategories(vocabularyData);
+                        }
+
                     }, { once: true });
                 }, 1500);
 
@@ -10437,7 +10755,6 @@
                 Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
                 allWords = [...new Set(allWords)];
 
-                renderCategories(vocabularyData);
                 // Pre-load voices for TTS
                 speechSynthesis.getVoices();
             }
@@ -10447,7 +10764,5 @@
     </script>
 </body>
 </html>
-
-
 
 
