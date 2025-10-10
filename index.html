@@ -7,6 +7,7 @@
 
     <!-- App Icons, Manifest, and Theme Color -->
     <meta name="theme-color" content="#1F2335">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="LingoQuest">
@@ -16,10 +17,10 @@
 
     <!-- 2. Fallback for iOS and older browsers -->
     <!-- Apple Touch Icon for iOS (180x180) -->
-    <link rel="apple-touch-icon" href="https://i.ibb.co/PNSc0k7/Lingo-Quest-Logo-1.png?v=5">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/nHZwSZ8/apple-touch-icon.png">
     
-    <!-- Favicon for desktop browsers (32x32) -->
-    <link rel="icon" href="https://i.ibb.co/2Y40d5c/Lingo-Quest-Logo.png?v=5">
+    <!-- Favicon for desktop browsers (using the 192x192 as a reliable fallback) -->
+    <link rel="icon" href="https://i.ibb.co/234vGC7q/web-app-manifest-192x192.png">
 
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -35,7 +36,6 @@
             --accent-red: #ef4444;
             --accent-yellow: #f59e0b;
         }
-
         html, body {
             overflow-x: hidden;
         }
@@ -507,7 +507,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-4">About LingoQuest</h2>
-            <p class="text-slate-300 mb-6">This application was developed by and for the students of the British Institute Of English Language And P.D.</p>
+            <p class="text-slate-300 mb-6">This application was developed by Akash Sawle, for the students of the British Institute Of English Language And P.D.</p>
             
             <div class="border-t border-white/20 pt-4 mb-6">
                 <h3 class="font-bold text-white mb-2">By:</h3>
@@ -578,24 +578,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-             // Listen for the browser/phone's back button
-            window.addEventListener('popstate', (event) => {
-                // This event fires when the history changes. We need to sync our app's view.
-                // We will handle the view rendering based on the navStack.
-                // A simple approach is to see if the hash is gone (meaning we went back to the root)
-                // or just to rely on our goBack function to sync up.
-                if (window.location.hash === '') {
-                    goHome();
-                } else {
-                    // A popstate means a back action happened, but our stack might be ahead.
-                    // This is a simplified way to handle it. A more robust solution might involve
-                    // syncing the history state object with the navStack.
-                    if (navStack.length > 0) {
-                       goBack(true); // Pass flag to indicate it's from popstate
-                    }
-                }
-            });
-
              const detailedExplanations = {
                 "Affect vs. Effect": `
                     <h3 class="text-2xl font-bold mb-4">Affect vs. Effect</h3>
@@ -9071,6 +9053,7 @@
         {"word":"Cuisine","meaning":"(French) A style or method of cooking, especially as characteristic of a particular country or region","example":"The restaurant is known for its excellent French cuisine."},
         {"word":"Vice versa","meaning":"(Latin) With the order changed; the other way around","example":"I don't know if he likes her or vice versa."},
         {"word":"Chic","meaning":"(French) Elegantly and stylishly fashionable","example":"She looked incredibly chic in her little black dress."},
+        {"word":"Chutzpah","meaning":"(Yiddish) Shameless audacity; nerve","example":"It took a lot of chutzpah to ask for a raise on his first day."},
         {"word":"Doppelgänger","meaning":"(German) An apparition or double of a living person","example":"I saw a woman who was my friend's exact doppelgänger in the crowd."},
         {"word":"Et cetera","meaning":"(Latin) And other similar things; and so on","example":"We need to buy bread, milk, eggs, et cetera."},
         {"word":"Incognito","meaning":"(Italian) With one's identity concealed","example":"The celebrity traveled incognito to avoid the paparazzi."},
@@ -10799,3 +10782,5 @@
     </script>
 </body>
 </html>
+
+
