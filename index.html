@@ -17,10 +17,10 @@
 
     <!-- 2. Fallback for iOS and older browsers -->
     <!-- Apple Touch Icon for iOS (180x180) -->
-    <link rel="apple-touch-icon" href="https://i.ibb.co/nHZwSZ8/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/PNSc0k7/Lingo-Quest-Logo-1.png?v=6">
     
     <!-- Favicon for desktop browsers (using the 192x192 as a reliable fallback) -->
-    <link rel="icon" href="https://i.ibb.co/234vGC7q/web-app-manifest-192x192.png">
+    <link rel="icon" href="https://i.ibb.co/tZ5Wdnb/Lingo-Quest-Logo-2.png?v=6">
 
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,6 +36,7 @@
             --accent-red: #ef4444;
             --accent-yellow: #f59e0b;
         }
+
         html, body {
             overflow-x: hidden;
         }
@@ -507,7 +508,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-4">About LingoQuest</h2>
-            <p class="text-slate-300 mb-6">This application was developed by Akash Sawle, for the students of the British Institute Of English Language And P.D.</p>
+            <p class="text-slate-300 mb-6">This application was developed by and for the students of the British Institute Of English Language And P.D.</p>
             
             <div class="border-t border-white/20 pt-4 mb-6">
                 <h3 class="font-bold text-white mb-2">By:</h3>
@@ -10070,17 +10071,29 @@
                 appContainer.classList.remove('p-4');
                 wordView.classList.add('active');
                 
+                // Create and add the title header
+                const headerWrapper = document.createElement('div');
+                headerWrapper.className = 'fixed top-0 left-0 right-0 z-40 bg-[#1F2335] py-2';
+                const headerPill = document.createElement('div');
+                headerPill.className = 'grad-nav rounded-full flex justify-center items-center max-w-sm md:max-w-md mx-auto p-2';
+                const heading = document.createElement('h2');
+                heading.className = "text-lg md:text-xl font-bold text-white text-center";
+                heading.textContent = 'Synonyms';
+                headerPill.appendChild(heading);
+                headerWrapper.appendChild(headerPill);
+                wordView.appendChild(headerWrapper);
+
                 const section = document.createElement('section');
-                section.className = "pop-in p-4";
+                section.className = "pop-in p-4 pt-24 pb-24"; // Added padding to account for the fixed header
                 section.id = "alphabet-grid-section";
 
                 const glassContainer = document.createElement('div');
                 glassContainer.className = "glass-ui p-4 rounded-2xl"
 
-                const heading = document.createElement('h2');
-                heading.className = "text-xl sm:text-2xl font-bold text-white mb-6 border-b-2 border-white/20 pb-2";
-                heading.textContent = 'Select a Letter';
-                glassContainer.appendChild(heading);
+                const gridHeading = document.createElement('h2');
+                gridHeading.className = "text-xl sm:text-2xl font-bold text-white mb-6 border-b-2 border-white/20 pb-2";
+                gridHeading.textContent = 'Select a Letter';
+                glassContainer.appendChild(gridHeading);
 
                 const grid = document.createElement('div');
                 grid.className = "grid grid-cols-5 sm:grid-cols-7 gap-3";
@@ -10091,9 +10104,7 @@
                     button.textContent = letter;
                     button.className = "bg-white/10 hover:bg-white/20 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center transition";
                     button.addEventListener('click', () => {
-                         document.querySelectorAll('.alphabet-button-active').forEach(btn => btn.classList.remove('alphabet-button-active'));
-                         button.classList.add('alphabet-button-active');
-                         renderSynonymList(letter, section, gradientClass);
+                         renderSynonymList(letter, gradientClass);
                     });
                     grid.appendChild(button);
                 }
@@ -10108,151 +10119,98 @@
                 navQuizBtn.disabled = true;
             }
 
-            function renderSynonymList(letter, parentSection, gradientClass) {
-                const existingList = document.getElementById('synonym-list-section');
-                if (existingList) {
-                    existingList.remove();
-                }
-
+            function renderSynonymList(letter, gradientClass) {
+                // Push the A-Z grid view to the stack so we can go back to it
+                navStack.push({ renderFunc: renderAlphabetGrid, args: [gradientClass] });
+                
                 const words = originalSynonymsData[letter] || [];
                 const title = `Synonyms: ${letter}`;
-
-                renderWords(title, words, parentSection, gradientClass, { isSynonymSublist: true, alphabetGridElement: parentSection });
+                
+                // The third arg (appendTo) is not used anymore with the new logic, pass null
+                renderWords(title, words, null, gradientClass, { isSynonymSublist: true });
             }
             
             function renderWords(title, words, appendTo, gradientClass, options = {}) {
-                const { isFavorites = false, isSearch = false, isSynonymSublist = false, alphabetGridElement = null } = options;
-                
-                if (!appendTo) {
-                    wordView.innerHTML = '';
-                    setTimeout(() => { wordView.scrollTop = 0; }, 0);
-                    document.body.classList.add('view-active');
-                    appContainer.classList.remove('p-4');
-                    wordView.classList.add('active');
-                }
+                const { isFavorites = false, isSearch = false, isSynonymSublist = false } = options;
+
                 activeWordItem = null;
-                
                 currentWordListData = { title, words };
+                let mainContainer;
+                let listContainer;
 
-                if (words.length === 0) {
-                    const message = isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.');
-                    const noWords = document.createElement('p');
-                    noWords.textContent = message;
-                    noWords.className = 'text-center text-gray-400 mt-4';
-                    
-                    const messageContainer = document.createElement('div');
-                    messageContainer.className = 'p-4';
-                    
-                    if(isSynonymSublist && alphabetGridElement) {
-                        alphabetGridElement.classList.add('hidden');
-                        messageContainer.id = 'synonym-list-section';
-                        
-                        const headerWrapper = document.createElement('div');
-                        headerWrapper.className = 'p-2';
-                        
-                        const headerPill = document.createElement('div');
-                        headerPill.className = 'grad-nav rounded-full flex justify-between items-center max-w-sm md:max-w-md mx-auto p-2';
-                        const heading = document.createElement('h2');
-                        heading.className = "text-lg md:text-xl font-bold text-white text-center flex-grow";
-                        heading.textContent = title;
-                        
-                        const browseBtn = document.createElement('button');
-                        browseBtn.textContent = 'Browse A-Z';
-                        browseBtn.className = 'text-sm bg-white/20 hover:bg-white/30 text-white font-bold py-1 px-3 rounded-full transition-colors ml-4';
-                        browseBtn.onclick = () => {
-                            messageContainer.remove();
-                            alphabetGridElement.classList.remove('hidden');
-                        };
+                // --- 1. Set up the main container and header ---
+                wordView.innerHTML = '';
+                setTimeout(() => { wordView.scrollTop = 0; }, 0);
+                document.body.classList.add('view-active');
+                appContainer.classList.remove('p-4');
+                wordView.classList.add('active');
+                categoryView.classList.add('hidden');
+                document.getElementById('home-features').classList.add('hidden');
+                wordView.classList.remove('hidden');
+                mainContainer = wordView;
 
-                        headerPill.appendChild(heading);
-                        headerPill.appendChild(browseBtn);
-                        headerWrapper.appendChild(headerPill);
-                        messageContainer.appendChild(headerWrapper);
-                        messageContainer.appendChild(noWords);
-                        alphabetGridElement.parentElement.appendChild(messageContainer);
-                    } else {
-                         messageContainer.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl">${noWords.outerHTML}</div>`;
-                         wordView.innerHTML = messageContainer.innerHTML;
-                    }
+                // --- Unified Header Creation ---
+                const headerWrapper = document.createElement('div');
+                headerWrapper.className = 'fixed top-0 left-0 right-0 z-40 bg-[#1F2335] py-2';
+                
+                const headerPill = document.createElement('div');
+                const pillBaseClasses = 'grad-nav rounded-full flex items-center max-w-sm md:max-w-md mx-auto p-2';
+                
+                if (isSynonymSublist) {
+                    headerPill.className = `${pillBaseClasses} justify-between`;
+                } else {
+                    headerPill.className = `${pillBaseClasses} justify-center`;
+                    headerWrapper.addEventListener('click', () => { wordView.scrollTo({ top: 0, behavior: 'smooth' }); });
+                }
 
-                    if (!isSynonymSublist) bottomNav.classList.remove('hidden');
-                    navQuizBtn.disabled = true;
-                    return;
+                const heading = document.createElement('h2');
+                heading.className = "text-lg md:text-xl font-bold text-white text-center";
+                if (isSynonymSublist) {
+                    heading.classList.add('flex-grow');
+                }
+                heading.textContent = title;
+                headerPill.appendChild(heading);
+
+                if (isSynonymSublist) {
+                    const browseBtn = document.createElement('button');
+                    browseBtn.textContent = 'A-Z';
+                    browseBtn.className = 'text-sm bg-white/20 hover:bg-white/30 text-white font-bold py-1 px-3 rounded-full transition-colors ml-4 flex-shrink-0';
+                    browseBtn.onclick = goBack;
+                    headerPill.appendChild(browseBtn);
                 }
                 
+                headerWrapper.appendChild(headerPill);
+                mainContainer.appendChild(headerWrapper);
+
                 const section = document.createElement('section');
                 section.className = "pop-in";
-                if (isSynonymSublist) {
-                    section.id = 'synonym-list-section';
-                }
+                listContainer = document.createElement('div');
+                listContainer.className = `p-4 max-w-2xl mx-auto pb-24 pt-24`; // Consistent padding
+                section.appendChild(listContainer);
+                mainContainer.appendChild(section);
 
-                if (isSynonymSublist && alphabetGridElement) {
-                    alphabetGridElement.classList.add('hidden');
-
-                    const headerWrapper = document.createElement('div');
-                    headerWrapper.className = 'sticky top-0 z-10';
-
-                    const headerPill = document.createElement('div');
-                    headerPill.className = 'grad-nav rounded-full flex justify-between items-center max-w-sm md:max-w-md mx-auto p-2';
-                    const heading = document.createElement('h2');
-                    heading.className = "text-lg md:text-xl font-bold text-white text-center flex-grow";
-                    heading.textContent = title;
-                    const browseBtn = document.createElement('button');
-                    browseBtn.textContent = 'Browse A-Z';
-                    browseBtn.className = 'text-sm bg-white/20 hover:bg-white/30 text-white font-bold py-1 px-3 rounded-full transition-colors ml-4';
-                    browseBtn.onclick = () => {
-                        section.remove();
-                        alphabetGridElement.classList.remove('hidden');
-                    };
-                    headerPill.appendChild(heading);
-                    headerPill.appendChild(browseBtn);
-                    headerWrapper.appendChild(headerPill);
-                } else {
-                    const headerWrapper = document.createElement('div');
-                    headerWrapper.className = 'fixed top-0 left-0 right-0 z-40 bg-[#1F2335] py-2';
-                    headerWrapper.addEventListener('click', () => { wordView.scrollTo({ top: 0, behavior: 'smooth' }); });
-                    const headerPill = document.createElement('div');
-                    headerPill.className = 'grad-nav rounded-full flex justify-center items-center max-w-sm md:max-w-md mx-auto p-2';
-                    const heading = document.createElement('h2');
-                    heading.className = "text-lg md:text-xl font-bold text-white text-center";
-                    heading.textContent = title;
-                    headerPill.appendChild(heading);
-                    headerWrapper.appendChild(headerPill);
-                    section.appendChild(headerWrapper);
-                }
-
-                const listContainer = document.createElement('div');
-                listContainer.className = 'p-4 max-w-2xl mx-auto pt-24 pb-24';
+                bottomNav.classList.remove('hidden');
+                
+                
+                // --- 2. Populate the list (This logic is now shared) ---
                 const list = document.createElement('div');
                 list.className = "space-y-4";
-                listContainer.appendChild(list);
-                section.appendChild(listContainer);
-
-                if (isSynonymSublist) {
-                     alphabetGridElement.parentElement.appendChild(section);
+                
+                if (words.length === 0) {
+                    const message = isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.');
+                    list.innerHTML = `<p class="text-center text-gray-400 mt-4">${message}</p>`;
+                    navQuizBtn.disabled = true;
                 } else {
-                     wordView.appendChild(section);
-                     categoryView.classList.add('hidden');
-                     document.getElementById('home-features').classList.add('hidden');
-                     wordView.classList.remove('hidden');
+                    const hasFlippableWords = words.some(w => !w.type);
+                    const quizPossible = hasFlippableWords && words.length >= 4;
+                    navQuizBtn.disabled = !quizPossible;
                 }
-
-                if (!isSynonymSublist) bottomNav.classList.remove('hidden');
-                const hasFlippableWords = words.some(w => !w.type);
-                const quizPossible = hasFlippableWords && words.length >= 4;
-                navQuizBtn.disabled = !quizPossible;
-
+                
                 words.forEach(item => {
                     if (item.type === 'explanation' || item.type === 'root') {
                         const explanationItem = document.createElement('div');
                         explanationItem.className = 'explanation-card p-3 sm:p-4';
-                        
-                        let cardContent = `<p class="text-sm sm:text-base font-semibold">${item.title}</p>`;
-                        if (item.meaning) {
-                            cardContent += `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>`;
-                        }
-                        
-                        explanationItem.innerHTML = cardContent;
+                        explanationItem.innerHTML = `<p class="text-sm sm:text-base font-semibold">${item.title}</p>${item.meaning ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}`;
                         explanationItem.addEventListener('click', () => showExplanationModal(item.title));
                         list.appendChild(explanationItem);
                         return;
@@ -10260,19 +10218,16 @@
 
                     const wordItem = document.createElement('div');
                     wordItem.className = "word-item";
-                    
                     const wordCardInner = document.createElement('div');
                     wordCardInner.className = 'word-card-inner';
-                    
                     const frontContent = document.createElement('div');
                     frontContent.className = "word-content front p-3 sm:p-4";
                     const backContent = document.createElement('div');
                     backContent.className = "word-content back p-3 sm:p-4";
 
                     const isOneWordSub = title.includes('One Word Substitution');
-                    const isPhraseList = title.includes('Phrases');
-                    const frontWord = isOneWordSub ? item.meaning : item.word;
                     const isAntonymList = title === 'Antonyms';
+                    const frontWord = isOneWordSub ? item.meaning : item.word;
                     const backWord = isAntonymList ? item.antonym : (isOneWordSub ? item.word : (item.synonyms ? `Synonyms: ${item.synonyms.join(', ')}` : (item.example || item.meaning)));
                     const isFavorited = favorites.some(fav => fav.word === item.word);
 
@@ -10280,27 +10235,16 @@
                         <div class="flex justify-between items-center w-full gap-4">
                             <div class="text-left flex-grow">
                                 <p class="text-sm sm:text-base font-semibold">${frontWord}</p>
-                                ${ (item.meaning && !isOneWordSub) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : '' }
+                                ${ (item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : '' }
+                                ${ (isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : '' }
                             </div>
-                            <button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                            </button>
-                            ${ !isOneWordSub ? `
-                            <div class="speak-button flex-shrink-0" data-speak="${item.word}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
-                            </div>` : '' }
+                            <button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>
+                            ${ !isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : '' }
                         </div>
                     `;
-                     backContent.innerHTML = `
+                        backContent.innerHTML = `
                         <div class="flex justify-between items-center w-full gap-4">
-                            ${ isAntonymList ? `
-                            <div class="text-left flex-grow">
-                                <p class="text-white font-semibold">${item.antonym}</p>
-                                <p class="text-xs text-slate-300">${item.antonym_meaning}</p>
-                            </div>
-                            ` : `
-                            <p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>
-                            `}
+                            ${ isAntonymList ? `<div class="text-left flex-grow"><p class="text-white font-semibold">${item.antonym}</p><p class="text-xs text-slate-300">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>`}
                             ${ isAntonymList ? `<div class="speak-button flex-shrink-0" data-speak="${item.antonym}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : '' }
                             ${ isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : '' }
                         </div>`;
@@ -10311,20 +10255,18 @@
 
                     wordItem.addEventListener('click', (e) => {
                         const target = e.target;
-                        if (target.closest('.speak-button')) {
-                            speakText(target.closest('.speak-button').dataset.speak);
-                        } else if (target.closest('.favorite-btn')) {
-                            toggleFavorite(target.closest('.favorite-btn'));
-                        } else {
-                            if (activeWordItem && activeWordItem !== wordItem) {
-                                activeWordItem.classList.remove('active');
-                            }
+                        if (target.closest('.speak-button')) speakText(target.closest('.speak-button').dataset.speak);
+                        else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn'));
+                        else {
+                            if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active');
                             wordItem.classList.toggle('active');
                             activeWordItem = wordItem.classList.contains('active') ? wordItem : null;
                         }
                     });
                     list.appendChild(wordItem);
                 });
+
+                listContainer.appendChild(list);
             }
             
             // --- Favorites Logic ---
@@ -10864,6 +10806,3 @@
     </script>
 </body>
 </html>
-
-
-
