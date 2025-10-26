@@ -13518,13 +13518,46 @@
                 const newLastName = document.getElementById('edit-lastname-input').value.trim();
                 const selectedBatchButton = document.querySelector('#edit-batch-time-selector .bg-pink-600');
                 const newBatchTime = selectedBatchButton ? selectedBatchButton.dataset.time : userProfile.batchTime;
-                if (!newFirstName || !newLastName) return;
-                const updatedData = { name: newFirstName, lastName: newLastName, batchTime: newBatchTime };
-                await setDoc(doc(db, `artifacts/${appId}/users`, userId), updatedData, { merge: true });
-                userProfile.name = newFirstName;
-                userProfile.lastName = newLastName;
-                userProfile.batchTime = newBatchTime;
-                displayProfileModal();
+
+                if (!newFirstName || !newLastName || !newBatchTime || !userId) {
+                     console.error("Missing data or userId for profile update.");
+                     alert("Please fill all fields.");
+                    return;
+                }
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/updateUserProfile"; // <<< PASTE URL HERE
+
+                try {
+                     console.log("Attempting to update profile for userId:", userId);
+                    const response = await fetch(functionUrl, {
+                        method: 'POST', // Using POST as defined in the function
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userId: userId,
+                            name: newFirstName,
+                            lastName: newLastName,
+                            batchTime: newBatchTime
+                        }),
+                    });
+
+                    if (response.ok) {
+                        console.log("Profile updated successfully via function.");
+                        // Update the local profile object immediately for responsiveness
+                        userProfile.name = newFirstName;
+                        userProfile.lastName = newLastName;
+                        userProfile.batchTime = newBatchTime;
+                        displayProfileModal(); // Refresh the profile modal view
+                    } else {
+                         const errorText = await response.text();
+                         console.error("Server responded with error during update:", response.status, errorText);
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error("Error updating profile via Cloud Function:", error);
+                    alert(`Could not update profile. Please check your connection and try again. Error: ${error.message}`);
+                }
             }
 
             function renderHomeView() {
@@ -14175,22 +14208,55 @@
                 }
             }
 
-            const getQuizStateRef = quizId => doc(db, `artifacts/${appId}/users/${userId}/quizState`, quizId);
-            const saveQuizState = async (quizId, state) => { if (userId) try { await setDoc(getQuizStateRef(quizId), { ...state, savedAt: serverTimestamp() }); } catch (e) { console.error("Error saving quiz state:", e); } };
-            const clearQuizState = async quizId => { if (userId) try { await deleteDoc(getQuizStateRef(quizId)); } catch (e) { console.error("Error clearing quiz state:", e); } };
-            const loadQuizState = async quizId => { if (!userId) return null; try { const snap = await getDoc(getQuizStateRef(quizId)); return snap.exists() ? snap.data() : null; } catch (e) { console.error("Error loading quiz state:", e); return null; } };
-            async function checkForSavedQuiz(quizId, questions, quizData, startQuizFunction) {
-                const savedState = await loadQuizState(quizId);
-                if (savedState && savedState.currentQuestionIndex < savedState.questions.length) {
-                    resumeQuizName.textContent = quizData.title || 'a previous quiz';
-                    resumeQuizModal.classList.remove('hidden');
-                    const resumeBtn = document.getElementById('resume-quiz-btn'), newQuizBtn = document.getElementById('new-quiz-btn');
-                    const resumeClone = resumeBtn.cloneNode(true); resumeBtn.parentNode.replaceChild(resumeClone, resumeBtn);
-                    const newClone = newQuizBtn.cloneNode(true); newQuizBtn.parentNode.replaceChild(newClone, newQuizBtn);
-                    resumeClone.addEventListener('click', () => { resumeQuizModal.classList.add('hidden'); startQuizFunction(questions, quizData, quizId, savedState); });
-                    newClone.addEventListener('click', async () => { await clearQuizState(quizId); resumeQuizModal.classList.add('hidden'); startQuizFunction(questions, quizData, quizId); });
-                } else { startQuizFunction(questions, quizData, quizId); }
-            }
+            const getQuizStateRef = (quizId) => { 
+                /* This function is now obsolete */ 
+                console.warn("getQuizStateRef is obsolete.");
+            };
+            
+            const saveQuizState = async (quizId, state) => {
+                if (!userId) return;
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizState"; // <<< PASTE URL HERE
+                try {
+                    await fetch(functionUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, quizId, state })
+                    });
+                } catch (e) { console.error("Error saving quiz state via Cloud Function:", e); }
+            };
+
+            const clearQuizState = async (quizId) => {
+                if (!userId) return;
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/clearQuizState"; // <<< PASTE URL HERE
+                try {
+                    await fetch(functionUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId, quizId })
+                    });
+                } catch (e) { console.error("Error clearing quiz state via Cloud Function:", e); }
+            };
+
+            const loadQuizState = async (quizId) => {
+                if (!userId) return null;
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/loadQuizState"; // <<< PASTE URL HERE
+                try {
+                    const response = await fetch(`${functionUrl}?userId=${userId}&quizId=${quizId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Convert savedAt from Firestore Timestamp if needed
+                        if(data.savedAt && data.savedAt._seconds) {
+                            data.savedAt = new Date(data.savedAt._seconds * 1000);
+                        }
+                        return data;
+                    } else {
+                        return null; // 404 Not Found means no saved state
+                    }
+                } catch (e) {
+                    console.error("Error loading quiz state via Cloud Function:", e);
+                    return null;
+                }
+            };
 
             function showQuizOptions(listData) {
                 mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
@@ -14322,70 +14388,285 @@
                 const lastName = document.getElementById('lastname-input').value.trim();
                 const selectedBatchButton = document.querySelector('#batch-time-selector .bg-pink-600');
                 const batchTime = selectedBatchButton ? selectedBatchButton.dataset.time : null;
-                const newUserProfile = { name: firstName, lastName: lastName, batchTime, streak: 0, lastQuizDate: null, createdAt: serverTimestamp() };
-                await setDoc(doc(db, `artifacts/${appId}/users`, userId), newUserProfile);
-                userProfile = newUserProfile;
-                profileSetupModal.classList.add('hidden');
-                setupFavoritesListener();
-                setupQuizHistoryListener();
-                switchView('home');
+
+                // Use the globally set userId which should be available after anonymous sign-in
+                if (!firstName || !lastName || !batchTime || !userId) {
+                    console.error("Missing data or userId for profile creation.");
+                    alert("Please fill all fields and ensure you are connected.");
+                    return; 
+                }
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/createUserProfile"; // <<< PASTE URL HERE
+
+                try {
+                    console.log("Attempting to create profile for userId:", userId); 
+                    const response = await fetch(functionUrl, {
+                        method: 'POST', // Use POST to send data
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ // Send data in the request body
+                            userId: userId,
+                            name: firstName,
+                            lastName: lastName,
+                            batchTime: batchTime
+                        }),
+                    });
+
+                    if (response.ok) {
+                        userProfile = await response.json(); // Get the profile created by the function
+                        console.log("Profile created successfully:", userProfile);
+
+                        // Convert Firestore Timestamps from function if they come back as objects with _seconds
+                         if (userProfile.createdAt && userProfile.createdAt._seconds) {
+                           userProfile.createdAt = new Date(userProfile.createdAt._seconds * 1000);
+                        }
+                         if (userProfile.lastQuizDate && userProfile.lastQuizDate._seconds) {
+                           userProfile.lastQuizDate = new Date(userProfile.lastQuizDate._seconds * 1000);
+                        } else {
+                           userProfile.lastQuizDate = null; // Ensure it's null if not set
+                        }
+                         // Initialize if not present
+                        userProfile.favorites = userProfile.favorites || [];
+                        userProfile.quizHistory = userProfile.quizHistory || [];
+
+
+                        profileSetupModal.classList.add('hidden');
+                        // Call the original listener setups (we'll migrate these later)
+                        setupFavoritesListener(); 
+                        setupQuizHistoryListener(); 
+                        profileBtn.classList.remove('hidden'); // Ensure profile button is visible
+                        switchView('home');
+                    } else {
+                         const errorText = await response.text();
+                         console.error("Server responded with error:", response.status, errorText);
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error("Error creating profile via Cloud Function:", error);
+                    // Provide more specific feedback if possible
+                    alert(`Could not save profile. Please check your connection and try again. Error: ${error.message}`);
+                }
             }
             
             function setupFavoritesListener() {
-                if (favoritesListener) favoritesListener();
-                favoritesListener = onSnapshot(collection(db, `artifacts/${appId}/users/${userId}/favorites`), (snapshot) => {
-                    favorites = snapshot.docs.map(doc => doc.data());
-                    if (activeView === 'favorites') renderFavoritesView();
-                    if (activeView === 'wordList') renderWords(currentWordListData.title, currentWordListData.words, currentWordListData.gradClass, currentWordListData.options);
-                });
+                // This function is now simplified to fetch favorites on load
+                // We are removing the real-time listener for now to simplify the migration.
+                if (favoritesListener) favoritesListener = null; // Clear any old listener
+                
+                if (!userId) return; // Wait for userId to be set
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getFavorites"; // <<< PASTE URL HERE
+
+                fetch(`${functionUrl}?userId=${userId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        favorites = data; // Update the local favorites array
+                        // Refresh views if they are open
+                        if (activeView === 'favorites') renderFavoritesView();
+                        if (activeView === 'wordList') renderWords(currentWordListData.title, currentWordListData.words, currentWordListData.gradClass, currentWordListData.options);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching favorites via Cloud Function:", error);
+                    });
             }
 
             function setupQuizHistoryListener() {
-                if (quizHistoryListener) quizHistoryListener();
-                const q = query(collection(db, `artifacts/${appId}/users/${userId}/quizHistory`), orderBy('date', 'desc'), limit(10));
-                quizHistoryListener = onSnapshot(q, (snapshot) => {
-                    if(!userProfile) userProfile = {};
-                    userProfile.quizHistory = snapshot.docs.map(doc => doc.data());
-                });
+                if (quizHistoryListener) quizHistoryListener = null; // Clear old listener
+                if (!userId) return;
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getQuizHistory"; // <<< PASTE URL HERE
+
+                fetch(`${functionUrl}?userId=${userId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 404) return []; // No history is not an error
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!userProfile) userProfile = {};
+                        // Convert ISO date strings back to JS Date objects
+                        userProfile.quizHistory = data.map(quiz => {
+                            if (quiz.date) {
+                                quiz.date = new Date(quiz.date);
+                            }
+                            return quiz;
+                        });
+                        console.log("Quiz history loaded:", userProfile.quizHistory);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching quiz history via Cloud Function:", error);
+                        if (!userProfile) userProfile = {};
+                        userProfile.quizHistory = []; // Ensure it's an empty array on error
+                    });
             }
             
             async function toggleFavorite(button) {
                 const wordString = button.dataset.word;
                 const wordData = allWords.find(w => w.word === wordString || w.hindi === wordString);
-                if (!wordData) return;
-                const favsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/favorites`);
+                if (!wordData || !userId) return; // Make sure we have data and a user
+
+                const addFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/addFavorite";       // <<< PASTE URL HERE
+                const removeFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/removeFavorite"; // <<< PASTE URL HERE
+
                 const uniqueId = wordData.isSentence ? wordData.hindi : wordData.word;
-                const q = query(favsCollectionRef, where(wordData.isSentence ? 'hindi' : 'word', '==', uniqueId));
-                const querySnapshot = await getDocs(q);
-                if (!querySnapshot.empty) {
-                    const deletePromises = querySnapshot.docs.map(docSnapshot => 
-                        deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/favorites`, docSnapshot.id))
-                    );
-                    await Promise.all(deletePromises);
-                    button.classList.remove('favorited');
-                } else {
-                    await addDoc(favsCollectionRef, wordData);
-                    button.classList.add('favorited');
+                const existingFavorite = favorites.find(fav => (fav.isSentence ? fav.hindi : fav.word) === uniqueId);
+
+                try {
+                    if (existingFavorite) {
+                        // --- ITEM IS ALREADY A FAVORITE, SO REMOVE IT ---
+                        const response = await fetch(removeFavoriteUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: userId,
+                                favoriteDocId: existingFavorite.id // Send the document ID to delete
+                            }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+
+                        // Remove from local array
+                        favorites = favorites.filter(fav => (fav.isSentence ? fav.hindi : fav.word) !== uniqueId);
+                        button.classList.remove('favorited');
+                        console.log("Favorite removed");
+
+                    } else {
+                        // --- ITEM IS NOT A FAVORITE, SO ADD IT ---
+                        const response = await fetch(addFavoriteUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: userId,
+                                wordData: wordData // Send the whole word object to add
+                            }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Server responded with status: ${response.status}`);
+                        }
+                        
+                        const newFavorite = await response.json(); // Get back the item with its new ID
+                        favorites.push(newFavorite); // Add to local array
+                        button.classList.add('favorited');
+                        console.log("Favorite added");
+                    }
+
+                    // Refresh favorites view if it's the active one
+                    if (activeView === 'favorites') {
+                        renderFavoritesView();
+                    }
+
+                } catch (error) {
+                    console.error("Error toggling favorite via Cloud Function:", error);
+                    alert("Could not update favorites. Please try again.");
                 }
             }
 
             async function addQuizResult(title, score, total) {
                 if (!userProfile || !userId) return;
-                await addDoc(collection(db, `artifacts/${appId}/users/${userId}/quizHistory`), { title, score, total, date: serverTimestamp() });
-                await updateStreak(true);
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizResult"; // <<< PASTE URL HERE
+                
+                try {
+                    const response = await fetch(functionUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: userId,
+                            title: title,
+                            score: score,
+                            total: total
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log("Quiz result saved and streak updated:", result);
+
+                    // The server function now handles the streak.
+                    // We just need to update our local userProfile object with the new streak info.
+                    userProfile.streak = result.newStreak;
+                    userProfile.lastQuizDate = new Date(result.lastQuizDate); // Convert ISO string to Date
+                    
+                    // Manually add the new quiz to the local history for UI refresh
+                    if (!userProfile.quizHistory) userProfile.quizHistory = [];
+                    userProfile.quizHistory.unshift({ title, score, total, date: new Date() });
+                    if (userProfile.quizHistory.length > 10) userProfile.quizHistory.pop(); // Keep list at 10
+
+                } catch (error) {
+                    console.error("Error saving quiz result via Cloud Function:", error);
+                    alert("Could not save your quiz result. Please check your connection.");
+                }
             }
 
             async function updateStreak(increment = true) {
-                if (!userProfile) return;
+                // This function is now ONLY for checking/resetting streak on app load.
+                // The 'increment' logic is handled by the saveQuizResult Cloud Function.
+                if (increment) {
+                    // This is now handled by saveQuizResult, so we do nothing here.
+                    return;
+                }
+
+                if (!userProfile || !userId) return;
+
                 const now = new Date();
-                const lastQuizDate = userProfile.lastQuizDate && typeof userProfile.lastQuizDate.toDate === 'function' ? userProfile.lastQuizDate.toDate() : userProfile.lastQuizDate;
-                let newStreak = userProfile.streak || 0, newLastQuizDate = userProfile.lastQuizDate;
-                if (increment) { if (lastQuizDate && isYesterday(lastQuizDate, now)) newStreak++; else if (!lastQuizDate || !isSameDay(lastQuizDate, now)) newStreak = 1; newLastQuizDate = now; }
-                else if (lastQuizDate && !isSameDay(lastQuizDate, now) && !isYesterday(lastQuizDate, now)) newStreak = 0;
-                if(newStreak !== userProfile.streak || (increment && newLastQuizDate !== userProfile.lastQuizDate)) {
-                    await setDoc(doc(db, `artifacts/${appId}/users`, userId), { streak: newStreak, lastQuizDate: newLastQuizDate }, { merge: true });
-                    userProfile.streak = newStreak;
-                    userProfile.lastQuizDate = newLastQuizDate;
+                
+                // Ensure lastQuizDate is a JS Date object
+                if (userProfile.lastQuizDate && userProfile.lastQuizDate._seconds) {
+                    userProfile.lastQuizDate = new Date(userProfile.lastQuizDate._seconds * 1000);
+                }
+
+                const lastQuizDate = userProfile.lastQuizDate;
+                let newStreak = userProfile.streak || 0;
+
+                // Check if streak should be reset (on app load)
+                if (lastQuizDate && !isSameDay(lastQuizDate, now) && !isYesterday(lastQuizDate, now)) {
+                    newStreak = 0; // Reset streak
+                } else {
+                    return; // No change needed, streak is current
+                }
+
+                // If streak needs to be reset, call the server
+                if (newStreak !== userProfile.streak) {
+                    console.log("Streak is outdated. Resetting to 0 on server.");
+                    
+                    const functionUrl = "https://updateuserprofile-zmv2fmj4aq-uc.a.run.app"; // <<< PASTE URL HERE
+                    
+                    try {
+                        const response = await fetch(functionUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: userId,
+                                // We are only sending the fields we want to change
+                                streak: newStreak, 
+                                lastQuizDate: null // Reset the date as well
+                            }),
+                        });
+                        
+                        if(!response.ok) throw new Error("Failed to reset streak on server");
+
+                        // Update local profile
+                        userProfile.streak = newStreak;
+                        userProfile.lastQuizDate = null;
+                        console.log("Streak reset to 0 on server.");
+
+                    } catch(error) {
+                        console.error("Could not reset streak on server:", error);
+                    }
                 }
             }
             
