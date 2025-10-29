@@ -14236,6 +14236,64 @@
                     });
                 } catch (e) { console.error("Error clearing quiz state via Cloud Function:", e); }
             };
+            async function checkForSavedQuiz(quizId, allQuestions, quizContext, startQuizCallback) {
+                const savedState = await loadQuizState(quizId);
+                const modal = document.getElementById('resume-quiz-modal');
+                const quizNameSpan = document.getElementById('resume-quiz-name');
+                const resumeBtn = document.getElementById('resume-quiz-btn');
+                const newQuizBtn = document.getElementById('new-quiz-btn');
+
+                // Check if there's a valid, in-progress quiz
+                if (savedState && savedState.currentQuestionIndex > 0 && savedState.questions && savedState.questions.length > savedState.currentQuestionIndex) {
+                    
+                    // Set the name of the quiz in the modal
+                    quizNameSpan.textContent = quizContext.title || 'this quiz';
+
+                    // --- We must replace old listeners to avoid memory leaks ---
+                    // Clone and replace the buttons to safely remove all old event listeners
+                    const newResumeBtn = resumeBtn.cloneNode(true);
+                    resumeBtn.parentNode.replaceChild(newResumeBtn, resumeBtn);
+
+                    const newNewQuizBtn = newQuizBtn.cloneNode(true);
+                    newQuizBtn.parentNode.replaceChild(newNewQuizBtn, newQuizBtn);
+                    
+                    // --- End of listener cleanup ---
+
+                    // Add event listener for resuming the quiz
+                    const resumeAction = () => {
+                        modal.classList.add('hidden');
+                        // Start the quiz with the SAVED questions and SAVED state
+                        startQuizCallback(savedState.questions, quizContext, quizId, savedState);
+                    };
+                    newResumeBtn.addEventListener('click', resumeAction);
+                    // Add touch event listener for mobile compatibility
+                    newResumeBtn.addEventListener('touchend', (e) => { e.preventDefault(); resumeAction(); });
+
+
+                    // Add event listener for starting a new quiz
+                    const newQuizAction = async () => {
+                        modal.classList.add('hidden');
+                        await clearQuizState(quizId); // Clear the old state
+                        // Start the quiz with ALL original questions and NO saved state
+                        startQuizCallback(allQuestions, quizContext, quizId, null);
+                    };
+                    newNewQuizBtn.addEventListener('click', newQuizAction);
+                    // Add touch event listener for mobile compatibility
+                    newNewQuizBtn.addEventListener('touchend', (e) => { e.preventDefault(); newQuizAction(); });
+
+                    // Show the modal
+                    modal.classList.remove('hidden');
+
+                } else {
+                    // No saved state, or saved state is invalid/complete, so start a new quiz immediately
+                    if (savedState) {
+                        // It might be an old/completed state, so clear it just in case
+                        await clearQuizState(quizId);
+                    }
+                    startQuizCallback(allQuestions, quizContext, quizId, null);
+                }
+            }
+            // --- END OF FUNCTION TO PASTE ---
 
             const loadQuizState = async (quizId) => {
                 if (!userId) return null;
