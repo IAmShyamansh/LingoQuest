@@ -457,6 +457,19 @@
              <div id="user-profile-content" class="text-white"></div>
         </div>
     </div>
+    <div id="passkey-modal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+         <h2 class="text-2xl font-bold text-white mb-2 text-center">Enter Passkey</h2>
+         <p class="text-slate-300 text-center mb-6">This app is restricted. Please enter the passkey to proceed.</p>
+         <div class="mb-4">
+            <label for="passkey-input" class="block text-sm font-bold text-slate-200 mb-2">Passkey:</label>
+            <input type="password" id="passkey-input" placeholder="Enter passkey..." class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+         </div>
+         <p id="passkey-error" class="text-red-400 text-sm text-center mb-4 hidden">Invalid passkey. Please try again.</p>
+         <button id="save-passkey-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Submit</button>
+    </div>
+</div>
+<!-- END: Add this Passkey Modal -->
 
     <div id="search-overlay" class="hidden fixed inset-0 z-[60] flex flex-col p-4 bg-black/80 backdrop-blur-sm">
         <div class="w-full max-w-2xl mx-auto mt-4">
@@ -600,6 +613,14 @@
             const searchModalSuggestions = document.getElementById('search-modal-suggestions');
             const resumeQuizModal = document.getElementById('resume-quiz-modal');
             const resumeQuizName = document.getElementById('resume-quiz-name');
+            // START: Add these variables for passkey
+const passkeyModal = document.getElementById('passkey-modal');
+const savePasskeyBtn = document.getElementById('save-passkey-btn');
+const passkeyInput = document.getElementById('passkey-input');
+const passkeyError = document.getElementById('passkey-error');
+const TEACHER_PASSKEY = "LingoQuest#2025"; 
+const PASSKEY_KEY = "lingoquest_passkey_verified";
+// END: Add these variables
 
             let activeView = null;
             let activeWordItem = null;
@@ -14727,6 +14748,19 @@
                     }
                 }
             }
+            // START: Create this new function
+function initializeAppAuth() {
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            loadProfileAndData(user.uid);
+        } else {
+            signInAnonymously(auth).catch(e => {
+                document.body.innerHTML = '<p class="text-white text-center p-8">Could not connect to services. Please check connection.</p>';
+            });
+        }
+    });
+}
+// END: Create this new function
             
             function initApp() {
                 allWords = [...new Set(flattenVocabulary(vocabularyData))];
@@ -14734,7 +14768,13 @@
                 Object.values(rootWords).forEach(arr => allWords.push(...arr));
                 allWords = [...new Set(allWords)];
                 speechSynthesis.getVoices();
-                onAuthStateChanged(auth, user => user ? loadProfileAndData(user.uid) : signInAnonymously(auth).catch(e => document.body.innerHTML = '<p class="text-white text-center p-8">Could not connect to services. Please check connection.</p>'));
+                const isPasskeyVerified = localStorage.getItem(PASSKEY_KEY) === "true";
+
+if (isPasskeyVerified) {
+    initializeAppAuth(); // Passkey is saved, start the app
+} else {
+    passkeyModal.classList.remove('hidden'); // No passkey, show the modal
+}
                 bottomNav.addEventListener('click', e => { const button = e.target.closest('button'); if (button?.dataset.view) button.dataset.view === 'profile' ? displayProfileModal() : switchView(button.dataset.view); });
                 searchModalBar.addEventListener('input', e => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { displaySuggestions(allWords.filter(item => (((item.isSentence ? item.hindi : item.word) || '').toLowerCase().includes(query) || (item.meaning || '').toLowerCase().includes(query)))); } else if(searchModalSuggestions) searchModalSuggestions.innerHTML = ''; });
                 closeAboutModal.addEventListener('click', () => aboutModal.classList.add('hidden'));
@@ -14744,6 +14784,31 @@
                 closeSearchOverlay.addEventListener('click', () => searchOverlay.classList.add('hidden'));
                 searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) searchOverlay.classList.add('hidden'); });
                 if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
+                if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
+
+// START: Add this listener for the passkey button
+if (savePasskeyBtn) {
+    savePasskeyBtn.addEventListener('click', () => {
+        const enteredKey = passkeyInput.value;
+        if (enteredKey === TEACHER_PASSKEY) {
+            localStorage.setItem(PASSKEY_KEY, "true");
+            passkeyModal.classList.add('hidden');
+            passkeyError.classList.add('hidden');
+            initializeAppAuth(); // Start the app
+        } else {
+            passkeyError.classList.remove('hidden');
+            passkeyInput.value = "";
+        }
+    });
+
+    // Also allow pressing Enter to submit
+    passkeyInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            savePasskeyBtn.click();
+        }
+    });
+}
+// END: Add this listener
                 closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
                 userProfileModal.addEventListener('click', e => { if (e.target === userProfileModal) userProfileModal.classList.add('hidden'); });
             }
