@@ -764,6 +764,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             let synthVoices = [];
             let userProfile = null;
             let userId = null;
+            let allSavedQuizStates = {};
             let favoritesListener = null;
             let quizHistoryListener = null;
             const isSpeechRecognitionSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
@@ -14257,8 +14258,11 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                     });
                 } catch (e) { console.error("Error clearing quiz state via Cloud Function:", e); }
             };
+            // START: Replace your OLD checkForSavedQuiz function with this NEW one
             async function checkForSavedQuiz(quizId, allQuestions, quizContext, startQuizCallback) {
-                const savedState = await loadQuizState(quizId);
+                // The 'await' is removed because loadQuizState is now synchronous (instant)
+                const savedState = loadQuizState(quizId);
+                
                 const modal = document.getElementById('resume-quiz-modal');
                 const quizNameSpan = document.getElementById('resume-quiz-name');
                 const resumeBtn = document.getElementById('resume-quiz-btn');
@@ -14267,75 +14271,57 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 // Check if there's a valid, in-progress quiz
                 if (savedState && savedState.currentQuestionIndex > 0 && savedState.questions && savedState.questions.length > savedState.currentQuestionIndex) {
                     
-                    // Set the name of the quiz in the modal
                     quizNameSpan.textContent = quizContext.title || 'this quiz';
 
-                    // --- We must replace old listeners to avoid memory leaks ---
-                    // Clone and replace the buttons to safely remove all old event listeners
                     const newResumeBtn = resumeBtn.cloneNode(true);
                     resumeBtn.parentNode.replaceChild(newResumeBtn, resumeBtn);
 
                     const newNewQuizBtn = newQuizBtn.cloneNode(true);
                     newQuizBtn.parentNode.replaceChild(newNewQuizBtn, newQuizBtn);
                     
-                    // --- End of listener cleanup ---
-
-                    // Add event listener for resuming the quiz
                     const resumeAction = () => {
                         modal.classList.add('hidden');
-                        // Start the quiz with the SAVED questions and SAVED state
                         startQuizCallback(savedState.questions, quizContext, quizId, savedState);
                     };
                     newResumeBtn.addEventListener('click', resumeAction);
-                    // Add touch event listener for mobile compatibility
                     newResumeBtn.addEventListener('touchend', (e) => { e.preventDefault(); resumeAction(); });
 
-
-                    // Add event listener for starting a new quiz
                     const newQuizAction = async () => {
                         modal.classList.add('hidden');
-                        await clearQuizState(quizId); // Clear the old state
-                        // Start the quiz with ALL original questions and NO saved state
+                        await clearQuizState(quizId); // Clear the old state from DB
+                        // Remove from our local cache as well
+                        if (allSavedQuizStates[quizId]) {
+                            delete allSavedQuizStates[quizId];
+                        }
                         startQuizCallback(allQuestions, quizContext, quizId, null);
                     };
                     newNewQuizBtn.addEventListener('click', newQuizAction);
-                    // Add touch event listener for mobile compatibility
                     newNewQuizBtn.addEventListener('touchend', (e) => { e.preventDefault(); newQuizAction(); });
 
-                    // Show the modal
                     modal.classList.remove('hidden');
 
                 } else {
-                    // No saved state, or saved state is invalid/complete, so start a new quiz immediately
                     if (savedState) {
-                        // It might be an old/completed state, so clear it just in case
                         await clearQuizState(quizId);
+                        if (allSavedQuizStates[quizId]) {
+                            delete allSavedQuizStates[quizId];
+                        }
                     }
                     startQuizCallback(allQuestions, quizContext, quizId, null);
                 }
             }
-            // --- END OF FUNCTION TO PASTE ---
+            // END: Replacement of checkForSavedQuiz
 
-            const loadQuizState = async (quizId) => {
-                if (!userId) return null;
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/loadQuizState"; // <<< PASTE URL HERE
-                try {
-                    const response = await fetch(`${functionUrl}?userId=${userId}&quizId=${quizId}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        // Convert savedAt from Firestore Timestamp if needed
-                        if(data.savedAt && data.savedAt._seconds) {
-                            data.savedAt = new Date(data.savedAt._seconds * 1000);
-                        }
-                        return data;
-                    } else {
-                        return null; // 404 Not Found means no saved state
-                    }
-                } catch (e) {
-                    console.error("Error loading quiz state via Cloud Function:", e);
-                    return null;
+            // START: Replace your OLD loadQuizState function with this NEW one
+            const loadQuizState = (quizId) => {
+                // This function no longer needs to be async.
+                // It just checks the global variable we already loaded.
+                if (allSavedQuizStates && allSavedQuizStates[quizId]) {
+                    return allSavedQuizStates[quizId];
                 }
+                return null; // No saved state found locally
             };
+            // END: Replacement of loadQuizState
 
             function showQuizOptions(listData) {
                 mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
@@ -14426,41 +14412,72 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
 
             const goBack = () => { if (navStack.length > 0) { const prevState = navStack.pop(); switchView(prevState.view, prevState.options); } else { switchView('home'); } };
             
+            // START: Replace your OLD loadProfileAndData function with this NEW one
             async function loadProfileAndData(uid) {
                 userId = uid;
                 try {
-                    // This is the URL for your new, secure Cloud Function.
-                    // You can find this in your terminal output after a successful deployment.
-                    const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getUserProfile";
+                    // This is the URL for your NEW consolidated Cloud Function
+                    const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getAppData";
                     
-                    // Make a secure request to YOUR server function, passing the userId.
+                    // Make ONE single request to get all app data
                     const response = await fetch(`${functionUrl}?userId=${uid}`);
                     
                     if (response.ok) {
-                        // If the server responds successfully, get the user profile data.
-                        userProfile = await response.json();
+                        const appData = await response.json();
+
+                        // 1. Set User Profile
+                        userProfile = appData.userProfile;
+                        if (!userProfile) {
+                            showProfileSetup();
+                            return; // Stop loading if profile is missing
+                        }
+
+                        // Convert date strings from JSON back to Date objects
+                        if (userProfile.createdAt && userProfile.createdAt._seconds) {
+                            userProfile.createdAt = new Date(userProfile.createdAt._seconds * 1000);
+                        }
+                        if (userProfile.lastQuizDate && userProfile.lastQuizDate._seconds) {
+                            userProfile.lastQuizDate = new Date(userProfile.lastQuizDate._seconds * 1000);
+                        } else if (userProfile.lastQuizDate) { // Handle if it's already an ISO string
+                             userProfile.lastQuizDate = new Date(userProfile.lastQuizDate);
+                        }
+
+
+                        // 2. Set Favorites
+                        favorites = appData.favorites || [];
                         
-                        // The rest of your app's startup logic remains the same.
-                        setupFavoritesListener();
-                        setupQuizHistoryListener();
-                        await updateStreak(false);
+                        // 3. Set Quiz History
+                        userProfile.quizHistory = (appData.quizHistory || []).map(quiz => {
+                            if (quiz.date) {
+                                quiz.date = new Date(quiz.date); // Convert ISO string to Date
+                            }
+                            return quiz;
+                        });
+
+                        // 4. Set Saved Quiz States
+                        allSavedQuizStates = appData.savedQuizzes || {};
+
+                        // 5. App is ready to show
                         profileBtn.classList.remove('hidden');
                         switchView('home');
+
                     } else if (response.status === 404) {
-                        // If the function returns a 'Not Found' error, it means it's a new user.
+                        // 404 means user profile not found, show setup
                         showProfileSetup();
                     } else {
-                        // Handle any other errors from the server.
+                        // Handle other server errors
                         throw new Error(`Server responded with status: ${response.status}`);
                     }
                 } catch (error) {
-                    console.error("Error fetching user profile via Cloud Function:", error);
+                    console.error("Error fetching app data via Cloud Function:", error);
                     document.body.innerHTML = '<p class="text-white text-center p-8">Could not load your profile. Please try again later.</p>';
                 }
 
+                // Hide splash screen after data is loaded or setup is shown
                 splashScreen.classList.add('splash-out');
                 splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none', { once: true });
             }
+            // END: Replacement of loadProfileAndData
             
             async function saveAndApplyProfile() {
                 const firstName = document.getElementById('firstname-input').value.trim();
@@ -14512,8 +14529,6 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
 
                         profileSetupModal.classList.add('hidden');
                         // Call the original listener setups (we'll migrate these later)
-                        setupFavoritesListener(); 
-                        setupQuizHistoryListener(); 
                         profileBtn.classList.remove('hidden'); // Ensure profile button is visible
                         switchView('home');
                     } else {
@@ -14528,65 +14543,8 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 }
             }
             
-            function setupFavoritesListener() {
-                // This function is now simplified to fetch favorites on load
-                // We are removing the real-time listener for now to simplify the migration.
-                if (favoritesListener) favoritesListener = null; // Clear any old listener
-                
-                if (!userId) return; // Wait for userId to be set
-
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getFavorites"; // <<< PASTE URL HERE
-
-                fetch(`${functionUrl}?userId=${userId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Server responded with status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        favorites = data; // Update the local favorites array
-                        // Refresh views if they are open
-                        if (activeView === 'favorites') renderFavoritesView();
-                        if (activeView === 'wordList') renderWords(currentWordListData.title, currentWordListData.words, currentWordListData.gradClass, currentWordListData.options);
-                    })
-                    .catch(error => {
-                        console.error("Error fetching favorites via Cloud Function:", error);
-                    });
-            }
-
-            function setupQuizHistoryListener() {
-                if (quizHistoryListener) quizHistoryListener = null; // Clear old listener
-                if (!userId) return;
-
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/getQuizHistory"; // <<< PASTE URL HERE
-
-                fetch(`${functionUrl}?userId=${userId}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            if (response.status === 404) return []; // No history is not an error
-                            throw new Error(`Server responded with status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (!userProfile) userProfile = {};
-                        // Convert ISO date strings back to JS Date objects
-                        userProfile.quizHistory = data.map(quiz => {
-                            if (quiz.date) {
-                                quiz.date = new Date(quiz.date);
-                            }
-                            return quiz;
-                        });
-                        console.log("Quiz history loaded:", userProfile.quizHistory);
-                    })
-                    .catch(error => {
-                        console.error("Error fetching quiz history via Cloud Function:", error);
-                        if (!userProfile) userProfile = {};
-                        userProfile.quizHistory = []; // Ensure it's an empty array on error
-                    });
-            }
             
+        
             async function toggleFavorite(button) {
                 const wordString = button.dataset.word;
                 const wordData = allWords.find(w => w.word === wordString || w.hindi === wordString);
@@ -14691,63 +14649,9 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 }
             }
 
-            async function updateStreak(increment = true) {
-                // This function is now ONLY for checking/resetting streak on app load.
-                // The 'increment' logic is handled by the saveQuizResult Cloud Function.
-                if (increment) {
-                    // This is now handled by saveQuizResult, so we do nothing here.
-                    return;
-                }
+            
 
-                if (!userProfile || !userId) return;
-
-                const now = new Date();
                 
-                // Ensure lastQuizDate is a JS Date object
-                if (userProfile.lastQuizDate && userProfile.lastQuizDate._seconds) {
-                    userProfile.lastQuizDate = new Date(userProfile.lastQuizDate._seconds * 1000);
-                }
-
-                const lastQuizDate = userProfile.lastQuizDate;
-                let newStreak = userProfile.streak || 0;
-
-                // Check if streak should be reset (on app load)
-                if (lastQuizDate && !isSameDay(lastQuizDate, now) && !isYesterday(lastQuizDate, now)) {
-                    newStreak = 0; // Reset streak
-                } else {
-                    return; // No change needed, streak is current
-                }
-
-                // If streak needs to be reset, call the server
-                if (newStreak !== userProfile.streak) {
-                    console.log("Streak is outdated. Resetting to 0 on server.");
-                    
-                    const functionUrl = "https://updateuserprofile-zmv2fmj4aq-uc.a.run.app"; // <<< PASTE URL HERE
-                    
-                    try {
-                        const response = await fetch(functionUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userId: userId,
-                                // We are only sending the fields we want to change
-                                streak: newStreak, 
-                                lastQuizDate: null // Reset the date as well
-                            }),
-                        });
-                        
-                        if(!response.ok) throw new Error("Failed to reset streak on server");
-
-                        // Update local profile
-                        userProfile.streak = newStreak;
-                        userProfile.lastQuizDate = null;
-                        console.log("Streak reset to 0 on server.");
-
-                    } catch(error) {
-                        console.error("Could not reset streak on server:", error);
-                    }
-                }
-            }
             // START: Create this new function
 function initializeAppAuth() {
     onAuthStateChanged(auth, user => {
