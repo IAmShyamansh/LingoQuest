@@ -351,6 +351,139 @@
         .mic-listening {
           animation: pulse-mic 1.5s infinite;
         }
+        /* --- START: Admin Panel Color and Scroll Fixes --- */
+
+/* Fix: Apply explicit dark background and light text to the individual <option> elements in the select boxes */
+#add-word-modal select option, 
+#create-category-modal select option {
+    background-color: var(--bg-dark); 
+    color: var(--text-light);
+}
+
+/* Fix: Ensure selected text in the box is readable (if background changes) */
+#add-word-modal select, 
+#create-category-modal select {
+    color: var(--text-light); 
+}
+
+/* Fix: Apply scrolling to the modal content areas (for visibility on mobile/small screens) */
+#add-word-form-container,
+.modal-scroll-container {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 8px; /* For scrollbar space */
+    /* Optional scrollbar styling is assumed to be in place */
+}
+/* --- END: Admin Panel Color and Scroll Fixes --- */
+        <template id="admin-panel-view-template">
+    <!-- Main Admin Dashboard View -->
+    <div class="pop-in p-4 max-w-3xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-white text-center mb-6">LingoQuest Admin Panel</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Card 1: Add New Word -->
+            <div class="glass-ui p-6 rounded-xl hover:shadow-pink-500/50 transition duration-300 cursor-pointer" id="open-add-word-modal">
+                <h2 class="text-xl font-bold text-pink-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Add New Word
+                </h2>
+                <p class="text-sm text-slate-300">Quickly insert a single new word, its meaning, and example into an existing sub-category.</p>
+            </div>
+
+            <!-- Card 2: Manage Categories (Placeholder) -->
+            <div class="glass-ui p-6 rounded-xl bg-white/5 opacity-60 cursor-not-allowed">
+                <h2 class="text-xl font-bold text-slate-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    Manage Categories
+                </h2>
+                <p class="text-sm text-slate-500">View, edit, or delete existing categories and their metadata. (Coming Soon!)</p>
+            </div>
+            
+            <!-- Card 3: Advanced Data Tools (Placeholder) -->
+            <div class="glass-ui p-6 rounded-xl bg-white/5 opacity-60 cursor-not-allowed md:col-span-2">
+                 <h2 class="text-xl font-bold text-slate-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    Data Migration & Tools
+                </h2>
+                <p class="text-sm text-slate-500">Synchronize local data dumps or perform bulk updates securely. (Coming Soon!)</p>
+            </div>
+        </div>
+        
+    </div>
+</template>
+
+<!-- New Word Addition Modal (Hidden by Default) -->
+<div id="add-word-modal" class="hidden fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+        <button id="close-add-word-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        <h2 class="text-2xl font-bold text-white mb-4 text-center">Add New Vocabulary Item</h2>
+        <!-- BEGIN SCROLLABLE CONTAINER -->
+        <div id="add-word-form-container" class="space-y-4">
+            
+            <div>
+                <label for="admin-main-category" class="block text-sm font-bold text-slate-200 mb-1">Select Main Category:</label>
+                <select id="admin-main-category" class="w-full bg-white/10 text-white border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></select>
+            </div>
+            
+            <div>
+                <label for="admin-sub-category" class="block text-sm font-bold text-slate-200 mb-1">Select Sub-Category:</label>
+                <select id="admin-sub-category" disabled class="w-full bg-white/10 text-white border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all disabled:opacity-50"></select>
+                <p id="admin-category-hint" class="text-xs text-slate-400 mt-2">Select the specific list (e.g., 'Basic Vocabulary') to insert the word into.</p>
+            </div>
+
+            <div class="border-t border-white/20 pt-4 space-y-4">
+                <label class="block text-lg font-bold text-white">Word Details:</label>
+                <div>
+                    <label for="admin-word" class="block text-sm font-bold text-slate-200 mb-1">English Word / Phrase:</label>
+                    <input type="text" id="admin-word" placeholder="e.g., Diligent, Be all ears" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="admin-meaning" class="block text-sm font-bold text-slate-200 mb-1">Meaning (Hindi/English):</label>
+                    <input type="text" id="admin-meaning" placeholder="e.g., महंती, To listen carefully" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="admin-example" class="block text-sm font-bold text-slate-200 mb-1">Example Sentence (Optional):</label>
+                    <input type="text" id="admin-example" placeholder="e.g., He is a diligent worker." class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+            </div>
+
+            <p id="admin-status-message" class="text-sm text-center font-bold min-h-6"></p>
+        </div>
+        <!-- END SCROLLABLE CONTAINER -->
+
+        <!-- BUTTON STAYS OUTSIDE SCROLLABLE AREA -->
+        <button id="submit-new-word-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50 mt-4" disabled>Save New Word</button>
+
+        </div>
+    </div>
+</div>
+/* Fix: Make the background of select options dark and text light */
+#add-word-modal select option {
+    background-color: var(--bg-dark); 
+    color: var(--text-light);
+}
+
+/* Fix: Make sure options look readable on different browsers */
+#add-word-modal select {
+    color: var(--text-light); /* Ensure selected text in the box is white */
+}
+
+/* New: Enforce max height and enable scrolling for the form content */
+#add-word-form-container {
+    max-height: 70vh; /* Limit the maximum height to 70% of the viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 8px; /* Add padding to prevent scrollbar from hiding content */
+}
+
+/* Optional: Scrollbar styling for a cleaner look */
+#add-word-form-container::-webkit-scrollbar {
+    width: 6px;
+}
+#add-word-form-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
     </style>
 </head>
 <body class="min-h-screen">
@@ -471,6 +604,25 @@
 </div>
 <!-- END: Add this Passkey Modal -->
 
+<div id="admin-login-modal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+         <h2 class="text-2xl font-bold text-white mb-2 text-center">Staff Sign In (Admin Access)</h2>
+         <p class="text-slate-300 text-center mb-6">Use your registered institutional credentials for permanent Admin access.</p>
+         <div class="space-y-4">
+            <div>
+                <label for="admin-email-input" class="block text-sm font-bold text-slate-200 mb-1">Email:</label>
+                <input type="email" id="admin-email-input" placeholder="Your permanent email" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+            </div>
+            <div>
+                <label for="admin-password-input" class="block text-sm font-bold text-slate-200 mb-1">Password:</label>
+                <input type="password" id="admin-password-input" placeholder="Password" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+            </div>
+         </div>
+         <p id="admin-login-error" class="text-red-400 text-sm text-center mb-4 mt-4 hidden">Invalid credentials or service error.</p>
+         <button id="submit-admin-login" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Sign In</button>
+    </div>
+</div>
+
     <div id="search-overlay" class="hidden fixed inset-0 z-[60] flex flex-col p-4 bg-black/80 backdrop-blur-sm">
         <div class="w-full max-w-2xl mx-auto mt-4">
             <div class="relative" id="search-modal-container">
@@ -530,6 +682,89 @@
             </div>
         </div>
     </template>
+    <template id="admin-panel-view-template">
+    <!-- Main Admin Dashboard View -->
+    <div class="pop-in p-4 max-w-3xl mx-auto">
+        <h1 class="text-4xl font-extrabold text-white text-center mb-6">LingoQuest Admin Panel</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Card 1: Add New Word -->
+            <div class="glass-ui p-6 rounded-xl hover:shadow-pink-500/50 transition duration-300 cursor-pointer" id="open-add-word-modal">
+                <h2 class="text-xl font-bold text-pink-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Add New Word
+                </h2>
+                <p class="text-sm text-slate-300">Quickly insert a single new word, its meaning, and example into an existing sub-category.</p>
+            </div>
+
+            <!-- Card 2: Manage Categories (Placeholder) -->
+            <div class="glass-ui p-6 rounded-xl bg-white/5 opacity-60 cursor-not-allowed">
+                <h2 class="text-xl font-bold text-slate-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    Manage Categories
+                </h2>
+                <p class="text-sm text-slate-500">View, edit, or delete existing categories and their metadata. (Coming Soon!)</p>
+            </div>
+            
+            <!-- Card 3: Advanced Data Tools (Placeholder) -->
+            <div class="glass-ui p-6 rounded-xl bg-white/5 opacity-60 cursor-not-allowed md:col-span-2">
+                 <h2 class="text-xl font-bold text-slate-400 mb-2 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    Data Migration & Tools
+                </h2>
+                <p class="text-sm text-slate-500">Synchronize local data dumps or perform bulk updates securely. (Coming Soon!)</p>
+            </div>
+        </div>
+        
+    </div>
+</template>
+
+<!-- New Word Addition Modal (Hidden by Default) -->
+<div id="add-word-modal" class="hidden fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+        <button id="close-add-word-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        <h2 class="text-2xl font-bold text-white mb-4 text-center">Add New Vocabulary Item</h2>
+        <!-- BEGIN SCROLLABLE CONTAINER -->
+        <div id="add-word-form-container" class="space-y-4">
+            
+            <div>
+                <label for="admin-main-category" class="block text-sm font-bold text-slate-200 mb-1">Select Main Category:</label>
+                <select id="admin-main-category" class="w-full bg-white/10 text-white border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></select>
+            </div>
+            
+            <div>
+                <label for="admin-sub-category" class="block text-sm font-bold text-slate-200 mb-1">Select Sub-Category:</label>
+                <select id="admin-sub-category" disabled class="w-full bg-white/10 text-white border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all disabled:opacity-50"></select>
+                <p id="admin-category-hint" class="text-xs text-slate-400 mt-2">Select the specific list (e.g., 'Basic Vocabulary') to insert the word into.</p>
+            </div>
+
+            <div class="border-t border-white/20 pt-4 space-y-4">
+                <label class="block text-lg font-bold text-white">Word Details:</label>
+                <div>
+                    <label for="admin-word" class="block text-sm font-bold text-slate-200 mb-1">English Word / Phrase:</label>
+                    <input type="text" id="admin-word" placeholder="e.g., Diligent, Be all ears" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="admin-meaning" class="block text-sm font-bold text-slate-200 mb-1">Meaning (Hindi/English):</label>
+                    <input type="text" id="admin-meaning" placeholder="e.g., महंती, To listen carefully" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+                <div>
+                    <label for="admin-example" class="block text-sm font-bold text-slate-200 mb-1">Example Sentence (Optional):</label>
+                    <input type="text" id="admin-example" placeholder="e.g., He is a diligent worker." class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+                </div>
+            </div>
+
+            <p id="admin-status-message" class="text-sm text-center font-bold min-h-6"></p>
+        </div>
+        <!-- END SCROLLABLE CONTAINER -->
+
+        <!-- BUTTON STAYS OUTSIDE SCROLLABLE AREA -->
+        <button id="submit-new-word-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50 mt-4" disabled>Save New Word</button>
+
+        </div>
+    </div>
+</div>
     
     <template id="study-hall-template">
         <section class="pop-in p-4 max-w-3xl mx-auto">
@@ -588,6 +823,33 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        // New Firebase Auth Imports (add to your existing imports at the top):
+import { 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+
+/**
+ * Signs in a user using email and password, intended for permanent staff access.
+ * * @param {string} email
+ * @param {string} password
+ */
+async function signInPermanentStaff(email, password) {
+    // Check if user is already signed in (prevents signing in twice)
+    if (auth.currentUser) await auth.signOut();
+
+    try {
+        // 1. Try to sign in with existing credentials
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential;
+    } catch (signInError) {
+        // If the sign-in error is NOT user-not-found, we assume the password is wrong.
+        console.error("Permanent Staff Login Error:", signInError);
+        throw signInError;
+    }
+}
+        
 
         (() => {
             const splashScreen = document.getElementById('splash-screen');
@@ -619,6 +881,10 @@ const savePasskeyBtn = document.getElementById('save-passkey-btn');
 const passkeyInput = document.getElementById('passkey-input');
 const passkeyError = document.getElementById('passkey-error');
 const TEACHER_PASSKEY = "LingoQuest#2025"; 
+// START: Add Master Key
+const MASTER_KEY = "LingoAdmin#2025"; // You can change this to your secret key
+const ADMIN_KEY = "lingoquest_admin_verified";
+// END: Add Master Key
 const PASSKEY_KEY = "lingoquest_passkey_verified";
 // END: Add these variables
 
@@ -13911,12 +14177,27 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 const recentHistoryHTML = userProfile.quizHistory && userProfile.quizHistory.length > 0 ? userProfile.quizHistory.slice(0, 5).map(r => `<div class="quiz-history-item font-sans flex justify-between items-center"><div><p class="font-semibold text-white">${r.title}</p><p class="text-xs text-slate-400">${r.date ? r.date.toDate().toLocaleDateString() : 'Just now'}</p></div><p class="font-bold text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</p></div>`).join('') : '';
                 const userFullName = `${userProfile.name} ${userProfile.lastName || ''}`.trim();
 
-                userProfileContent.innerHTML = `<div class="text-center mb-6"><div class="flex justify-center items-center gap-2"><h2 class="text-3xl font-bold text-white">${userFullName}</h2><button id="edit-profile-btn" class="p-1 text-slate-400 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button></div><p class="text-amber-400 font-semibold">${userProfile.batchTime || 'No batch selected'}</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Streak</h3><p class="text-3xl font-extrabold text-amber-400 mt-1 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="mr-1"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>${userProfile.streak || 0}</p></div><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Accuracy</h3><p class="text-3xl font-extrabold text-white mt-1">${overallAccuracy}%</p></div>${focusAreaHTML}</div><h3 class="text-xl font-bold text-white mb-2 border-b border-white/20 pb-2">Recent Scores</h3><div class="space-y-2 max-h-64 overflow-y-auto pr-2">${recentHistoryHTML || '<p class="text-center text-slate-400 font-sans py-4">No quiz history yet. Take a quiz to see your results!</p>'}</div>`;
+                // START: Check for Admin Status
+                const isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
+                const adminButtonHTML = isAdmin ? `<div class="mt-6 border-t border-white/20 pt-4"><button id="admin-panel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg">Admin Panel</button></div>` : '';
+                // END: Check for Admin Status
+
+                userProfileContent.innerHTML = `<div class="text-center mb-6"><div class="flex justify-center items-center gap-2"><h2 class="text-3xl font-bold text-white">${userFullName}</h2><button id="edit-profile-btn" class="p-1 text-slate-400 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button></div><p class="text-amber-400 font-semibold">${userProfile.batchTime || 'No batch selected'}</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Streak</h3><p class="text-3xl font-extrabold text-amber-400 mt-1 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="mr-1"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>${userProfile.streak || 0}</p></div><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Accuracy</h3><p class="text-3xl font-extrabold text-white mt-1">${overallAccuracy}%</p></div>${focusAreaHTML}</div><h3 class="text-xl font-bold text-white mb-2 border-b border-white/20 pb-2">Recent Scores</h3><div class="space-y-2 max-h-64 overflow-y-auto pr-2">${recentHistoryHTML || '<p class="text-center text-slate-400 font-sans py-4">No quiz history yet. Take a quiz to see your results!</p>'}</div>${adminButtonHTML}`; // <-- Add adminButtonHTML here
                 userProfileModal.classList.remove('hidden');
 
                 const focusCard = userProfileContent.querySelector('.focus-card');
                 if (focusCard) focusCard.addEventListener('click', () => navigateToCategory(focusCard.dataset.category));
                 document.getElementById('edit-profile-btn').addEventListener('click', renderProfileEditView);
+                // START: Add Admin Panel button listener
+const adminBtn = document.getElementById('admin-panel-btn');
+if (adminBtn) {
+    adminBtn.addEventListener('click', () => {
+        userProfileModal.classList.add('hidden');
+        navStack.push({ view: 'profile' }); // Add a "back" step
+        renderAdminPanel(); // Call the new admin view function
+    });
+}
+// END: Add Admin Panel button listener
             }
 
             function renderProfileEditView() {
@@ -15057,6 +15338,190 @@ function initializeAppAuth() {
     });
 }
 // END: Create this new function
+// --- ADMIN PANEL SPECIFIC VARIABLES AND FUNCTIONS ---
+const addWordModal = document.getElementById('add-word-modal');
+const closeAddWordModal = document.getElementById('close-add-word-modal');
+const adminMainCategorySelect = document.getElementById('admin-main-category');
+const adminSubCategorySelect = document.getElementById('admin-sub-category');
+const submitNewWordBtn = document.getElementById('submit-new-word-btn');
+const adminStatusMessage = document.getElementById('admin-status-message');
+
+function renderAdminPanel() {
+    updateTopNav({ title: 'Admin Panel', showBack: true });
+    const template = document.getElementById('admin-panel-view-template');
+    mainContent.appendChild(template.content.cloneNode(true));
+    activeView = 'adminPanel';
+    
+    // Setup listeners for the main panel cards
+    document.getElementById('open-add-word-modal').addEventListener('click', showAddWordModal);
+}
+
+function showAddWordModal() {
+    addWordModal.classList.remove('hidden');
+    adminStatusMessage.textContent = '';
+    adminMainCategorySelect.innerHTML = '<option value="" disabled selected>Select a main category</option>';
+    adminSubCategorySelect.innerHTML = '<option value="" disabled selected>Select a sub-category</option>';
+    
+    // Populate main categories (only those that contain sub-categories or simple lists)
+    homeScreenOrder.filter(name => name !== 'Dictionary' && name !== 'Grammar & Rules').forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        adminMainCategorySelect.appendChild(option);
+    });
+    
+    // Clear word details
+    document.getElementById('admin-word').value = '';
+    document.getElementById('admin-meaning').value = '';
+    document.getElementById('admin-example').value = '';
+    checkWordFormState();
+}
+
+function populateSubCategories(mainCategoryName) {
+    adminSubCategorySelect.innerHTML = '<option value="" disabled selected>Select a sub-category</option>';
+    adminSubCategorySelect.disabled = true;
+    adminSubCategorySelect.classList.add('disabled:opacity-50');
+
+    const mainCategoryData = vocabularyData[mainCategoryName];
+    if (!mainCategoryData) return;
+
+    let subCategories = {};
+
+    if (Array.isArray(mainCategoryData)) {
+        // Simple list, treat the main category name as the sub-category
+        subCategories[mainCategoryName] = mainCategoryData;
+    } else if (mainCategoryData.sentences) {
+        // Conversation/Sentence structure, typically stored under 'sentences' key
+        subCategories[mainCategoryName] = mainCategoryData.sentences;
+    } else if (mainCategoryData.subtopics) {
+        // Grammar & Rules format (complex nested), we will skip this for simple word add
+        return;
+    } else {
+        // Nested object (like Advanced Vocab, Phrases & Idioms, Vocab Builder)
+        for (const subName in mainCategoryData) {
+            const subData = mainCategoryData[subName];
+            // Only allow adding to arrays (word lists)
+            if (Array.isArray(subData)) {
+                // Filter out special lists that shouldn't be added to manually (like synonyms-view)
+                if (subData !== 'synonyms-view') { 
+                    subCategories[subName] = subData;
+                }
+            } else if (subData && subData.sentences) {
+                // Handle nested structure like Conversational English
+                subCategories[subName] = subData.sentences;
+            }
+        }
+    }
+    
+    // Populate the select element
+    for(const subName in subCategories) {
+        const option = document.createElement('option');
+        option.value = subName;
+        option.textContent = subName;
+        adminSubCategorySelect.appendChild(option);
+    }
+    
+    if (Object.keys(subCategories).length > 0) {
+        adminSubCategorySelect.disabled = false;
+        adminSubCategorySelect.classList.remove('disabled:opacity-50');
+    }
+}
+
+function checkWordFormState() {
+    const word = document.getElementById('admin-word').value.trim();
+    const meaning = document.getElementById('admin-meaning').value.trim();
+    const mainCat = adminMainCategorySelect.value;
+    const subCat = adminSubCategorySelect.value;
+
+    const isSubCatSelected = subCat !== 'Select a sub-category' && subCat !== '';
+    const isMainCatSelected = mainCat !== 'Select a main category' && mainCat !== '';
+    const isWordAndMeaningPresent = word && meaning;
+
+    submitNewWordBtn.disabled = !(isSubCatSelected && isMainCatSelected && isWordAndMeaningPresent);
+}
+
+// Function to handle the actual Firestore write via Cloud Function
+async function submitNewWord() {
+    submitNewWordBtn.disabled = true;
+    adminStatusMessage.classList.remove('text-red-400', 'text-green-400', 'text-amber-400');
+    adminStatusMessage.classList.add('text-amber-400');
+    adminStatusMessage.innerHTML = 'Saving word... <svg class="inline animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+    
+    const word = document.getElementById('admin-word').value.trim();
+    const meaning = document.getElementById('admin-meaning').value.trim();
+    const example = document.getElementById('admin-example').value.trim();
+    const mainCategory = adminMainCategorySelect.value;
+    const subCategory = adminSubCategorySelect.value;
+
+    const functionUrl = "https://addvocabularyitem-zmv2fmj4aq-uc.a.run.app";
+
+    try {
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: userId, // Must send userId for authentication/authorization
+                mainCategory: mainCategory,
+                subCategory: subCategory,
+                item: {
+                    word: word,
+                    meaning: meaning,
+                    example: example || undefined, // Send as undefined if empty
+                    isSentence: mainCategory === 'Conversational English' // Flag for sentence type
+                }
+            }),
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            adminStatusMessage.classList.remove('text-amber-400');
+            adminStatusMessage.classList.add('text-green-400');
+            adminStatusMessage.textContent = `Success! Item added to: ${subCategory}`;
+            
+            // Clear inputs, but keep categories selected
+            document.getElementById('admin-word').value = '';
+            document.getElementById('admin-meaning').value = '';
+            document.getElementById('admin-example').value = '';
+            
+            // Re-enable button but check if new fields are filled
+            checkWordFormState(); 
+
+            // NOTE: The app should technically reload data via loadProfileAndData 
+            // after an admin action, but for this exercise, we rely on the 
+            // local app owner to fully refresh the browser to see the changes 
+            // as this is an Admin tool, not a user-facing feature.
+
+        } else {
+            adminStatusMessage.classList.remove('text-amber-400');
+            adminStatusMessage.classList.add('text-red-400');
+            adminStatusMessage.textContent = result.error || "Failed to save. Check inputs or permissions.";
+            submitNewWordBtn.disabled = false; // Allow retry
+        }
+    } catch (error) {
+        console.error("Error submitting new word:", error);
+        adminStatusMessage.classList.remove('text-amber-400');
+        adminStatusMessage.classList.add('text-red-400');
+        adminStatusMessage.textContent = "Network error. Could not connect to the service.";
+        submitNewWordBtn.disabled = false; // Allow retry
+    }
+}
+
+// --- ADMIN PANEL LISTENERS ---
+closeAddWordModal.addEventListener('click', () => addWordModal.classList.add('hidden'));
+
+adminMainCategorySelect.addEventListener('change', (e) => {
+    populateSubCategories(e.target.value);
+    checkWordFormState();
+});
+
+adminSubCategorySelect.addEventListener('change', checkWordFormState);
+document.getElementById('admin-word').addEventListener('input', checkWordFormState);
+document.getElementById('admin-meaning').addEventListener('input', checkWordFormState);
+document.getElementById('admin-example').addEventListener('input', checkWordFormState);
+submitNewWordBtn.addEventListener('click', submitNewWord);
             
             function initApp() {
                 allWords = [...new Set(flattenVocabulary(vocabularyData))];
@@ -15082,29 +15547,83 @@ if (isPasskeyVerified) {
                 if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
                 if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
 
-// START: Add this listener for the passkey button
+// Define a fixed email for the Master Admin access.
+const MASTER_ADMIN_EMAIL = "master@lingoquest.com"; 
+
+// --- NEW VARIABLE DECLARATIONS ---
+const adminLoginModal = document.getElementById('admin-login-modal');
+const submitAdminLoginBtn = document.getElementById('submit-admin-login');
+const adminEmailInput = document.getElementById('admin-email-input');
+const adminPasswordInput = document.getElementById('admin-password-input');
+const adminLoginError = document.getElementById('admin-login-error');
+// --- END NEW VARIABLE DECLARATIONS ---
+
+
 if (savePasskeyBtn) {
-    savePasskeyBtn.addEventListener('click', () => {
-        const enteredKey = passkeyInput.value;
-        if (enteredKey === TEACHER_PASSKEY) {
+    savePasskeyBtn.addEventListener('click', async () => {
+        const enteredKey = passkeyInput.value.trim();
+        passkeyError.classList.add('hidden');
+        
+        if (enteredKey === MASTER_KEY) {
+            // STEP 1: Master Key is correct (gateway), hide passkey modal and show staff login modal
             localStorage.setItem(PASSKEY_KEY, "true");
             passkeyModal.classList.add('hidden');
+            adminLoginModal.classList.remove('hidden');
+            adminEmailInput.focus();
+            
+        } else if (enteredKey === TEACHER_PASSKEY) {
+            // Teacher login logic (Anonymous/Non-Admin)
+            localStorage.setItem(PASSKEY_KEY, "true");
+            localStorage.setItem(ADMIN_KEY, "false"); // Explicitly non-admin
+            passkeyModal.classList.add('hidden');
             passkeyError.classList.add('hidden');
-            initializeAppAuth(); // Start the app
+            initializeAppAuth(); // Triggers Anonymous Sign-in
+            
         } else {
+            passkeyError.textContent = "Invalid passkey. Please try again.";
             passkeyError.classList.remove('hidden');
             passkeyInput.value = "";
         }
     });
 
-    // Also allow pressing Enter to submit
-    passkeyInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            savePasskeyBtn.click();
+    // Listener for the new Staff Sign In Modal
+    submitAdminLoginBtn.addEventListener('click', async () => {
+        const email = adminEmailInput.value.trim();
+        const password = adminPasswordInput.value.trim();
+        adminLoginError.classList.add('hidden');
+
+        if (!email || !password) {
+            adminLoginError.textContent = "Please enter both email and password.";
+            adminLoginError.classList.remove('hidden');
+            return;
+        }
+
+        try {
+            // STEP 2: Attempt permanent sign-in with staff credentials
+            await signInPermanentStaff(email, password); 
+
+            // If sign-in succeeds, set admin flag and proceed (Auth state listener will take over)
+            localStorage.setItem(ADMIN_KEY, "true");
+            adminLoginModal.classList.add('hidden');
+            initializeAppAuth(); // Reruns auth listener to get new UID and load data
+
+        } catch(e) {
+            console.error("Staff Login Failed:", e);
+            adminLoginError.textContent = "Invalid email or password. Please check credentials.";
+            adminLoginError.classList.remove('hidden');
+            localStorage.removeItem(ADMIN_KEY); // Remove any pending admin flag
         }
     });
+
+    // Allow pressing Enter to submit on passkey field
+    passkeyInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') savePasskeyBtn.click();
+    });
+    // Allow pressing Enter to submit on password field in new modal
+    adminPasswordInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') submitAdminLoginBtn.click();
+    });
 }
-// END: Add this listener
                 closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
                 userProfileModal.addEventListener('click', e => { if (e.target === userProfileModal) userProfileModal.classList.add('hidden'); });
             }
