@@ -849,6 +849,63 @@ async function signInPermanentStaff(email, password) {
         throw signInError;
     }
 }
+/**
+ * Fetches all vocabulary data (words, sentences) from the public Firestore path.
+ * This replaces the need for a large, static JavaScript object.
+ * @returns {Promise<Object>} An object structured like the original vocabularyData.
+ */
+async function fetchVocabularyDataFromFirestore() {
+    console.log("Fetching live vocabulary data from Firestore...");
+    
+    // Base path for the public vocabulary
+    const basePath = `artifacts/${appId}/public/data/categories`;
+    const categoriesRef = collection(db, basePath);
+    
+    const liveVocabularyData = {
+        "Vocabulary Builder": {},
+        "Advanced Vocabulary": {},
+        "Phrases & Idioms": {},
+        "Conversational English": {},
+        "Sentence Structure": {},
+        "Grammar & Rules": {}
+    };
+
+    try {
+        const categoriesSnapshot = await getDocs(categoriesRef);
+
+        for (const catDoc of categoriesSnapshot.docs) {
+            const mainCategoryName = catDoc.id; // e.g., "Vocabulary Builder"
+            const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
+            const subsSnapshot = await getDocs(subsRef);
+
+            liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
+
+            for (const subDoc of subsSnapshot.docs) {
+                const subCategoryName = subDoc.id; // e.g., "Basic Vocabulary"
+                const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
+                const wordsSnapshot = await getDocs(wordsRef);
+
+                const wordList = wordsSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    // Clean up Firestore timestamp if present, and attach doc ID
+                    const item = { ...data, id: doc.id };
+                    delete item.createdAt; // Remove unnecessary timestamp for front-end list display
+                    return item;
+                });
+
+                // Attach the fetched list to the correctly structured object
+                liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
+            }
+        }
+        console.log("Live vocabulary data fetched and structured.");
+        return liveVocabularyData;
+
+    } catch (error) {
+        console.error("Error fetching live vocabulary data:", error);
+        // Fallback: Return the empty structure, forcing user to use manual input or embedded data
+        return liveVocabularyData; 
+    }
+}
         
 
         (() => {
@@ -15523,110 +15580,141 @@ document.getElementById('admin-meaning').addEventListener('input', checkWordForm
 document.getElementById('admin-example').addEventListener('input', checkWordFormState);
 submitNewWordBtn.addEventListener('click', submitNewWord);
             
-            function initApp() {
-                allWords = [...new Set(flattenVocabulary(vocabularyData))];
-                Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
-                Object.values(rootWords).forEach(arr => allWords.push(...arr));
-                allWords = [...new Set(allWords)];
-                speechSynthesis.getVoices();
-                const isPasskeyVerified = localStorage.getItem(PASSKEY_KEY) === "true";
+            // REPLACE THE EXISTING initApp FUNCTION WITH THIS:
 
-if (isPasskeyVerified) {
-    initializeAppAuth(); // Passkey is saved, start the app
-} else {
-    passkeyModal.classList.remove('hidden'); // No passkey, show the modal
-}
-                bottomNav.addEventListener('click', e => { const button = e.target.closest('button'); if (button?.dataset.view) button.dataset.view === 'profile' ? displayProfileModal() : switchView(button.dataset.view); });
-                searchModalBar.addEventListener('input', e => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { displaySuggestions(allWords.filter(item => (((item.isSentence ? item.hindi : item.word) || '').toLowerCase().includes(query) || (item.meaning || '').toLowerCase().includes(query)))); } else if(searchModalSuggestions) searchModalSuggestions.innerHTML = ''; });
-                closeAboutModal.addEventListener('click', () => aboutModal.classList.add('hidden'));
-                aboutModal.addEventListener('click', e => { if (e.target === aboutModal) aboutModal.classList.add('hidden'); }); 
-                closeExplanationModal.addEventListener('click', () => explanationModal.classList.add('hidden'));
-                explanationModal.addEventListener('click', e => { if (e.target === explanationModal) explanationModal.classList.add('hidden'); });
-                closeSearchOverlay.addEventListener('click', () => searchOverlay.classList.add('hidden'));
-                searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) searchOverlay.classList.add('hidden'); });
-                if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
-                if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
+function initApp() {
+    // Note: The hardcoded data objects (vocabularyData, originalSynonymsData, rootWords, detailedExplanations) must
+    // still exist in the script block for the app logic to work, but the vocabularyData variable
+    // itself is now overwritten with live data below.
+    
+    const isPasskeyVerified = localStorage.getItem(PASSKEY_KEY) === "true";
 
-// Define a fixed email for the Master Admin access.
-const MASTER_ADMIN_EMAIL = "master@lingoquest.com"; 
-
-// --- NEW VARIABLE DECLARATIONS ---
-const adminLoginModal = document.getElementById('admin-login-modal');
-const submitAdminLoginBtn = document.getElementById('submit-admin-login');
-const adminEmailInput = document.getElementById('admin-email-input');
-const adminPasswordInput = document.getElementById('admin-password-input');
-const adminLoginError = document.getElementById('admin-login-error');
-// --- END NEW VARIABLE DECLARATIONS ---
-
-
-if (savePasskeyBtn) {
-    savePasskeyBtn.addEventListener('click', async () => {
-        const enteredKey = passkeyInput.value.trim();
-        passkeyError.classList.add('hidden');
-        
-        if (enteredKey === MASTER_KEY) {
-            // STEP 1: Master Key is correct (gateway), hide passkey modal and show staff login modal
-            localStorage.setItem(PASSKEY_KEY, "true");
-            passkeyModal.classList.add('hidden');
-            adminLoginModal.classList.remove('hidden');
-            adminEmailInput.focus();
-            
-        } else if (enteredKey === TEACHER_PASSKEY) {
-            // Teacher login logic (Anonymous/Non-Admin)
-            localStorage.setItem(PASSKEY_KEY, "true");
-            localStorage.setItem(ADMIN_KEY, "false"); // Explicitly non-admin
-            passkeyModal.classList.add('hidden');
-            passkeyError.classList.add('hidden');
-            initializeAppAuth(); // Triggers Anonymous Sign-in
-            
-        } else {
-            passkeyError.textContent = "Invalid passkey. Please try again.";
-            passkeyError.classList.remove('hidden');
-            passkeyInput.value = "";
-        }
-    });
-
-    // Listener for the new Staff Sign In Modal
-    submitAdminLoginBtn.addEventListener('click', async () => {
-        const email = adminEmailInput.value.trim();
-        const password = adminPasswordInput.value.trim();
-        adminLoginError.classList.add('hidden');
-
-        if (!email || !password) {
-            adminLoginError.textContent = "Please enter both email and password.";
-            adminLoginError.classList.remove('hidden');
-            return;
-        }
-
-        try {
-            // STEP 2: Attempt permanent sign-in with staff credentials
-            await signInPermanentStaff(email, password); 
-
-            // If sign-in succeeds, set admin flag and proceed (Auth state listener will take over)
-            localStorage.setItem(ADMIN_KEY, "true");
-            adminLoginModal.classList.add('hidden');
-            initializeAppAuth(); // Reruns auth listener to get new UID and load data
-
-        } catch(e) {
-            console.error("Staff Login Failed:", e);
-            adminLoginError.textContent = "Invalid email or password. Please check credentials.";
-            adminLoginError.classList.remove('hidden');
-            localStorage.removeItem(ADMIN_KEY); // Remove any pending admin flag
-        }
-    });
-
-    // Allow pressing Enter to submit on passkey field
-    passkeyInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') savePasskeyBtn.click();
-    });
-    // Allow pressing Enter to submit on password field in new modal
-    adminPasswordInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') submitAdminLoginBtn.click();
-    });
-}
-                closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
-                userProfileModal.addEventListener('click', e => { if (e.target === userProfileModal) userProfileModal.classList.add('hidden'); });
+    if (isPasskeyVerified) {
+        initializeAppAuth(); // Passkey is saved, start the app
+    } else {
+        passkeyModal.classList.remove('hidden'); // No passkey, show the modal
+    }
+    
+    // --- NEW LIVE DATA FETCH & PROCESSING ---
+    // Fetch live data and merge it into the existing global object structure
+    fetchVocabularyDataFromFirestore().then(liveData => {
+        // Step 1: Overwrite the static list data with the live data
+        // We only overwrite the arrays (the subcategories) fetched from Firestore.
+        for (const mainCat in liveData) {
+            for (const subCat in liveData[mainCat]) {
+                 // Check if the structure exists before overwriting
+                 if (vocabularyData[mainCat] && vocabularyData[mainCat][subCat]) {
+                      vocabularyData[mainCat][subCat] = liveData[mainCat][subCat];
+                 }
             }
+        }
+        // Step 2: Re-flatten the word list now that the data is live
+        allWords = [...new Set(flattenVocabulary(vocabularyData))];
+        Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
+        Object.values(rootWords).forEach(arr => allWords.push(...arr));
+        allWords = [...new Set(allWords)];
+        
+        console.log("App data synced with Firestore. Total live words:", allWords.length);
+        
+        // This ensures the application starts using the live data on every refresh.
+    }).catch(error => {
+        console.error("Critical: Failed to sync vocabulary data from Firestore. Using embedded static data.", error);
+        // If fetch fails, the app continues using the old static data (the embedded 'vocabularyData')
+    });
+    // --- END NEW LIVE DATA FETCH & PROCESSING ---
+
+    speechSynthesis.getVoices();
+    bottomNav.addEventListener('click', e => { const button = e.target.closest('button'); if (button?.dataset.view) button.dataset.view === 'profile' ? displayProfileModal() : switchView(button.dataset.view); });
+    searchModalBar.addEventListener('input', e => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { displaySuggestions(allWords.filter(item => (((item.isSentence ? item.hindi : item.word) || '').toLowerCase().includes(query) || (item.meaning || '').toLowerCase().includes(query)))); } else if(searchModalSuggestions) searchModalSuggestions.innerHTML = ''; });
+    closeAboutModal.addEventListener('click', () => aboutModal.classList.add('hidden'));
+    aboutModal.addEventListener('click', e => { if (e.target === aboutModal) aboutModal.classList.add('hidden'); }); 
+    closeExplanationModal.addEventListener('click', () => explanationModal.classList.add('hidden'));
+    explanationModal.addEventListener('click', e => { if (e.target === explanationModal) explanationModal.classList.add('hidden'); });
+    closeSearchOverlay.addEventListener('click', () => searchOverlay.classList.add('hidden'));
+    searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) searchOverlay.classList.add('hidden'); });
+    if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
+    if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
+
+    // Define a fixed email for the Master Admin access.
+    const MASTER_ADMIN_EMAIL = "master@lingoquest.com"; 
+
+    // --- NEW VARIABLE DECLARATIONS ---
+    const adminLoginModal = document.getElementById('admin-login-modal');
+    const submitAdminLoginBtn = document.getElementById('submit-admin-login');
+    const adminEmailInput = document.getElementById('admin-email-input');
+    const adminPasswordInput = document.getElementById('admin-password-input');
+    const adminLoginError = document.getElementById('admin-login-error');
+    // --- END NEW VARIABLE DECLARATIONS ---
+
+
+    if (savePasskeyBtn) {
+        savePasskeyBtn.addEventListener('click', async () => {
+            const enteredKey = passkeyInput.value.trim();
+            passkeyError.classList.add('hidden');
+            
+            if (enteredKey === MASTER_KEY) {
+                // STEP 1: Master Key is correct (gateway), hide passkey modal and show staff login modal
+                localStorage.setItem(PASSKEY_KEY, "true");
+                passkeyModal.classList.add('hidden');
+                adminLoginModal.classList.remove('hidden');
+                adminEmailInput.focus();
+                
+            } else if (enteredKey === TEACHER_PASSKEY) {
+                // Teacher login logic (Anonymous/Non-Admin)
+                localStorage.setItem(PASSKEY_KEY, "true");
+                localStorage.setItem(ADMIN_KEY, "false"); // Explicitly non-admin
+                passkeyModal.classList.add('hidden');
+                passkeyError.classList.add('hidden');
+                initializeAppAuth(); // Triggers Anonymous Sign-in
+                
+            } else {
+                passkeyError.textContent = "Invalid passkey. Please try again.";
+                passkeyError.classList.remove('hidden');
+                passkeyInput.value = "";
+            }
+        });
+
+        // Listener for the new Staff Sign In Modal
+        submitAdminLoginBtn.addEventListener('click', async () => {
+            const email = adminEmailInput.value.trim();
+            const password = adminPasswordInput.value.trim();
+            adminLoginError.classList.add('hidden');
+
+            if (!email || !password) {
+                adminLoginError.textContent = "Please enter both email and password.";
+                adminLoginError.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // STEP 2: Attempt permanent sign-in with staff credentials
+                await signInPermanentStaff(email, password); 
+
+                // If sign-in succeeds, set admin flag and proceed (Auth state listener will take over)
+                localStorage.setItem(ADMIN_KEY, "true");
+                adminLoginModal.classList.add('hidden');
+                initializeAppAuth(); // Reruns auth listener to get new UID and load data
+
+            } catch(e) {
+                console.error("Staff Login Failed:", e);
+                adminLoginError.textContent = "Invalid email or password. Please check credentials.";
+                adminLoginError.classList.remove('hidden');
+                localStorage.removeItem(ADMIN_KEY); // Remove any pending admin flag
+            }
+        });
+
+        // Allow pressing Enter to submit on passkey field
+        passkeyInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') savePasskeyBtn.click();
+        });
+        // Allow pressing Enter to submit on password field in new modal
+        adminPasswordInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitAdminLoginBtn.click();
+        });
+    }
+    closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
+    userProfileModal.addEventListener('click', e => { if (e.target === userProfileModal) userProfileModal.classList.add('hidden'); });
+}
             initApp();
         })(); 
     </script>
