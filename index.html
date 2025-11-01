@@ -858,9 +858,10 @@ async function fetchVocabularyDataFromFirestore() {
     console.log("Fetching live vocabulary data from Firestore...");
     
     // Base path for the public vocabulary
-    const basePath = `artifacts/${appId}/public/data/categories`;
+    const basePath = `artifacts/${appId}/public/data/categories`; 
     const categoriesRef = collection(db, basePath);
     
+    // Initial structure to hold the fetched data
     const liveVocabularyData = {
         "Vocabulary Builder": {},
         "Advanced Vocabulary": {},
@@ -871,25 +872,31 @@ async function fetchVocabularyDataFromFirestore() {
     };
 
     try {
+        // Step 1: Get the list of Main Categories (e.g., Vocabulary Builder, Advanced Vocabulary)
         const categoriesSnapshot = await getDocs(categoriesRef);
 
         for (const catDoc of categoriesSnapshot.docs) {
-            const mainCategoryName = catDoc.id; // e.g., "Vocabulary Builder"
-            const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
-            const subsSnapshot = await getDocs(subsRef);
-
+            const mainCategoryName = catDoc.id;
+            
             liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
 
+            // --- Step 2: Get the list of Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
+            const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
+            const subsSnapshot = await getDocs(subsRef);
+            
+            // Note: If subsSnapshot is empty, the logic correctly skips the inner loops.
+
             for (const subDoc of subsSnapshot.docs) {
-                const subCategoryName = subDoc.id; // e.g., "Basic Vocabulary"
+                const subCategoryName = subDoc.id;
+                
+                // --- Step 3: Get the final word list from the 'words' collection ---
                 const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
                 const wordsSnapshot = await getDocs(wordsRef);
 
                 const wordList = wordsSnapshot.docs.map(doc => {
                     const data = doc.data();
-                    // Clean up Firestore timestamp if present, and attach doc ID
                     const item = { ...data, id: doc.id };
-                    delete item.createdAt; // Remove unnecessary timestamp for front-end list display
+                    delete item.createdAt; 
                     return item;
                 });
 
@@ -897,13 +904,14 @@ async function fetchVocabularyDataFromFirestore() {
                 liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
             }
         }
+        
         console.log("Live vocabulary data fetched and structured.");
         return liveVocabularyData;
 
     } catch (error) {
-        console.error("Error fetching live vocabulary data:", error);
-        // Fallback: Return the empty structure, forcing user to use manual input or embedded data
-        return liveVocabularyData; 
+        // This log will still catch permission errors, but by this stage, it means the rules are incorrect.
+        console.error("Critical Failure in Data Fetch Logic:", error);
+        return liveVocabularyData; // Return static structure if fetch fails
     }
 }
         
@@ -15580,8 +15588,7 @@ document.getElementById('admin-meaning').addEventListener('input', checkWordForm
 document.getElementById('admin-example').addEventListener('input', checkWordFormState);
 submitNewWordBtn.addEventListener('click', submitNewWord);
             
-            // REPLACE THE EXISTING initApp FUNCTION WITH THIS:
-
+            // This block defines how the app starts.
 function initApp() {
     // Note: The hardcoded data objects (vocabularyData, originalSynonymsData, rootWords, detailedExplanations) must
     // still exist in the script block for the app logic to work, but the vocabularyData variable
