@@ -851,7 +851,7 @@ async function signInPermanentStaff(email, password) {
 }
 /**
  * Fetches all vocabulary data (words, sentences) from the public Firestore path.
- * This replaces the need for a large, static JavaScript object.
+ * This function is robust against empty collections and ensures the return structure is correct.
  * @returns {Promise<Object>} An object structured like the original vocabularyData.
  */
 async function fetchVocabularyDataFromFirestore() {
@@ -861,7 +861,7 @@ async function fetchVocabularyDataFromFirestore() {
     const basePath = `artifacts/${appId}/public/data/categories`; 
     const categoriesRef = collection(db, basePath);
     
-    // Initial structure to hold the fetched data
+    // Initial structure to hold the fetched data. This ensures we have ALL required keys.
     const liveVocabularyData = {
         "Vocabulary Builder": {},
         "Advanced Vocabulary": {},
@@ -872,24 +872,26 @@ async function fetchVocabularyDataFromFirestore() {
     };
 
     try {
-        // Step 1: Get the list of Main Categories (e.g., Vocabulary Builder, Advanced Vocabulary)
+        // Step 1: Get the list of Main Categories
         const categoriesSnapshot = await getDocs(categoriesRef);
 
         for (const catDoc of categoriesSnapshot.docs) {
             const mainCategoryName = catDoc.id;
             
+            // Only process categories that exist in our expected structure
+            if (liveVocabularyData[mainCategoryName] === undefined) continue;
+
             liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
 
-            // --- Step 2: Get the list of Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
+            // Get the reference for the subcategories collection
             const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
             const subsSnapshot = await getDocs(subsRef);
             
-            // Note: If subsSnapshot is empty, the logic correctly skips the inner loops.
-
+            // --- Iterate over Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
             for (const subDoc of subsSnapshot.docs) {
                 const subCategoryName = subDoc.id;
                 
-                // --- Step 3: Get the final word list from the 'words' collection ---
+                // --- Get the final word list from the 'words' collection ---
                 const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
                 const wordsSnapshot = await getDocs(wordsRef);
 
@@ -900,7 +902,7 @@ async function fetchVocabularyDataFromFirestore() {
                     return item;
                 });
 
-                // Attach the fetched list to the correctly structured object
+                // Crucial: Attach the fetched list (even if empty) to the structured object
                 liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
             }
         }
@@ -909,9 +911,9 @@ async function fetchVocabularyDataFromFirestore() {
         return liveVocabularyData;
 
     } catch (error) {
-        // This log will still catch permission errors, but by this stage, it means the rules are incorrect.
+        // Log the error and return the static data structure as a safe fallback
         console.error("Critical Failure in Data Fetch Logic:", error);
-        return liveVocabularyData; // Return static structure if fetch fails
+        return liveVocabularyData; 
     }
 }
         
