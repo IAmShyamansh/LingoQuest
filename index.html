@@ -816,6 +816,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
         
         const firebaseConfig = {"apiKey":"AIzaSyBgIOoZvo_WVt_ZnRv3j6aMqiieREobVgg","authDomain":"lingoquest-876e1.firebaseapp.com","projectId":"lingoquest-876e1","storageBucket":"lingoquest-876e1.appspot.com","messagingSenderId":"1057113143901","appId":"1:1057113143901:web:5aa7f1dc0e7c80d66cebb4"};
         const appId = 'lingoquest-876e1';
@@ -823,6 +824,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const messaging = getMessaging(app);
         // New Firebase Auth Imports (add to your existing imports at the top):
 import { 
     signInWithEmailAndPassword, 
@@ -15198,6 +15200,7 @@ if (adminBtn) {
 
                         // 5. App is ready to show
                         profileBtn.classList.remove('hidden');
+                        requestNotificationPermission(); // Ask for permission now that user is logged in
                         switchView('home');
 
                     } else if (response.status === 404) {
@@ -15270,6 +15273,7 @@ if (adminBtn) {
                         // Call the original listener setups (we'll migrate these later)
                  
                         profileBtn.classList.remove('hidden'); // Ensure profile button is visible
+                        requestNotificationPermission(); // Ask for permission right after new profile is created
                         switchView('home');
                     } else {
                          const errorText = await response.text();
@@ -15589,6 +15593,75 @@ document.getElementById('admin-word').addEventListener('input', checkWordFormSta
 document.getElementById('admin-meaning').addEventListener('input', checkWordFormState);
 document.getElementById('admin-example').addEventListener('input', checkWordFormState);
 submitNewWordBtn.addEventListener('click', submitNewWord);
+
+// --- PASTE THIS ENTIRE BLOCK OF NEW FUNCTIONS ---
+
+        /**
+         * Asks the user for notification permission and saves the token if granted.
+         */
+        function requestNotificationPermission() {
+            console.log('Requesting notification permission...');
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                    
+                    // --- IMPORTANT! ---
+                    // You MUST get this key from your Firebase Project Settings.
+                    // Go to Firebase > Project Settings > Cloud Messaging > Web configuration > Generate key pair
+                    const VAPID_KEY = 'BLRiy8KwxCaCq9tH6l3jkR5ZP4EzP5lMoV2Y3-EixsYSErQG4-nP596TewSmrSDEapOhq5FyaC3uxSz_Ujck8pE'; 
+                    
+                    if (VAPID_KEY === 'BLRiy8KwxCaCq9tH6l3jkR5ZP4EzP5lMoV2Y3-EixsYSErQG4-nP596TewSmrSDEapOhq5FyaC3uxSz_Ujck8pE') {
+                        console.error("VAPID Key is missing. Please add it from your Firebase project settings.");
+                        return;
+                    }
+
+                    // Get the token
+                    getToken(messaging, { vapidKey: VAPID_KEY }).then((currentToken) => {
+                        if (currentToken) {
+                            console.log('FCM Token:', currentToken);
+                            saveTokenToFirestore(currentToken);
+                        } else {
+                            console.log('No registration token available. Request permission to generate one.');
+                        }
+                    }).catch((err) => {
+                        console.log('An error occurred while retrieving token. ', err);
+                    });
+                } else {
+                    console.log('Unable to get permission to show notifications.');
+                }
+            });
+
+            // Also, listen for messages when the app is in the foreground
+            onMessage(messaging, (payload) => {
+                console.log('Message received in foreground: ', payload);
+                // Here, you could show a custom in-app banner instead of a system notification
+            });
+        }
+
+        /**
+         * Saves the user's FCM token to their private profile.
+         * @param {string} token The FCM registration token.
+         */
+        async function saveTokenToFirestore(token) {
+            if (!userId) {
+                console.error('User ID is not available. Cannot save FCM token.');
+                return;
+            }
+            
+            // This is the private profile document for the user
+            const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/main`);
+
+            try {
+                await setDoc(profileRef, {
+                    fcmToken: token, // This is the token we will use to send notifications
+                    lastTokenUpdate: serverTimestamp() 
+                }, { merge: true }); // Use merge to avoid overwriting the whole profile
+                
+                console.log('FCM Token saved to Firestore.');
+            } catch (error) {
+                console.error('Error saving FCM token to Firestore: ', error);
+            }
+        }
             
             // This block defines how the app starts.
 function initApp() {
