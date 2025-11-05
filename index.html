@@ -15648,14 +15648,18 @@ submitNewWordBtn.addEventListener('click', submitNewWord);
                 return;
             }
             
-            // This is the private profile document for the user
-            const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/main`);
+            // --- THIS IS THE FIX ---
+            // This path now correctly points to your main user document,
+            // not the old "profile/main" sub-document.
+            const profileRef = doc(db, `artifacts/${appId}/users/${userId}`);
 
             try {
+                // We use setDoc with merge:true to add/update the fcmToken
+                // field without overwriting the rest of your profile.
                 await setDoc(profileRef, {
-                    fcmToken: token, // This is the token we will use to send notifications
+                    fcmToken: token, 
                     lastTokenUpdate: serverTimestamp() 
-                }, { merge: true }); // Use merge to avoid overwriting the whole profile
+                }, { merge: true }); 
                 
                 console.log('FCM Token saved to Firestore.');
             } catch (error) {
