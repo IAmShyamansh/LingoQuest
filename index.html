@@ -852,7 +852,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
         
         // --- START FIX: Robust environment check ---
@@ -16619,14 +16619,67 @@ if (adminBtn) {
 
             function showQuizOptions(listData, options = { isChallenge: false }) {
                 mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
-                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full"><h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2><div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4"><button class="mode-card p-4 rounded-xl text-left" data-length="short"><h3 class="font-bold text-lg text-white">Short Quiz</h3><p class="text-sm text-slate-300">A quick quiz with 10 random words.</p></button><button class="mode-card p-4 rounded-xl text-left" data-length="long"><h3 class="font-bold text-lg text-white">Long Quiz</h3><p class="text-sm text-slate-300">Test all words in this category.</p></p></div></div>`;
+                
+                if (options.isChallenge) {
+                    // --- NEW: Ask for player count first for challenges ---
+                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full">
+                        <h2 class="text-2xl font-bold text-white mb-6 text-center">How many players? (2-6)</h2>
+                        <div id="player-count-selection" class="grid grid-cols-5 gap-2">
+                            ${[2, 3, 4, 5, 6].map(num => `<button class="mode-card p-4 rounded-xl text-center" data-count="${num}">
+                                <h3 class="font-bold text-xl text-white">${num}</h3>
+                                <p class="text-xs text-slate-300">players</p>
+                            </button>`).join('')}
+                        </div>
+                    </div>`;
+                    
+                    document.getElementById('player-count-selection').addEventListener('click', e => {
+                        const button = e.target.closest('.mode-card');
+                        if (button && !button.disabled) {
+                            const maxPlayers = parseInt(button.dataset.count, 10);
+                            // Now that we have player count, ask for quiz length
+                            showQuizLengthOptions(listData, options, maxPlayers);
+                        }
+                    });
+
+                } else {
+                    // --- Original logic for solo quiz ---
+                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full">
+                        <h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2>
+                        <div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button class="mode-card p-4 rounded-xl text-left" data-length="short"><h3 class="font-bold text-lg text-white">Short Quiz</h3><p class="text-sm text-slate-300">A quick quiz with 10 random words.</p></button>
+                            <button class="mode-card p-4 rounded-xl text-left" data-length="long"><h3 class="font-bold text-lg text-white">Long Quiz</h3><p class="text-sm text-slate-300">Test all words in this category.</p></button>
+                        </div>
+                    </div>`;
+                    
+                    document.getElementById('quiz-length-selection').addEventListener('click', e => {
+                        const button = e.target.closest('.mode-card');
+                        if (button && !button.disabled) {
+                            // Pass maxPlayers as 1 (or null) for solo
+                            showQuizTypeOptions(button.dataset.length, listData, options, 1);
+                        }
+                    });
+                }
+            }
+            // --- NEW FUNCTION ---
+            function showQuizLengthOptions(listData, options, maxPlayers) {
+                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full">
+                    <h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2>
+                    <div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button class="mode-card p-4 rounded-xl text-left" data-length="short"><h3 class="font-bold text-lg text-white">Short Quiz</h3><p class="text-sm text-slate-300">A quick quiz with 10 random words.</p></button>
+                        <button class="mode-card p-4 rounded-xl text-left" data-length="long"><h3 class="font-bold text-lg text-white">Long Quiz</h3><p class="text-sm text-slate-300">Test all words in this category.</p></button>
+                    </div>
+                </div>`;
+                
                 document.getElementById('quiz-length-selection').addEventListener('click', e => {
                     const button = e.target.closest('.mode-card');
-                    if (button && !button.disabled) showQuizTypeOptions(button.dataset.length, listData, options);
+                    if (button && !button.disabled) {
+                        showQuizTypeOptions(button.dataset.length, listData, options, maxPlayers);
+                    }
                 });
             }
 
-            function showQuizTypeOptions(quizLength, listData, options = { isChallenge: false }) {
+            // --- MODIFIED FUNCTION ---
+            function showQuizTypeOptions(quizLength, listData, options = { isChallenge: false }, maxPlayers) {
                 mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full"><h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Mode</h2><div id="quiz-mode-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4"><button class="mode-card p-4 rounded-xl text-left" data-mode="word-to-meaning"><h3 class="font-bold text-lg text-white">Choose the Correct Meaning</h3><p class="text-sm text-slate-300">Guess the meaning of the word.</p></button><button class="mode-card p-4 rounded-xl text-left" data-mode="meaning-to-word"><h3 class="font-bold text-lg text-white">Choose the Correct Word</h3><p class="text-sm text-slate-300">Guess the word from the meaning.</p></button></div></div>`;
                 document.getElementById('quiz-mode-selection').addEventListener('click', e => {
                     const button = e.target.closest('.mode-card');
@@ -16634,12 +16687,108 @@ if (adminBtn) {
                         const mode = button.dataset.mode;
                         if (options.isChallenge) {
                             // This is a new challenge
-                            createQuizChallenge(listData.words, mode, quizLength, listData);
+                            createQuizChallenge(listData.words, mode, quizLength, listData, maxPlayers);
                         } else {
                             // This is a normal, solo quiz
                             const quizId = `vocab-${listData.title.replace(/\s+/g, '-').toLowerCase()}-${mode}-${quizLength}`;
                             checkForSavedQuiz(quizId, listData.words, listData, (qWords, qData, qId, savedState) => startQuiz(qWords, mode, quizLength, qId, qData, savedState));
                         }
+                    }
+                });
+            }
+            // --- NEW FUNCTION ---
+            function showCountdown(onFinishCallback) {
+                let count = 5;
+                const countdownOverlay = document.createElement('div');
+                countdownOverlay.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4';
+                countdownOverlay.innerHTML = `<div id="countdown-timer" class="text-9xl font-extrabold text-white pinch-in">${count}</div>`;
+                document.body.appendChild(countdownOverlay);
+
+                const timer = setInterval(() => {
+                    count--;
+                    const timerElement = document.getElementById('countdown-timer');
+                    if (count > 0) {
+                        if (timerElement) {
+                            timerElement.textContent = count;
+                            timerElement.classList.remove('pinch-in');
+                            void timerElement.offsetWidth; // Trigger reflow
+                            timerElement.classList.add('pinch-in');
+                        }
+                    } else if (count === 0) {
+                        if (timerElement) {
+                            timerElement.textContent = 'GO!';
+                            timerElement.classList.remove('pinch-in');
+                            void timerElement.offsetWidth;
+                            timerElement.classList.add('pinch-in');
+                        }
+                    } else {
+                        clearInterval(timer);
+                        countdownOverlay.remove();
+                        if (onFinishCallback) onFinishCallback();
+                    }
+                }, 1000);
+            }
+
+            // --- NEW FUNCTION ---
+            function showChallengeLobby(challengeDocId, options = { isCreator: false }) {
+                mainContent.innerHTML = ''; // Clear the main content area
+                mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
+                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full text-center">
+                    <h2 class="text-2xl font-bold text-white mb-4">Challenge Lobby</h2>
+                    <p class="text-slate-300 mb-6">Share this code with your friends to join:</p>
+                    <div class="bg-black/20 p-4 rounded-lg mb-6">
+                        <p id="challenge-code-display" class="text-4xl font-bold text-amber-400 tracking-widest">...</p>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Players Joined</h3>
+                    <div id="player-list-container" class="space-y-2 min-h-[100px] max-h-40 overflow-y-auto">
+                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                    <p id="player-count-display" class="text-slate-400 text-sm mt-4">Waiting for players...</p>
+                </div>`;
+
+                const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDocId);
+                const playerListContainer = document.getElementById('player-list-container');
+                const playerCountDisplay = document.getElementById('player-count-display');
+                const challengeCodeDisplay = document.getElementById('challenge-code-display');
+
+                const unsubscribe = onSnapshot(challengeDocRef, async (docSnap) => {
+                    const data = docSnap.data();
+                    if (!data) {
+                        unsubscribe();
+                        return;
+                    }
+
+                    // Update UI with current players
+                    challengeCodeDisplay.textContent = data.code;
+                    playerListContainer.innerHTML = '';
+                    data.players.forEach(player => {
+                        const playerEl = document.createElement('p');
+                        playerEl.className = 'text-white font-semibold text-lg';
+                        playerEl.textContent = player.name;
+                        playerListContainer.appendChild(playerEl);
+                    });
+                    playerCountDisplay.textContent = `${data.players.length} / ${data.maxPlayers} players joined`;
+
+                    // Check for start condition
+                    if (data.status === 'active') {
+                        // Game is starting!
+                        unsubscribe();
+                        const listContext = { title: data.quizTitle };
+                        showCountdown(() => {
+                            startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, listContext, null, { isChallenge: true, challengeId: challengeDocId, playerId: userId });
+                        });
+                    } else if (data.status === 'waiting' && options.isCreator && data.players.length === data.maxPlayers) {
+                        // This user is the creator and the lobby is full.
+                        // This user is responsible for starting the game.
+                        unsubscribe(); // Stop listening to prevent double-triggers
+                        await updateDoc(challengeDocRef, { status: "active" });
+                        // The 'active' status will be caught by this same listener on its final fire,
+                        // or by the listeners of all other players.
+                        // We will also call countdown for the creator immediately.
+                        const listContext = { title: data.quizTitle };
+                        showCountdown(() => {
+                            startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, listContext, null, { isChallenge: true, challengeId: challengeDocId, playerId: userId });
+                        });
                     }
                 });
             }
@@ -16653,66 +16802,37 @@ if (adminBtn) {
                 return code;
             }
 
-            async function createQuizChallenge(words, quizType, quizLength, listContext) {
+            async function createQuizChallenge(words, quizType, quizLength, listContext, maxPlayers) {
                 const quizWords = words.filter(w => !w.type);
                 const originalTitle = listContext.title;
                 const questions = (quizLength === 'short' ? [...quizWords].sort(() => 0.5 - Math.random()).slice(0, 10) : [...quizWords].sort(() => 0.5 - Math.random()));
                 const challengeCode = generateChallengeCode();
 
                 try {
-                    // 1. Create the challenge in Firestore
+                    // 1. Create the new challenge structure in Firestore
                     const challengeRef = collection(db, `artifacts/${appId}/public/data/challenges`);
+                    const creatorPlayer = {
+                        id: userId,
+                        name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
+                        score: null,
+                        isCreator: true
+                    };
+
                     const challengeDoc = await addDoc(challengeRef, {
                         code: challengeCode,
                         quizTitle: originalTitle,
                         questions: questions,
                         quizType: quizType,
                         quizLength: quizLength,
-                        player1: {
-                            id: userId,
-                            name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
-                            score: null
-                        },
-                        player2: {
-                            id: null,
-                            name: null,
-                            score: null
-                        },
+                        players: [creatorPlayer], // Add creator to the players array
+                        maxPlayers: maxPlayers,
                         status: 'waiting', // waiting -> active -> finished
                         createdAt: serverTimestamp()
                     });
 
-                    // 2. Show a "waiting" screen with the code
-                    mainContent.innerHTML = '';
-                    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
-                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full text-center">
-                        <h2 class="text-2xl font-bold text-white mb-4">Challenge Created!</h2>
-                        <p class="text-slate-300 mb-6">Send this code to your friend to join:</p>
-                        <div class="bg-black/20 p-4 rounded-lg mb-6">
-                            <p id="challenge-code-display" class="text-4xl font-bold text-amber-400 tracking-widest">${challengeCode}</p>
-                        </div>
-                        <p class="text-slate-400 text-sm">Waiting for your friend to join...</p>
-                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    </div>`;
-
-                    // 3. Listen for Player 2 to join
-                    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDoc.id);
-                    
-                    // --- START FIX ---
-                    // Store the unsubscribe function from onSnapshot
-                    const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
-                        const data = docSnap.data();
-                        
-                        // Check if status is 'active'
-                        if (data && data.status === 'active') {
-                            // Detach the listener immediately so it doesn't fire again
-                            unsubscribe(); 
-                            
-                            // Player 2 has joined! Start the quiz for Player 1.
-                            startQuiz(data.questions, quizType, quizLength, challengeDoc.id, listContext, null, { isChallenge: true, playerNum: 'player1' });
-                        }
-                    });
-                    // --- END FIX ---
+                    // 2. Show the new "Lobby" screen
+                    // This new function will show the UI and start the listener.
+                    showChallengeLobby(challengeDoc.id, { isCreator: true });
 
                 } catch (e) {
                     console.error("Error creating challenge: ", e);
@@ -16745,18 +16865,40 @@ if (adminBtn) {
 
                     const challengeDoc = querySnapshot.docs[0];
                     const challengeData = challengeDoc.data();
-
-                    // 2. Join the challenge by updating the doc
                     const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDoc.id);
+
+                    // 2. Check if lobby is full
+                    if (challengeData.players.length >= challengeData.maxPlayers) {
+                        joinChallengeError.textContent = "This lobby is already full.";
+                        submitJoinChallengeBtn.disabled = false;
+                        return;
+                    }
+
+                    // 3. Check if user is already in the lobby
+                    if (challengeData.players.some(p => p.id === userId)) {
+                        joinChallengeError.textContent = "You are already in this lobby.";
+                        // Don't disable the button, just show the lobby
+                        joinChallengeModal.classList.add('hidden');
+                        showChallengeLobby(challengeDoc.id, { isCreator: challengeData.players[0].id === userId });
+                        return;
+                    }
+
+                    // 4. Join the challenge by adding to the players array
+                    const newPlayer = {
+                        id: userId,
+                        name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
+                        score: null,
+                        isCreator: false
+                    };
+                    
                     await updateDoc(challengeDocRef, {
-                        "player2.id": userId,
-                        "player2.name": (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
-                        "status": "active"
+                        players: arrayUnion(newPlayer) // Safely add new player to the array
                     });
 
-                    // 3. Hide modal and start the quiz for Player 2
+                    // 5. Hide modal and show the lobby screen
                     joinChallengeModal.classList.add('hidden');
-                    startQuiz(challengeData.questions, challengeData.quizType, challengeData.quizLength, challengeDoc.id, { title: challengeData.quizTitle }, null, { isChallenge: true, playerNum: 'player2' });
+                    submitJoinChallengeBtn.disabled = false;
+                    showChallengeLobby(challengeDoc.id, { isCreator: false });
 
                 } catch (e) {
                     console.error("Error joining challenge: ", e);
@@ -16765,50 +16907,51 @@ if (adminBtn) {
                 }
             }
 
-            // This new function will show the results
             function showChallengeResults(challengeId, challengeData) {
                 mainContent.classList.remove('h-full');
                 
-                const p1 = challengeData.player1;
-                const p2 = challengeData.player2;
-                
-                // --- START FIX: Identify user and opponent ---
-                let you, opponent;
-                if (userId === p1.id) {
-                    you = p1;
-                    opponent = p2;
-                } else {
-                    you = p2;
-                    opponent = p1;
-                }
-                // --- END FIX ---
+                // --- NEW: Sort players by score (highest first) ---
+                const sortedPlayers = [...challengeData.players].sort((a, b) => b.score - a.score);
 
+                // Find the current user's rank
+                const yourResult = sortedPlayers.find(p => p.id === userId);
+                const yourRank = sortedPlayers.indexOf(yourResult) + 1;
+                
                 let resultText = "";
                 let resultColor = "text-white";
-                if (you.score > opponent.score) {
+                
+                if (yourRank === 1) {
                     resultText = "You Won!";
                     resultColor = "text-green-400";
-                } else if (opponent.score > you.score) {
-                    resultText = "You Lost!";
+                } else if (yourRank === sortedPlayers.length) {
+                    resultText = "You Lost";
                     resultColor = "text-red-400";
                 } else {
-                    resultText = "It's a Tie!";
+                    resultText = `You finished ${yourRank} / ${sortedPlayers.length}`;
                     resultColor = "text-amber-400";
                 }
 
+                // Build the leaderboard HTML
+                const leaderboardHTML = sortedPlayers.map((player, index) => {
+                    const rank = index + 1;
+                    const isYou = player.id === userId;
+                    return `
+                        <div class="flex items-center justify-between p-3 rounded-lg ${isYou ? 'bg-indigo-900/50' : 'bg-slate-800/50'}">
+                            <div class="flex items-center gap-4">
+                                <span class="text-lg font-bold w-6 ${rank === 1 ? 'text-amber-400' : 'text-slate-400'}">#${rank}</span>
+                                <span class="font-semibold text-white">${player.name}${isYou ? ' (You)' : ''}</span>
+                            </div>
+                            <span class="text-xl font-bold text-white">${player.score}</span>
+                        </div>
+                    `;
+                }).join('');
+
                 mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
-                    <h2 class="text-3xl font-bold text-white mb-4">Challenge Complete!</h2>
+                    <h2 class="text-3xl font-bold text-white mb-4">Challenge Over!</h2>
                     <h3 class="text-4xl font-bold mb-8 ${resultColor}">${resultText}</h3>
                     
-                    <div class="grid grid-cols-2 gap-4 text-white">
-                        <div class="bg-indigo-900/50 p-4 rounded-lg">
-                            <p class="text-sm text-slate-300">${you.name} (You)</p>
-                            <p class="text-5xl font-bold mt-2">${you.score}</p>
-                        </div>
-                        <div class="bg-slate-800/50 p-4 rounded-lg">
-                            <p class="text-sm text-slate-300">${opponent.name}</p>
-                            <p class="text-5xl font-bold mt-2">${opponent.score}</p>
-                        </div>
+                    <div class="text-left space-y-2 max-h-64 overflow-y-auto pr-2">
+                        ${leaderboardHTML}
                     </div>
 
                     <div class="flex justify-center gap-4 mt-8">
@@ -16835,12 +16978,14 @@ if (adminBtn) {
 
                 function displayQuestion() {
                     if (currentQuestionIndex >= totalQuestions) {
+                        // QUIZ IS OVER
+                        clearInterval(timerInterval); // Stop any running timer
                         if (challengeOptions.isChallenge) {
-                            handleChallengeFinish();
+                            handleChallengeFinish(); // This is the correct function to call
                         } else {
-                            displayResults(wrongAnswers);
+                            displayResults(wrongAnswers); // This is for solo quizzes
                         }
-                        return;
+                        return; // Stop the function
                     }
 
                     const questionItem = quizWords[currentQuestionIndex];
@@ -16922,26 +17067,53 @@ if (adminBtn) {
                 }
 
                 async function handleChallengeFinish() {
-                    // Quiz is over, save final score to Firestore
+                    // Quiz is over, show a "waiting" screen
                     mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
                         <h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2>
                         <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
-                        <p class="text-slate-400 text-sm">Saving your score and waiting for opponent...</p>
+                        <p class="text-slate-400 text-sm">Saving your score and waiting for other players...</p>
                         <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </div>`;
 
                     try {
-                        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, quizId);
+                        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeOptions.challengeId);
                         
-                        // Atomically update the player's score and check if both are done
-                        if (challengeOptions.playerNum === 'player1') {
-                            await updateDoc(challengeDocRef, { "player1.score": score });
-                        } else {
-                            await updateDoc(challengeDocRef, { "player2.score": score, "status": "finished" });
+                        // --- NEW LOGIC: Update score in the players array ---
+                        
+                        // 1. Get the current document data
+                        const docSnap = await getDoc(challengeDocRef);
+                        if (!docSnap.exists()) {
+                            throw new Error("Challenge document not found!");
+                        }
+                        
+                        let data = docSnap.data();
+                        let updatedPlayers = [...data.players]; // Create a new array
+                        
+                        // 2. Find this player and update their score
+                        const playerIndex = updatedPlayers.findIndex(p => p.id === challengeOptions.playerId);
+                        if (playerIndex > -1) {
+                            updatedPlayers[playerIndex].score = score;
                         }
 
-                        // Now, listen for the results
-                        listenForChallengeResults(quizId);
+                        // 3. Check if all players are finished
+                        const allFinished = updatedPlayers.every(p => p.score !== null);
+                        
+                        // 4. Update the document in Firestore
+                        if (allFinished) {
+                            // This is the last player to finish. End the game.
+                            await updateDoc(challengeDocRef, {
+                                players: updatedPlayers,
+                                status: "finished"
+                            });
+                        } else {
+                            // Other players are still playing. Just save this score.
+                            await updateDoc(challengeDocRef, {
+                                players: updatedPlayers
+                            });
+                        }
+                        
+                        // 5. Now that score is saved, start listening for the 'finished' status
+                        listenForChallengeResults(challengeOptions.challengeId);
 
                     } catch (e) {
                         console.error("Error saving challenge score: ", e);
@@ -16953,7 +17125,8 @@ if (adminBtn) {
                     const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
                     const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
                         const data = docSnap.data();
-                        if (data && data.status === 'finished' && data.player1.score !== null && data.player2.score !== null) {
+                        // Wait until status is 'finished'
+                        if (data && data.status === 'finished') {
                             unsubscribe(); // Stop listening
                             showChallengeResults(challengeId, data);
                         }
