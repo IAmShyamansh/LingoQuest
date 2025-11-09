@@ -679,6 +679,10 @@
                 <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-quiz-target="Vocabulary Builder"><h3 class="font-bold text-lg text-white">Vocabulary Builder Quiz</h3><p class="text-sm text-slate-200">A mix of words from all basic categories.</p></button>
                 <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-quiz-target="Advanced Vocabulary"><h3 class="font-bold text-lg text-white">Advanced Vocabulary Quiz</h3><p class="text-sm text-slate-200">Test yourself on confusing words, synonyms, and more.</p></button>
                 <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-quiz-target="Phrases & Idioms"><h3 class="font-bold text-lg text-white">Phrases and Idioms Quiz</h3><p class="text-sm text-slate-200">Test your recall of common idiomatic expressions.</p></button>
+                <button id="join-challenge-btn" class="mode-card grad-4 w-full p-4 rounded-xl text-left">
+                    <h3 class="font-bold text-lg text-white">Join a Challenge</h3>
+                    <p class="text-sm text-slate-200">Enter a code to challenge a friend.</p>
+                </button>
             </div>
         </div>
     </template>
@@ -811,25 +815,45 @@
              </div>
         </div>
     </div>
+    <div id="join-challenge-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
+            <button id="close-join-challenge-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            <h2 class="text-2xl font-bold text-white mb-4 text-center">Join a Challenge</h2>
+            <p class="text-slate-300 text-center mb-6">Enter the 6-digit challenge code your friend sent you.</p>
+            <div class="mb-4">
+                <label for="challenge-code-input" class="block text-sm font-bold text-slate-200 mb-2">Challenge Code:</label>
+                <input type="text" id="challenge-code-input" placeholder="e.g., ABC-123" maxlength="7" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all text-center text-lg font-bold uppercase tracking-widest">
+            </div>
+            <p id="join-challenge-error" class="text-red-400 text-sm text-center mb-4 min-h-[1.25rem]"></p>
+            <button id="submit-join-challenge" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Join Quiz</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
         
-        const firebaseConfig = {"apiKey":"AIzaSyBgIOoZvo_WVt_ZnRv3j6aMqiieREobVgg","authDomain":"lingoquest-876e1.firebaseapp.com","projectId":"lingoquest-876e1","storageBucket":"lingoquest-876e1.appspot.com","messagingSenderId":"1057113143901","appId":"1:1057113143901:web:5aa7f1dc0e7c80d66cebb4"};
-        const appId = 'lingoquest-876e1';
+        // --- START FIX: Robust environment check ---
+
+    // We check for the auth token. If it exists, we are in the Gemini preview.
+    // If not, we are external and MUST use the hardcoded fallbacks.
+    const isGeminiEnv = (typeof __initial_auth_token !== 'undefined' && __initial_auth_token);
+
+    const firebaseConfig = isGeminiEnv
+        ? JSON.parse(__firebase_config)
+        : {"apiKey":"AIzaSyBgIOoZvo_WVt_ZnRv3j6aMqiieREobVgg","authDomain":"lingoquest-876e1.firebaseapp.com","projectId":"lingoquest-876e1","storageBucket":"lingoquest-876e1.appspot.com","messagingSenderId":"1057113143901","appId":"1:1057113143901:web:5aa7f1dc0e7c80d66cebb4"};
+
+    const appId = (typeof __app_id !== 'undefined' && __app_id) ? __app_id : 'lingoquest-876e1';
+
+    // --- END FIX ---
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const messaging = getMessaging(app);
-        // New Firebase Auth Imports (add to your existing imports at the top):
-import { 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    
 
 
 /**
@@ -850,75 +874,7 @@ async function signInPermanentStaff(email, password) {
         console.error("Permanent Staff Login Error:", signInError);
         throw signInError;
     }
-}
-/**
- * Fetches all vocabulary data (words, sentences) from the public Firestore path.
- * This function is robust against empty collections and ensures the return structure is correct.
- * @returns {Promise<Object>} An object structured like the original vocabularyData.
- */
-async function fetchVocabularyDataFromFirestore() {
-    console.log("Fetching live vocabulary data from Firestore...");
-    
-    // Base path for the public vocabulary
-    const basePath = `artifacts/${appId}/public/data/categories`; 
-    const categoriesRef = collection(db, basePath);
-    
-    // Initial structure to hold the fetched data. This ensures we have ALL required keys.
-    const liveVocabularyData = {
-        "Vocabulary Builder": {},
-        "Advanced Vocabulary": {},
-        "Phrases & Idioms": {},
-        "Conversational English": {},
-        "Sentence Structure": {},
-        "Grammar & Rules": {}
-    };
-
-    try {
-        // Step 1: Get the list of Main Categories
-        const categoriesSnapshot = await getDocs(categoriesRef);
-
-        for (const catDoc of categoriesSnapshot.docs) {
-            const mainCategoryName = catDoc.id;
-            
-            // Only process categories that exist in our expected structure
-            if (liveVocabularyData[mainCategoryName] === undefined) continue;
-
-            liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
-
-            // Get the reference for the subcategories collection
-            const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
-            const subsSnapshot = await getDocs(subsRef);
-            
-            // --- Iterate over Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
-            for (const subDoc of subsSnapshot.docs) {
-                const subCategoryName = subDoc.id;
-                
-                // --- Get the final word list from the 'words' collection ---
-                const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
-                const wordsSnapshot = await getDocs(wordsRef);
-
-                const wordList = wordsSnapshot.docs.map(doc => {
-                    const data = doc.data();
-                    const item = { ...data, id: doc.id };
-                    delete item.createdAt; 
-                    return item;
-                });
-
-                // Crucial: Attach the fetched list (even if empty) to the structured object
-                liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
-            }
-        }
-        
-        console.log("Live vocabulary data fetched and structured.");
-        return liveVocabularyData;
-
-    } catch (error) {
-        // Log the error and return the static data structure as a safe fallback
-        console.error("Critical Failure in Data Fetch Logic:", error);
-        return liveVocabularyData; 
-    }
-}
-        
+}  
 
         (() => {
             const splashScreen = document.getElementById('splash-screen');
@@ -944,6 +900,11 @@ async function fetchVocabularyDataFromFirestore() {
             const searchModalSuggestions = document.getElementById('search-modal-suggestions');
             const resumeQuizModal = document.getElementById('resume-quiz-modal');
             const resumeQuizName = document.getElementById('resume-quiz-name');
+            const joinChallengeModal = document.getElementById('join-challenge-modal');
+            const closeJoinChallengeModal = document.getElementById('close-join-challenge-modal');
+            const submitJoinChallengeBtn = document.getElementById('submit-join-challenge');
+            const challengeCodeInput = document.getElementById('challenge-code-input');
+            const joinChallengeError = document.getElementById('join-challenge-error');
             // START: Add these variables for passkey
 const passkeyModal = document.getElementById('passkey-modal');
 const savePasskeyBtn = document.getElementById('save-passkey-btn');
@@ -15872,29 +15833,36 @@ if (adminBtn) {
                 mainContent.appendChild(template.content.cloneNode(true));
 
                 mainContent.querySelectorAll('.mode-card').forEach(card => {
+                    // Check if the card has a 'data-quiz-target' attribute
                     const targetCategory = card.dataset.quizTarget;
-                    const wordsForQuiz = [];
-                    function collectWords(data) {
-                        for (const key in data) {
-                            if(['Synonyms', 'Confusing Words', 'Latin Roots', 'Greek Roots'].includes(key)) continue; 
-                            const value = data[key];
-                            if(Array.isArray(value)) wordsForQuiz.push(...value.filter(v => !v.type));
-                            else if(typeof value === 'object' && value !== null && value !== 'synonyms-view') collectWords(value);
-                        }
-                    }
-                    if (targetCategory === 'Phrases & Idioms') collectWords(vocabularyData['Phrases & Idioms']);
-                    else if (targetCategory === 'Advanced Vocabulary') collectWords({"Antonyms": vocabularyData['Advanced Vocabulary']['Antonyms'], "One Word Substitution": vocabularyData['Advanced Vocabulary']['One Word Substitution'], "Proverbs and Sayings": vocabularyData['Advanced Vocabulary']['Proverbs and Sayings'], "Business Vocab": vocabularyData['Advanced Vocabulary']['Business Vocab']});
-                    else if (targetCategory === 'Vocabulary Builder') collectWords(vocabularyData['Vocabulary Builder']);
 
-                    if (wordsForQuiz.length < 4) {
-                        card.disabled = true;
-                        if(card.querySelector('p')) card.querySelector('p').textContent = "Needs at least 4 items for a quiz.";
-                    } else {
-                        card.addEventListener('click', () => {
-                            const quizId = `vocab-hub-${targetCategory}`;
-                            checkForSavedQuiz(quizId, wordsForQuiz, {title: `${targetCategory} Quiz`, originalWords: wordsForQuiz}, (qWords, qData, qId, savedState) => startQuiz(qWords, 'word-to-meaning', 'short', qId, qData, savedState));
-                        });
-                    }
+                    if (targetCategory) {
+                        // This is a "Create Quiz" button, so we check for words
+                        const wordsForQuiz = [];
+                        function collectWords(data) {
+                            for (const key in data) {
+                                if(['Synonyms', 'Confusing Words', 'Latin Roots', 'Greek Roots'].includes(key)) continue; 
+                                const value = data[key];
+                                if(Array.isArray(value)) wordsForQuiz.push(...value.filter(v => !v.type));
+                                else if(typeof value === 'object' && value !== null && value !== 'synonyms-view') collectWords(value);
+                            }
+                        }
+                        if (targetCategory === 'Phrases & Idioms') collectWords(vocabularyData['Phrases & Idioms']);
+                        else if (targetCategory === 'Advanced Vocabulary') collectWords({"Antonyms": vocabularyData['Advanced Vocabulary']['Antonyms'], "One Word Substitution": vocabularyData['Advanced Vocabulary']['One Word Substitution'], "Proverbs and Sayings": vocabularyData['Advanced Vocabulary']['Proverbs and Sayings'], "Business Vocab": vocabularyData['Advanced Vocabulary']['Business Vocab']});
+                        else if (targetCategory === 'Vocabulary Builder') collectWords(vocabularyData['Vocabulary Builder']);
+
+                        if (wordsForQuiz.length < 4) {
+                            card.disabled = true;
+                            if(card.querySelector('p')) card.querySelector('p').textContent = "Needs at least 4 items for a quiz.";
+                        } else {
+                            card.addEventListener('click', () => {
+                                const quizId = `vocab-hub-${targetCategory}`;
+                                checkForSavedQuiz(quizId, wordsForQuiz, {title: `${targetCategory} Quiz`, originalWords: wordsForQuiz}, (qWords, qData, qId, savedState) => startQuiz(qWords, 'word-to-meaning', 'short', qId, qData, savedState));
+                            });
+                        }
+                    } 
+                    // If the card has no 'data-quiz-target' (like the "Join" button), 
+                    // we just ignore it here, and its separate click listener from initApp() will work.
                 });
             }
 
@@ -16299,6 +16267,15 @@ if (adminBtn) {
                 if (words.length === 0) list.innerHTML = `<p class="text-center text-gray-400 mt-4">${isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.')}</p>`;
                 if (quizData) { const quizBtn = document.createElement('button'); quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; quizBtn.innerHTML = 'Take the Sentence Scramble Quiz'; quizBtn.onclick = () => checkForSavedQuiz(`jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`, quizData.questions, { title }, startJumbledQuiz); list.appendChild(quizBtn); }
                 if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { const quizBtn = document.createElement('button'); quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; quizBtn.innerHTML = 'Take the Quiz'; quizBtn.onclick = () => showQuizOptions(currentWordListData); list.appendChild(quizBtn); }
+                // START: Add Challenge Button
+                if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { 
+                    const challengeBtn = document.createElement('button'); 
+                    challengeBtn.className = 'w-full grad-4 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
+                    challengeBtn.innerHTML = 'Challenge a Friend'; 
+                    challengeBtn.onclick = () => showQuizOptions(currentWordListData, { isChallenge: true }); // Pass a flag
+                    list.appendChild(challengeBtn); 
+                }
+                // END: Add Challenge Button
                 words.forEach(item => {
                     if (typeof item === 'string') {
                         // This handles simple string-based lists like Discussion Questions
@@ -16594,28 +16571,209 @@ if (adminBtn) {
             };
             // END: Replacement of loadQuizState
 
-            function showQuizOptions(listData) {
+            function showQuizOptions(listData, options = { isChallenge: false }) {
                 mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
                 mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full"><h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2><div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4"><button class="mode-card p-4 rounded-xl text-left" data-length="short"><h3 class="font-bold text-lg text-white">Short Quiz</h3><p class="text-sm text-slate-300">A quick quiz with 10 random words.</p></button><button class="mode-card p-4 rounded-xl text-left" data-length="long"><h3 class="font-bold text-lg text-white">Long Quiz</h3><p class="text-sm text-slate-300">Test all words in this category.</p></p></div></div>`;
                 document.getElementById('quiz-length-selection').addEventListener('click', e => {
                     const button = e.target.closest('.mode-card');
-                    if (button && !button.disabled) showQuizTypeOptions(button.dataset.length, listData);
+                    if (button && !button.disabled) showQuizTypeOptions(button.dataset.length, listData, options);
                 });
             }
 
-            function showQuizTypeOptions(quizLength, listData) {
+            function showQuizTypeOptions(quizLength, listData, options = { isChallenge: false }) {
                 mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full"><h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Mode</h2><div id="quiz-mode-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4"><button class="mode-card p-4 rounded-xl text-left" data-mode="word-to-meaning"><h3 class="font-bold text-lg text-white">Choose the Correct Meaning</h3><p class="text-sm text-slate-300">Guess the meaning of the word.</p></button><button class="mode-card p-4 rounded-xl text-left" data-mode="meaning-to-word"><h3 class="font-bold text-lg text-white">Choose the Correct Word</h3><p class="text-sm text-slate-300">Guess the word from the meaning.</p></button></div></div>`;
                 document.getElementById('quiz-mode-selection').addEventListener('click', e => {
                     const button = e.target.closest('.mode-card');
                     if (button && !button.disabled) {
                         const mode = button.dataset.mode;
-                        const quizId = `vocab-${listData.title.replace(/\s+/g, '-').toLowerCase()}-${mode}-${quizLength}`;
-                        checkForSavedQuiz(quizId, listData.words, listData, (qWords, qData, qId, savedState) => startQuiz(qWords, mode, quizLength, qId, qData, savedState));
+                        if (options.isChallenge) {
+                            // This is a new challenge
+                            createQuizChallenge(listData.words, mode, quizLength, listData);
+                        } else {
+                            // This is a normal, solo quiz
+                            const quizId = `vocab-${listData.title.replace(/\s+/g, '-').toLowerCase()}-${mode}-${quizLength}`;
+                            checkForSavedQuiz(quizId, listData.words, listData, (qWords, qData, qId, savedState) => startQuiz(qWords, mode, quizLength, qId, qData, savedState));
+                        }
                     }
                 });
             }
+            function generateChallengeCode() {
+                const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+                let code = '';
+                for (let i = 0; i < 6; i++) {
+                    code += chars.charAt(Math.floor(Math.random() * chars.length));
+                    if (i === 2) code += '-';
+                }
+                return code;
+            }
+
+            async function createQuizChallenge(words, quizType, quizLength, listContext) {
+                const quizWords = words.filter(w => !w.type);
+                const originalTitle = listContext.title;
+                const questions = (quizLength === 'short' ? [...quizWords].sort(() => 0.5 - Math.random()).slice(0, 10) : [...quizWords].sort(() => 0.5 - Math.random()));
+                const challengeCode = generateChallengeCode();
+
+                try {
+                    // 1. Create the challenge in Firestore
+                    const challengeRef = collection(db, `artifacts/${appId}/public/data/challenges`);
+                    const challengeDoc = await addDoc(challengeRef, {
+                        code: challengeCode,
+                        quizTitle: originalTitle,
+                        questions: questions,
+                        quizType: quizType,
+                        quizLength: quizLength,
+                        player1: {
+                            id: userId,
+                            name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
+                            score: null
+                        },
+                        player2: {
+                            id: null,
+                            name: null,
+                            score: null
+                        },
+                        status: 'waiting', // waiting -> active -> finished
+                        createdAt: serverTimestamp()
+                    });
+
+                    // 2. Show a "waiting" screen with the code
+                    mainContent.innerHTML = '';
+                    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
+                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full text-center">
+                        <h2 class="text-2xl font-bold text-white mb-4">Challenge Created!</h2>
+                        <p class="text-slate-300 mb-6">Send this code to your friend to join:</p>
+                        <div class="bg-black/20 p-4 rounded-lg mb-6">
+                            <p id="challenge-code-display" class="text-4xl font-bold text-amber-400 tracking-widest">${challengeCode}</p>
+                        </div>
+                        <p class="text-slate-400 text-sm">Waiting for your friend to join...</p>
+                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>`;
+
+                    // 3. Listen for Player 2 to join
+                    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDoc.id);
+                    
+                    // --- START FIX ---
+                    // Store the unsubscribe function from onSnapshot
+                    const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
+                        const data = docSnap.data();
+                        
+                        // Check if status is 'active'
+                        if (data && data.status === 'active') {
+                            // Detach the listener immediately so it doesn't fire again
+                            unsubscribe(); 
+                            
+                            // Player 2 has joined! Start the quiz for Player 1.
+                            startQuiz(data.questions, quizType, quizLength, challengeDoc.id, listContext, null, { isChallenge: true, playerNum: 'player1' });
+                        }
+                    });
+                    // --- END FIX ---
+
+                } catch (e) {
+                    console.error("Error creating challenge: ", e);
+                    mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not create challenge. Please check your connection and try again.</p>`;
+                }
+            }
             
-            function startQuiz(words, quizType, quizLength, quizId, listContext, savedState = null) {
+            async function joinQuizChallenge() {
+                const code = challengeCodeInput.value.trim().toUpperCase();
+                if (code.length !== 7) {
+                    joinChallengeError.textContent = "Please enter a valid 6-digit code.";
+                    return;
+                }
+                
+                joinChallengeError.textContent = '';
+                submitJoinChallengeBtn.disabled = true;
+
+                try {
+                    // 1. Find the challenge with the matching code
+                    const challengesRef = collection(db, `artifacts/${appId}/public/data/challenges`);
+                    const q = query(challengesRef, where("code", "==", code), where("status", "==", "waiting"));
+                    
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) {
+                        joinChallengeError.textContent = "Challenge not found or is already active. Please check the code.";
+                        submitJoinChallengeBtn.disabled = false;
+                        return;
+                    }
+
+                    const challengeDoc = querySnapshot.docs[0];
+                    const challengeData = challengeDoc.data();
+
+                    // 2. Join the challenge by updating the doc
+                    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDoc.id);
+                    await updateDoc(challengeDocRef, {
+                        "player2.id": userId,
+                        "player2.name": (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
+                        "status": "active"
+                    });
+
+                    // 3. Hide modal and start the quiz for Player 2
+                    joinChallengeModal.classList.add('hidden');
+                    startQuiz(challengeData.questions, challengeData.quizType, challengeData.quizLength, challengeDoc.id, { title: challengeData.quizTitle }, null, { isChallenge: true, playerNum: 'player2' });
+
+                } catch (e) {
+                    console.error("Error joining challenge: ", e);
+                    joinChallengeError.textContent = "An error occurred. Please try again.";
+                    submitJoinChallengeBtn.disabled = false;
+                }
+            }
+
+            // This new function will show the results
+            function showChallengeResults(challengeId, challengeData) {
+                mainContent.classList.remove('h-full');
+                
+                const p1 = challengeData.player1;
+                const p2 = challengeData.player2;
+                
+                // --- START FIX: Identify user and opponent ---
+                let you, opponent;
+                if (userId === p1.id) {
+                    you = p1;
+                    opponent = p2;
+                } else {
+                    you = p2;
+                    opponent = p1;
+                }
+                // --- END FIX ---
+
+                let resultText = "";
+                let resultColor = "text-white";
+                if (you.score > opponent.score) {
+                    resultText = "You Won!";
+                    resultColor = "text-green-400";
+                } else if (opponent.score > you.score) {
+                    resultText = "You Lost!";
+                    resultColor = "text-red-400";
+                } else {
+                    resultText = "It's a Tie!";
+                    resultColor = "text-amber-400";
+                }
+
+                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
+                    <h2 class="text-3xl font-bold text-white mb-4">Challenge Complete!</h2>
+                    <h3 class="text-4xl font-bold mb-8 ${resultColor}">${resultText}</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4 text-white">
+                        <div class="bg-indigo-900/50 p-4 rounded-lg">
+                            <p class="text-sm text-slate-300">${you.name} (You)</p>
+                            <p class="text-5xl font-bold mt-2">${you.score}</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-lg">
+                            <p class="text-sm text-slate-300">${opponent.name}</p>
+                            <p class="text-5xl font-bold mt-2">${opponent.score}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-4 mt-8">
+                        <button id="back-to-hub" class="font-bold py-2 px-6 rounded-lg transition-transform hover:scale-105 bg-pink-600 hover:bg-pink-700 text-white">Done</button>
+                    </div>
+                </div>`;
+                
+                document.getElementById('back-to-hub').onclick = () => switchView('quizHub', { forceRender: true });
+            }
+            
+            function startQuiz(words, quizType, quizLength, quizId, listContext, savedState = null, challengeOptions = { isChallenge: false, playerNum: 'player1' }) {
                 let score = savedState?.score || 0;
                 let currentQuestionIndex = savedState?.currentQuestionIndex || 0;
                 const wrongAnswers = savedState?.wrongAnswers || [];
@@ -16626,8 +16784,19 @@ if (adminBtn) {
                 const isOneWordSub = originalTitle.includes('One Word Substitution');
                 const isAntonymList = originalTitle === 'Antonyms';
 
+                let timerInterval; // For the 15-second timer
+                let timeLeft = 15;
+
                 function displayQuestion() {
-                    if (currentQuestionIndex >= totalQuestions) { displayResults(wrongAnswers); return; }
+                    if (currentQuestionIndex >= totalQuestions) {
+                        if (challengeOptions.isChallenge) {
+                            handleChallengeFinish();
+                        } else {
+                            displayResults(wrongAnswers);
+                        }
+                        return;
+                    }
+
                     const questionItem = quizWords[currentQuestionIndex];
                     let questionText, correctAnswer, options = [];
                     if (quizType === 'meaning-to-word') {
@@ -16637,7 +16806,7 @@ if (adminBtn) {
                         while (options.length < 4) { const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; if (randomItem.word && !options.includes(randomItem.word)) options.push(randomItem.word); }
                     } else {
                         questionText = isAntonymList ? `What is the antonym of "${questionItem.word}"?` : (isOneWordSub ? questionItem.meaning : questionItem.word);
-                        correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : questionItem.meaning);
+                        correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : (questionItem.synonyms ? `Synonyms: ${questionItem.synonyms.join(', ')}` : questionItem.meaning));
                         options.push(correctAnswer);
                         while (options.length < 4) { const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; let randomAnswer = isAntonymList ? randomItem.antonym : (isOneWordSub ? randomItem.word : randomItem.meaning); if (randomAnswer && !options.includes(randomAnswer)) options.push(randomAnswer); }
                     }
@@ -16645,18 +16814,106 @@ if (adminBtn) {
                     mainContent.innerHTML = '';
                     mainContent.appendChild(document.getElementById('quiz-view-template').content.cloneNode(true));
                     mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
-                    mainContent.querySelector('#quiz-content-container').innerHTML = `<div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-white">Quiz Time!</h2><p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p></div><p class="text-2xl font-bold mb-6 text-center text-white">${questionText}</p><div id="quiz-options" class="grid grid-cols-1 gap-4">${options.map(o => `<button class="quiz-option p-4 rounded-xl text-left">${o}</button>`).join('')}</div>`;
+                    
+                    let timerHTML = '';
+                    if (challengeOptions.isChallenge) {
+                        timerHTML = `<div id="quiz-timer" class="text-2xl font-bold text-amber-400">15</div>`;
+                    }
+
+                    mainContent.querySelector('#quiz-content-container').innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold text-white">${challengeOptions.isChallenge ? 'Challenge!' : 'Quiz Time!'}</h2>
+                            ${timerHTML}
+                            <p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p>
+                        </div>
+                        <p class="text-2xl font-bold mb-6 text-center text-white">${questionText}</p>
+                        <div id="quiz-options" class="grid grid-cols-1 gap-4">${options.map(o => `<button class="quiz-option p-4 rounded-xl text-left">${o}</button>`).join('')}</div>`;
+                    
                     mainContent.querySelectorAll('.quiz-option').forEach(button => button.addEventListener('click', e => handleAnswer(button.textContent, correctAnswer, e.target)));
+
+                    if (challengeOptions.isChallenge) {
+                        startQuestionTimer(correctAnswer);
+                    }
                 }
                 
-                function handleAnswer(selectedAnswer, correctAnswer, button) {
-                    const allOptions = mainContent.querySelectorAll('.quiz-option');
-                    allOptions.forEach(btn => btn.disabled = true);
-                    if (selectedAnswer === correctAnswer) { button.classList.add('correct', 'celebrate'); button.addEventListener('animationend', () => button.classList.remove('celebrate'), { once: true }); score++; } 
-                    else { button.classList.add('incorrect'); wrongAnswers.push(quizWords[currentQuestionIndex]); allOptions.forEach(btn => { if (btn.textContent === correctAnswer) btn.classList.add('correct'); }); }
-                    setTimeout(() => { currentQuestionIndex++; saveQuizState(quizId, { score, currentQuestionIndex, questions: quizWords, wrongAnswers }); displayQuestion(); }, 1500);
+                function startQuestionTimer(correctAnswer) {
+                    timeLeft = 15;
+                    const timerElement = document.getElementById('quiz-timer');
+                    timerElement.textContent = timeLeft;
+
+                    clearInterval(timerInterval); // Clear any existing timer
+                    timerInterval = setInterval(() => {
+                        timeLeft--;
+                        timerElement.textContent = timeLeft;
+                        if (timeLeft <= 0) {
+                            handleAnswer(null, correctAnswer, null); // Time's up
+                        }
+                    }, 1000);
                 }
 
+                function handleAnswer(selectedAnswer, correctAnswer, button) {
+                    clearInterval(timerInterval); // Stop the timer
+                    
+                    const allOptions = mainContent.querySelectorAll('.quiz-option');
+                    allOptions.forEach(btn => btn.disabled = true);
+                    
+                    if (selectedAnswer === correctAnswer) { 
+                        if(button) button.classList.add('correct', 'celebrate');
+                        score++; 
+                    } else { 
+                        if(button) button.classList.add('incorrect');
+                        if (!challengeOptions.isChallenge) wrongAnswers.push(quizWords[currentQuestionIndex]);
+                        allOptions.forEach(btn => { if (btn.textContent === correctAnswer) btn.classList.add('correct'); });
+                    }
+                    
+                    setTimeout(() => { 
+                        currentQuestionIndex++; 
+                        if (!challengeOptions.isChallenge) {
+                            saveQuizState(quizId, { score, currentQuestionIndex, questions: quizWords, wrongAnswers });
+                        }
+                        displayQuestion(); 
+                    }, 1500);
+                }
+
+                async function handleChallengeFinish() {
+                    // Quiz is over, save final score to Firestore
+                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
+                        <h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2>
+                        <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
+                        <p class="text-slate-400 text-sm">Saving your score and waiting for opponent...</p>
+                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>`;
+
+                    try {
+                        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, quizId);
+                        
+                        // Atomically update the player's score and check if both are done
+                        if (challengeOptions.playerNum === 'player1') {
+                            await updateDoc(challengeDocRef, { "player1.score": score });
+                        } else {
+                            await updateDoc(challengeDocRef, { "player2.score": score, "status": "finished" });
+                        }
+
+                        // Now, listen for the results
+                        listenForChallengeResults(quizId);
+
+                    } catch (e) {
+                        console.error("Error saving challenge score: ", e);
+                        mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not save your score. Please try again.</p>`;
+                    }
+                }
+
+                function listenForChallengeResults(challengeId) {
+                    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
+                    const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
+                        const data = docSnap.data();
+                        if (data && data.status === 'finished' && data.player1.score !== null && data.player2.score !== null) {
+                            unsubscribe(); // Stop listening
+                            showChallengeResults(challengeId, data);
+                        }
+                    });
+                }
+                
                 function displayResults(mistakes) {
                     addQuizResult(`${originalTitle} Quiz`, score, totalQuestions);
                     clearQuizState(quizId); 
@@ -16668,6 +16925,8 @@ if (adminBtn) {
                         reviewBtn.onclick = () => renderWords(`Review: ${listContext.title}`, mistakes, 'grad-6', { ...listContext.options, isReview: true });
                     }
                 }
+
+                // Initial call to start the quiz
                 displayQuestion();
             }
             
@@ -16924,21 +17183,228 @@ if (adminBtn) {
             }
 
             
+/**
+         * Fetches all vocabulary data (words, sentences) from the public Firestore path.
+         * This function is robust against empty collections and ensures the return structure is correct.
+         * @returns {Promise<Object>} An object structured like the original vocabularyData.
+         */
+        async function fetchVocabularyDataFromFirestore() {
+            console.log("Fetching live vocabulary data from Firestore...");
+            
+            // Base path for the public vocabulary
+            const basePath = `artifacts/${appId}/public/data/categories`; 
+            const categoriesRef = collection(db, basePath);
+            
+            // Initial structure to hold the fetched data. This ensures we have ALL required keys.
+            const liveVocabularyData = {
+                "Vocabulary Builder": {},
+                "Advanced Vocabulary": {},
+                "Phrases & Idioms": {},
+                "Conversational English": {},
+                "Sentence Structure": {},
+                "Grammar & Rules": {}
+            };
 
+            try {
+                // Step 1: Get the list of Main Categories
+                const categoriesSnapshot = await getDocs(categoriesRef);
+
+                for (const catDoc of categoriesSnapshot.docs) {
+                    const mainCategoryName = catDoc.id;
+                    
+                    // Only process categories that exist in our expected structure
+                    if (liveVocabularyData[mainCategoryName] === undefined) continue;
+
+                    liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
+
+                    // Get the reference for the subcategories collection
+                    const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
+                    const subsSnapshot = await getDocs(subsRef);
+                    
+                    // --- Iterate over Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
+                    for (const subDoc of subsSnapshot.docs) {
+                        const subCategoryName = subDoc.id;
+                        
+                        // --- Get the final word list from the 'words' collection ---
+                        const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
+                        const wordsSnapshot = await getDocs(wordsRef);
+
+                        const wordList = wordsSnapshot.docs.map(doc => {
+                            const data = doc.data();
+                            const item = { ...data, id: doc.id };
+                            delete item.createdAt; 
+                            return item;
+                        });
+
+                        // Crucial: Attach the fetched list (even if empty) to the structured object
+                        liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
+                    }
+                }
+                
+                console.log("Live vocabulary data fetched and structured.");
+                return liveVocabularyData;
+
+            } catch (error) {
+                // Log the error and return the static data structure as a safe fallback
+                console.error("Critical Failure in Data Fetch Logic:", error);
+                return liveVocabularyData; 
+            }
+        }
+        
+        /**
+         * Fetches all vocabulary data (words, sentences) from the public Firestore path.
+         * This function is robust against empty collections and ensures the return structure is correct.
+         * @returns {Promise<Object>} An object structured like the original vocabularyData.
+         */
+        async function fetchVocabularyDataFromFirestore() {
+            console.log("Fetching live vocabulary data from Firestore...");
+            
+            // Base path for the public vocabulary
+            const basePath = `artifacts/${appId}/public/data/categories`; 
+            const categoriesRef = collection(db, basePath);
+            
+            // Initial structure to hold the fetched data. This ensures we have ALL required keys.
+            const liveVocabularyData = {
+                "Vocabulary Builder": {},
+                "Advanced Vocabulary": {},
+                "Phrases & Idioms": {},
+                "Conversational English": {},
+                "Sentence Structure": {},
+                "Grammar & Rules": {}
+            };
+
+            try {
+                // Step 1: Get the list of Main Categories
+                const categoriesSnapshot = await getDocs(categoriesRef);
+
+                for (const catDoc of categoriesSnapshot.docs) {
+                    const mainCategoryName = catDoc.id;
+                    
+                    // Only process categories that exist in our expected structure
+                    if (liveVocabularyData[mainCategoryName] === undefined) continue;
+
+                    liveVocabularyData[mainCategoryName] = liveVocabularyData[mainCategoryName] || {};
+
+                    // Get the reference for the subcategories collection
+                    const subsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories`);
+                    const subsSnapshot = await getDocs(subsRef);
+                    
+                    // --- Iterate over Subcategories (e.g., Basic Vocabulary, Food Idioms) ---
+                    for (const subDoc of subsSnapshot.docs) {
+                        const subCategoryName = subDoc.id;
+                        
+                        // --- Get the final word list from the 'words' collection ---
+                        const wordsRef = collection(db, `${basePath}/${mainCategoryName}/subcategories/${subCategoryName}/words`);
+                        const wordsSnapshot = await getDocs(wordsRef);
+
+                        const wordList = wordsSnapshot.docs.map(doc => {
+                            const data = doc.data();
+                            const item = { ...data, id: doc.id };
+                            delete item.createdAt; 
+                            return item;
+                        });
+
+                        // Crucial: Attach the fetched list (even if empty) to the structured object
+                        liveVocabularyData[mainCategoryName][subCategoryName] = wordList;
+                    }
+                }
+                
+                console.log("Live vocabulary data fetched and structured.");
+                return liveVocabularyData;
+
+            } catch (error) {
+                // Log the error and return the static data structure as a safe fallback
+                console.error("Critical Failure in Data Fetch Logic:", error);
+                return liveVocabularyData; 
+            }
+        }
+        
+        /**
+         * Fetches live data and populates the local vocabularyData and allWords variables.
+         * This must be called only AFTER authentication is complete.
+         */
+        async function syncPublicData() {
+            try {
+                const liveData = await fetchVocabularyDataFromFirestore();
+                
+                // Overwrite the static data with live data
+                for (const mainCat in liveData) {
+                    if (vocabularyData[mainCat]) { // Check if main category exists
+                        for (const subCat in liveData[mainCat]) {
+                            // Check if sub-category exists before overwriting
+                            if (vocabularyData[mainCat][subCat] !== undefined) {
+                                vocabularyData[mainCat][subCat] = liveData[mainCat][subCat];
+                            }
+                        }
+                    }
+                }
+                
+                // Re-flatten the word list now that data is live
+                allWords = [...new Set(flattenVocabulary(vocabularyData))];
+                Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
+                Object.values(rootWords).forEach(arr => allWords.push(...arr));
+                allWords = [...new Set(allWords)];
+                
+                console.log("App data synced with Firestore. Total live words:", allWords.length);
+                return true; // Signal success
+
+            } catch (error) {
+                console.error("Critical: Failed to sync vocabulary data from Firestore. Using embedded static data.", error);
+                // If fetch fails, the app continues using the old static data
+                // We still need to flatten the *static* data
+                allWords = [...new Set(flattenVocabulary(vocabularyData))];
+                Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
+                Object.values(rootWords).forEach(arr => allWords.push(...arr));
+                allWords = [...new Set(allWords)];
+                return false; // Signal failure (but app can proceed with static data)
+            }
+        }
                 
             // START: Create this new function
-function initializeAppAuth() {
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            loadProfileAndData(user.uid);
-        } else {
-            signInAnonymously(auth).catch(e => {
-                document.body.innerHTML = '<p class="text-white text-center p-8">Could not connect to services. Please check connection.</p>';
-            });
-        }
-    });
-}
-// END: Create this new function
+            function initializeAppAuth() {
+                onAuthStateChanged(auth, async (user) => { // Make the listener async
+                    if (user) {
+                        // User is signed in.
+                        
+                        // --- ADD THIS BLOCK ---
+                        // Step 1: Fetch public data (words, categories)
+                        // We must do this *after* sign-in, but *before* loading profile.
+                        await syncPublicData(); 
+                        // --- END ADDED BLOCK ---
+                        
+                        // Step 2: Load user's private data (profile, favorites, etc.)
+                        loadProfileAndData(user.uid); 
+
+                    } else {
+                        // User is not signed in.
+                        let signInPromise; // To await the sign-in
+                        
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            console.log("Signing in with custom token...");
+                            signInPromise = signInWithCustomToken(auth, __initial_auth_token).catch(e => {
+                                console.error("Custom token sign-in failed:", e);
+                                return signInAnonymously(auth); // Fallback to anonymous
+                            });
+                        } else {
+                            // No token provided, sign in anonymously (Teacher/Student passkey path)
+                            console.log("Signing in anonymously...");
+                            signInPromise = signInAnonymously(auth);
+                        }
+                        
+                        // Handle sign-in failure
+                        signInPromise.catch(e => {
+                            console.error("All authentication failed:", e);
+                            document.body.innerHTML = '<p class="text-white text-center p-8">Could not authenticate. Please check connection.</p>';
+                        });
+
+                        // NOTE: The onAuthStateChanged listener will run *again*
+                        // with the new `user` object after signInPromise completes.
+                        // The `if (user)` block will then execute,
+                        // triggering syncPublicData() and loadProfileAndData().
+                    }
+                });
+            }
+            // END: Create this new function
 // --- ADMIN PANEL SPECIFIC VARIABLES AND FUNCTIONS ---
 const addWordModal = document.getElementById('add-word-modal');
 const closeAddWordModal = document.getElementById('close-add-word-modal');
@@ -17211,36 +17677,48 @@ function initApp() {
         passkeyModal.classList.remove('hidden'); // No passkey, show the modal
     }
     
-    // --- NEW LIVE DATA FETCH & PROCESSING ---
-    // Fetch live data and merge it into the existing global object structure
-    fetchVocabularyDataFromFirestore().then(liveData => {
-        // Step 1: Overwrite the static list data with the live data
-        // We only overwrite the arrays (the subcategories) fetched from Firestore.
-        for (const mainCat in liveData) {
-            for (const subCat in liveData[mainCat]) {
-                 // Check if the structure exists before overwriting
-                 if (vocabularyData[mainCat] && vocabularyData[mainCat][subCat]) {
-                      vocabularyData[mainCat][subCat] = liveData[mainCat][subCat];
-                 }
+    /**
+         * Fetches live data and populates the local vocabularyData and allWords variables.
+         * This must be called only AFTER authentication is complete.
+         */
+        async function syncPublicData() {
+            try {
+                const liveData = await fetchVocabularyDataFromFirestore();
+                
+                // Overwrite the static data with live data
+                for (const mainCat in liveData) {
+                    if (vocabularyData[mainCat]) { // Check if main category exists
+                        for (const subCat in liveData[mainCat]) {
+                            // Check if sub-category exists before overwriting
+                            if (vocabularyData[mainCat][subCat] !== undefined) {
+                                vocabularyData[mainCat][subCat] = liveData[mainCat][subCat];
+                            }
+                        }
+                    }
+                }
+                
+                // Re-flatten the word list now that data is live
+                allWords = [...new Set(flattenVocabulary(vocabularyData))];
+                Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
+                Object.values(rootWords).forEach(arr => allWords.push(...arr));
+                allWords = [...new Set(allWords)];
+                
+                console.log("App data synced with Firestore. Total live words:", allWords.length);
+                return true; // Signal success
+
+            } catch (error) {
+                console.error("Critical: Failed to sync vocabulary data from Firestore. Using embedded static data.", error);
+                // If fetch fails, the app continues using the old static data
+                // We still need to flatten the *static* data
+                allWords = [...new Set(flattenVocabulary(vocabularyData))];
+                Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
+                Object.values(rootWords).forEach(arr => allWords.push(...arr));
+                allWords = [...new Set(allWords)];
+                return false; // Signal failure (but app can proceed with static data)
             }
         }
-        // Step 2: Re-flatten the word list now that the data is live
-        allWords = [...new Set(flattenVocabulary(vocabularyData))];
-        Object.values(originalSynonymsData).forEach(arr => allWords.push(...arr));
-        Object.values(rootWords).forEach(arr => allWords.push(...arr));
-        allWords = [...new Set(allWords)];
-        
-        console.log("App data synced with Firestore. Total live words:", allWords.length);
-        
-        // This ensures the application starts using the live data on every refresh.
-    }).catch(error => {
-        console.error("Critical: Failed to sync vocabulary data from Firestore. Using embedded static data.", error);
-        // If fetch fails, the app continues using the old static data (the embedded 'vocabularyData')
-    });
-    // --- END NEW LIVE DATA FETCH & PROCESSING ---
 
-    speechSynthesis.getVoices();
-    bottomNav.addEventListener('click', e => { const button = e.target.closest('button'); if (button?.dataset.view) button.dataset.view === 'profile' ? displayProfileModal() : switchView(button.dataset.view); });
+    speechSynthesis.getVoices()
     searchModalBar.addEventListener('input', e => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { displaySuggestions(allWords.filter(item => (((item.isSentence ? item.hindi : item.word) || '').toLowerCase().includes(query) || (item.meaning || '').toLowerCase().includes(query)))); } else if(searchModalSuggestions) searchModalSuggestions.innerHTML = ''; });
     closeAboutModal.addEventListener('click', () => aboutModal.classList.add('hidden'));
     aboutModal.addEventListener('click', e => { if (e.target === aboutModal) aboutModal.classList.add('hidden'); }); 
@@ -17249,8 +17727,31 @@ function initApp() {
     closeSearchOverlay.addEventListener('click', () => searchOverlay.classList.add('hidden'));
     searchOverlay.addEventListener('click', e => { if (e.target === searchOverlay) searchOverlay.classList.add('hidden'); });
     if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
-    if (saveProfileBtn) saveProfileBtn.addEventListener('click', saveAndApplyProfile);
 
+            // Modify the main nav listener to just handle the click, not the join button listener
+            bottomNav.addEventListener('click', e => { 
+                const button = e.target.closest('button'); 
+                if (button?.dataset.view) {
+                    if (button.dataset.view === 'profile') {
+                        displayProfileModal();
+                    } else if (button.dataset.view === 'quizHub') {
+                        // Special handling for Quiz Hub to add the listener
+                        switchView('quizHub');
+                        setTimeout(() => {
+                            const joinBtn = document.getElementById('join-challenge-btn');
+                            if(joinBtn) {
+                                joinBtn.addEventListener('click', () => {
+                                    joinChallengeError.textContent = '';
+                                    challengeCodeInput.value = '';
+                                    joinChallengeModal.classList.remove('hidden');
+                                });
+                            }
+                        }, 100);
+                    } else {
+                        switchView(button.dataset.view);
+                    }
+                }
+            });
     // Define a fixed email for the Master Admin access.
     const MASTER_ADMIN_EMAIL = "master@lingoquest.com"; 
 
@@ -17331,6 +17832,33 @@ function initApp() {
     closeUserProfileModal.addEventListener('click', () => userProfileModal.classList.add('hidden'));
     userProfileModal.addEventListener('click', e => { if (e.target === userProfileModal) userProfileModal.classList.add('hidden'); });
 }
+// Listeners for Join Challenge Modal
+            closeJoinChallengeModal.addEventListener('click', () => joinChallengeModal.classList.add('hidden'));
+            joinChallengeModal.addEventListener('click', e => { if (e.target === joinChallengeModal) joinChallengeModal.classList.add('hidden'); });
+            submitJoinChallengeBtn.addEventListener('click', () => joinQuizChallenge());
+            challengeCodeInput.addEventListener('input', (e) => {
+                e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+                if (e.target.value.length === 3 && !e.target.value.includes('-')) {
+                    e.target.value += '-';
+                }
+            });
+            challengeCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') submitJoinChallengeBtn.click(); });
+
+            // Modify the quizHub listener to include the new join button
+            document.getElementById('nav-quiz-hub').addEventListener('click', () => {
+                switchView('quizHub');
+                // We must add the listener *after* the view is rendered
+                setTimeout(() => {
+                    const joinBtn = document.getElementById('join-challenge-btn');
+                    if(joinBtn) {
+                        joinBtn.addEventListener('click', () => {
+                            joinChallengeError.textContent = '';
+                            challengeCodeInput.value = '';
+                            joinChallengeModal.classList.remove('hidden');
+                        });
+                    }
+                }, 100); // A small delay to ensure template is in DOM
+            });
             initApp();
         })(); 
     </script>
