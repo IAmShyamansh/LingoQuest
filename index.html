@@ -498,6 +498,17 @@
                 <text x="120" y="48" font-family="Nunito, sans-serif" font-size="40" font-weight="900" fill="url(#logo-gradient-2-splash)">Quest</text>
             </svg>
         </div>
+        <!-- START: PASTE THIS NEW BLOCK HERE -->
+        <div class="absolute bottom-1/4 left-1/2 -translate-x-1/2 w-full px-8 text-center">
+            <!-- Loading Spinner -->
+            <svg class="animate-spin h-8 w-8 text-pink-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <!-- Quote Text -->
+            <p id="loading-quote" class="text-slate-400 font-sans text-sm italic"></p>
+        </div>
+        <!-- END: NEW BLOCK -->
         <div class="absolute bottom-4 text-center text-xs text-slate-500">
             <p>© 2025 British Institute Of English Language And P.D.</p>
             <p>All Rights Reserved.</p>
@@ -853,6 +864,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
         const messaging = getMessaging(app);
+    
+        // START: PASTE THIS ARRAY
+        const motivationalQuotes = [
+            "A different language is a different vision of life.",
+            "To learn a language is to have one more window from which to look at the world.",
+            "The limits of my language are the limits of my world.",
+            "One language sets you in a corridor for life. Two languages open every door along the way.",
+            "Learning another language is learning another way to think about things.",
+            "Practice makes perfect. Keep speaking!",
+            "Don't be afraid to make mistakes. It's part of learning.",
+            "Every new language is a new world.",
+            "The journey of a thousand miles begins with a single step. Start speaking today."
+        ];
+        // END: PASTE THIS ARRAY
     
 
 
@@ -17698,9 +17723,18 @@ submitNewWordBtn.addEventListener('click', submitNewWord);
             
             // This block defines how the app starts.
 function initApp() {
-    // Note: The hardcoded data objects (vocabularyData, originalSynonymsData, rootWords, detailedExplanations) must
-    // still exist in the script block for the app logic to work, but the vocabularyData variable
-    // itself is now overwritten with live data below.
+    // START: PASTE THIS QUOTE LOGIC
+                // Display a random quote on the splash screen
+                try {
+                    const quoteElement = document.getElementById('loading-quote');
+                    if (quoteElement) {
+                        const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+                        quoteElement.textContent = `"${randomQuote}"`;
+                    }
+                } catch (e) {
+                    console.warn("Could not set loading quote.", e);
+                }
+                // END: PASTE THIS QUOTE LOGIC
     
     const isPasskeyVerified = localStorage.getItem(PASSKEY_KEY) === "true";
 
