@@ -179,6 +179,15 @@
             animation: popIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             animation-fill-mode: backwards;
         }
+        /* START: PASTE THIS NEW CODE BLOCK HERE */
+        @keyframes pinchIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .pinch-in {
+            animation: pinchIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        /* END: NEW CODE BLOCK */
 
         @keyframes tada {
             from { transform: scale(1); }
