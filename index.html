@@ -16485,7 +16485,12 @@ if (adminBtn) {
             
             const saveQuizState = async (quizId, state) => {
                 if (!userId) return;
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizState"; // <<< PASTE URL HERE
+                
+                // --- START FIX: Update local cache ---
+                allSavedQuizStates[quizId] = state;
+                // --- END FIX ---
+
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizState";
                 try {
                     await fetch(functionUrl, {
                         method: 'POST',
@@ -16497,7 +16502,14 @@ if (adminBtn) {
 
             const clearQuizState = async (quizId) => {
                 if (!userId) return;
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/clearQuizState"; // <<< PASTE URL HERE
+
+                // --- START FIX: Update local cache ---
+                if (allSavedQuizStates[quizId]) {
+                    delete allSavedQuizStates[quizId];
+                }
+                // --- END FIX ---
+                
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/clearQuizState";
                 try {
                     await fetch(functionUrl, {
                         method: 'POST',
