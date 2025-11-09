@@ -17095,62 +17095,83 @@ if (adminBtn) {
                 const wordData = allWords.find(w => w.word === wordString || w.hindi === wordString);
                 if (!wordData || !userId) return; // Make sure we have data and a user
 
-                const addFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/addFavorite";       // <<< PASTE URL HERE
-                const removeFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/removeFavorite"; // <<< PASTE URL HERE
+                const addFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/addFavorite";
+                const removeFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/removeFavorite";
 
                 const uniqueId = wordData.isSentence ? wordData.hindi : wordData.word;
                 const existingFavorite = favorites.find(fav => (fav.isSentence ? fav.hindi : fav.word) === uniqueId);
 
-                try {
-                    if (existingFavorite) {
-                        // --- ITEM IS ALREADY A FAVORITE, SO REMOVE IT ---
-                        const response = await fetch(removeFavoriteUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userId: userId,
-                                favoriteDocId: existingFavorite.id // Send the document ID to delete
-                            }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`Server responded with status: ${response.status}`);
-                        }
-
-                        // Remove from local array
-                        favorites = favorites.filter(fav => (fav.isSentence ? fav.hindi : fav.word) !== uniqueId);
-                        button.classList.remove('favorited');
-                        console.log("Favorite removed");
-
-                    } else {
-                        // --- ITEM IS NOT A FAVORITE, SO ADD IT ---
-                        const response = await fetch(addFavoriteUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                userId: userId,
-                                wordData: wordData // Send the whole word object to add
-                            }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`Server responded with status: ${response.status}`);
-                        }
-                        
-                        const newFavorite = await response.json(); // Get back the item with its new ID
-                        favorites.push(newFavorite); // Add to local array
-                        button.classList.add('favorited');
-                        console.log("Favorite added");
-                    }
-
-                    // Refresh favorites view if it's the active one
+                if (existingFavorite) {
+                    // --- START: OPTIMISTIC REMOVE ---
+                    const favIdToRemove = existingFavorite.id;
+                    const index = favorites.indexOf(existingFavorite);
+                    
+                    // 1. Update local cache immediately
+                    if (index > -1) favorites.splice(index, 1);
+                    
+                    // 2. Update UI immediately
+                    button.classList.remove('favorited');
                     if (activeView === 'favorites') {
                         renderFavoritesView();
                     }
+                    
+                    // 3. Call server in the background
+                    try {
+                        const response = await fetch(removeFavoriteUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: userId, favoriteDocId: favIdToRemove })
+                        });
+                        if (!response.ok) throw new Error('Server failed to remove favorite');
+                        console.log("Favorite removed from DB");
+                    } catch (error) {
+                        // ROLLBACK on failure
+                        console.error("Error removing favorite:", error);
+                        if (index > -1) favorites.splice(index, 0, existingFavorite); // Add it back
+                        button.classList.add('favorited');
+                        if (activeView === 'favorites') { renderFavoritesView(); }
+                        // alert("Could not remove favorite. Please check connection.");
+                    }
+                    // --- END: OPTIMISTIC REMOVE ---
 
-                } catch (error) {
-                    console.error("Error toggling favorite via Cloud Function:", error);
-                    alert("Could not update favorites. Please try again.");
+                } else {
+                    // --- START: OPTIMISTIC ADD ---
+                    // Create a temporary favorite with a temp ID
+                    const placeholderFavorite = { ...wordData, id: 'temp-' + Date.now() };
+                    
+                    // 1. Update local cache immediately
+                    favorites.push(placeholderFavorite);
+                    
+                    // 2. Update UI immediately
+                    button.classList.add('favorited');
+                    if (activeView === 'favorites') {
+                        renderFavoritesView();
+                    }
+                    
+                    // 3. Call server in the background
+                    try {
+                        const response = await fetch(addFavoriteUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: userId, wordData: wordData })
+                        });
+                        
+                        if (!response.ok) throw new Error('Server failed to add favorite');
+                        
+                        const newFavoriteWithId = await response.json();
+                        // 4. Update the placeholder with the real ID from the DB
+                        placeholderFavorite.id = newFavoriteWithId.id;
+                        console.log("Favorite added to DB");
+
+                    } catch (error) {
+                        // ROLLBACK on failure
+                        console.error("Error adding favorite:", error);
+                        favorites = favorites.filter(fav => fav.id !== placeholderFavorite.id); // Remove placeholder
+                        button.classList.remove('favorited');
+                        if (activeView === 'favorites') { renderFavoritesView(); }
+                        // alert("Could not add favorite. Please check connection.");
+                    }
+                    // --- END: OPTIMISTIC ADD ---
                 }
             }
 
