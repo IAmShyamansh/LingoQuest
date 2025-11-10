@@ -17796,10 +17796,64 @@ async function submitNewWord() {
             // Re-enable button but check if new fields are filled
             checkWordFormState(); 
 
-            // NOTE: The app should technically reload data via loadProfileAndData 
-            // after an admin action, but for this exercise, we rely on the 
-            // local app owner to fully refresh the browser to see the changes 
-            // as this is an Admin tool, not a user-facing feature.
+            // ----- START: THIS IS THE FIX -----
+            // This code updates the app's local data so you see the new word immediately.
+
+            // 1. Create the new word object based on what was submitted
+            let newWordObject;
+            let targetArray;
+
+            // Check if this is a "Sentences" category (like "1000 Daily Use Sentences")
+            if (vocabularyData[mainCategory] && vocabularyData[mainCategory][subCategory] && vocabularyData[mainCategory][subCategory].sentences) {
+                newWordObject = {
+                    hindi: meaning,  // 'meaning' from form is Hindi
+                    english: word,   // 'word' from form is English
+                    isSentence: true
+                };
+                // Find the correct 'sentences' array to add to
+                targetArray = vocabularyData[mainCategory][subCategory].sentences;
+            
+            } 
+            // Check if this is a standard word list (like "Basic Vocabulary")
+            else if (vocabularyData[mainCategory] && Array.isArray(vocabularyData[mainCategory][subCategory])) {
+                newWordObject = {
+                    word: word,
+                    meaning: meaning,
+                    example: example || ""
+                };
+                // Find the correct word array to add to
+                targetArray = vocabularyData[mainCategory][subCategory];
+            } else if (vocabularyData[mainCategory] && vocabularyData[mainCategory][subCategory]) {
+                 // Fallback for nested but not-array/sentence structure (e.g. adding to 'Basic Vocabulary' within 'Vocabulary Builder')
+                 const subCatData = vocabularyData[mainCategory][subCategory];
+                 if (Array.isArray(subCatData)) {
+                    newWordObject = {
+                        word: word,
+                        meaning: meaning,
+                        example: example || ""
+                    };
+                    targetArray = subCatData;
+                 }
+            }
+
+
+            // 2. Add the new object to the correct list in vocabularyData
+            if (targetArray) {
+                targetArray.push(newWordObject);
+                console.log("New word added to local vocabularyData:", newWordObject);
+            }
+
+            // 3. Add the new object to 'allWords' for the search function
+            // We normalize it first so search can find it
+            const searchWordObject = {
+                ...newWordObject,
+                word: newWordObject.english || newWordObject.word, 
+                meaning: newWordObject.hindi || newWordObject.meaning 
+            };
+            allWords.push(searchWordObject);
+            console.log("New word added to local allWords cache.");
+
+            // ----- END: THIS IS THE FIX -----
 
         } else {
             adminStatusMessage.classList.remove('text-amber-400');
