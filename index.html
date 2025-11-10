@@ -17854,6 +17854,18 @@ async function submitNewWord() {
             console.log("New word added to local allWords cache.");
 
             // ----- END: THIS IS THE FIX -----
+            
+            // ----- START: NEW FIX (UI RE-RENDER) -----
+            
+            // Check if the user is currently viewing the list that was just updated.
+            // The 'subCategory' variable holds the title of the list we added to.
+            if (activeView === 'wordList' && currentWordListData.title === subCategory) {
+                console.log("Active view matches updated category. Re-rendering word list...");
+                // Re-render the current word list view with the new data.
+                // currentWordListData.words already has the new word because targetArray was a reference to it.
+                renderWords(currentWordListData.title, currentWordListData.words, currentWordListData.gradClass, currentWordListData.options);
+            }
+            // ----- END: NEW FIX (UI RE-RENDER) -----
 
         } else {
             adminStatusMessage.classList.remove('text-amber-400');
