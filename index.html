@@ -17796,35 +17796,33 @@ async function submitNewWord() {
             // Re-enable button but check if new fields are filled
             checkWordFormState(); 
 
-            // ----- START: THIS IS THE FIX -----
-            // This code updates the app's local data so you see the new word immediately.
+            // ----- START: DATA FIX V3 -----
 
             // 1. Create the new word object based on what was submitted
             let newWordObject;
-            let targetArray;
+            let targetArray; // This will be the *original* data array
 
-            // Check if this is a "Sentences" category (like "1000 Daily Use Sentences")
+            // Check "Conversational English" > "1000 Daily Use Sentences"
             if (vocabularyData[mainCategory] && vocabularyData[mainCategory][subCategory] && vocabularyData[mainCategory][subCategory].sentences) {
                 newWordObject = {
                     hindi: meaning,  // 'meaning' from form is Hindi
                     english: word,   // 'word' from form is English
-                    isSentence: true
+                    isSentence: true // Flag for renderWords()
                 };
-                // Find the correct 'sentences' array to add to
                 targetArray = vocabularyData[mainCategory][subCategory].sentences;
             
             } 
-            // Check if this is a standard word list (like "Basic Vocabulary")
+            // Check "Vocabulary Builder" > "Basic Vocabulary"
             else if (vocabularyData[mainCategory] && Array.isArray(vocabularyData[mainCategory][subCategory])) {
                 newWordObject = {
                     word: word,
                     meaning: meaning,
                     example: example || ""
                 };
-                // Find the correct word array to add to
                 targetArray = vocabularyData[mainCategory][subCategory];
+
             } else if (vocabularyData[mainCategory] && vocabularyData[mainCategory][subCategory]) {
-                 // Fallback for nested but not-array/sentence structure (e.g. adding to 'Basic Vocabulary' within 'Vocabulary Builder')
+                 // Fallback for nested but not-array/sentence structure
                  const subCatData = vocabularyData[mainCategory][subCategory];
                  if (Array.isArray(subCatData)) {
                     newWordObject = {
@@ -17837,14 +17835,29 @@ async function submitNewWord() {
             }
 
 
-            // 2. Add the new object to the correct list in vocabularyData
+            // 2. Add the new object to the correct *original* list in vocabularyData
             if (targetArray) {
                 targetArray.push(newWordObject);
-                console.log("New word added to local vocabularyData:", newWordObject);
+                console.log("New word pushed to original vocabularyData array.");
+
+                // ----- NEW FIX LOGIC -----
+                // Check if the currently viewed list is a *copy* of the original
+                // (which happens for sentence lists)
+                if (activeView === 'wordList' && 
+                    currentWordListData.title === subCategory && 
+                    currentWordListData.words !== targetArray) {
+                    
+                    // If it's a copy, push the new word to the copy as well.
+                    currentWordListData.words.push(newWordObject);
+                    console.log("New word also pushed to current view (copied array).");
+                }
+                // If it's not a copy (e.g., "Basic Vocabulary"), targetArray and
+                // currentWordListData.words are the SAME array, so the first push
+                // already updated it. This check prevents a double-push.
+                // ----- END NEW FIX LOGIC -----
             }
 
             // 3. Add the new object to 'allWords' for the search function
-            // We normalize it first so search can find it
             const searchWordObject = {
                 ...newWordObject,
                 word: newWordObject.english || newWordObject.word, 
@@ -17853,19 +17866,16 @@ async function submitNewWord() {
             allWords.push(searchWordObject);
             console.log("New word added to local allWords cache.");
 
-            // ----- END: THIS IS THE FIX -----
+            // ----- END: DATA FIX V3 -----
             
-            // ----- START: NEW FIX (UI RE-RENDER) -----
-            
-            // Check if the user is currently viewing the list that was just updated.
-            // The 'subCategory' variable holds the title of the list we added to.
+            // ----- START: UI RE-RENDER -----
+            // This part was already correct, and will now work
+            // because currentWordListData.words is guaranteed to be updated.
             if (activeView === 'wordList' && currentWordListData.title === subCategory) {
-                console.log("Active view matches updated category. Re-rendering word list...");
-                // Re-render the current word list view with the new data.
-                // currentWordListData.words already has the new word because targetArray was a reference to it.
+                console.log("Active view matches. Re-rendering word list...");
                 renderWords(currentWordListData.title, currentWordListData.words, currentWordListData.gradClass, currentWordListData.options);
             }
-            // ----- END: NEW FIX (UI RE-RENDER) -----
+            // ----- END: UI RE-RENDER -----
 
         } else {
             adminStatusMessage.classList.remove('text-amber-400');
