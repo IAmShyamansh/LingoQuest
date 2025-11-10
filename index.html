@@ -851,7 +851,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
         
@@ -18002,7 +18002,7 @@ function initApp() {
                 }
             });
     // Define a fixed email for the Master Admin access.
-    const MASTER_ADMIN_EMAIL = "master@lingoquest.com"; 
+    const MASTER_ADMIN_EMAIL = "akashsawle19@gmail.com"; 
 
     // --- NEW VARIABLE DECLARATIONS ---
     const adminLoginModal = document.getElementById('admin-login-modal');
