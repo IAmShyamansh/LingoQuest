@@ -852,7 +852,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, deleteDoc, query, where, getDocs, serverTimestamp, orderBy, limit, updateDoc, arrayUnion, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
         
         // --- START FIX: Robust environment check ---
@@ -17067,7 +17067,7 @@ if (adminBtn) {
                 }
 
                 async function handleChallengeFinish() {
-                    // Quiz is over, show a "waiting" screen
+                    // 1. Quiz is over, show a "waiting" screen immediately
                     mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
                         <h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2>
                         <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
@@ -17075,48 +17075,57 @@ if (adminBtn) {
                         <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     </div>`;
 
+                    // 2. Start listening for the 'finished' status *before* we write our score
+                    listenForChallengeResults(challengeOptions.challengeId);
+
                     try {
                         const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeOptions.challengeId);
-                        
-                        // --- NEW LOGIC: Update score in the players array ---
-                        
-                        // 1. Get the current document data
-                        const docSnap = await getDoc(challengeDocRef);
-                        if (!docSnap.exists()) {
-                            throw new Error("Challenge document not found!");
-                        }
-                        
-                        let data = docSnap.data();
-                        let updatedPlayers = [...data.players]; // Create a new array
-                        
-                        // 2. Find this player and update their score
-                        const playerIndex = updatedPlayers.findIndex(p => p.id === challengeOptions.playerId);
-                        if (playerIndex > -1) {
-                            updatedPlayers[playerIndex].score = score;
-                        }
 
-                        // 3. Check if all players are finished
-                        const allFinished = updatedPlayers.every(p => p.score !== null);
+                        // --- NEW: Use a Firestore Transaction ---
+                        await runTransaction(db, async (transaction) => {
+                            // Read the document *inside* the transaction
+                            const docSnap = await transaction.get(challengeDocRef);
+                            if (!docSnap.exists()) {
+                                throw new Error("Challenge document not found!");
+                            }
+
+                            let data = docSnap.data();
+                            
+                            // Create a new array from the existing players data
+                            let updatedPlayers = [...data.players]; 
+                            
+                            // Find this player and update their score
+                            const playerIndex = updatedPlayers.findIndex(p => p.id === challengeOptions.playerId);
+                            if (playerIndex > -1) {
+                                // Only update if score isn't already set (prevents double submissions)
+                                if (updatedPlayers[playerIndex].score === null) {
+                                    updatedPlayers[playerIndex].score = score;
+                                }
+                            }
+
+                            // Check if all players are finished
+                            const allFinished = updatedPlayers.every(p => p.score !== null);
+                            
+                            if (allFinished) {
+                                // Last player to finish. End the game.
+                                transaction.update(challengeDocRef, {
+                                    players: updatedPlayers,
+                                    status: "finished"
+                                });
+                            } else {
+                                // Other players are still playing. Just save this score.
+                                transaction.update(challengeDocRef, {
+                                    players: updatedPlayers
+                                });
+                            }
+                        });
+                        // --- End of Transaction ---
                         
-                        // 4. Update the document in Firestore
-                        if (allFinished) {
-                            // This is the last player to finish. End the game.
-                            await updateDoc(challengeDocRef, {
-                                players: updatedPlayers,
-                                status: "finished"
-                            });
-                        } else {
-                            // Other players are still playing. Just save this score.
-                            await updateDoc(challengeDocRef, {
-                                players: updatedPlayers
-                            });
-                        }
-                        
-                        // 5. Now that score is saved, start listening for the 'finished' status
-                        listenForChallengeResults(challengeOptions.challengeId);
+                        console.log("Score saved successfully via transaction.");
+                        // 5. Note: We already started listening, so we just wait now.
 
                     } catch (e) {
-                        console.error("Error saving challenge score: ", e);
+                        console.error("Error in challenge finish transaction: ", e);
                         mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not save your score. Please try again.</p>`;
                     }
                 }
