@@ -18340,7 +18340,20 @@ function initApp() {
                 }, 100); // A small delay to ensure template is in DOM
             });
             initApp();
-        })(); 
+        })();
+        // This code goes inside your index.html's script tag
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('ServiceWorker registered successfully.');
+      })
+      .catch(err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+} 
     </script>
 </body>
 </html>
