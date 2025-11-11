@@ -179,6 +179,19 @@
             animation: popIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             animation-fill-mode: backwards;
         }
+        /* --- START: Add this for favorite animation --- */
+        @keyframes favorite-pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4) rotate(10deg); fill: var(--accent-yellow); stroke: var(--accent-yellow); }
+            100% { transform: scale(1); }
+        }
+        
+        .favorite-pop svg {
+            /* This animation will run when the class is added */
+            animation: favorite-pop 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        /* --- END: Add this for favorite animation --- */
+
         /* START: PASTE THIS NEW CODE BLOCK HERE */
         @keyframes pinchIn {
             from { transform: scale(0.8); opacity: 0; }
@@ -15539,8 +15552,9 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 if (showActions) {
                     const actionsTemplate = document.getElementById('top-nav-actions-template');
                     topNavRight.appendChild(actionsTemplate.content.cloneNode(true));
-                    topNavRight.querySelector('#about-btn').addEventListener('click', () => aboutModal.classList.remove('hidden'));
+                    topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); aboutModal.classList.remove('hidden'); });
                     topNavRight.querySelector('#search-btn').addEventListener('click', () => {
+                        vibrate();
                         searchModalSuggestions.innerHTML = '';
                         searchModalBar.value = '';
                         searchOverlay.classList.remove('hidden');
@@ -15560,7 +15574,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 if (showBack) {
                     const backButtonTemplate = document.getElementById('back-button-template');
                     topNavLeft.appendChild(backButtonTemplate.content.cloneNode(true));
-                    topNavLeft.querySelector('#back-btn').addEventListener('click', goBack);
+                    topNavLeft.querySelector('#back-btn').addEventListener('click', () => { vibrate(); goBack(); });
                 } else if (showLogo) {
                     const logoTemplate = document.getElementById('logo-template');
                     topNavLeft.appendChild(logoTemplate.content.cloneNode(true));
@@ -16015,7 +16029,7 @@ if (adminBtn) {
                             });
                              setTimeout(() => {
                                 contentContainer.querySelectorAll('.speak-button-convo').forEach(btn => {
-                                    btn.addEventListener('click', () => speakText(btn.dataset.speak));
+                                    btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak); });
                                 });
                             }, 0);
                             break;
@@ -16045,8 +16059,8 @@ if (adminBtn) {
                             });
                              setTimeout(() => {
                                 contentContainer.querySelectorAll('.speak-button-pronun').forEach(btn => {
-                                    btn.addEventListener('click', () => speakText(btn.dataset.speak));
-                                });
+                                btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak); });
+                            });
                             }, 0);
                             break;
                         case 'sentence_forms':
@@ -16366,7 +16380,7 @@ if (adminBtn) {
                         sentenceItem.addEventListener('click', e => { 
                             const target = e.target;
                             if (target.classList.contains('done-checkbox')) return; // Ignore clicks on the checkbox
-                            if (target.closest('.speak-button')) speakText(target.closest('.speak-button').dataset.speak); 
+                            if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } 
                             else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
                         });
                         list.appendChild(sentenceItem);
@@ -16390,7 +16404,7 @@ if (adminBtn) {
                         const sentenceItem = document.createElement('div');
                         sentenceItem.className = 'sentence-item p-3 sm:p-4';
                         sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-sm sm:text-base font-semibold flex-grow">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-slate-300 mt-3"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-700 leading-tight flex-grow">${item.english}</p><div class="speak-button flex-shrink-0" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
-                        sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) speakText(target.closest('.speak-button').dataset.speak); else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
+                        sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
                         list.appendChild(sentenceItem);
                     
                     } else {
@@ -16410,7 +16424,7 @@ if (adminBtn) {
                         backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-white font-semibold">${item.antonym}</p><p class="text-xs text-slate-300">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>`}${isAntonymList || isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
                         wordCardInner.append(frontContent, backContent);
                         wordItem.appendChild(wordCardInner);
-                        wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) speakText(target.closest('.speak-button').dataset.speak); else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
+                        wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
                         list.appendChild(wordItem);
                     }
                 });
@@ -17347,9 +17361,10 @@ if (adminBtn) {
             
         
             async function toggleFavorite(button) {
+                vibrate(); // Haptic feedback
                 const wordString = button.dataset.word;
                 const wordData = allWords.find(w => w.word === wordString || w.hindi === wordString);
-                if (!wordData || !userId) return; // Make sure we have data and a user
+                if (!wordData || !userId) return;
 
                 const addFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/addFavorite";
                 const removeFavoriteUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/removeFavorite";
@@ -17362,16 +17377,13 @@ if (adminBtn) {
                     const favIdToRemove = existingFavorite.id;
                     const index = favorites.indexOf(existingFavorite);
                     
-                    // 1. Update local cache immediately
                     if (index > -1) favorites.splice(index, 1);
                     
-                    // 2. Update UI immediately
                     button.classList.remove('favorited');
                     if (activeView === 'favorites') {
                         renderFavoritesView();
                     }
                     
-                    // 3. Call server in the background
                     try {
                         const response = await fetch(removeFavoriteUrl, {
                             method: 'POST',
@@ -17381,30 +17393,33 @@ if (adminBtn) {
                         if (!response.ok) throw new Error('Server failed to remove favorite');
                         console.log("Favorite removed from DB");
                     } catch (error) {
-                        // ROLLBACK on failure
                         console.error("Error removing favorite:", error);
-                        if (index > -1) favorites.splice(index, 0, existingFavorite); // Add it back
+                        if (index > -1) favorites.splice(index, 0, existingFavorite);
                         button.classList.add('favorited');
                         if (activeView === 'favorites') { renderFavoritesView(); }
-                        // alert("Could not remove favorite. Please check connection.");
                     }
                     // --- END: OPTIMISTIC REMOVE ---
 
                 } else {
+                    // --- START: NEW ANIMATION LOGIC ---
+                    // 1. Add the animation class to the button
+                    button.classList.add('favorite-pop');
+                    // 2. Remove the class after the animation ends so it can play again
+                    button.addEventListener('animationend', () => {
+                        button.classList.remove('favorite-pop');
+                    }, { once: true });
+                    // --- END: NEW ANIMATION LOGIC ---
+
                     // --- START: OPTIMISTIC ADD ---
-                    // Create a temporary favorite with a temp ID
                     const placeholderFavorite = { ...wordData, id: 'temp-' + Date.now() };
                     
-                    // 1. Update local cache immediately
                     favorites.push(placeholderFavorite);
                     
-                    // 2. Update UI immediately
                     button.classList.add('favorited');
                     if (activeView === 'favorites') {
                         renderFavoritesView();
                     }
                     
-                    // 3. Call server in the background
                     try {
                         const response = await fetch(addFavoriteUrl, {
                             method: 'POST',
@@ -17415,17 +17430,14 @@ if (adminBtn) {
                         if (!response.ok) throw new Error('Server failed to add favorite');
                         
                         const newFavoriteWithId = await response.json();
-                        // 4. Update the placeholder with the real ID from the DB
                         placeholderFavorite.id = newFavoriteWithId.id;
                         console.log("Favorite added to DB");
 
                     } catch (error) {
-                        // ROLLBACK on failure
                         console.error("Error adding favorite:", error);
-                        favorites = favorites.filter(fav => fav.id !== placeholderFavorite.id); // Remove placeholder
+                        favorites = favorites.filter(fav => fav.id !== placeholderFavorite.id);
                         button.classList.remove('favorited');
                         if (activeView === 'favorites') { renderFavoritesView(); }
-                        // alert("Could not add favorite. Please check connection.");
                     }
                     // --- END: OPTIMISTIC ADD ---
                 }
