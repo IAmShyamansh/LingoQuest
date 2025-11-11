@@ -16023,13 +16023,13 @@ if (adminBtn) {
                                         <p class="text-white font-semibold">${convo.line}</p>
                                         <p class="text-sm text-slate-400">${convo.hindi}</p>
                                     </div>
-                                    <button class="speak-button-convo flex-shrink-0 p-2 rounded-full text-slate-300 hover:bg-white/10 hover:text-white transition-colors" data-speak="${convo.line}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
+                                    <button class="speak-button-convo flex-shrink-0 p-2 rounded-full text-slate-300 hover:bg-white/10 hover:text-white transition-colors" data-speak="${convo.line}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
                                 `;
                                 element.appendChild(convoCard);
                             });
                              setTimeout(() => {
                                 contentContainer.querySelectorAll('.speak-button-convo').forEach(btn => {
-                                    btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak); });
+                                    btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
                                 });
                             }, 0);
                             break;
@@ -16045,13 +16045,13 @@ if (adminBtn) {
                                             <h4 class="text-2xl font-bold text-white">${pair.word1}</h4>
                                             <p class="text-sm text-cyan-300 font-mono">${pair.sound1}</p>
                                             <p class="text-sm text-slate-300">${pair.hindi1}</p>
-                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word1}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
+                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word1}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
                                         </div>
                                         <div class="text-center px-2">
                                              <h4 class="text-2xl font-bold text-white">${pair.word2}</h4>
                                             <p class="text-sm text-pink-300 font-mono">${pair.sound2}</p>
                                             <p class="text-sm text-slate-300">${pair.hindi2}</p>
-                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word2}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
+                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word2}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
                                         </div>
                                     </div>
                                 `;
@@ -16059,7 +16059,7 @@ if (adminBtn) {
                             });
                              setTimeout(() => {
                                 contentContainer.querySelectorAll('.speak-button-pronun').forEach(btn => {
-                                btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak); });
+                                btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
                             });
                             }, 0);
                             break;
@@ -16358,7 +16358,7 @@ if (adminBtn) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                                 </button>
                                 <div class="speak-button flex-shrink-0" data-speak="${item.replace(/"/g, '&quot;')}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
                                 </div>
                             </div>`;
                         
@@ -16380,7 +16380,7 @@ if (adminBtn) {
                         sentenceItem.addEventListener('click', e => { 
                             const target = e.target;
                             if (target.classList.contains('done-checkbox')) return; // Ignore clicks on the checkbox
-                            if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } 
+                            if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } 
                             else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
                         });
                         list.appendChild(sentenceItem);
@@ -16403,8 +16403,8 @@ if (adminBtn) {
                         const uniqueId = item.hindi, isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
                         const sentenceItem = document.createElement('div');
                         sentenceItem.className = 'sentence-item p-3 sm:p-4';
-                        sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-sm sm:text-base font-semibold flex-grow">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-slate-300 mt-3"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-700 leading-tight flex-grow">${item.english}</p><div class="speak-button flex-shrink-0" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
-                        sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
+                        sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-sm sm:text-base font-semibold flex-grow">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-slate-300 mt-3"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-700 leading-tight flex-grow">${item.english}</p><div class="speak-button flex-shrink-0" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
+                        sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
                         list.appendChild(sentenceItem);
                     
                     } else {
@@ -16420,11 +16420,11 @@ if (adminBtn) {
                         const isOneWordSub = title.includes('One Word Substitution'), isAntonymList = title === 'Antonyms';
                         const frontWord = isOneWordSub ? item.meaning : item.word;
                         const backWord = isAntonymList ? item.antonym : (isOneWordSub ? item.word : (item.synonyms ? `Synonyms: ${item.synonyms.join(', ')}` : (item.example || item.meaning)));
-                        frontContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4"><div class="text-left flex-grow"><p class="text-sm sm:text-base font-semibold">${frontWord}</p>${(item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}${(isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}</div><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>${!isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
-                        backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-white font-semibold">${item.antonym}</p><p class="text-xs text-slate-300">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>`}${isAntonymList || isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
+                        frontContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4"><div class="text-left flex-grow"><p class="text-sm sm:text-base font-semibold">${frontWord}</p>${(item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}${(isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}</div><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>${!isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
+                        backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-white font-semibold">${item.antonym}</p><p class="text-xs text-slate-300">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>`}${isAntonymList || isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
                         wordCardInner.append(frontContent, backContent);
                         wordItem.appendChild(wordCardInner);
-                        wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { vibrate(10); speakText(target.closest('.speak-button').dataset.speak); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
+                        wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
                         list.appendChild(wordItem);
                     }
                 });
@@ -17212,13 +17212,36 @@ if (adminBtn) {
                 displayQuestion();
             }
             
-            function loadVoices() { synthVoices = speechSynthesis.getVoices(); if (synthVoices.length === 0) speechSynthesis.onvoiceschanged = () => synthVoices = speechSynthesis.getVoices(); }
-            function speakText(textToSpeak, onEndCallback) {
+            // --- MODIFIED FUNCTION: speakText ---
+            // Added 'buttonElement' as the second argument, made onEndCallback the third
+            function speakText(textToSpeak, buttonElement = null, onEndCallback = null) {
                 speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(textToSpeak.replace(/[*_`]/g, '').replace(/\s*\/\s*/g, ', '));
-                if (synthVoices.length > 0) { const voice = synthVoices.find(v => v.lang === 'en-US' && /female|woman/i.test(v.name)) || synthVoices.find(v => v.lang === 'en-US'); if (voice) utterance.voice = voice; }
+                
+                if (synthVoices.length > 0) { 
+                    const voice = synthVoices.find(v => v.lang === 'en-US' && /female|woman/i.test(v.name)) || synthVoices.find(v => v.lang === 'en-US'); 
+                    if (voice) utterance.voice = voice; 
+                }
                 utterance.lang = 'en-US';
-                if(onEndCallback) utterance.onend = onEndCallback;
+
+                // --- START: New logic for button animation ---
+                const svg = buttonElement ? buttonElement.querySelector('svg') : null;
+                if (svg) {
+                    // Add red color and scale classes
+                    svg.classList.add('text-red-500', 'scale-110');
+                }
+                
+                utterance.onend = () => {
+                    if (svg) {
+                        // Remove red color and scale classes
+                        svg.classList.remove('text-red-500', 'scale-110');
+                    }
+                    if (onEndCallback) {
+                        onEndCallback(); // Call the original callback if it exists
+                    }
+                };
+                // --- END: New logic ---
+
                 setTimeout(() => speechSynthesis.speak(utterance), 50);
             }
 
