@@ -16910,35 +16910,62 @@ if (adminBtn) {
             function showChallengeResults(challengeId, challengeData) {
                 mainContent.classList.remove('h-full');
                 
-                // --- NEW: Sort players by score (highest first) ---
+                // Sort players by score (highest first)
                 const sortedPlayers = [...challengeData.players].sort((a, b) => b.score - a.score);
 
-                // Find the current user's rank
+                // Find the current user's score and rank
                 const yourResult = sortedPlayers.find(p => p.id === userId);
-                const yourRank = sortedPlayers.indexOf(yourResult) + 1;
+                const yourScore = yourResult ? yourResult.score : -1;
+                const yourRank = yourResult ? sortedPlayers.indexOf(yourResult) + 1 : -1;
                 
                 let resultText = "";
                 let resultColor = "text-white";
+
+                // --- START: FIX FOR TIE-BREAKING LOGIC ---
                 
-                if (yourRank === 1) {
-                    resultText = "You Won!";
-                    resultColor = "text-green-400";
-                } else if (yourRank === sortedPlayers.length) {
-                    resultText = "You Lost";
-                    resultColor = "text-red-400";
+                // 1. Find the highest score from the sorted list
+                const topScore = sortedPlayers.length > 0 ? sortedPlayers[0].score : 0;
+
+                // 2. Check if your score is the top score
+                if (yourScore === topScore && topScore >= 0) {
+                    // 3. Count how many players got that top score
+                    const winners = sortedPlayers.filter(p => p.score === topScore);
+                    
+                    if (winners.length > 1) {
+                        // It's a tie for first place
+                        resultText = "It's a Tie!";
+                        resultColor = "text-amber-400"; // Tie color
+                    } else {
+                        // You are the sole winner
+                        resultText = "You Won!";
+                        resultColor = "text-green-400"; // Win color
+                    }
                 } else {
-                    resultText = `You finished ${yourRank} / ${sortedPlayers.length}`;
-                    resultColor = "text-amber-400";
+                    // You are not the winner. Check if you are last.
+                    if (yourRank === sortedPlayers.length && sortedPlayers.length > 1) {
+                        resultText = "You Lost";
+                        resultColor = "text-red-500"; // Loser color
+                    } else {
+                        // Not first, but not last (or a 1-player game)
+                        resultText = `You finished ${yourRank} / ${sortedPlayers.length}`;
+                        resultColor = "text-slate-300"; // Neutral color
+                    }
                 }
+                // --- END: FIX FOR TIE-BREAKING LOGIC ---
 
                 // Build the leaderboard HTML
                 const leaderboardHTML = sortedPlayers.map((player, index) => {
                     const rank = index + 1;
                     const isYou = player.id === userId;
+                    // --- NEW: Add crown for 1st place ---
+                    const rankDisplay = rank === 1 
+                        ? `<span class="text-lg font-bold w-6 text-amber-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z"></path><path d="M3 18h18v2H3z"></path></svg></span>`
+                        : `<span class="text-lg font-bold w-6 text-slate-400">#${rank}</span>`;
+
                     return `
                         <div class="flex items-center justify-between p-3 rounded-lg ${isYou ? 'bg-indigo-900/50' : 'bg-slate-800/50'}">
                             <div class="flex items-center gap-4">
-                                <span class="text-lg font-bold w-6 ${rank === 1 ? 'text-amber-400' : 'text-slate-400'}">#${rank}</span>
+                                ${rankDisplay}
                                 <span class="font-semibold text-white">${player.name}${isYou ? ' (You)' : ''}</span>
                             </div>
                             <span class="text-xl font-bold text-white">${player.score}</span>
