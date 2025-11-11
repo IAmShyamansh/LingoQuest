@@ -16957,10 +16957,17 @@ if (adminBtn) {
                 const leaderboardHTML = sortedPlayers.map((player, index) => {
                     const rank = index + 1;
                     const isYou = player.id === userId;
-                    // --- NEW: Add crown for 1st place ---
-                    const rankDisplay = rank === 1 
-                        ? `<span class="text-lg font-bold w-6 text-amber-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z"></path><path d="M3 18h18v2H3z"></path></svg></span>`
-                        : `<span class="text-lg font-bold w-6 text-slate-400">#${rank}</span>`;
+                    
+                    // --- START: NEW CROWN/RANK LOGIC FOR TIES ---
+                    let rankDisplay;
+                    // Give a crown to anyone whose score matches the top score (and isn't 0)
+                    if (player.score === topScore && topScore >= 0) {
+                        rankDisplay = `<span class="text-lg font-bold w-6 text-amber-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z"></path><path d="M3 18h18v2H3z"></path></svg></span>`;
+                    } else {
+                        // Otherwise, show their rank number
+                        rankDisplay = `<span class="text-lg font-bold w-6 text-slate-400">#${rank}</span>`;
+                    }
+                    // --- END: NEW CROWN/RANK LOGIC FOR TIES ---
 
                     return `
                         <div class="flex items-center justify-between p-3 rounded-lg ${isYou ? 'bg-indigo-900/50' : 'bg-slate-800/50'}">
