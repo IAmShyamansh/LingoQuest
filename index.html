@@ -887,6 +887,19 @@
             "The journey of a thousand miles begins with a single step. Start speaking today."
         ];
         // END: PASTE THIS ARRAY
+
+        // --- NEW FUNCTION: Haptic Feedback ---
+            function vibrate(duration = 20) {
+                if (navigator.vibrate) {
+                    try {
+                        // Vibrate for a short duration
+                        navigator.vibrate(duration);
+                    } catch (e) {
+                        // Some browsers might block it, ignore errors
+                        console.warn("Haptic feedback failed", e);
+                    }
+                }
+            }
     
 
 
@@ -15794,6 +15807,7 @@ if (adminBtn) {
                     card.style.animationDelay = `${i * 60}ms`;
                     card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
                     card.addEventListener('click', () => {
+                         vibrate(); // <-- ADD THIS LINE
                          if (categoryName === 'Dictionary') {
                             switchView('dictionary', { isSubView: true, from: { view: 'home' } });
                          } else if (data === 'synonyms-view') {
@@ -15828,6 +15842,7 @@ if (adminBtn) {
                     card.style.animationDelay = `${i * 60}ms`;
                     card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
                     card.addEventListener('click', () => {
+                        vibrate(); // <-- ADD THIS LINE
                         const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
                         if (data === 'synonyms-view') {
                             switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
@@ -18091,6 +18106,7 @@ function initApp() {
             bottomNav.addEventListener('click', e => { 
                 const button = e.target.closest('button'); 
                 if (button?.dataset.view) {
+                    vibrate(); // <-- ADD THIS LINE
                     if (button.dataset.view === 'profile') {
                         displayProfileModal();
                     } else if (button.dataset.view === 'quizHub') {
