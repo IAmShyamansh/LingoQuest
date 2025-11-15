@@ -18055,7 +18055,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
     "Discussion Questions", 
     "Sentence Structure", 
     "Grammar & Rules",
-    "Competitive Exam English",
+    "Banking Exam English",
     "Dictionary"
 ];
             
@@ -20417,50 +20417,99 @@ if (adminBtn) {
         }
                 
             // This block defines how the app starts.
+
             function initializeAppAuth() {
+
                 onAuthStateChanged(auth, async (user) => { // Listener is still async
+
                     if (user) {
+
                         // User is signed in.
+
                         
+
                         // --- START: MODIFICATION ---
-                        // STEP 1: Load the user's profile & data IMMEDIATELY.
-                        // This will use the STATIC data already in the file, making the app load instantly.
-                        // We make this an 'await' to ensure the profile loads before we try to sync in the background.
-                        await loadProfileAndData(user.uid); 
+
+                        // STEP 1: IMMEDIATELY show the app.
+
+                        // We no longer 'await' the data load.
+
+                        splashScreen.classList.add('splash-out');
+
+                        splashScreen.addEventListener('animationend', () => splashScreen.style.display = 'none', { once: true });
+
+                        switchView('home');
+
+
+
+                        // STEP 2: NOW, load all user data in the background.
+
+                        loadProfileAndData(user.uid); 
+
                         
-                        // STEP 2: *After* the app is loaded, *now* sync with the server in the background.
-                        // Notice there is no 'await'. This runs silently without blocking the UI.
-                        // This will fetch any new words for the *next* time the user opens the app.
+
+                        // STEP 3: Sync public data in the background.
+
                         syncPublicData(); 
+
                         // --- END: MODIFICATION ---
 
+
+
                     } else {
+
                         // User is not signed in.
+
                         let signInPromise; // To await the sign-in
+
                         
+
                         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+
                             console.log("Signing in with custom token...");
+
                             signInPromise = signInWithCustomToken(auth, __initial_auth_token).catch(e => {
+
                                 console.error("Custom token sign-in failed:", e);
+
                                 return signInAnonymously(auth); // Fallback to anonymous
+
                             });
+
                         } else {
+
                             // No token provided, sign in anonymously (Teacher/Student passkey path)
+
                             console.log("Signing in anonymously...");
+
                             signInPromise = signInAnonymously(auth);
+
                         }
+
                         
+
                         // Handle sign-in failure
+
                         signInPromise.catch(e => {
+
                             console.error("All authentication failed:", e);
+
                             document.body.innerHTML = '<p class="text-white text-center p-8">Could not authenticate. Please check connection.</p>';
+
                         });
 
+
+
                         // NOTE: The onAuthStateChanged listener will run *again*
+
                         // with the new `user` object after signInPromise completes.
+
                         // The `if (user)` block will then execute.
+
                     }
+
                 });
+
             }
             // END: Create this new function
 // --- ADMIN PANEL SPECIFIC VARIABLES AND FUNCTIONS ---
