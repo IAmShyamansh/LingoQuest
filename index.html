@@ -663,7 +663,7 @@
         /* --- START: Match the Columns Game Styles --- */
         #match-game-board {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px; /* Give it a wider max width */
             margin: auto;
         }
 
@@ -1076,7 +1076,7 @@
 
     <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="match-game-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="match-game-container">
+        <div class="pop-in p-4 max-w-5xl mx-auto pb-24" id="match-game-container">
             <!-- Game Header: Moves -->
             <div class="flex justify-between items-center mb-4 px-2 max-w-[600px] mx-auto">
                 <div class="text-left">
@@ -16450,13 +16450,20 @@ if (adminBtn) {
                 // --- NEW LOGIC: Get words based on difficulty ---
                 const wordPool = getWordsForDifficulty(difficulty);
                 
-                // --- NEW LOGIC: Fixed card count ---
-                // Both games will use 10 pairs
-                const totalPairs = 10;
+                // --- FIXED LOGIC: Define grid settings ---
+                let totalPairs = 10;
+                let gridConfig = { cols: 4, maxWidth: "36rem" }; // Medium (4x5 grid) - 576px
+
+                if (difficulty === 'easy') {
+                    totalPairs = 6;
+                    gridConfig = { cols: 3, maxWidth: "28rem" }; // Easy (3x4 grid) - 448px
+                } else if (difficulty === 'hard') {
+                    totalPairs = 15;
+                    gridConfig = { cols: 5, maxWidth: "42rem" }; // Hard (5x6 grid) - 672px
+                }
                 
                 if (wordPool.length < totalPairs) {
                     alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
-                    // Go back to the difficulty selection screen
                     renderGameDifficultySelectView(gameType, gameTitle, gradClass);
                     return;
                 }
@@ -16465,22 +16472,20 @@ if (adminBtn) {
                 const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
 
                 if (gameType === 'flip-cards') {
-                    startFlipCardGame(selectedWords, gameTitle, gradClass); 
+                    // --- THIS IS THE FIX ---
+                    // Pass totalPairs and gridConfig to the game function
+                    startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs, gridConfig); 
                 
                 } else if (gameType === 'match-columns') {
-                    // --- THIS IS THE NEW PART ---
                     startMatchColumnsGame(selectedWords, gameTitle, gradClass);
-                    // --- END OF NEW PART ---
-
                 } else {
-                    // Placeholder for other games
                     alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
                 }
             }
             // END: PASTE THIS REPLACEMENT FUNCTION
 
             // START: PASTE THIS REPLACEMENT FUNCTION
-            function startFlipCardGame(selectedWords, originalTitle, gradClass) {
+            function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig) {
                 // --- START: HIDE NAVS ---
                 document.getElementById('top-nav').classList.add('hidden');
                 document.getElementById('bottom-nav').classList.add('hidden');
@@ -16500,12 +16505,11 @@ if (adminBtn) {
                 const restartBtn = document.getElementById('restart-game-btn');
                 const gameOverIcon = document.getElementById('game-over-icon');
                 
-                // --- START: NEW HARDCODED GRID ---
-                const gridConfig = { cols: 4, maxWidth: "400px" };
-                const totalPairs = 10;
+                // --- START: DYNAMIC GRID FIX ---
+                // These values now come from the difficulty selection
                 gameContainer.style.maxWidth = gridConfig.maxWidth;
                 grid.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
-                // --- END: NEW HARDCODED GRID ---
+                // --- END: DYNAMIC GRID FIX ---
 
                 // --- START: ADD QUIT BUTTON LISTENER ---
                 const quitBtn = document.getElementById('quit-game-btn');
@@ -16625,7 +16629,7 @@ if (adminBtn) {
                 restartBtn.onclick = () => {
                     modal.classList.add('hidden');
                     // Relaunch the game with the same set of words
-                    startFlipCardGame(selectedWords, originalTitle, gradClass); 
+                    startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig); 
                 };
             }
             // END: PASTE THIS REPLACEMENT FUNCTION
