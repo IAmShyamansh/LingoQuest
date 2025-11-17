@@ -540,6 +540,125 @@
     background: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
 }
+/* --- START: Flip Card Game Styles --- */
+        #flip-card-game-container {
+            width: 100%;
+            max-width: 400px; /* Max width for the game board */
+            margin: auto;
+        }
+
+        #flip-card-grid {
+        display: grid;
+        gap: 12px;
+        perspective: 1000px; /* For the 3D flip effect */
+    }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Make cards square */
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+        /* This class is added by JS to flip the card */
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front {
+            /* --- START: ADDED THESE PROPERTIES --- */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* --- END: ADDED PROPERTIES --- */
+
+            background-color: #e2e8f0; /* Light slate background */
+            color: white;
+            font-size: 2.5rem; /* Icon size */
+        }
+        
+        
+
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start; 
+            justify-content: flex-start; 
+            
+            /* --- START: MODIFIED PROPERTIES --- */
+            padding: 6px; /* MODIFIED: Reduced padding from 8px to 6px for more space */
+            background-color: #f1f5f9; 
+            color: var(--bg-dark); 
+            transform: rotateY(180deg);
+            font-size: 0.55rem; /* MODIFIED: Reduced font size from 0.65rem (this is 8.8px) */
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.2; /* MODIFIED: Tightened line height from 1.25 */
+            overflow-wrap: break-word; 
+            word-break: break-word; 
+            overflow: hidden; /* MODIFIED: Replaced 'overflow-y: auto' with 'hidden' to remove scrollbar */
+            /* --- END: MODIFIED PROPERTIES --- */
+        }
+        /* Optional: Add custom scrollbar for the card back */
+        .flip-card-back::-webkit-scrollbar {
+            width: 4px;
+        }
+        .flip-card-back::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Style for matched cards */
+        .flip-card.matched .flip-card-inner {
+        transform: rotateY(180deg); /* Keep it flipped */
+        animation: tada 0.8s ease; /* Add 'tada' animation on match */
+    }
+        
+        /* Disable clicks on flipped/matched cards */
+        .flip-card.flipped,
+        .flip-card.matched {
+            pointer-events: none;
+        }
+        /* --- END: Flip Card Game Styles --- */
+        /* --- START: Game Footer Bar Style --- */
+        #game-footer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background-color: rgba(31, 35, 53, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        /* --- END: Game Footer Bar Style --- */
     </style>
 </head>
 <body class="min-h-screen">
@@ -585,6 +704,10 @@
                 <button id="nav-favorites" data-view="favorites" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                     <span class="text-xs font-bold">Favorites</span>
+                </button>
+                <button id="nav-game-zone" data-view="gameZone" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.5a8 8 0 1 1 15 0a8 8 0 1 1-15 0Z"></path><path d="M12 12v.01"></path><path d="M16 12v.01"></path><path d="M8 12v.01"></path><path d="M12 18s-4-3-4-6"></path><path d="M12 18s4-3 4-6"></path></svg>
+                    <span class="text-xs font-bold">Game Zone</span>
                 </button>
                 <button id="nav-quiz-hub" data-view="quizHub" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
@@ -722,6 +845,39 @@
             <footer class="text-center text-xs text-slate-500 mt-8 pb-4 px-4"><p>Product of British Institute Of English Language And P.D.</p></footer>
         </div>
     </template>
+    <!-- START: PASTE THIS NEW TEMPLATE -->
+    <template id="game-category-select-template">
+         <div class="max-w-2xl lg:max-w-5xl mx-auto w-full p-4 relative z-10 opacity-100">
+            <!-- This title will be set by JS -->
+            <h1 id="game-category-title" class="text-3xl font-bold text-white text-center mb-6"></h1>
+            <main id="category-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 relative z-10 px-4"></main>
+            <footer class="text-center text-xs text-slate-500 mt-8 pb-4 px-4"><p>Select a category to start your game.</p></footer>
+        </div>
+    </template>
+    <!-- END: PASTE THIS NEW TEMPLATE -->
+
+    <!-- START: PASTE THIS NEW TEMPLATE -->
+    <template id="game-difficulty-select-template">
+         <div class="pop-in p-4 max-w-3xl mx-auto">
+            <h1 id="game-difficulty-title" class="text-3xl font-bold text-white text-center mb-6"></h1>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button class="mode-card grad-1 p-6 rounded-xl text-center" data-difficulty="easy">
+                    <h3 class="font-bold text-xl text-white">Easy</h3>
+                    <p class="text-sm text-slate-200">Basic Vocab & Daily Actions</p>
+                </button>
+                <button class="mode-card grad-2 p-6 rounded-xl text-center" data-difficulty="medium">
+                    <h3 class="font-bold text-xl text-white">Medium</h3>
+                    <p class="text-sm text-slate-200">Adds Travel, Emotions & Business</p>
+                </button>
+                <button class="mode-card grad-3 p-6 rounded-xl text-center" data-difficulty="hard">
+                    <h3 class="font-bold text-xl text-white">Hard</h3>
+                    <p class="text-sm text-slate-200">Adds Idioms & One Word Sub.</p>
+                </button>
+            </div>
+            <footer class="text-center text-xs text-slate-500 mt-8 pb-4 px-4"><p>Select a difficulty to start the game.</p></footer>
+        </div>
+    </template>
+    <!-- END: PASTE THIS NEW TEMPLATE -->
 
     <template id="word-list-template">
         <div class="pop-in p-4 max-w-2xl mx-auto">
@@ -730,23 +886,86 @@
         </div>
     </template>
     
-    <template id="quiz-hub-template">
-        <div class="pop-in p-4 max-w-2xl mx-auto">
+    </template>
+    
+    <!-- START: PASTE THIS NEW TEMPLATE CODE HERE -->
+    <template id="game-zone-template">
+        <div class="pop-in p-4 max-w-3xl mx-auto">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white">Quiz Hub</h1>
-                <p class="text-slate-300 mt-1">Test your knowledge with a surprise quiz.</p>
+                <h1 class="text-3xl font-bold text-white">Game Zone</h1>
+                <p class="text-slate-300 mt-1">Learn and play with fun games!</p>
             </div>
-            <div class="space-y-4">
-                <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-quiz-target="Vocabulary Builder"><h3 class="font-bold text-lg text-white">Vocabulary Builder Quiz</h3><p class="text-sm text-slate-200">A mix of words from all basic categories.</p></button>
-                <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-quiz-target="Advanced Vocabulary"><h3 class="font-bold text-lg text-white">Advanced Vocabulary Quiz</h3><p class="text-sm text-slate-200">Test yourself on confusing words, synonyms, and more.</p></button>
-                <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-quiz-target="Phrases & Idioms"><h3 class="font-bold text-lg text-white">Phrases and Idioms Quiz</h3><p class="text-sm text-slate-200">Test your recall of common idiomatic expressions.</p></button>
-                <button id="join-challenge-btn" class="mode-card grad-4 w-full p-4 rounded-xl text-left">
-                    <h3 class="font-bold text-lg text-white">Join a Challenge</h3>
-                    <p class="text-sm text-slate-200">Enter a code to challenge a friend.</p>
-                </button>
+
+            <!-- Learning Path Section -->
+            <div class.="mb-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Learning Path</h2>
+                <div class="glass-ui p-6 rounded-xl text-center">
+                    <p class="text-slate-300">A new, level-based learning journey is coming soon!</p>
+                    <p class="text-5xl mt-4">🗺️</p>
+                </div>
+            </div>
+
+            <!-- Game Arcade Section -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-white mb-4">Game Arcade</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-game="match-columns">
+                        <h3 class="font-bold text-lg text-white">Match the Columns</h3>
+                        <p class="text-sm text-slate-200">Connect the word with its meaning.</p>
+                    </button>
+                    <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-game="flip-cards">
+                        <h3 class="font-bold text-lg text-white">Flip Card Memory</h3>
+                        <p class="text-sm text-slate-200">Find the matching pairs.</p>
+                    </button>
+                    <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="crossword">
+                        <h3 class="font-bold text-lg text-white">Crossword</h3>
+                        <p class="text-sm text-slate-200">Solve the daily word puzzle.</p>
+                    </button>
+                    <button class="mode-card grad-4 w-full p-4 rounded-xl text-left" data-game="jumbled-word">
+                        <h3 class="font-bold text-lg text-white">Jumbled Word</h3>
+                        <p class="text-sm text-slate-200">Unscramble the letters.</p>
+                    </button>
+                </div>
             </div>
         </div>
     </template>
+    <!-- END: PASTE THIS NEW TEMPLATE CODE HERE -->
+<!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
+    <template id="flip-card-game-template">
+        <div class="pop-in p-4 max-w-3xl mx-auto" id="flip-card-game-container">
+            <!-- Game Header: Score & Moves -->
+            <div class="flex justify-between items-center mb-4 px-2">
+                <div class="text-left">
+                    <span class="text-sm text-slate-300">Score</span>
+                    <p id="game-score" class="text-2xl font-bold text-white">0</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm text-slate-300">Moves</span>
+                    <p id="game-moves" class="text-2xl font-bold text-white">0</p>
+                </div>
+            </div>
+            
+            <!-- Game Board -->
+            <div id="flip-card-grid">
+                <!-- Cards will be generated by JavaScript -->
+            </div>
+
+            <!-- Game Over Modal (hidden by default) -->
+            <div id="game-over-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                <div class="glass-ui p-6 rounded-2xl text-center pop-in">
+                    <div id="game-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
+                    <h2 class="text-2xl font-bold text-white mb-2">You Won!</h2>
+                    <p class="text-lg text-slate-200 mb-6">You found all matches in <strong id="final-moves">0</strong> moves!</p>
+                    <button id="restart-game-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Play Again</button>
+                </div>
+            </div>
+            <div id="game-footer-bar">
+            <button id="quit-game-btn" class="w-full max-w-xs bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg">Quit Game</button>
+        </div>
+
+        </div>
+    </template>
+    <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="admin-panel-view-template">
     <!-- Main Admin Dashboard View -->
     <div class="pop-in p-4 max-w-3xl mx-auto">
@@ -15645,6 +15864,8 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 switch (viewName) {
                     case 'home': renderHomeView(); break;
                     case 'favorites': renderFavoritesView(); break;
+                    case 'gameZone': renderGameZoneView(); break;
+                    case 'gameDifficultySelect': renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); break;
                     case 'quizHub': renderQuizHubView(); break;
                     case 'profile': displayProfileModal(); break;
                     case 'dictionary': renderDictionaryView(); break;
@@ -15890,48 +16111,54 @@ if (adminBtn) {
                 });
             }
 
-            function renderCategoryListView(categories, title, subtitle, gradClass) {
-                updateTopNav({ title: title, showBack: true, gradClass: gradClass });
-                const template = document.getElementById('home-view-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                const categoryGridEl = mainContent.querySelector('#category-grid');
-                categoryGridEl.innerHTML = '';
-                let i = 0;
-                for(const categoryName in categories) {
-                    const data = categories[categoryName];
-                    const card = document.createElement('div');
-                    let newGradClass = (title === 'Advanced Vocabulary' && (categoryName === 'Latin Roots' || categoryName === 'Greek Roots')) ? gradClass : gradients[i % gradients.length];
-                    card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${newGradClass}`;
-                    card.style.animationDelay = `${i * 60}ms`;
-                    card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
-                    card.addEventListener('click', () => {
-                        vibrate(); // <-- ADD THIS LINE
-                        const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
-                        if (data === 'synonyms-view') {
-                            switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
-                        } else if (Array.isArray(data)) {
-                            const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
-                            const transformedData = data.map(item => {
-                                if (typeof item === 'string') return item; // Keep strings as strings
-                                if (item.hindi) return { ...item, isSentence: true };
-                                return item;
-                            });
-                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, extra });
-                        } else if (data.sentences) { 
-                            const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
-                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass });
-                        } else if (data.subtopics) {
-                            switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                        } else if (data.content) {
-                            switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                        } else {
-                            switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: newGradClass });
-                        }
-                    });
-                    categoryGridEl.appendChild(card);
-                    i++;
-                }
+            // START: PASTE THIS REPLACEMENT FUNCTION
+        function renderCategoryListView(categories, title, subtitle, gradClass) {
+            updateTopNav({ title: title, showBack: true, gradClass: gradClass });
+
+            const template = document.getElementById('home-view-template');
+            mainContent.appendChild(template.content.cloneNode(true));
+            const categoryGridEl = mainContent.querySelector('#category-grid');
+            categoryGridEl.innerHTML = '';
+            let i = 0;
+            for(const categoryName in categories) {
+                const data = categories[categoryName];
+                const card = document.createElement('div');
+                let newGradClass = (title === 'Advanced Vocabulary' && (categoryName === 'Latin Roots' || categoryName === 'Greek Roots')) ? gradClass : gradients[i % gradients.length];
+                card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${newGradClass}`;
+                card.style.animationDelay = `${i * 60}ms`;
+                card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
+
+                card.addEventListener('click', () => {
+                    vibrate(); 
+
+                    // This is the original "Study Mode" logic
+                    const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
+                    if (data === 'synonyms-view') {
+                        switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
+                    } else if (Array.isArray(data)) {
+                        const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
+                        const transformedData = data.map(item => {
+                            if (typeof item === 'string') return item; // Keep strings as strings
+                            if (item.hindi) return { ...item, isSentence: true };
+                            return item;
+                        });
+                        switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, extra });
+                    } else if (data.sentences) { 
+                        const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
+                        switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass });
+                    } else if (data.subtopics) {
+                        switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
+                    } else if (data.content) {
+                        switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
+                    } else {
+                        switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: newGradClass });
+                    }
+                });
+                categoryGridEl.appendChild(card);
+                i++;
             }
+        }
+        // END: PASTE THIS REPLACEMENT FUNCTION
             
             function renderFavoritesView() {
                 updateTopNav({ title: "Favorites", showBack: false, showActions: true });
@@ -15977,6 +16204,282 @@ if (adminBtn) {
                     // we just ignore it here, and its separate click listener from initApp() will work.
                 });
             }
+            // START: REPLACE the old renderGameZoneView with this one
+
+        // START: REPLACE the old renderGameZoneView with this one
+            function renderGameZoneView() {
+                updateTopNav({ title: "Game Zone", showBack: false, showActions: true });
+                const template = document.getElementById('game-zone-template');
+                mainContent.appendChild(template.content.cloneNode(true));
+                
+                // Add click listeners for the game buttons
+                mainContent.querySelectorAll('.mode-card[data-game]').forEach(card => {
+                    card.addEventListener('click', () => {
+                        vibrate();
+                        const gameType = card.dataset.game;
+                        const gameTitle = card.querySelector('h3').textContent;
+                        const gradClass = card.classList[1]; // e.g., 'grad-2'
+
+                        // NEW FLOW: Switch to the difficulty selection view
+                        switchView('gameDifficultySelect', {
+                            isSubView: true, 
+                            from: { view: 'gameZone' }, // Set the 'back' button destination
+                            gameType, 
+                            gameTitle, 
+                            gradClass 
+                        });
+                    });
+                });
+            }
+            // END: REPLACE the old renderGameZoneView
+
+        // START: PASTE THIS ENTIRE NEW FUNCTION
+        function renderGameDifficultySelectView(gameType, gameTitle, gradClass) {
+            updateTopNav({ title: "Select Difficulty", showBack: true, gradClass: gradClass });
+
+            // Use the new template
+            const template = document.getElementById('game-difficulty-select-template');
+            mainContent.appendChild(template.content.cloneNode(true));
+
+            // Set the custom title
+            mainContent.querySelector('#game-difficulty-title').textContent = `Select Difficulty for ${gameTitle}`;
+
+            mainContent.querySelectorAll('.mode-card[data-difficulty]').forEach(card => {
+                card.addEventListener('click', () => {
+                    vibrate();
+                    const difficulty = card.dataset.difficulty;
+
+                    // Launch the game with the selected difficulty
+                    launchGameFromWordList(gameType, gameTitle, difficulty, gradClass);
+                });
+            });
+        }
+        // END: PASTE THIS ENTIRE NEW FUNCTION
+            
+
+        // START: PASTE THESE TWO NEW FUNCTIONS
+
+            // Helper to filter for valid game words
+            const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
+
+            function getWordsForDifficulty(difficulty) {
+                let wordPool = [];
+                
+                // Helper to filter for valid game words (non-sentences, non-types)
+                const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
+
+                // 1. Get Easy words (as you requested)
+                const basicVocab = (vocabularyData["Vocabulary Builder"]["Basic Vocabulary"] || []).filter(isValidGameWord);
+                const dailyActions = (vocabularyData["Vocabulary Builder"]["Daily Actions & Verbs"] || []).filter(isValidGameWord);
+                wordPool = [...basicVocab, ...dailyActions];
+                
+                if (difficulty === 'easy') {
+                    console.log(`Loading Easy pool: ${wordPool.length} words`);
+                    return wordPool;
+                }
+
+                // 2. Get Medium words (adds to the easy pool)
+                const travel = (vocabularyData["Vocabulary Builder"]["Travel & Adventure"] || []).filter(isValidGameWord);
+                const emotions = (vocabularyData["Vocabulary Builder"]["Emotions & Feelings"] || []).filter(isValidGameWord);
+                const business = (vocabularyData["Advanced Vocabulary"]["Business Vocab"] || []).filter(isValidGameWord);
+                wordPool = [...wordPool, ...travel, ...emotions, ...business];
+                
+                if (difficulty === 'medium') {
+                    console.log(`Loading Medium pool: ${wordPool.length} words`);
+                    return wordPool;
+                }
+
+                // 3. Get Hard words (adds to the medium pool)
+                const oneWord = (vocabularyData["Advanced Vocabulary"]["One Word Substitution"] || []).filter(isValidGameWord);
+                let idiomWords = [];
+                // Loop through all idiom sub-categories
+                for(const key in vocabularyData["Phrases & Idioms"]) {
+                    idiomWords = [...idiomWords, ...(vocabularyData["Phrases & Idioms"][key] || []).filter(isValidGameWord)];
+                }
+                wordPool = [...wordPool, ...oneWord, ...idiomWords];
+                
+                console.log(`Loading Hard pool: ${wordPool.length} words`);
+                return wordPool;
+            }
+
+        // START: PASTE THIS REPLACEMENT FUNCTION
+            function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
+                // --- NEW LOGIC: Get words based on difficulty ---
+                const wordPool = getWordsForDifficulty(difficulty);
+                
+                // --- NEW LOGIC: Fixed card count ---
+                const totalPairs = 10; // Always 10 pairs (20 cards)
+                
+                if (wordPool.length < totalPairs) {
+                    alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
+                    // Go back to the difficulty selection screen
+                    renderGameDifficultySelectView(gameType, gameTitle, gradClass);
+                    return;
+                }
+
+                // Get a random selection of words for the game
+                const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+
+                if (gameType === 'flip-cards') {
+                    // --- CHANGED SIGNATURE ---
+                    startFlipCardGame(selectedWords, gameTitle, gradClass); 
+                } else {
+                    // Placeholder for other games
+                    alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
+                }
+            }
+            // END: PASTE THIS REPLACEMENT FUNCTION
+
+            // START: PASTE THIS REPLACEMENT FUNCTION
+            function startFlipCardGame(selectedWords, originalTitle, gradClass) {
+                // --- START: HIDE NAVS ---
+                document.getElementById('top-nav').classList.add('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+                document.body.style.paddingTop = '0';
+                document.body.style.paddingBottom = '0';
+                // --- END: HIDE NAVS ---
+
+                mainContent.innerHTML = '';
+                mainContent.appendChild(document.getElementById('flip-card-game-template').content.cloneNode(true));
+
+                const gameContainer = document.getElementById('flip-card-game-container');
+                const grid = document.getElementById('flip-card-grid');
+                const scoreEl = document.getElementById('game-score');
+                const movesEl = document.getElementById('game-moves');
+                const modal = document.getElementById('game-over-modal');
+                const finalMovesEl = document.getElementById('final-moves');
+                const restartBtn = document.getElementById('restart-game-btn');
+                const gameOverIcon = document.getElementById('game-over-icon');
+                
+                // --- START: NEW HARDCODED GRID ---
+                const gridConfig = { cols: 4, maxWidth: "400px" };
+                const totalPairs = 10;
+                gameContainer.style.maxWidth = gridConfig.maxWidth;
+                grid.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
+                // --- END: NEW HARDCODED GRID ---
+
+                // --- START: ADD QUIT BUTTON LISTENER ---
+                const quitBtn = document.getElementById('quit-game-btn');
+                const quitGame = () => {
+                    // Restore navs
+                    document.getElementById('top-nav').classList.remove('hidden');
+                    document.getElementById('bottom-nav').classList.remove('hidden');
+                    document.body.style.paddingTop = '56px';
+                    document.body.style.paddingBottom = '56px';
+                    // Go back to game zone
+                    switchView('gameZone', { forceRender: true });
+                };
+                quitBtn.addEventListener('click', quitGame);
+                // --- END: ADD QUIT BUTTON LISTENER ---
+
+                let moves = 0;
+                let score = 0;
+                let firstCard = null;
+                let secondCard = null;
+                let lockBoard = false; 
+
+                // 2. Create card pairs (word + meaning)
+                const gameCards = [];
+                selectedWords.forEach((word, index) => {
+                    gameCards.push({ id: index, content: word.word, type: 'word' });
+                    gameCards.push({ id: index, content: word.meaning, type: 'meaning' });
+                });
+
+                // 3. Shuffle the cards
+                const shuffledCards = gameCards.sort(() => 0.5 - Math.random());
+
+                // 4. Create card elements in HTML
+                shuffledCards.forEach(card => {
+                    const cardEl = document.createElement('div');
+                    cardEl.className = 'flip-card';
+                    cardEl.dataset.id = card.id; // This ID links the pair
+                    
+                    cardEl.innerHTML = `
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <svg viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" class="w-3/4 h-3/4">
+                                    <defs>
+                                        <linearGradient id="logo-gradient-1-card" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
+                                        <linearGradient id="logo-gradient-2-card" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#be185d"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
+                                    </defs>
+                                    <text x="10" y="48" font-family="Nunito, sans-serif" font-size="40" font-weight="900" fill="url(#logo-gradient-1-card)">Lingo</text>
+                                    <text x="120" y="48" font-family="Nunito, sans-serif" font-size="40" font-weight="900" fill="url(#logo-gradient-2-card)">Quest</text>
+                                </svg>
+                            </div>
+                            <div class="flip-card-back">${card.content}</div>
+                        </div>
+                    `;
+                    cardEl.addEventListener('click', onCardClick);
+                    grid.appendChild(cardEl);
+                });
+
+                function onCardClick(e) {
+                    if (lockBoard) return;
+                    const clickedCard = e.currentTarget;
+                    if (clickedCard === firstCard) return; // Can't click the same card twice
+
+                    clickedCard.classList.add('flipped');
+
+                    if (!firstCard) {
+                        firstCard = clickedCard;
+                    } else {
+                        secondCard = clickedCard;
+                        moves++;
+                        movesEl.textContent = moves;
+                        lockBoard = true; // Lock the board while checking
+                        checkForMatch();
+                    }
+                }
+
+                function checkForMatch() {
+                    if (firstCard.dataset.id === secondCard.dataset.id) {
+                        // It's a match!
+                        score++;
+                        scoreEl.textContent = score;
+                        vibrate(50);
+                        
+                        // NEW: Wait for flip to finish (600ms), then add 'matched' class
+                        setTimeout(() => {
+                            firstCard.classList.add('matched');
+                            secondCard.classList.add('matched');
+                            
+                            if (score === totalPairs) {
+                                // Game over
+                                finalMovesEl.textContent = moves;
+                                if (moves > totalPairs * 2) gameOverIcon.textContent = '😅'; // Okay
+                                else gameOverIcon.textContent = '🎉'; // Great!
+                                setTimeout(() => {
+                                    modal.classList.remove('hidden');
+                                    quitBtn.classList.add('hidden'); // Hide quit btn on game-over modal
+                                }, 800); // Wait for 'tada' animation to finish
+                            }
+                            
+                            resetBoard(); // Reset board *after* match logic
+                        }, 600); // This delay matches the CSS flip duration
+
+                    } else {
+                        // Not a match
+                        vibrate(20);
+                        // lockBoard is already true, so just wait to flip back
+                        setTimeout(() => {
+                            firstCard.classList.remove('flipped');
+                            secondCard.classList.remove('flipped');
+                            resetBoard(); // Reset board *after* flip-back
+                        }, 1200); // Flip back after 1.2 seconds
+                    }
+                }
+
+                function resetBoard() {
+                    [firstCard, secondCard, lockBoard] = [null, null, false];
+                }
+
+                restartBtn.onclick = () => {
+                    modal.classList.add('hidden');
+                    // Relaunch the game with the same set of words
+                    startFlipCardGame(selectedWords, originalTitle, gradClass); 
+                };
+            }
+            // END: PASTE THIS REPLACEMENT FUNCTION
 
             function renderSynonymsView(gradClass) {
                 updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
