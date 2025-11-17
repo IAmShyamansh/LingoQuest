@@ -556,7 +556,7 @@
         .flip-card {
             background-color: transparent;
             width: 100%;
-            aspect-ratio: 1 / 1; /* Make cards square */
+            height: 5rem; /* MODIFIED: Set a fixed height (80px) */
             cursor: pointer;
             border-radius: 8px;
         }
@@ -604,21 +604,21 @@
             backface-visibility: hidden;
             border-radius: 8px;
             display: flex;
-            align-items: flex-start; 
-            justify-content: flex-start; 
+            align-items: flex-start; /* Align text to top */
+            justify-content: flex-start; /* Align text to left */
             
             /* --- START: MODIFIED PROPERTIES --- */
-            padding: 6px; /* MODIFIED: Reduced padding from 8px to 6px for more space */
+            padding: 6px; /* MODIFIED: Reduced padding for more space */
             background-color: #f1f5f9; 
             color: var(--bg-dark); 
             transform: rotateY(180deg);
-            font-size: 0.55rem; /* MODIFIED: Reduced font size from 0.65rem (this is 8.8px) */
+            font-size: 0.65rem; /* MODIFIED: Made font even smaller (10.4px) */
             font-weight: 700;
             font-family: 'Inter', sans-serif;
-            line-height: 1.2; /* MODIFIED: Tightened line height from 1.25 */
+            line-height: 1.25; /* MODIFIED: Tightened line height */
             overflow-wrap: break-word; 
             word-break: break-word; 
-            overflow: hidden; /* MODIFIED: Replaced 'overflow-y: auto' with 'hidden' to remove scrollbar */
+            overflow: hidden; /* MODIFIED: Removed scrollbar */
             /* --- END: MODIFIED PROPERTIES --- */
         }
         /* Optional: Add custom scrollbar for the card back */
@@ -1039,7 +1039,7 @@
     
 <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="flip-card-game-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto" id="flip-card-game-container">
+        <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="flip-card-game-container">
             <!-- Game Header: Score & Moves -->
             <div class="flex justify-between items-center mb-4 px-2">
                 <div class="text-left">
