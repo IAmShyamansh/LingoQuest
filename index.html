@@ -1076,7 +1076,7 @@
 
     <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="match-game-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto" id="match-game-container">
+        <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="match-game-container">
             <!-- Game Header: Moves -->
             <div class="flex justify-between items-center mb-4 px-2 max-w-[600px] mx-auto">
                 <div class="text-left">
@@ -16407,45 +16407,43 @@ if (adminBtn) {
             // Helper to filter for valid game words
             const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
 
+            // START: PASTE THIS REPLACEMENT FUNCTION
             function getWordsForDifficulty(difficulty) {
                 let wordPool = [];
                 
                 // Helper to filter for valid game words (non-sentences, non-types)
                 const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
 
-                // 1. Get Easy words (as you requested)
-                const basicVocab = (vocabularyData["Vocabulary Builder"]["Basic Vocabulary"] || []).filter(isValidGameWord);
-                const dailyActions = (vocabularyData["Vocabulary Builder"]["Daily Actions & Verbs"] || []).filter(isValidGameWord);
-                wordPool = [...basicVocab, ...dailyActions];
-                
                 if (difficulty === 'easy') {
+                    // 1. Get ONLY Easy words
+                    const basicVocab = (vocabularyData["Vocabulary Builder"]["Basic Vocabulary"] || []).filter(isValidGameWord);
+                    const dailyActions = (vocabularyData["Vocabulary Builder"]["Daily Actions & Verbs"] || []).filter(isValidGameWord);
+                    wordPool = [...basicVocab, ...dailyActions];
                     console.log(`Loading Easy pool: ${wordPool.length} words`);
-                    return wordPool;
-                }
-
-                // 2. Get Medium words (adds to the easy pool)
-                const travel = (vocabularyData["Vocabulary Builder"]["Travel & Adventure"] || []).filter(isValidGameWord);
-                const emotions = (vocabularyData["Vocabulary Builder"]["Emotions & Feelings"] || []).filter(isValidGameWord);
-                const business = (vocabularyData["Advanced Vocabulary"]["Business Vocab"] || []).filter(isValidGameWord);
-                wordPool = [...wordPool, ...travel, ...emotions, ...business];
-                
-                if (difficulty === 'medium') {
+                    
+                } else if (difficulty === 'medium') {
+                    // 2. Get ONLY Medium words
+                    const travel = (vocabularyData["Vocabulary Builder"]["Travel & Adventure"] || []).filter(isValidGameWord);
+                    const emotions = (vocabularyData["Vocabulary Builder"]["Emotions & Feelings"] || []).filter(isValidGameWord);
+                    const business = (vocabularyData["Advanced Vocabulary"]["Business Vocab"] || []).filter(isValidGameWord);
+                    wordPool = [...travel, ...emotions, ...business];
                     console.log(`Loading Medium pool: ${wordPool.length} words`);
-                    return wordPool;
-                }
 
-                // 3. Get Hard words (adds to the medium pool)
-                const oneWord = (vocabularyData["Advanced Vocabulary"]["One Word Substitution"] || []).filter(isValidGameWord);
-                let idiomWords = [];
-                // Loop through all idiom sub-categories
-                for(const key in vocabularyData["Phrases & Idioms"]) {
-                    idiomWords = [...idiomWords, ...(vocabularyData["Phrases & Idioms"][key] || []).filter(isValidGameWord)];
+                } else if (difficulty === 'hard') {
+                    // 3. Get ONLY Hard words
+                    const oneWord = (vocabularyData["Advanced Vocabulary"]["One Word Substitution"] || []).filter(isValidGameWord);
+                    let idiomWords = [];
+                    // Loop through all idiom sub-categories
+                    for(const key in vocabularyData["Phrases & Idioms"]) {
+                        idiomWords = [...idiomWords, ...(vocabularyData["Phrases & Idioms"][key] || []).filter(isValidGameWord)];
+                    }
+                    wordPool = [...oneWord, ...idiomWords];
+                    console.log(`Loading Hard pool: ${wordPool.length} words`);
                 }
-                wordPool = [...wordPool, ...oneWord, ...idiomWords];
                 
-                console.log(`Loading Hard pool: ${wordPool.length} words`);
                 return wordPool;
             }
+            // END: PASTE THIS REPLACEMENT FUNCTION
 
         // START: PASTE THIS REPLACEMENT FUNCTION
             function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
