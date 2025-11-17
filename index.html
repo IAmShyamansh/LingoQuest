@@ -16447,38 +16447,43 @@ if (adminBtn) {
 
         // START: PASTE THIS REPLACEMENT FUNCTION
             function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
-                // --- NEW LOGIC: Get words based on difficulty ---
+                // Get the correct pool of words based on difficulty
                 const wordPool = getWordsForDifficulty(difficulty);
                 
-                // --- FIXED LOGIC: Define grid settings ---
-                let totalPairs = 10;
-                let gridConfig = { cols: 4, maxWidth: "36rem" }; // Medium (4x5 grid) - 576px
-
-                if (difficulty === 'easy') {
-                    totalPairs = 6;
-                    gridConfig = { cols: 3, maxWidth: "28rem" }; // Easy (3x4 grid) - 448px
-                } else if (difficulty === 'hard') {
-                    totalPairs = 15;
-                    gridConfig = { cols: 5, maxWidth: "42rem" }; // Hard (5x6 grid) - 672px
-                }
-                
-                if (wordPool.length < totalPairs) {
-                    alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
-                    renderGameDifficultySelectView(gameType, gameTitle, gradClass);
-                    return;
-                }
-
-                // Get a random selection of words for the game
-                const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-
                 if (gameType === 'flip-cards') {
-                    // --- THIS IS THE FIX ---
-                    // Pass totalPairs and gridConfig to the game function
+                    // --- NEW FLIP CARD LOGIC ---
+                    // 3x6 grid = 18 cards = 9 pairs
+                    const totalPairs = 9; 
+                    // 3 columns wide, with a responsive max-width
+                    const gridConfig = { cols: 3, maxWidth: "28rem" }; 
+                    
+                    if (wordPool.length < totalPairs) {
+                        alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
+                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
+                        return;
+                    }
+                    // Get 9 random words
+                    const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+                    // Start the game with these settings
                     startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs, gridConfig); 
                 
                 } else if (gameType === 'match-columns') {
+                    // --- NEW MATCH COLUMN LOGIC ---
+                    // Always 10 questions
+                    const totalPairs = 10;
+                    
+                    if (wordPool.length < totalPairs) {
+                        alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
+                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
+                        return;
+                    }
+                    // Get 10 random words
+                    const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+                    // Start the game
                     startMatchColumnsGame(selectedWords, gameTitle, gradClass);
+
                 } else {
+                    // Placeholder for future games
                     alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
                 }
             }
