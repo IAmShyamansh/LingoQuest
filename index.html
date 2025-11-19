@@ -796,6 +796,149 @@
         }
         /* --- END: Jumbled Word Game Styles --- */
 
+        /* --- START: Word Rain Game Styles --- */
+#rain-game-view {
+    position: fixed; /* Force it to cover everything */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200; /* Above navs */
+    background-color: #0f172a;
+    display: flex;
+    flex-direction: column;
+}
+
+#rain-header {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(30, 41, 59, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+#rain-game-container {
+    position: relative;
+    width: 100%;
+    flex-grow: 1; /* Maximizes the playing area */
+    overflow: hidden;
+    background: linear-gradient(to bottom, #0f172a, #1e293b);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.raindrop {
+    position: absolute;
+    top: -50px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 999px; 
+    font-weight: bold;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    z-index: 10;
+    transition: background 0.1s, transform 0.1s; 
+}
+
+.raindrop::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid rgba(255, 255, 255, 0.3);
+}
+
+#water-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: var(--accent-pink); 
+    box-shadow: 0 0 15px var(--accent-pink);
+    z-index: 20;
+}
+
+#rain-options-grid {
+    flex-shrink: 0;
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 0.5rem; 
+    padding: 0.75rem;
+    background-color: #1e293b; /* Dark footer background */
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* --- REPLACEMENT CSS FOR WORD RAIN BUTTONS --- */
+.option-btn-rain {
+    background-color: white;
+    color: #0f172a; /* Dark text for contrast */
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    
+    /* Capsule Shape */
+    border-radius: 9999px; 
+    padding: 12px 8px;
+    
+    /* Layout */
+    width: 100%;
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
+    /* Visuals */
+    border: none;
+    border-bottom: 4px solid #cbd5e1; /* 3D effect */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.1s ease;
+    cursor: pointer;
+    
+    /* Text handling */
+    font-size: 0.9rem;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.option-btn-rain:active {
+    transform: translateY(2px);
+    border-bottom-width: 0px;
+    box-shadow: none;
+}
+
+.option-btn-rain.correct {
+    background-color: #22c55e !important; /* Bright Green */
+    color: white !important;
+    border-bottom-color: #15803d !important; /* Darker Green Border */
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+}
+
+.option-btn-rain.incorrect {
+    background-color: #ef4444 !important; /* Bright Red */
+    color: white !important;
+    border-bottom-color: #b91c1c !important; /* Darker Red Border */
+    animation: shake 0.4s ease-in-out;
+}
+
+.rain-heart {
+    color: var(--accent-red);
+    filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.5));
+}
+/* --- END: Word Rain Game Styles --- */
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -1034,7 +1177,7 @@
             </div>
 
             <!-- Learning Path Section -->
-            <div class.="mb-8">
+            <div class="mb-8">
                 <h2 class="text-2xl font-bold text-white mb-4">Learning Path</h2>
                 <div class="glass-ui p-6 rounded-xl text-center">
                     <p class="text-slate-300">A new, level-based learning journey is coming soon!</p>
@@ -1054,9 +1197,10 @@
                         <h3 class="font-bold text-lg text-white">Flip Card Memory</h3>
                         <p class="text-sm text-slate-200">Find the matching pairs.</p>
                     </button>
-                    <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="crossword">
-                        <h3 class="font-bold text-lg text-white">Crossword</h3>
-                        <p class="text-sm text-slate-200">Solve the daily word puzzle.</p>
+                    <!-- REPLACED CROSSWORD WITH WORD RAIN -->
+                    <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="word-rain">
+                        <h3 class="font-bold text-lg text-white">Word Rain</h3>
+                        <p class="text-sm text-slate-200">Tap the meaning before the word drops!</p>
                     </button>
                     <button class="mode-card grad-4 w-full p-4 rounded-xl text-left" data-game="jumbled-word">
                         <h3 class="font-bold text-lg text-white">Jumbled Word</h3>
@@ -1181,7 +1325,7 @@
     </template>
     <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
 
-    <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
+        <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="jumbled-word-game-template">
         <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="jumbled-game-container">
             <!-- Game Header: Score & Timer -->
@@ -1233,6 +1377,66 @@
         <!-- Quit Game Button -->
         <div id="game-footer-bar">
             <button id="quit-game-btn" class="w-full max-w-xs bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg">Quit Game</button>
+        </div>
+    </template>
+    <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
+
+    
+    <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
+    <template id="word-rain-game-template">
+        <!-- Full Screen Container (No Padding) -->
+        <div id="rain-game-view">
+            
+            <!-- Compact Header -->
+            <div id="rain-header">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider">Score</span>
+                        <p id="rain-score" class="text-xl font-bold leading-none">0</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider">Streak</span>
+                        <p id="rain-streak" class="text-xl font-bold text-amber-400 leading-none">0</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                     <div id="rain-lives" class="flex gap-1 text-lg">
+                        <span class="rain-heart">❤️</span><span class="rain-heart">❤️</span><span class="rain-heart">❤️</span>
+                    </div>
+                    <!-- Compact Quit Button (X Icon) -->
+                    <button id="quit-game-btn" class="bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-200 p-2 rounded-full transition-colors ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Area (Fills Remaining Space) -->
+            <div id="rain-game-container">
+                <!-- Words injected here -->
+                <div id="water-line"></div>
+                <div id="rain-message-overlay" class="absolute inset-0 flex items-center justify-center bg-black/60 z-30 hidden">
+                    <p class="text-white font-bold text-xl pop-in">Get Ready...</p>
+                </div>
+            </div>
+
+            <!-- Options Area (Fixed at Bottom) -->
+            <div id="rain-options-grid">
+                <!-- Buttons injected here -->
+            </div>
+
+            <!-- Game Over Modal -->
+            <div id="rain-over-modal" class="hidden fixed inset-0 z-[210] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                <div class="glass-ui p-6 rounded-2xl text-center pop-in max-w-sm w-full">
+                    <div id="rain-over-icon" class="text-7xl mb-4">⛈️</div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Game Over</h2>
+                    <p class="text-lg text-slate-200 mb-6">You scored <strong id="final-score-rain">0</strong>!</p>
+                    <div class="flex gap-3 justify-center">
+                        <button id="exit-game-btn-modal" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-lg">Exit</button>
+                        <button id="restart-game-btn-rain" class="grad-nav text-white font-bold py-2 px-6 rounded-lg">Play Again</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </template>
     <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
@@ -16591,8 +16795,8 @@ if (adminBtn) {
                 const wordPool = getWordsForDifficulty(difficulty);
                 
                 if (gameType === 'flip-cards') {
-                    // --- FLIP CARD LOGIC ---
-                    const totalPairs = 9; // 3x6 grid = 18 cards = 9 pairs
+                    // ... existing flip card logic ...
+                    const totalPairs = 9; 
                     const gridConfig = { cols: 3, maxWidth: "28rem" }; 
                     
                     if (wordPool.length < totalPairs) {
@@ -16600,28 +16804,24 @@ if (adminBtn) {
                         renderGameDifficultySelectView(gameType, gameTitle, gradClass);
                         return;
                     }
-                    // Get 9 random words
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-                    // Start the game with these settings
                     startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs, gridConfig); 
                 
                 } else if (gameType === 'match-columns') {
-                    // --- MATCH COLUMN LOGIC ---
-                    const totalPairs = 10; // Always 10 questions
+                    // ... existing match columns logic ...
+                    const totalPairs = 10; 
                     
                     if (wordPool.length < totalPairs) {
                         alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
                         renderGameDifficultySelectView(gameType, gameTitle, gradClass);
                         return;
                     }
-                    // Get 10 random words
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-                    // Start the game
                     startMatchColumnsGame(selectedWords, gameTitle, gradClass);
                 
                 } else if (gameType === 'jumbled-word') {
-                    // --- JUMBLED WORD LOGIC ---
-                    const totalQuestions = 10; // 10 words to unscramble
+                    // ... existing jumbled word logic ...
+                    const totalQuestions = 10;
                     
                     if (wordPool.length < totalQuestions) {
                         alert(`Sorry, there are not enough words (min ${totalQuestions}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
@@ -16629,246 +16829,272 @@ if (adminBtn) {
                         return;
                     }
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-                    
-                    // --- THIS IS THE MODIFIED LINE ---
                     startJumbledWordGame(selectedWords, gameTitle, gradClass, difficulty);
-                    // --- END OF MODIFIED LINE ---
+                
+                } else if (gameType === 'word-rain') {
+                    // --- NEW WORD RAIN LOGIC ---
+                    // Needs a decent pool to pull random wrong answers from
+                    if (wordPool.length < 10) {
+                        alert("Not enough words to play Word Rain. Need at least 10.");
+                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
+                        return;
+                    }
+                    // We use the WHOLE pool for this game to ensure variety
+                    startWordRainGame(wordPool, gameTitle, gradClass);
 
                 } else {
-                    // Placeholder for future games
                     alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
                 }
             }
             // END: PASTE THIS REPLACEMENT FUNCTION
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
             /**
-             * Scrambles a word, handling multi-word phrases.
-             * @param {string} word The word to scramble.
-             * @returns {string} The scrambled word.
+             * Starts the Word Rain game (Fullscreen Version).
              */
-            function scrambleWord(word) {
-                let words = word.toUpperCase().split(' '); // e.g., ["RUB", "HANDS"]
-                
-                // 1. Scramble each word individually
-                let scrambledWords = words.map(w => {
-                    let chars = w.split('');
-                    for (let i = chars.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [chars[i], chars[j]] = [chars[j], chars[i]];
-                    }
-                    return chars.join('');
-                }); // e.g., ["UBR", "DSANH"]
-                
-                // 2. Shuffle the order of the scrambled words if there are multiple
-                if (scrambledWords.length > 1) {
-                    for (let i = scrambledWords.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [scrambledWords[i], scrambledWords[j]] = [scrambledWords[j], scrambledWords[i]];
-                    } // e.g., ["DSANH", "UBR"]
-                }
-                
-                const finalScrambled = scrambledWords.join(' ');
-                
-                // If the scramble is the same, re-scramble it.
-                if (finalScrambled === word.toUpperCase() && word.length > 2) {
-                    return scrambleWord(word);
-                }
-                return finalScrambled;
-            }
-            // END: PASTE THIS REPLACEMENT FUNCTION
-
-            // START: PASTE THIS REPLACEMENT FUNCTION
-            /**
-             * Starts the Jumbled Word game.
-             */
-            function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty) {
-                // 1. Hide navs and show game template
-                document.getElementById('top-nav').classList.add('hidden');
-                document.getElementById('bottom-nav').classList.add('hidden');
-                document.body.style.paddingTop = '0';
-                document.body.style.paddingBottom = '0';
+            function startWordRainGame(allWordsPool, originalTitle, gradClass) {
+                // 1. Hide standard navs (game has its own header)
+                const topNav = document.getElementById('top-nav');
+                const bottomNav = document.getElementById('bottom-nav');
+                topNav.classList.add('hidden');
+                bottomNav.classList.add('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
 
                 mainContent.innerHTML = '';
-                mainContent.appendChild(document.getElementById('jumbled-word-game-template').content.cloneNode(true));
+                mainContent.appendChild(document.getElementById('word-rain-game-template').content.cloneNode(true));
 
-                // 2. Get all elements
-                const wordDisplay = document.getElementById('jumbled-word-display');
-                const clueDisplay = document.getElementById('jumbled-word-clue'); // <-- NEW
-                const answerInput = document.getElementById('jumbled-answer-input');
-                const feedbackEl = document.getElementById('jumbled-feedback');
-                const scoreEl = document.getElementById('game-score');
-                const timerEl = document.getElementById('game-timer');
-                const skipBtn = document.getElementById('skip-word-btn');
-                const submitBtn = document.getElementById('submit-word-btn');
-                const hintBtn = document.getElementById('hint-word-btn');
+                // 2. Elements
+                const container = document.getElementById('rain-game-container');
+                const optionsGrid = document.getElementById('rain-options-grid');
+                const scoreEl = document.getElementById('rain-score');
+                const livesEl = document.getElementById('rain-lives');
+                const streakEl = document.getElementById('rain-streak');
+                const modal = document.getElementById('rain-over-modal');
+                const finalScoreEl = document.getElementById('final-score-rain');
                 
-                const modal = document.getElementById('jumbled-over-modal');
-                const finalScoreEl = document.getElementById('final-score-jumbled');
-                const restartBtn = document.getElementById('restart-game-btn-jumbled');
-                const gameOverIcon = document.getElementById('jumbled-over-icon');
+                // Buttons
+                const restartBtn = document.getElementById('restart-game-btn-rain');
                 const quitBtn = document.getElementById('quit-game-btn');
+                const exitModalBtn = document.getElementById('exit-game-btn-modal');
 
-                // 3. Setup Quit Button
-                const quitGame = () => {
-                    clearInterval(timerInterval); // Stop the timer
-                    document.getElementById('top-nav').classList.remove('hidden');
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-                    document.body.style.paddingTop = '56px';
-                    document.body.style.paddingBottom = '56px';
+                // 3. State
+                let score = 0;
+                let lives = 3;
+                let streak = 0;
+                let totalWordsSpawned = 0;
+                let gameLoopId;
+                let currentFallingWord = null;
+                let isGameOver = false;
+                const dropSpeedBase = 1.5; // Pixels per frame
+
+                // 4. Cleanup & Quit Logic
+                const cleanupAndExit = () => {
+                    isGameOver = true;
+                    cancelAnimationFrame(gameLoopId);
+                    
+                    // Restore UI
+                    topNav.classList.remove('hidden');
+                    bottomNav.classList.remove('hidden');
+                    document.body.style.overflow = ''; 
+                    
+                    // Go back
                     switchView('gameZone', { forceRender: true });
                 };
-                quitBtn.addEventListener('click', quitGame);
 
-                // 4. Initialize game state
-                let score = 0;
-                let currentQuestionIndex = 0;
-                const totalQuestions = selectedWords.length;
-                let timerInterval;
-                let timeLeft = 30;
-                let hintUsed = false;
+                quitBtn.addEventListener('click', cleanupAndExit);
+                exitModalBtn.addEventListener('click', cleanupAndExit);
 
-                function startTimer() {
-                    timeLeft = 30;
-                    timerEl.textContent = timeLeft;
-                    timerEl.classList.remove('text-red-500');
-
-                    clearInterval(timerInterval);
-                    timerInterval = setInterval(() => {
-                        timeLeft--;
-                        timerEl.textContent = timeLeft;
-                        if (timeLeft <= 5) {
-                            timerEl.classList.add('text-red-500');
-                        }
-                        if (timeLeft <= 0) {
-                            clearInterval(timerInterval);
-                            handleAnswer(null); // Time's up
-                        }
-                    }, 1000);
-                }
-
-                function displayQuestion() {
-                    if (currentQuestionIndex >= totalQuestions) {
-                        displayJumbledResults();
-                        return;
-                    }
-
-                    const currentWord = selectedWords[currentQuestionIndex];
-                    wordDisplay.textContent = scrambleWord(currentWord.word);
-                    
-                    // --- START: NEW HINT LOGIC FOR HARD MODE ---
-                    if (difficulty === 'hard') {
-                        clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
-                        clueDisplay.classList.remove('hidden');
-                    } else {
-                        clueDisplay.classList.add('hidden');
-                    }
-                    // --- END: NEW HINT LOGIC ---
-
-                    wordDisplay.classList.remove('celebrate');
-                    answerInput.value = '';
-                    answerInput.className = "w-full bg-white/90 text-slate-900 placeholder-slate-500 border-2 border-transparent focus:border-pink-500 rounded-lg py-4 px-4 outline-none transition-all text-center text-lg font-bold uppercase";
-                    feedbackEl.innerHTML = '';
-                    answerInput.disabled = false;
-                    submitBtn.disabled = false;
-                    skipBtn.disabled = false;
-                    
-                    hintUsed = false; 
-                    hintBtn.disabled = false;
-                    
-                    answerInput.focus();
-                    startTimer();
-                }
-
-                function handleAnswer(userAnswer) {
-                    clearInterval(timerInterval);
-                    answerInput.disabled = true;
-                    submitBtn.disabled = true;
-                    skipBtn.disabled = true;
-                    hintBtn.disabled = true;
-
-                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
-                    
-                    if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
-                        // Correct answer
-                        vibrate(50);
-                        score++;
-                        scoreEl.textContent = score;
-                        answerInput.classList.add('correct');
-                        feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-center">Correct!</p>`;
-                    } else if (userAnswer === null) {
-                        // Time's up
-                        vibrate(20);
-                        answerInput.classList.add('incorrect');
-                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Time's up! Answer: ${correctAnswer}</p>`;
-                    } else {
-                        // Wrong answer
-                        vibrate(20);
-                        answerInput.classList.add('incorrect');
-                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Wrong! Answer: ${correctAnswer}</p>`;
-                    }
-
-                    // Move to the next question
-                    setTimeout(() => {
-                        currentQuestionIndex++;
-                        displayQuestion();
-                    }, 2000);
-                }
-
-                function displayJumbledResults() {
-                    addQuizResult(`${originalTitle} (Jumbled)`, score, totalQuestions);
-                    finalScoreEl.textContent = `${score} / ${totalQuestions}`;
-                    
-                    if(score / totalQuestions < 0.5) {
-                        gameOverIcon.textContent = '😅';
-                    } else {
-                        gameOverIcon.textContent = '🎉';
-                        showConfetti();
-                    }
-                    
-                    modal.classList.remove('hidden');
-                    quitBtn.classList.add('hidden');
-                }
-
-                // Attach event listeners
-                submitBtn.addEventListener('click', () => handleAnswer(answerInput.value));
-                answerInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        handleAnswer(answerInput.value);
-                    }
-                });
-                skipBtn.addEventListener('click', () => handleAnswer(null));
-                
-                hintBtn.addEventListener('click', () => {
-                    if (hintUsed) return;
-                    vibrate(20);
-                    hintUsed = true;
-                    hintBtn.disabled = true;
-
-                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
-                    const userAnswer = answerInput.value.toUpperCase();
-                    
-                    // Find the first incorrect character
-                    for (let i = 0; i < correctAnswer.length; i++) {
-                        if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
-                            // Reveal the correct part of the answer
-                            answerInput.value = correctAnswer.slice(0, i + 1);
-                            answerInput.focus();
-                            return; // Give only one letter hint
-                        }
-                    }
-                });
-                
+                // 5. Restart Logic
                 restartBtn.onclick = () => {
                     modal.classList.add('hidden');
-                    // Relaunch the game with the same set of words but re-shuffled
-                    startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty); // Pass difficulty
+                    // Recursively call start to reset everything
+                    startWordRainGame(allWordsPool, originalTitle, gradClass);
                 };
-                
-                // Start the first question
-                displayQuestion();
+
+                // 6. Game Helpers
+                function updateLives() {
+                    livesEl.innerHTML = '';
+                    for(let i = 0; i < lives; i++) livesEl.innerHTML += '<span class="rain-heart">❤️</span>';
+                }
+
+                function updateScoreAndStreak(isCorrect) {
+                    if (isCorrect) {
+                        streak++;
+                        score += 10;
+                        // Streak Bonus (Every 5)
+                        if (streak % 5 === 0 && streak >= 5) {
+                            const bonus = streak * 10;
+                            score += bonus;
+                            // Float bonus text
+                            const bonusEl = document.createElement('div');
+                            bonusEl.textContent = `+${bonus}`;
+                            bonusEl.className = 'absolute text-amber-400 font-black text-4xl z-50 pop-in pointer-events-none';
+                            bonusEl.style.top = '40%';
+                            bonusEl.style.left = '50%';
+                            bonusEl.style.transform = 'translateX(-50%)';
+                            bonusEl.style.textShadow = '0 2px 4px rgba(0,0,0,0.5)';
+                            container.appendChild(bonusEl);
+                            setTimeout(() => bonusEl.remove(), 800);
+                        }
+                    } else {
+                        streak = 0;
+                    }
+                    scoreEl.textContent = score;
+                    streakEl.textContent = streak;
+                }
+
+                function spawnWord() {
+                    if (isGameOver || currentFallingWord) return;
+
+                    // Pick word
+                    const wordData = allWordsPool[Math.floor(Math.random() * allWordsPool.length)];
+                    
+                    // Generate Options
+                    const options = [wordData];
+                    while (options.length < 4) {
+                        const w = allWordsPool[Math.floor(Math.random() * allWordsPool.length)];
+                        // Avoid duplicate meanings
+                        if (w.meaning && !options.some(o => o.meaning === w.meaning)) {
+                            options.push(w);
+                        }
+                    }
+                    const shuffledOptions = options.sort(() => 0.5 - Math.random());
+
+                    // Render Options Buttons
+                    optionsGrid.innerHTML = '';
+                    shuffledOptions.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn-rain';
+                        btn.textContent = opt.meaning;
+                        btn.dataset.correct = (opt.word === wordData.word);
+                        // Prevent double-tap
+                        btn.onclick = (e) => handleOptionClick(opt, e.currentTarget);
+                        optionsGrid.appendChild(btn);
+                    });
+
+                    // Create Falling Element
+                    const el = document.createElement('div');
+                    el.className = 'raindrop';
+                    el.textContent = wordData.word;
+                    // Random X (10% to 90%)
+                    const randomLeft = 10 + Math.random() * 80;
+                    el.style.left = `${randomLeft}%`;
+                    container.appendChild(el);
+                    
+                    totalWordsSpawned++;
+
+                    // Speed scales with streak (difficulty ramps up)
+                    const speedIncrease = Math.floor(streak / 5) * 0.3;
+                    
+                    currentFallingWord = {
+                        el: el,
+                        data: wordData,
+                        y: -60, // Start just above view
+                        speed: dropSpeedBase + speedIncrease
+                    };
+                }
+
+                function handleOptionClick(selectedData, button) {
+                    if (!currentFallingWord || isGameOver || button.disabled) return;
+                    
+                    // Disable all buttons immediately
+                    const allBtns = optionsGrid.querySelectorAll('button');
+                    allBtns.forEach(b => b.disabled = true);
+
+                    if (selectedData.word === currentFallingWord.data.word) {
+                        // Correct
+                        vibrate(30);
+                        updateScoreAndStreak(true);
+                        button.classList.add('correct');
+                        
+                        // Animate word away
+                        currentFallingWord.el.style.transition = 'transform 0.2s, opacity 0.2s';
+                        currentFallingWord.el.style.transform = `translateX(-50%) scale(1.5)`;
+                        currentFallingWord.el.style.opacity = '0';
+                        
+                        const oldEl = currentFallingWord.el;
+                        currentFallingWord = null; // Stop falling logic for this word
+
+                        setTimeout(() => {
+                            if(oldEl) oldEl.remove();
+                            spawnWord();
+                        }, 250);
+
+                    } else {
+                        // Incorrect
+                        vibrate(100);
+                        updateScoreAndStreak(false);
+                        button.classList.add('incorrect');
+                        
+                        // Show correct one
+                        const correctBtn = optionsGrid.querySelector('[data-correct="true"]');
+                        if (correctBtn) correctBtn.classList.add('correct');
+
+                        lives--;
+                        updateLives();
+                        
+                        if (lives <= 0) {
+                            endGame();
+                        } else {
+                            // Clear word and respawn after delay
+                            const oldEl = currentFallingWord.el;
+                            currentFallingWord = null;
+                            setTimeout(() => {
+                                if(oldEl) oldEl.remove();
+                                spawnWord();
+                            }, 1000);
+                        }
+                    }
+                }
+
+                function gameLoop() {
+                    if (isGameOver) return;
+
+                    if (currentFallingWord) {
+                        currentFallingWord.y += currentFallingWord.speed;
+                        currentFallingWord.el.style.top = `${currentFallingWord.y}px`;
+
+                        // Check collision with water line
+                        // Container height changes on mobile, so we measure dynamically
+                        const limit = container.clientHeight - 15; 
+                        
+                        if (currentFallingWord.y > limit) {
+                            // Missed!
+                            vibrate(200);
+                            updateScoreAndStreak(false);
+                            lives--;
+                            updateLives();
+                            
+                            currentFallingWord.el.remove();
+                            currentFallingWord = null;
+
+                            if (lives <= 0) {
+                                endGame();
+                            } else {
+                                spawnWord();
+                            }
+                        }
+                    } else {
+                        // Start or recover
+                        // If no word is falling, spawn one (unless waiting for timeout)
+                        if (optionsGrid.children.length === 0) spawnWord();
+                    }
+
+                    gameLoopId = requestAnimationFrame(gameLoop);
+                }
+
+                function endGame() {
+                    isGameOver = true;
+                    cancelAnimationFrame(gameLoopId);
+                    finalScoreEl.textContent = score;
+                    const safeTotal = totalWordsSpawned > 0 ? totalWordsSpawned : 1;
+                    addQuizResult(`${originalTitle} (Word Rain)`, Math.floor(score/10), safeTotal);
+                    modal.classList.remove('hidden');
+                }
+
+                // Start
+                spawnWord();
+                gameLoop();
             }
-            // END: PASTE THIS REPLACEMENT FUNCTION
 
             // START: PASTE THIS REPLACEMENT FUNCTION
             function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig) {
@@ -18776,7 +19002,8 @@ if (adminBtn) {
 
                 } catch (error) {
                     console.error("Error saving quiz result via Cloud Function:", error);
-                    alert("Could not save your quiz result. Please check your connection.");
+                    // MODIFIED: Commented out alert to prevent user interruption on game over
+                    // alert("Could not save your quiz result. Please check your connection.");
                 }
             }
 
