@@ -16795,8 +16795,8 @@ if (adminBtn) {
                 const wordPool = getWordsForDifficulty(difficulty);
                 
                 if (gameType === 'flip-cards') {
-                    // ... existing flip card logic ...
-                    const totalPairs = 9; 
+                    // --- FLIP CARD LOGIC ---
+                    const totalPairs = 9; // 3x6 grid = 18 cards = 9 pairs
                     const gridConfig = { cols: 3, maxWidth: "28rem" }; 
                     
                     if (wordPool.length < totalPairs) {
@@ -16804,24 +16804,28 @@ if (adminBtn) {
                         renderGameDifficultySelectView(gameType, gameTitle, gradClass);
                         return;
                     }
+                    // Get 9 random words
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+                    // Start the game with these settings
                     startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs, gridConfig); 
                 
                 } else if (gameType === 'match-columns') {
-                    // ... existing match columns logic ...
-                    const totalPairs = 10; 
+                    // --- MATCH COLUMN LOGIC ---
+                    const totalPairs = 10; // Always 10 questions
                     
                     if (wordPool.length < totalPairs) {
                         alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
                         renderGameDifficultySelectView(gameType, gameTitle, gradClass);
                         return;
                     }
+                    // Get 10 random words
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
+                    // Start the game
                     startMatchColumnsGame(selectedWords, gameTitle, gradClass);
                 
                 } else if (gameType === 'jumbled-word') {
-                    // ... existing jumbled word logic ...
-                    const totalQuestions = 10;
+                    // --- JUMBLED WORD LOGIC ---
+                    const totalQuestions = 10; // 10 words to unscramble
                     
                     if (wordPool.length < totalQuestions) {
                         alert(`Sorry, there are not enough words (min ${totalQuestions}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
@@ -16829,6 +16833,8 @@ if (adminBtn) {
                         return;
                     }
                     const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+                    
+                    // --- THIS IS THE MODIFIED LINE ---
                     startJumbledWordGame(selectedWords, gameTitle, gradClass, difficulty);
                 
                 } else if (gameType === 'word-rain') {
@@ -16846,6 +16852,462 @@ if (adminBtn) {
                     alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
                 }
             }
+            // END: PASTE THIS REPLACEMENT FUNCTION
+
+            // START: PASTE THIS REPLACEMENT FUNCTION
+
+            /**
+
+             * Scrambles a word, handling multi-word phrases.
+
+             * @param {string} word The word to scramble.
+
+             * @returns {string} The scrambled word.
+
+             */
+
+            function scrambleWord(word) {
+
+                let words = word.toUpperCase().split(' '); // e.g., ["RUB", "HANDS"]
+
+                
+
+                // 1. Scramble each word individually
+
+                let scrambledWords = words.map(w => {
+
+                    let chars = w.split('');
+
+                    for (let i = chars.length - 1; i > 0; i--) {
+
+                        const j = Math.floor(Math.random() * (i + 1));
+
+                        [chars[i], chars[j]] = [chars[j], chars[i]];
+
+                    }
+
+                    return chars.join('');
+
+                }); // e.g., ["UBR", "DSANH"]
+
+                
+
+                // 2. Shuffle the order of the scrambled words if there are multiple
+
+                if (scrambledWords.length > 1) {
+
+                    for (let i = scrambledWords.length - 1; i > 0; i--) {
+
+                        const j = Math.floor(Math.random() * (i + 1));
+
+                        [scrambledWords[i], scrambledWords[j]] = [scrambledWords[j], scrambledWords[i]];
+
+                    } // e.g., ["DSANH", "UBR"]
+
+                }
+
+                
+
+                const finalScrambled = scrambledWords.join(' ');
+
+                
+
+                // If the scramble is the same, re-scramble it.
+
+                if (finalScrambled === word.toUpperCase() && word.length > 2) {
+
+                    return scrambleWord(word);
+
+                }
+
+                return finalScrambled;
+
+            }
+
+            // END: PASTE THIS REPLACEMENT FUNCTION
+
+
+
+            // START: PASTE THIS REPLACEMENT FUNCTION
+
+            /**
+
+             * Starts the Jumbled Word game.
+
+             */
+
+            function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty) {
+
+                // 1. Hide navs and show game template
+
+                document.getElementById('top-nav').classList.add('hidden');
+
+                document.getElementById('bottom-nav').classList.add('hidden');
+
+                document.body.style.paddingTop = '0';
+
+                document.body.style.paddingBottom = '0';
+
+
+
+                mainContent.innerHTML = '';
+
+                mainContent.appendChild(document.getElementById('jumbled-word-game-template').content.cloneNode(true));
+
+
+
+                // 2. Get all elements
+
+                const wordDisplay = document.getElementById('jumbled-word-display');
+
+                const clueDisplay = document.getElementById('jumbled-word-clue'); // <-- NEW
+
+                const answerInput = document.getElementById('jumbled-answer-input');
+
+                const feedbackEl = document.getElementById('jumbled-feedback');
+
+                const scoreEl = document.getElementById('game-score');
+
+                const timerEl = document.getElementById('game-timer');
+
+                const skipBtn = document.getElementById('skip-word-btn');
+
+                const submitBtn = document.getElementById('submit-word-btn');
+
+                const hintBtn = document.getElementById('hint-word-btn');
+
+                
+
+                const modal = document.getElementById('jumbled-over-modal');
+
+                const finalScoreEl = document.getElementById('final-score-jumbled');
+
+                const restartBtn = document.getElementById('restart-game-btn-jumbled');
+
+                const gameOverIcon = document.getElementById('jumbled-over-icon');
+
+                const quitBtn = document.getElementById('quit-game-btn');
+
+
+
+                // 3. Setup Quit Button
+
+                const quitGame = () => {
+
+                    clearInterval(timerInterval); // Stop the timer
+
+                    document.getElementById('top-nav').classList.remove('hidden');
+
+                    document.getElementById('bottom-nav').classList.remove('hidden');
+
+                    document.body.style.paddingTop = '56px';
+
+                    document.body.style.paddingBottom = '56px';
+
+                    switchView('gameZone', { forceRender: true });
+
+                };
+
+                quitBtn.addEventListener('click', quitGame);
+
+
+
+                // 4. Initialize game state
+
+                let score = 0;
+
+                let currentQuestionIndex = 0;
+
+                const totalQuestions = selectedWords.length;
+
+                let timerInterval;
+
+                let timeLeft = 30;
+
+                let hintUsed = false;
+
+
+
+                function startTimer() {
+
+                    timeLeft = 30;
+
+                    timerEl.textContent = timeLeft;
+
+                    timerEl.classList.remove('text-red-500');
+
+
+
+                    clearInterval(timerInterval);
+
+                    timerInterval = setInterval(() => {
+
+                        timeLeft--;
+
+                        timerEl.textContent = timeLeft;
+
+                        if (timeLeft <= 5) {
+
+                            timerEl.classList.add('text-red-500');
+
+                        }
+
+                        if (timeLeft <= 0) {
+
+                            clearInterval(timerInterval);
+
+                            handleAnswer(null); // Time's up
+
+                        }
+
+                    }, 1000);
+
+                }
+
+
+
+                function displayQuestion() {
+
+                    if (currentQuestionIndex >= totalQuestions) {
+
+                        displayJumbledResults();
+
+                        return;
+
+                    }
+
+
+
+                    const currentWord = selectedWords[currentQuestionIndex];
+
+                    wordDisplay.textContent = scrambleWord(currentWord.word);
+
+                    
+
+                    // --- START: NEW HINT LOGIC FOR HARD MODE ---
+
+                    if (difficulty === 'hard') {
+
+                        clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
+
+                        clueDisplay.classList.remove('hidden');
+
+                    } else {
+
+                        clueDisplay.classList.add('hidden');
+
+                    }
+
+                    // --- END: NEW HINT LOGIC ---
+
+
+
+                    wordDisplay.classList.remove('celebrate');
+
+                    answerInput.value = '';
+
+                    answerInput.className = "w-full bg-white/90 text-slate-900 placeholder-slate-500 border-2 border-transparent focus:border-pink-500 rounded-lg py-4 px-4 outline-none transition-all text-center text-lg font-bold uppercase";
+
+                    feedbackEl.innerHTML = '';
+
+                    answerInput.disabled = false;
+
+                    submitBtn.disabled = false;
+
+                    skipBtn.disabled = false;
+
+                    
+
+                    hintUsed = false; 
+
+                    hintBtn.disabled = false;
+
+                    
+
+                    answerInput.focus();
+
+                    startTimer();
+
+                }
+
+
+
+                function handleAnswer(userAnswer) {
+
+                    clearInterval(timerInterval);
+
+                    answerInput.disabled = true;
+
+                    submitBtn.disabled = true;
+
+                    skipBtn.disabled = true;
+
+                    hintBtn.disabled = true;
+
+
+
+                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
+
+                    
+
+                    if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
+
+                        // Correct answer
+
+                        vibrate(50);
+
+                        score++;
+
+                        scoreEl.textContent = score;
+
+                        answerInput.classList.add('correct');
+
+                        feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-center">Correct!</p>`;
+
+                    } else if (userAnswer === null) {
+
+                        // Time's up
+
+                        vibrate(20);
+
+                        answerInput.classList.add('incorrect');
+
+                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Time's up! Answer: ${correctAnswer}</p>`;
+
+                    } else {
+
+                        // Wrong answer
+
+                        vibrate(20);
+
+                        answerInput.classList.add('incorrect');
+
+                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Wrong! Answer: ${correctAnswer}</p>`;
+
+                    }
+
+
+
+                    // Move to the next question
+
+                    setTimeout(() => {
+
+                        currentQuestionIndex++;
+
+                        displayQuestion();
+
+                    }, 2000);
+
+                }
+
+
+
+                function displayJumbledResults() {
+
+                    addQuizResult(`${originalTitle} (Jumbled)`, score, totalQuestions);
+
+                    finalScoreEl.textContent = `${score} / ${totalQuestions}`;
+
+                    
+
+                    if(score / totalQuestions < 0.5) {
+
+                        gameOverIcon.textContent = '😅';
+
+                    } else {
+
+                        gameOverIcon.textContent = '🎉';
+
+                        showConfetti();
+
+                    }
+
+                    
+
+                    modal.classList.remove('hidden');
+
+                    quitBtn.classList.add('hidden');
+
+                }
+
+
+
+                // Attach event listeners
+
+                submitBtn.addEventListener('click', () => handleAnswer(answerInput.value));
+
+                answerInput.addEventListener('keydown', (e) => {
+
+                    if (e.key === 'Enter') {
+
+                        handleAnswer(answerInput.value);
+
+                    }
+
+                });
+
+                skipBtn.addEventListener('click', () => handleAnswer(null));
+
+                
+
+                hintBtn.addEventListener('click', () => {
+
+                    if (hintUsed) return;
+
+                    vibrate(20);
+
+                    hintUsed = true;
+
+                    hintBtn.disabled = true;
+
+
+
+                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
+
+                    const userAnswer = answerInput.value.toUpperCase();
+
+                    
+
+                    // Find the first incorrect character
+
+                    for (let i = 0; i < correctAnswer.length; i++) {
+
+                        if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
+
+                            // Reveal the correct part of the answer
+
+                            answerInput.value = correctAnswer.slice(0, i + 1);
+
+                            answerInput.focus();
+
+                            return; // Give only one letter hint
+
+                        }
+
+                    }
+
+                });
+
+                
+
+                restartBtn.onclick = () => {
+
+                    modal.classList.add('hidden');
+
+                    // Relaunch the game with the same set of words but re-shuffled
+
+                    startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty); // Pass difficulty
+
+                };
+
+                
+
+                // Start the first question
+
+                displayQuestion();
+
+            }
+
             // END: PASTE THIS REPLACEMENT FUNCTION
 
             /**
