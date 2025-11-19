@@ -939,6 +939,157 @@
 }
 /* --- END: Word Rain Game Styles --- */
 
+/* --- LEARNING PATH & QUIZ STYLES (UPDATED) --- */
+
+/* Hide Scrollbars */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* --- FIXED: Path Layout with Custom Top Bar --- */
+.path-container {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Increased padding to clear the new fixed header */
+    padding-top: 9rem;   
+    padding-bottom: 8rem;
+}
+
+.path-line {
+    position: absolute;
+    /* Line starts below the header */
+    top: 9rem;
+    bottom: 6rem;
+    left: 50%;
+    width: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(-50%);
+    z-index: 0;
+    border-radius: 99px;
+}
+
+.path-line-progress {
+    position: absolute;
+    top: 9rem;
+    left: 50%;
+    width: 6px;
+    background: linear-gradient(to bottom, #ec4899, #8b5cf6);
+    transform: translateX(-50%);
+    z-index: 0;
+    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+    border-radius: 99px;
+}
+
+/* Zig-Zag Node Positioning */
+.path-node {
+    position: relative;
+    z-index: 10;
+    margin-bottom: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Shift Odd/Even Nodes for Snake Effect */
+.path-node:nth-child(odd) {
+    transform: translateX(-25%); /* Move Left */
+}
+
+.path-node:nth-child(even) {
+    transform: translateX(25%); /* Move Right */
+}
+
+/* Circle Styles */
+.node-circle {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 4px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 20; /* Ensure circle is above connectors if we add curves later */
+}
+
+.path-node.unlocked .node-circle {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    border-color: #ffffff;
+    color: #ffffff;
+    cursor: pointer;
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(99, 102, 241, 0.6);
+}
+
+.path-node.unlocked:active .node-circle { transform: scale(0.95); }
+.path-node.completed .node-circle { background: linear-gradient(135deg, #10b981, #059669); border-color: #facc15; }
+
+/* Stars */
+.node-stars {
+    display: flex;
+    gap: 4px;
+    position: absolute;
+    top: -12px;
+    background: #0f172a;
+    padding: 4px 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    z-index: 25;
+}
+.star-icon { width: 14px; height: 14px; fill: #334155; }
+.star-icon.earned { fill: #facc15; filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.8)); }
+
+/* Labels */
+.node-label {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-top: 12px;
+    text-align: center;
+    max-width: 160px; /* Smaller width to fit zig-zag */
+    transition: all 0.3s ease;
+}
+.path-node.unlocked .node-label { color: #fff; background: #4f46e5; border-color: #4f46e5; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); }
+
+/* Quiz Buttons (Keep existing styles) */
+.path-quiz-option { white-space: normal !important; word-wrap: break-word; overflow-wrap: break-word; min-height: 4.5rem; position: relative; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: white; font-weight: 700; font-size: 1.1rem; padding: 1rem 1.5rem; border-radius: 1rem; transition: all 0.15s ease; }
+.path-quiz-option:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
+.path-quiz-option.correct { background: #22c55e !important; border-color: #22c55e !important; box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
+.path-quiz-option.incorrect { background: #ef4444 !important; border-color: #ef4444 !important; opacity: 0.8; }
+
+/* --- HIDE SCROLLBARS BUT ALLOW SCROLLING --- */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* --- TEXT WRAPPING FIX FOR BUTTONS --- */
+.path-quiz-option {
+    white-space: normal !important; /* Force text to wrap */
+    word-wrap: break-word; /* Break long words if necessary */
+    overflow-wrap: break-word;
+    min-height: 4rem; /* Ensure minimum height for touch targets */
+}
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -1170,46 +1321,46 @@
     
     <!-- START: PASTE THIS NEW TEMPLATE CODE HERE -->
     <template id="game-zone-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white">Game Zone</h1>
-                <p class="text-slate-300 mt-1">Learn and play with fun games!</p>
-            </div>
+    <div class="pop-in p-4 max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white">Game Zone</h1>
+            <p class="text-slate-300 mt-1">Learn and play with fun games!</p>
+        </div>
 
-            <!-- Learning Path Section -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-white mb-4">Learning Path</h2>
-                <div class="glass-ui p-6 rounded-xl text-center">
-                    <p class="text-slate-300">A new, level-based learning journey is coming soon!</p>
-                    <p class="text-5xl mt-4">🗺️</p>
-                </div>
-            </div>
-
-            <!-- Game Arcade Section -->
-            <div class="mt-8">
-                <h2 class="text-2xl font-bold text-white mb-4">Game Arcade</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-game="match-columns">
-                        <h3 class="font-bold text-lg text-white">Match the Columns</h3>
-                        <p class="text-sm text-slate-200">Connect the word with its meaning.</p>
-                    </button>
-                    <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-game="flip-cards">
-                        <h3 class="font-bold text-lg text-white">Flip Card Memory</h3>
-                        <p class="text-sm text-slate-200">Find the matching pairs.</p>
-                    </button>
-                    <!-- REPLACED CROSSWORD WITH WORD RAIN -->
-                    <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="word-rain">
-                        <h3 class="font-bold text-lg text-white">Word Rain</h3>
-                        <p class="text-sm text-slate-200">Tap the meaning before the word drops!</p>
-                    </button>
-                    <button class="mode-card grad-4 w-full p-4 rounded-xl text-left" data-game="jumbled-word">
-                        <h3 class="font-bold text-lg text-white">Jumbled Word</h3>
-                        <p class="text-sm text-slate-200">Unscramble the letters.</p>
-                    </button>
-                </div>
+        <!-- Learning Path Section (Updated) -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-white mb-4">Learning Path</h2>
+            <div id="open-learning-path" class="glass-ui p-6 rounded-xl text-center cursor-pointer hover:bg-white/10 transition-colors transform active:scale-95">
+                <p class="text-5xl mb-2">🗺️</p>
+                <h3 class="font-bold text-xl text-white">Start Your Journey</h3>
+                <p class="text-sm text-slate-300 mt-1">Master vocabulary level by level.</p>
             </div>
         </div>
-    </template>
+
+        <!-- Game Arcade Section -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-white mb-4">Game Arcade</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-game="match-columns">
+                    <h3 class="font-bold text-lg text-white">Match the Columns</h3>
+                    <p class="text-sm text-slate-200">Connect the word with its meaning.</p>
+                </button>
+                <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-game="flip-cards">
+                    <h3 class="font-bold text-lg text-white">Flip Card Memory</h3>
+                    <p class="text-sm text-slate-200">Find the matching pairs.</p>
+                </button>
+                <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="word-rain">
+                    <h3 class="font-bold text-lg text-white">Word Rain</h3>
+                    <p class="text-sm text-slate-200">Tap the meaning before the word drops!</p>
+                </button>
+                <button class="mode-card grad-4 w-full p-4 rounded-xl text-left" data-game="jumbled-word">
+                    <h3 class="font-bold text-lg text-white">Jumbled Word</h3>
+                    <p class="text-sm text-slate-200">Unscramble the letters.</p>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
     <!-- END: PASTE THIS NEW TEMPLATE CODE HERE -->
 
     <!-- START: PASTE THIS NEW TEMPLATE HERE -->
@@ -1583,6 +1734,113 @@
             <button id="submit-join-challenge" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Join Quiz</button>
         </div>
     </div>
+
+    <!-- REPLACEMENT: Learning Path View -->
+<template id="learning-path-template">
+    <div class="pop-in w-full pb-24">
+        <!-- Custom Fixed Top Bar -->
+        <div class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 shadow-2xl transition-all duration-300">
+            <div class="max-w-md mx-auto">
+                
+                <!-- Header Row: Back Button + Title + Percentage -->
+                <div class="flex items-center gap-3 mb-3">
+                    <button id="exit-learning-path" class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors border border-white/5" aria-label="Exit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    
+                    <div class="flex-grow flex justify-between items-baseline">
+                        <h1 class="text-xl font-black text-white tracking-tight">Learning Path</h1>
+                        <span class="text-amber-400 font-bold text-xs font-mono bg-amber-400/10 px-2 py-1 rounded border border-amber-400/20" id="lp-total-progress">0%</span>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 rounded-full h-2 shadow-inner border border-white/5">
+                    <div id="lp-progress-bar" class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(236,72,153,0.5)]" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Container -->
+        <div id="learning-path-container" class="path-container">
+            <div class="path-line"></div>
+            <div id="path-line-fill" class="path-line-progress" style="height: 0%"></div>
+        </div>
+    </div>
+</template>
+
+<!-- REPLACEMENT Template for Path Quiz UI -->
+<template id="path-quiz-template">
+    <div class="fixed inset-0 z-[9999] flex flex-col h-full w-full bg-slate-900 text-white font-sans overflow-hidden">
+        <!-- Background FX -->
+        <div class="absolute top-[-10%] left-[-10%] w-80 h-80 bg-pink-600/20 rounded-full blur-[80px] pointer-events-none animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-80 h-80 bg-indigo-600/20 rounded-full blur-[80px] pointer-events-none animate-pulse" style="animation-delay: 1s;"></div>
+
+        <!-- TOP BAR -->
+        <div class="relative z-50 flex justify-between items-center p-4 pt-6 shrink-0">
+            <!-- Timer (Left) -->
+            <div class="flex items-center gap-3 bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-amber-400"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span id="path-quiz-timer" class="font-mono font-bold text-xl text-white">--</span>
+            </div>
+
+            <!-- Quit Button (Right) -->
+            <button id="path-quiz-quit" class="p-3 bg-slate-800/80 backdrop-blur-md rounded-full text-slate-400 hover:text-white hover:bg-red-500/20 border border-white/10 transition-all active:scale-90" aria-label="Quit Quiz">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <!-- MIDDLE: Question & Options (Scrollable for small phones) -->
+        <div class="relative z-10 flex-grow flex flex-col items-center p-4 w-full overflow-y-auto no-scrollbar">
+            <div class="w-full max-w-xl mx-auto flex flex-col justify-center min-h-full">
+                
+                <!-- Question -->
+                <div class="text-center mb-8 mt-4">
+                    <p class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-3 opacity-80">Question</p>
+                    <h2 id="path-quiz-question" class="text-3xl sm:text-4xl font-black leading-tight drop-shadow-2xl px-2 break-words">
+                        ...
+                    </h2>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="path-quiz-options" class="grid grid-cols-1 gap-3 w-full pb-4">
+                    <!-- Buttons injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: Progress Bar -->
+        <div class="relative z-20 w-full bg-slate-900/80 backdrop-blur-md border-t border-white/5 shrink-0">
+            <div class="w-full h-4 bg-slate-800">
+                <div id="path-quiz-progress" class="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all duration-500 ease-out" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Level Options Modal -->
+<div id="level-options-modal" class="hidden fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+    <div class="glass-ui p-6 rounded-2xl w-full max-w-sm pop-in text-center relative">
+        <button id="close-level-options" class="absolute top-3 right-3 text-slate-400 hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        <h2 id="level-options-title" class="text-xl font-bold text-white mb-1">Title</h2>
+        <p class="text-slate-400 text-xs mb-6">Pass with 90% to unlock next level.</p>
+        <div class="space-y-3">
+            <button id="level-study-btn" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl">📖 Study Guide</button>
+            <button id="level-quiz-btn" class="w-full bg-pink-600 text-white font-bold py-3 rounded-xl">⚡ Start Quiz</button>
+        </div>
+    </div>
+</div>
+
+<!-- Level Result Modal -->
+<div id="level-result-modal" class="hidden fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="glass-ui p-6 rounded-2xl text-center pop-in max-w-sm w-full border border-white/10">
+        <h2 id="level-result-title" class="text-2xl font-bold text-white mb-2">Level Complete!</h2>
+        <p id="level-result-msg" class="text-slate-300 mb-4">You mastered this topic.</p>
+        <div class="text-4xl font-bold text-white mb-6" id="level-score-display">95%</div>
+        <button id="level-next-btn" class="w-full grad-nav text-white font-bold py-3 rounded-xl mb-3">Continue</button>
+        <button id="level-retry-btn" class="w-full bg-white/10 text-white font-bold py-3 rounded-xl">Retry</button>
+    </div>
+</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -16340,6 +16598,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                     case 'home': renderHomeView(); break;
                     case 'favorites': renderFavoritesView(); break;
                     case 'gameZone': renderGameZoneView(); break;
+                    case 'learningPath': renderLearningPath(); break;
                     case 'gameDifficultySelect': renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); break;
                     case 'quizHub': renderQuizHubView(); break;
                     case 'profile': displayProfileModal(); break;
@@ -16683,29 +16942,27 @@ if (adminBtn) {
 
         // START: REPLACE the old renderGameZoneView with this one
             function renderGameZoneView() {
-                updateTopNav({ title: "Game Zone", showBack: false, showActions: true });
-                const template = document.getElementById('game-zone-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                
-                // Add click listeners for the game buttons
-                mainContent.querySelectorAll('.mode-card[data-game]').forEach(card => {
-                    card.addEventListener('click', () => {
-                        vibrate();
-                        const gameType = card.dataset.game;
-                        const gameTitle = card.querySelector('h3').textContent;
-                        const gradClass = card.classList[1]; // e.g., 'grad-2'
+    updateTopNav({ title: "Game Zone", showBack: false, showActions: true });
+    const template = document.getElementById('game-zone-template');
+    mainContent.appendChild(template.content.cloneNode(true));
+    
+    document.getElementById('open-learning-path').addEventListener('click', () => {
+        vibrate();
+        switchView('learningPath', { isSubView: true, from: { view: 'gameZone' } });
+    });
 
-                        // NEW FLOW: Switch to the difficulty selection view
-                        switchView('gameDifficultySelect', {
-                            isSubView: true, 
-                            from: { view: 'gameZone' }, // Set the 'back' button destination
-                            gameType, 
-                            gameTitle, 
-                            gradClass 
-                        });
-                    });
-                });
-            }
+    mainContent.querySelectorAll('.mode-card[data-game]').forEach(card => {
+        card.addEventListener('click', () => {
+            vibrate();
+            switchView('gameDifficultySelect', {
+                isSubView: true, from: { view: 'gameZone' },
+                gameType: card.dataset.game,
+                gameTitle: card.querySelector('h3').textContent,
+                gradClass: card.classList[1]
+            });
+        });
+    });
+}
             // END: REPLACE the old renderGameZoneView
 
         // START: PASTE THIS ENTIRE NEW FUNCTION
@@ -18970,209 +19227,262 @@ if (adminBtn) {
             }
             
             function startQuiz(words, quizType, quizLength, quizId, listContext, savedState = null, challengeOptions = { isChallenge: false, playerNum: 'player1' }) {
-                let score = savedState?.score || 0;
-                let currentQuestionIndex = savedState?.currentQuestionIndex || 0;
-                const wrongAnswers = savedState?.wrongAnswers || [];
-                const quizzableWords = words.filter(w => !w.type);
-                const originalTitle = listContext.title;
-                const quizWords = savedState?.questions || (quizLength === 'short' ? [...quizzableWords].sort(() => 0.5 - Math.random()).slice(0, 10) : [...quizzableWords].sort(() => 0.5 - Math.random()));
-                const totalQuestions = quizWords.length;
-                const isOneWordSub = originalTitle.includes('One Word Substitution');
-                const isAntonymList = originalTitle === 'Antonyms';
+    
+    // Hide main navs for standard challenges (Path Mode has its own overlay)
+    if (challengeOptions.isChallenge) {
+        document.getElementById('top-nav').classList.add('hidden');
+        document.getElementById('bottom-nav').classList.add('hidden');
+    }
 
-                let timerInterval; // For the 15-second timer
-                let timeLeft = 15;
+    let score = savedState?.score || 0;
+    let currentQuestionIndex = savedState?.currentQuestionIndex || 0;
+    const wrongAnswers = savedState?.wrongAnswers || [];
+    const quizzableWords = words.filter(w => !w.type);
+    const originalTitle = listContext.title;
+    
+    const quizWords = savedState?.questions || (quizLength === 'short' ? [...quizzableWords].sort(() => 0.5 - Math.random()).slice(0, 10) : [...quizzableWords].sort(() => 0.5 - Math.random()));
+    const totalQuestions = quizWords.length;
+    const isOneWordSub = originalTitle.includes('One Word Substitution');
+    const isAntonymList = originalTitle.includes('Antonyms');
 
-                function displayQuestion() {
-                    if (currentQuestionIndex >= totalQuestions) {
-                        // QUIZ IS OVER
-                        clearInterval(timerInterval); // Stop any running timer
-                        if (challengeOptions.isChallenge) {
-                            handleChallengeFinish(); // This is the correct function to call
-                        } else {
-                            displayResults(wrongAnswers); // This is for solo quizzes
-                        }
-                        return; // Stop the function
-                    }
+    let timerInterval;
+    let timeLeft;
+    let pathQuizContainer = null; 
 
-                    const questionItem = quizWords[currentQuestionIndex];
-                    let questionText, correctAnswer, options = [];
-                    if (quizType === 'meaning-to-word') {
-                        questionText = isAntonymList ? `What word is the antonym of "${questionItem.antonym}"?` : questionItem.meaning;
-                        correctAnswer = questionItem.word;
-                        options.push(correctAnswer);
-                        while (options.length < 4) { const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; if (randomItem.word && !options.includes(randomItem.word)) options.push(randomItem.word); }
-                    } else {
-                        questionText = isAntonymList ? `What is the antonym of "${questionItem.word}"?` : (isOneWordSub ? questionItem.meaning : questionItem.word);
-                        correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : (questionItem.synonyms ? `Synonyms: ${questionItem.synonyms.join(', ')}` : questionItem.meaning));
-                        options.push(correctAnswer);
-                        while (options.length < 4) { const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; let randomAnswer = isAntonymList ? randomItem.antonym : (isOneWordSub ? randomItem.word : randomItem.meaning); if (randomAnswer && !options.includes(randomAnswer)) options.push(randomAnswer); }
-                    }
-                    options.sort(() => 0.5 - Math.random());
-                    mainContent.innerHTML = '';
-                    mainContent.appendChild(document.getElementById('quiz-view-template').content.cloneNode(true));
-                    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
-                    
-                    let timerHTML = '';
-                    if (challengeOptions.isChallenge) {
-                        timerHTML = `<div id="quiz-timer" class="text-2xl font-bold text-amber-400">15</div>`;
-                    }
+    // --- Cleanup Function ---
+    function cleanupQuizUI() {
+        clearInterval(timerInterval);
+        
+        // Restore Main Navs
+        const tNav = document.getElementById('top-nav');
+        const bNav = document.getElementById('bottom-nav');
+        if(tNav) tNav.classList.remove('hidden');
+        if(bNav) bNav.classList.remove('hidden');
+        
+        // Remove Overlay
+        if (pathQuizContainer) {
+            pathQuizContainer.remove();
+            pathQuizContainer = null;
+        }
+    }
 
-                    mainContent.querySelector('#quiz-content-container').innerHTML = `
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-white">${challengeOptions.isChallenge ? 'Challenge!' : 'Quiz Time!'}</h2>
-                            ${timerHTML}
-                            <p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p>
-                        </div>
-                        <p class="text-2xl font-bold mb-6 text-center text-white">${questionText}</p>
-                        <div id="quiz-options" class="grid grid-cols-1 gap-4">${options.map(o => `<button class="quiz-option p-4 rounded-xl text-left">${o}</button>`).join('')}</div>`;
-                    
-                    mainContent.querySelectorAll('.quiz-option').forEach(button => button.addEventListener('click', e => handleAnswer(button.textContent, correctAnswer, e.target)));
-
-                    if (challengeOptions.isChallenge) {
-                        startQuestionTimer(correctAnswer);
-                    }
-                }
-                
-                function startQuestionTimer(correctAnswer) {
-                    timeLeft = 15;
-                    const timerElement = document.getElementById('quiz-timer');
-                    timerElement.textContent = timeLeft;
-
-                    clearInterval(timerInterval); // Clear any existing timer
-                    timerInterval = setInterval(() => {
-                        timeLeft--;
-                        timerElement.textContent = timeLeft;
-                        if (timeLeft <= 0) {
-                            handleAnswer(null, correctAnswer, null); // Time's up
-                        }
-                    }, 1000);
-                }
-
-                function handleAnswer(selectedAnswer, correctAnswer, button) {
-                    clearInterval(timerInterval); // Stop the timer
-                    
-                    const allOptions = mainContent.querySelectorAll('.quiz-option');
-                    allOptions.forEach(btn => btn.disabled = true);
-                    
-                    if (selectedAnswer === correctAnswer) { 
-                        if(button) button.classList.add('correct', 'celebrate');
-                        score++; 
-                    } else { 
-                        if(button) button.classList.add('incorrect');
-                        if (!challengeOptions.isChallenge) wrongAnswers.push(quizWords[currentQuestionIndex]);
-                        allOptions.forEach(btn => { if (btn.textContent === correctAnswer) btn.classList.add('correct'); });
-                    }
-                    
-                    setTimeout(() => { 
-                        currentQuestionIndex++; 
-                        if (!challengeOptions.isChallenge) {
-                            saveQuizState(quizId, { score, currentQuestionIndex, questions: quizWords, wrongAnswers });
-                        }
-                        displayQuestion(); 
-                    }, 1500);
-                }
-
-                async function handleChallengeFinish() {
-                    // Quiz is over, show a "waiting" screen
-                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
-                        <h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2>
-                        <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
-                        <p class="text-slate-400 text-sm">Saving your score and waiting for other players...</p>
-                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    </div>`;
-
-                    try {
-                        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeOptions.challengeId);
-                        
-                        // --- NEW LOGIC: Update score in the players array ---
-                        
-                        // 1. Get the current document data
-                        const docSnap = await getDoc(challengeDocRef);
-                        if (!docSnap.exists()) {
-                            throw new Error("Challenge document not found!");
-                        }
-                        
-                        let data = docSnap.data();
-                        let updatedPlayers = [...data.players]; // Create a new array
-                        
-                        // 2. Find this player and update their score
-                        const playerIndex = updatedPlayers.findIndex(p => p.id === challengeOptions.playerId);
-                        if (playerIndex > -1) {
-                            updatedPlayers[playerIndex].score = score;
-                        }
-
-                        // 3. Check if all players are finished
-                        const allFinished = updatedPlayers.every(p => p.score !== null);
-                        
-                        // 4. Update the document in Firestore
-                        if (allFinished) {
-                            // This is the last player to finish. End the game.
-                            await updateDoc(challengeDocRef, {
-                                players: updatedPlayers,
-                                status: "finished"
-                            });
-                        } else {
-                            // Other players are still playing. Just save this score.
-                            await updateDoc(challengeDocRef, {
-                                players: updatedPlayers
-                            });
-                        }
-                        
-                        // 5. Now that score is saved, start listening for the 'finished' status
-                        listenForChallengeResults(challengeOptions.challengeId);
-
-                    } catch (e) {
-                        console.error("Error saving challenge score: ", e);
-                        mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not save your score. Please try again.</p>`;
-                    }
-                }
-
-                function listenForChallengeResults(challengeId) {
-                    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
-                    const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
-                        const data = docSnap.data();
-                        // Wait until status is 'finished'
-                        if (data && data.status === 'finished') {
-                            unsubscribe(); // Stop listening
-                            showChallengeResults(challengeId, data);
-                        }
-                    });
-                }
-                
-                function displayResults(mistakes) {
-                    addQuizResult(`${originalTitle} Quiz`, score, totalQuestions);
-                    clearQuizState(quizId); 
-                    mainContent.classList.remove('h-full');
-                    
-                    // --- START: NEW CONFETTI LOGIC ---
-                    let resultIcon = '';
-                    if (score === totalQuestions) {
-                        resultIcon = `<div class="text-7xl mb-4 animate-bounce">🎉</div>`;
-                        showConfetti(); // Trigger confetti!
-                    }
-                    // --- END: NEW CONFETTI LOGIC ---
-
-                    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4">
-                        ${resultIcon}
-                        <h2 class="text-2xl font-bold text-white mb-4">Quiz Complete!</h2>
-                        <p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p>
-                        <div class="flex flex-wrap justify-center gap-4">
-                            <button id="restart-quiz" class="font-bold py-2 px-4 rounded-lg transition-transform hover:scale-105 bg-pink-600 hover:bg-pink-700 text-white">Restart</button>
-                            <button id="review-mistakes" class="font-bold py-2 px-4 rounded-lg transition-transform hover:scale-105 bg-amber-500 hover:bg-amber-600 text-white disabled:opacity-50" ${mistakes.length === 0 ? 'disabled' : ''}>Review Mistakes</button>
-                        </div>
-                    </div>`;
-                    
-                    document.getElementById('restart-quiz').onclick = () => originalTitle.includes('Quiz') ? switchView('quizHub', { forceRender: true }) : showQuizOptions(listContext);
-                    const reviewBtn = document.getElementById('review-mistakes');
-                    if (reviewBtn && !reviewBtn.disabled) {
-                        reviewBtn.onclick = () => renderWords(`Review: ${listContext.title}`, mistakes, 'grad-6', { ...listContext.options, isReview: true });
-                    }
-                }
-
-                // Initial call to start the quiz
-                displayQuestion();
+    function displayQuestion() {
+        if (currentQuestionIndex >= totalQuestions) {
+            cleanupQuizUI();
+            
+            if (challengeOptions && challengeOptions.isPathMode) {
+                handlePathQuizResult(score, totalQuestions, challengeOptions.levelIndex);
+                return;
             }
+            if (challengeOptions.isChallenge) {
+                handleChallengeFinish(); 
+            } else {
+                displayResults(wrongAnswers); 
+            }
+            return;
+        }
+
+        const questionItem = quizWords[currentQuestionIndex];
+        let questionText, correctAnswer, options = [];
+
+        let currentMode = quizType;
+        if (quizType === 'mixed') {
+            currentMode = Math.random() < 0.5 ? 'word-to-meaning' : 'meaning-to-word';
+        }
+
+        if (currentMode === 'meaning-to-word') {
+            questionText = isAntonymList ? `Antonym for "${questionItem.antonym}"` : questionItem.meaning;
+            correctAnswer = questionItem.word;
+            options.push(correctAnswer);
+            while (options.length < (challengeOptions.isPathMode ? 2 : 4)) { 
+                const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; 
+                if (randomItem.word && !options.includes(randomItem.word)) options.push(randomItem.word); 
+            }
+        } else {
+            questionText = isAntonymList ? `Antonym for "${questionItem.word}"` : (isOneWordSub ? questionItem.meaning : questionItem.word);
+            correctAnswer = isAntonymList ? questionItem.antonym : (isOneWordSub ? questionItem.word : (questionItem.synonyms ? `Synonyms: ${questionItem.synonyms.join(', ')}` : questionItem.meaning));
+            options.push(correctAnswer);
+            while (options.length < (challengeOptions.isPathMode ? 2 : 4)) { 
+                const randomItem = quizzableWords[Math.floor(Math.random() * quizzableWords.length)]; 
+                let randomAnswer = isAntonymList ? randomItem.antonym : (isOneWordSub ? randomItem.word : randomItem.meaning); 
+                if (randomAnswer && !options.includes(randomAnswer)) options.push(randomAnswer); 
+            }
+        }
+
+        options.sort(() => 0.5 - Math.random());
+        
+        // --- RENDER UI ---
+        if (challengeOptions.isPathMode) {
+            // *** PATH QUIZ (FULLSCREEN OVERLAY) ***
+            if (!pathQuizContainer) {
+                const template = document.getElementById('path-quiz-template');
+                if (!template) { alert("Error: Quiz template missing."); return; }
+                document.body.appendChild(template.content.cloneNode(true));
+                pathQuizContainer = document.body.lastElementChild;
+                
+                // FIX: Instant Quit (No Confirmation)
+                const quitBtn = pathQuizContainer.querySelector('#path-quiz-quit');
+                if(quitBtn) {
+                    const newQuitBtn = quitBtn.cloneNode(true);
+                    quitBtn.parentNode.replaceChild(newQuitBtn, quitBtn);
+                    
+                    newQuitBtn.onclick = (e) => {
+                        e.preventDefault();
+                        cleanupQuizUI(); // Instantly close
+                    };
+                    newQuitBtn.ontouchstart = (e) => {
+                         e.stopPropagation(); // Fix for mobile touch
+                    };
+                }
+            }
+            
+            // Update Elements
+            pathQuizContainer.querySelector('#path-quiz-question').textContent = questionText;
+            
+            // Smooth Progress Bar
+            const progressWidth = ((currentQuestionIndex) / totalQuestions) * 100;
+            pathQuizContainer.querySelector('#path-quiz-progress').style.width = `${progressWidth}%`;
+            
+            const optionsContainer = pathQuizContainer.querySelector('#path-quiz-options');
+            optionsContainer.innerHTML = options.map(o => `<button class="path-quiz-option text-left">${o}</button>`).join('');
+            
+            optionsContainer.querySelectorAll('button').forEach(btn => 
+                btn.addEventListener('click', e => handleAnswer(btn.textContent, correctAnswer, e.target))
+            );
+
+        } else {
+            // *** STANDARD QUIZ ***
+            mainContent.innerHTML = '';
+            mainContent.appendChild(document.getElementById('quiz-view-template').content.cloneNode(true));
+            mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
+            
+            let timerHTML = '';
+            if (challengeOptions.isChallenge) {
+                const duration = challengeOptions.timerDuration || 15;
+                timerHTML = `<div id="quiz-timer" class="text-2xl font-bold text-amber-400">${duration}</div>`;
+            }
+
+            mainContent.querySelector('#quiz-content-container').innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-white">${challengeOptions.isChallenge ? 'Challenge!' : 'Quiz Time!'}</h2>
+                    ${timerHTML}
+                    <p class="text-gray-300">${currentQuestionIndex + 1} / ${totalQuestions}</p>
+                </div>
+                <p class="text-2xl font-bold mb-6 text-center text-white">${questionText}</p>
+                <div id="quiz-options" class="grid grid-cols-1 gap-4">${options.map(o => `<button class="quiz-option p-4 rounded-xl text-left">${o}</button>`).join('')}</div>`;
+            
+            mainContent.querySelectorAll('.quiz-option').forEach(button => 
+                button.addEventListener('click', e => handleAnswer(button.textContent, correctAnswer, e.target))
+            );
+        }
+
+        if (challengeOptions.isChallenge || challengeOptions.isPathMode) {
+            startQuestionTimer(correctAnswer, challengeOptions.timerDuration || 15, challengeOptions.isPathMode);
+        }
+    }
+    
+    function startQuestionTimer(correctAnswer, duration, isPathMode) {
+        timeLeft = duration;
+        const timerId = isPathMode ? '#path-quiz-timer' : '#quiz-timer';
+        const root = (isPathMode && pathQuizContainer) ? pathQuizContainer : document;
+        const timerElement = root.querySelector(timerId);
+        
+        if(timerElement) {
+            timerElement.textContent = timeLeft;
+            timerElement.classList.remove('text-red-500', 'animate-pulse');
+        }
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if(timerElement) {
+                timerElement.textContent = timeLeft;
+                if (timeLeft <= 5) timerElement.classList.add('text-red-500', 'animate-pulse');
+            }
+            if (timeLeft <= 0) {
+                handleAnswer(null, correctAnswer, null);
+            }
+        }, 1000);
+    }
+
+    function handleAnswer(selectedAnswer, correctAnswer, button) {
+        clearInterval(timerInterval);
+        
+        const root = (challengeOptions.isPathMode && pathQuizContainer) ? pathQuizContainer : document;
+        const optionClass = challengeOptions.isPathMode ? '.path-quiz-option' : '.quiz-option';
+        const allOptions = root.querySelectorAll(optionClass);
+        
+        allOptions.forEach(btn => btn.disabled = true);
+        
+        if (selectedAnswer === correctAnswer) { 
+            if(button) button.classList.add('correct', 'celebrate');
+            score++; 
+            vibrate(50);
+        } else { 
+            if(button) button.classList.add('incorrect', 'shake');
+            vibrate(200);
+            if (!challengeOptions.isChallenge && !challengeOptions.isPathMode) wrongAnswers.push(quizWords[currentQuestionIndex]);
+            allOptions.forEach(btn => { if (btn.textContent === correctAnswer) btn.classList.add('correct'); });
+        }
+        
+        setTimeout(() => { 
+            currentQuestionIndex++; 
+            
+            // Update progress immediately for smoothness
+            if (challengeOptions.isPathMode && pathQuizContainer) {
+                const progressEl = pathQuizContainer.querySelector('#path-quiz-progress');
+                if(progressEl) {
+                    const progressWidth = ((currentQuestionIndex) / totalQuestions) * 100;
+                    progressEl.style.width = `${progressWidth}%`;
+                }
+            }
+
+            if (!challengeOptions.isChallenge && !challengeOptions.isPathMode) {
+                saveQuizState(quizId, { score, currentQuestionIndex, questions: quizWords, wrongAnswers });
+            }
+            displayQuestion(); 
+        }, 1000);
+    }
+
+    async function handleChallengeFinish() {
+        mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto"><h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2><p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p><p class="text-slate-400 text-sm">Saving your score and waiting for other players...</p><svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>`;
+        try {
+            const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeOptions.challengeId);
+            const docSnap = await getDoc(challengeDocRef);
+            if (!docSnap.exists()) throw new Error("Challenge document not found!");
+            let data = docSnap.data();
+            let updatedPlayers = [...data.players];
+            const playerIndex = updatedPlayers.findIndex(p => p.id === challengeOptions.playerId);
+            if (playerIndex > -1) updatedPlayers[playerIndex].score = score;
+            const allFinished = updatedPlayers.every(p => p.score !== null);
+            if (allFinished) { await updateDoc(challengeDocRef, { players: updatedPlayers, status: "finished" }); } 
+            else { await updateDoc(challengeDocRef, { players: updatedPlayers }); }
+            listenForChallengeResults(challengeOptions.challengeId);
+        } catch (e) { console.error("Error saving challenge score: ", e); mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not save your score. Please try again.</p>`; }
+    }
+
+    function listenForChallengeResults(challengeId) {
+        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
+        const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
+            const data = docSnap.data();
+            if (data && data.status === 'finished') { unsubscribe(); showChallengeResults(challengeId, data); }
+        });
+    }
+    
+    function displayResults(mistakes) {
+        addQuizResult(`${originalTitle} Quiz`, score, totalQuestions);
+        clearQuizState(quizId); 
+        mainContent.classList.remove('h-full');
+        let resultIcon = '';
+        if (score === totalQuestions) { resultIcon = `<div class="text-7xl mb-4 animate-bounce">🎉</div>`; showConfetti(); }
+        mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4">${resultIcon}<h2 class="text-2xl font-bold text-white mb-4">Quiz Complete!</h2><p class="text-xl mb-6 text-gray-200">You scored ${score} out of ${totalQuestions}!</p><div class="flex flex-wrap justify-center gap-4"><button id="restart-quiz" class="font-bold py-2 px-4 rounded-lg transition-transform hover:scale-105 bg-pink-600 hover:bg-pink-700 text-white">Restart</button><button id="review-mistakes" class="font-bold py-2 px-4 rounded-lg transition-transform hover:scale-105 bg-amber-500 hover:bg-amber-600 text-white disabled:opacity-50" ${mistakes.length === 0 ? 'disabled' : ''}>Review Mistakes</button></div></div>`;
+        document.getElementById('restart-quiz').onclick = () => originalTitle.includes('Quiz') ? switchView('quizHub', { forceRender: true }) : showQuizOptions(listContext);
+        const reviewBtn = document.getElementById('review-mistakes');
+        if (reviewBtn && !reviewBtn.disabled) { reviewBtn.onclick = () => renderWords(`Review: ${listContext.title}`, mistakes, 'grad-6', { ...listContext.options, isReview: true }); }
+    }
+
+    displayQuestion();
+}
             
             // --- MODIFIED FUNCTION: speakText ---
             // Added 'buttonElement' as the second argument, made onEndCallback the third
@@ -20029,6 +20339,195 @@ submitNewWordBtn.addEventListener('click', submitNewWord);
                 console.error('Error saving FCM token to Firestore: ', error);
             }
         }
+
+        // --- NEW: Learning Path Logic ---
+
+const pathConfig = [
+    { id: 1, main: "Vocabulary Builder", sub: "Basic Vocabulary", icon: "🌱" },
+    { id: 2, main: "Vocabulary Builder", sub: "Daily Actions & Verbs", icon: "🏃" },
+    { id: 3, main: "Vocabulary Builder", sub: "Travel & Adventure", icon: "✈️" },
+    { id: 4, main: "Vocabulary Builder", sub: "Emotions & Feelings", icon: "😊" },
+    { id: 5, main: "Advanced Vocabulary", sub: "Business Vocab", icon: "💼" },
+    { id: 6, main: "Advanced Vocabulary", sub: "Antonyms", icon: "↔️" },
+    { id: 7, main: "Advanced Vocabulary", sub: "Proverbs and Sayings", icon: "📜" },
+    { id: 8, main: "Phrases & Idioms", sub: "Body Parts Idioms", icon: "👀" },
+    { id: 9, main: "Phrases & Idioms", sub: "Nature & Environment Idioms", icon: "🌧️" },
+    { id: 10, main: "Phrases & Idioms", sub: "Animal Idioms", icon: "🦁" },
+    { id: 11, main: "Phrases & Idioms", sub: "Common Idiomatic Expressions", icon: "🗣️" },
+    { id: 12, main: "Phrases & Idioms", sub: "Food Idioms", icon: "🍕" },
+    { id: 13, main: "Phrases & Idioms", sub: "Color Idioms", icon: "🎨" },
+    { id: 14, main: "Advanced Vocabulary", sub: "One Word Substitution", icon: "☝️" }
+];
+
+function renderLearningPath() {
+    // 1. HIDE the Default Top Nav (We use a custom one here)
+    const topNav = document.getElementById('top-nav');
+    if(topNav) topNav.classList.add('hidden');
+    
+    // 2. Ensure Bottom Nav is visible
+    document.getElementById('bottom-nav').classList.remove('hidden');
+    document.body.style.overflow = '';
+
+    const template = document.getElementById('learning-path-template');
+    mainContent.innerHTML = '';
+    mainContent.appendChild(template.content.cloneNode(true));
+    
+    // --- NEW: Handle Exit Button ---
+    document.getElementById('exit-learning-path').addEventListener('click', () => {
+        vibrate();
+        // Restore default top nav
+        if(topNav) topNav.classList.remove('hidden');
+        // Go back to Game Zone
+        switchView('gameZone');
+    });
+
+    const container = document.getElementById('learning-path-container');
+    const progressFill = document.getElementById('path-line-fill');
+    const topProgressBar = document.getElementById('lp-progress-bar');
+    const totalProgressText = document.getElementById('lp-total-progress');
+
+    const unlockedIndex = (userProfile && typeof userProfile.pathProgress !== 'undefined') ? userProfile.pathProgress : 0;
+    const levelScores = (userProfile && userProfile.pathScores) ? userProfile.pathScores : {}; 
+
+    const percentComplete = Math.min(100, Math.round((unlockedIndex / pathConfig.length) * 100));
+    if(topProgressBar) topProgressBar.style.width = `${percentComplete}%`;
+    if(totalProgressText) totalProgressText.textContent = `${percentComplete}%`;
+    
+    const maxIndex = Math.max(1, pathConfig.length - 1);
+    const fillHeight = Math.min(100, (unlockedIndex / maxIndex) * 100);
+    if(progressFill) progressFill.style.height = `${fillHeight}%`;
+
+    pathConfig.forEach((level, index) => {
+        const isUnlocked = index <= unlockedIndex;
+        const isCompleted = index < unlockedIndex;
+        const starsEarned = levelScores[index] || 0;
+
+        const node = document.createElement('div');
+        // CSS nth-child handles the zig-zag
+        node.className = `path-node ${isUnlocked ? 'unlocked' : ''} ${isCompleted ? 'completed' : ''}`;
+        
+        let starHTML = '';
+        for(let i=1; i<=3; i++) {
+            starHTML += `<svg class="star-icon ${i <= starsEarned ? 'earned' : ''}" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+        }
+
+        node.innerHTML = `
+            <div class="node-circle">
+                <span>${isUnlocked ? level.icon : '🔒'}</span>
+                ${isCompleted ? '<div class="absolute -right-1 -top-1 bg-green-500 text-white rounded-full p-1 border-2 border-slate-900"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6 9 17l-5-5"/></svg></div>' : ''}
+                <div class="node-stars">${isUnlocked ? starHTML : ''}</div>
+            </div>
+            <div class="node-label">${level.sub}</div>
+        `;
+
+        if (isUnlocked) node.addEventListener('click', () => openLevelOptions(index));
+        container.appendChild(node);
+    });
+}
+
+function openLevelOptions(levelIndex) {
+    vibrate();
+    const levelConfig = pathConfig[levelIndex];
+    const modal = document.getElementById('level-options-modal');
+    
+    document.getElementById('level-options-title').textContent = levelConfig.sub;
+    
+    document.getElementById('level-study-btn').onclick = () => {
+        modal.classList.add('hidden');
+        let words = [];
+        const mainCat = vocabularyData[levelConfig.main];
+        if (mainCat) {
+            if (Array.isArray(mainCat[levelConfig.sub])) words = mainCat[levelConfig.sub];
+            else if (mainCat[levelConfig.sub] && mainCat[levelConfig.sub].sentences) words = mainCat[levelConfig.sub].sentences.map(s => ({...s, isSentence: true}));
+        }
+        switchView('wordList', { isSubView: true, from: { view: 'learningPath' }, title: levelConfig.sub, words: words, gradClass: 'grad-5' });
+    };
+
+    document.getElementById('level-quiz-btn').onclick = () => {
+        modal.classList.add('hidden');
+        startPathQuiz(levelIndex);
+    };
+
+    document.getElementById('close-level-options').onclick = () => modal.classList.add('hidden');
+    modal.classList.remove('hidden');
+}
+
+function startPathQuiz(levelIndex) {
+    try {
+        const levelConfig = pathConfig[levelIndex];
+        let words = [];
+        const mainCat = vocabularyData[levelConfig.main];
+        if (mainCat) {
+            if (Array.isArray(mainCat[levelConfig.sub])) words = mainCat[levelConfig.sub];
+            else if (mainCat[levelConfig.sub] && mainCat[levelConfig.sub].sentences) words = mainCat[levelConfig.sub].sentences;
+        }
+        words = words.filter(w => w && !w.type && !w.isSentence);
+
+        if (!words || words.length < 4) {
+            alert("Not enough words for a quiz.");
+            return;
+        }
+        
+        // 50 Word Limit & Timer Logic
+        words = words.sort(() => 0.5 - Math.random()).slice(0, 50);
+        let timerSeconds = 15; 
+        if (levelConfig.main === "Vocabulary Builder") timerSeconds = 10; 
+        else if (levelConfig.main === "Advanced Vocabulary") timerSeconds = (levelConfig.sub === "One Word Substitution") ? 30 : 20;
+        else if (levelConfig.main === "Phrases & Idioms") timerSeconds = 30;
+
+        startQuiz(words, 'mixed', 'long', null, { title: levelConfig.sub }, null, { isPathMode: true, levelIndex: levelIndex, timerDuration: timerSeconds });
+        
+    } catch (error) {
+        console.error("Path Quiz Error:", error);
+        alert("Error starting quiz.");
+    }
+}
+
+function handlePathQuizResult(score, total, levelIndex) {
+    const percentage = Math.round((score / total) * 100);
+    const passed = percentage >= 90;
+
+    // Remove Overlay
+    const overlay = document.querySelector('.fixed.z-\\[9999\\]');
+    if(overlay) overlay.remove();
+    
+    document.getElementById('top-nav').classList.remove('hidden');
+    document.getElementById('bottom-nav').classList.remove('hidden');
+
+    const modal = document.getElementById('level-result-modal');
+    document.getElementById('level-score-display').textContent = `${percentage}%`;
+    
+    if (passed) {
+        document.getElementById('level-result-title').textContent = "Level Complete!";
+        document.getElementById('level-result-msg').textContent = "You mastered this topic.";
+        showConfetti();
+        updatePathProgress(levelIndex);
+        document.getElementById('level-next-btn').textContent = "Next Level";
+        document.getElementById('level-next-btn').onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
+    } else {
+        document.getElementById('level-result-title').textContent = "Level Failed";
+        document.getElementById('level-result-msg').textContent = "Score 90% to pass.";
+        document.getElementById('level-next-btn').textContent = "Back to Path";
+        document.getElementById('level-next-btn').onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
+    }
+
+    document.getElementById('level-retry-btn').onclick = () => {
+        modal.classList.add('hidden');
+        startPathQuiz(levelIndex);
+    };
+    modal.classList.remove('hidden');
+}
+
+async function updatePathProgress(levelIndex) {
+    if (!userProfile) return;
+    if (levelIndex === userProfile.pathProgress) {
+        userProfile.pathProgress = levelIndex + 1;
+        const profileRef = doc(db, `artifacts/${appId}/users/${userId}`);
+        try {
+            await updateDoc(profileRef, { pathProgress: userProfile.pathProgress });
+        } catch (e) { console.error("Save error:", e); }
+    }
+}
             
             // This block defines how the app starts.
             function initApp() {
