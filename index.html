@@ -637,7 +637,7 @@
 
 /* --- FLIP CARD ANIMATIONS & STYLES --- */
 
-/* Front Face (The Logo Side) */
+/* Front Face (The Logo/Icon Side) */
 .flip-front {
     position: absolute;
     width: 100%;
@@ -650,8 +650,9 @@
     border-radius: 12px;
     border: 2px solid rgba(255,255,255,0.1);
     
-    /* Logo Style */
-    background: linear-gradient(135deg, #6366f1, #ec4899);
+    /* UPDATED COLOR: Bright Blue Gradient */
+    background: linear-gradient(135deg, #0ea5e9, #2563eb); 
+    
     color: white;
     font-family: 'Nunito', sans-serif;
     font-weight: 900;
@@ -18413,349 +18414,181 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
 }
 
             // START: PASTE THIS REPLACEMENT FUNCTION
-
 function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs = 9, gridConfig) {
-
     // 1. Hide Navs & Disable Scroll
-
     const tNav = document.getElementById('top-nav');
-
     const bNav = document.getElementById('bottom-nav');
-
     if(tNav) tNav.classList.add('hidden');
-
     if(bNav) bNav.classList.add('hidden');
-
     document.body.style.overflow = 'hidden'; 
 
-
-
     // 2. Inject Template
-
     mainContent.innerHTML = '';
-
     mainContent.appendChild(document.getElementById('flip-card-game-template').content.cloneNode(true));
 
-
-
     // 3. Get Elements
-
     const grid = document.getElementById('flip-card-grid');
-
     const scoreEl = document.getElementById('game-score');
-
     const movesEl = document.getElementById('game-moves');
-
     const modal = document.getElementById('game-over-modal');
-
     const finalMsg = document.getElementById('final-moves-msg');
-
     const modalIcon = document.getElementById('game-over-icon');
-
     const modalTitle = document.getElementById('game-over-title');
-
     const quitBtn = document.getElementById('quit-flip-game');
-
     const exitBtn = document.getElementById('exit-flip-btn');
-
     const restartBtn = document.getElementById('restart-flip-btn');
 
-
-
     // 4. Data Prep
-
     const validWords = selectedWords.filter(w => w.word && w.meaning);
-
     if (validWords.length < totalPairs) {
-
         alert("Not enough words for this game mode. Try a harder difficulty.");
-
         quitGame();
-
         return;
-
     }
-
-
 
     // Pick Pairs
-
     const gameWords = [...validWords].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-
     
-
     let gameCards = [];
-
     gameWords.forEach((word, index) => {
-
         gameCards.push({ pairId: index, content: word.word, type: 'word' });
-
         gameCards.push({ pairId: index, content: word.meaning, type: 'meaning' });
-
     });
-
     gameCards.sort(() => 0.5 - Math.random());
 
-
-
     // 5. Render Cards
-
     grid.innerHTML = '';
-
     gameCards.forEach(card => {
-
         const cardEl = document.createElement('div');
-
         cardEl.className = 'flip-card-fixed'; 
-
         cardEl.dataset.pairId = card.pairId;
-
         
-
-        // HTML with "LQ" Logo
-
+        // HTML with Star Icon
         cardEl.innerHTML = `
-
             <div class="flip-card-inner">
-
-                <div class="flip-front">LQ</div>
-
-                <div class="flip-back">
-
-                    <span>${card.content}</span>
-
+                <div class="flip-front">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-white drop-shadow-md">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
                 </div>
-
+                <div class="flip-back">
+                    <span>${card.content}</span>
+                </div>
             </div>
-
         `;
-
         cardEl.addEventListener('click', onCardClick);
-
         grid.appendChild(cardEl);
-
     });
 
-
-
     // 6. Game State
-
     let movesTaken = 0;
-
     let matches = 0;
-
     let firstCard = null;
-
     let secondCard = null;
-
     let lockBoard = false;
-
     const MOVES_LIMIT = 40; 
-
     
-
     scoreEl.textContent = `0/${totalPairs}`;
-
     movesEl.textContent = movesTaken;
 
-
-
     // 7. Logic
-
     function onCardClick(e) {
-
         if (lockBoard) return;
-
         const clickedCard = e.currentTarget;
-
         
-
         // Ignore if clicked same card or already matched/flipped
-
         if (clickedCard === firstCard || clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) return;
 
-
-
         // Flip Animation
-
         clickedCard.classList.add('flipped');
-
         if(navigator.vibrate) navigator.vibrate(10);
 
-
-
         if (!firstCard) {
-
             // 1st Card Turned
-
             firstCard = clickedCard;
-
         } else {
-
             // 2nd Card Turned -> Count Move Here
-
             secondCard = clickedCard;
-
             movesTaken++; // Increment Move Count
-
             movesEl.textContent = movesTaken;
-
             
-
             if (movesTaken > MOVES_LIMIT) movesEl.classList.add('text-red-500');
 
-
-
             lockBoard = true;
-
             checkForMatch();
-
         }
-
     }
-
-
 
     function checkForMatch() {
-
         const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
 
-
-
         if (isMatch) {
-
             // MATCH FOUND
-
             matches++;
-
             scoreEl.textContent = `${matches}/${totalPairs}`;
-
             if(navigator.vibrate) navigator.vibrate(50);
-
             
-
             // Wait a tiny bit to show the match, then disappear
-
             setTimeout(() => {
-
                 firstCard.classList.add('matched');
-
                 secondCard.classList.add('matched');
-
                 resetBoard();
-
                 
-
                 if (matches === totalPairs) {
-
                     // Wait for disappearance animation to finish before showing modal
-
                     setTimeout(() => endGame(true), 800); 
-
                 }
-
             }, 600);
-
         } else {
-
             // NO MATCH
-
             if(navigator.vibrate) navigator.vibrate(100);
-
             
-
             setTimeout(() => {
-
                 firstCard.classList.add('incorrect');
-
                 secondCard.classList.add('incorrect');
-
             }, 400);
 
-
-
             setTimeout(() => {
-
                 firstCard.classList.remove('flipped', 'incorrect');
-
                 secondCard.classList.remove('flipped', 'incorrect');
-
                 resetBoard();
-
             }, 1200);
-
         }
-
     }
-
-
 
     function resetBoard() {
-
         [firstCard, secondCard, lockBoard] = [null, null, false];
-
     }
-
-
 
     function endGame(win) {
-
         if (win) {
-
             if(typeof showConfetti === 'function') showConfetti();
-
             if (typeof addQuizResult === 'function') {
-
                 const score = Math.max(10, 100 - ((movesTaken - totalPairs) * 3));
-
                 addQuizResult(`${originalTitle} (Flip)`, Math.floor(score/10), 10); 
-
             }
-
             modalTitle.textContent = "Memory Master!";
-
             modalIcon.textContent = "🧠";
-
             finalMsg.innerHTML = `Cleared in <span class="text-amber-400 font-bold">${movesTaken}</span> moves!`;
-
             modal.classList.remove('hidden');
-
             quitBtn.style.display = 'none';
-
         }
-
     }
-
-
 
     function quitGame() {
-
         if(tNav) tNav.classList.remove('hidden');
-
         if(bNav) bNav.classList.remove('hidden');
-
         document.body.style.overflow = '';
-
         switchView('gameZone', { forceRender: true });
-
     }
 
-
-
     quitBtn.onclick = () => { if(confirm("Quit Game?")) quitGame(); };
-
     exitBtn.onclick = quitGame;
-
     restartBtn.onclick = () => {
-
         modal.classList.add('hidden');
-
         startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs);
-
     };
-
 }
-
 // END: PASTE THIS REPLACEMENT FUNCTION
 
             // START: PASTE THIS REPLACEMENT FUNCTION
