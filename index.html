@@ -16954,38 +16954,173 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             }
 
             function displayProfileModal() {
-                if (!userProfile) return;
-                const totalQuizzes = userProfile.quizHistory ? userProfile.quizHistory.length : 0;
-                let totalScore = 0, totalPossibleScore = 0;
-                if (totalQuizzes > 0) userProfile.quizHistory.forEach(r => { totalScore += r.score; totalPossibleScore += r.total; });
-                const overallAccuracy = totalPossibleScore > 0 ? ((totalScore / totalPossibleScore) * 100).toFixed(0) : 0;
-                const focusArea = getFocusArea();
-                const focusAreaHTML = focusArea ? `<div class="stat-card focus-card" data-category="${focusArea}"><h3 class="text-sm font-bold text-slate-300 uppercase">Focus Area</h3><p class="text-lg font-bold text-white mt-2">${focusArea}</p><p class="text-xs text-amber-400">Click to practice</p></div>` : `<div class="stat-card"><h3 class="text-sm font-bold text-slate-300 uppercase">Focus Area</h3><p class="text-xs font-normal text-slate-400 mt-2">Take a few more quizzes to unlock this!</p></div>`;
-                const recentHistoryHTML = userProfile.quizHistory && userProfile.quizHistory.length > 0 ? userProfile.quizHistory.slice(0, 5).map(r => `<div class="quiz-history-item font-sans flex justify-between items-center"><div><p class="font-semibold text-white">${r.title}</p><p class="text-xs text-slate-400">${r.date ? r.date.toLocaleDateString() : 'Just now'}</p></div><p class="font-bold text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</p></div>`).join('') : '';
-                const userFullName = `${userProfile.name} ${userProfile.lastName || ''}`.trim();
+    if (!userProfile) return;
 
-                // START: Check for Admin Status
-                const isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
-                const adminButtonHTML = isAdmin ? `<div class="mt-6 border-t border-white/20 pt-4"><button id="admin-panel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg">Admin Panel</button></div>` : '';
-                // END: Check for Admin Status
+    const fullHistory = userProfile.quizHistory || [];
 
-                userProfileContent.innerHTML = `<div class="text-center mb-6"><div class="flex justify-center items-center gap-2"><h2 class="text-3xl font-bold text-white">${userFullName}</h2><button id="edit-profile-btn" class="p-1 text-slate-400 hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button></div><p class="text-amber-400 font-semibold">${userProfile.batchTime || 'No batch selected'}</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Streak</h3><p class="text-3xl font-extrabold text-amber-400 mt-1 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="mr-1"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>${userProfile.streak || 0}</p></div><div class="stat-card text-center bg-white/5 p-4 rounded-lg"><h3 class="text-sm font-bold text-slate-300 uppercase">Accuracy</h3><p class="text-3xl font-extrabold text-white mt-1">${overallAccuracy}%</p></div>${focusAreaHTML}</div><h3 class="text-xl font-bold text-white mb-2 border-b border-white/20 pb-2">Recent Scores</h3><div class="space-y-2 max-h-64 overflow-y-auto pr-2">${recentHistoryHTML || '<p class="text-center text-slate-400 font-sans py-4">No quiz history yet. Take a quiz to see your results!</p>'}</div>${adminButtonHTML}`; // <-- Add adminButtonHTML here
-                userProfileModal.classList.remove('hidden');
+    // 1. Separate Main Quizzes vs Arcade Games
+    const arcadeKeywords = ['(Match)', '(Flip)', '(Jumbled)', '(Word Rain)'];
+    
+    const arcadeHistory = fullHistory.filter(r => 
+        arcadeKeywords.some(keyword => r.title.includes(keyword))
+    );
+    
+    const mainHistory = fullHistory.filter(r => 
+        !arcadeKeywords.some(keyword => r.title.includes(keyword))
+    );
 
-                const focusCard = userProfileContent.querySelector('.focus-card');
-                if (focusCard) focusCard.addEventListener('click', () => navigateToCategory(focusCard.dataset.category));
-                document.getElementById('edit-profile-btn').addEventListener('click', renderProfileEditView);
-                // START: Add Admin Panel button listener
-const adminBtn = document.getElementById('admin-panel-btn');
-if (adminBtn) {
-    adminBtn.addEventListener('click', () => {
-        userProfileModal.classList.add('hidden');
-        navStack.push({ view: 'profile' }); // Add a "back" step
-        renderAdminPanel(); // Call the new admin view function
-    });
+    // 2. Calculate Stats (Focus on Main Learning metrics only)
+    const totalMainQuizzes = mainHistory.length;
+    let totalScore = 0, totalPossibleScore = 0;
+    if (totalMainQuizzes > 0) mainHistory.forEach(r => { totalScore += r.score; totalPossibleScore += r.total; });
+    const overallAccuracy = totalPossibleScore > 0 ? ((totalScore / totalPossibleScore) * 100).toFixed(0) : 0;
+    
+    const focusArea = getFocusArea();
+    const userFullName = `${userProfile.name} ${userProfile.lastName || ''}`.trim();
+    
+    // Admin Button Logic
+    const isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
+    const adminButtonHTML = isAdmin ? `<div class="mt-4 border-t border-white/20 pt-4"><button id="admin-panel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg">Admin Panel</button></div>` : '';
+
+    // Focus Area Card HTML
+    const focusAreaHTML = focusArea 
+        ? `<div class="stat-card focus-card cursor-pointer hover:bg-white/10 transition-colors p-3 rounded-lg bg-white/5 border border-white/10" data-category="${focusArea}">
+             <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
+             <p class="text-base font-bold text-white truncate">${focusArea}</p>
+             <p class="text-[10px] text-amber-400 mt-1">Tap to practice</p>
+           </div>` 
+        : `<div class="stat-card p-3 rounded-lg bg-white/5 border border-white/10">
+             <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
+             <p class="text-xs font-normal text-slate-400">Keep learning to unlock!</p>
+           </div>`;
+
+    // 4. Render Modal Content
+    userProfileContent.innerHTML = `
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <div class="flex justify-center items-center gap-2 mb-1">
+                <h2 class="text-2xl font-bold text-white">${userFullName}</h2>
+                <button id="edit-profile-btn" class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                </button>
+            </div>
+            <p class="text-amber-400 text-sm font-semibold">${userProfile.batchTime || 'No batch selected'}</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
+                <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Streak</h3>
+                <p class="text-2xl font-extrabold text-amber-400 flex items-center justify-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                    ${userProfile.streak || 0}
+                </p>
+            </div>
+            <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
+                <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Accuracy</h3>
+                <p class="text-2xl font-extrabold text-white">${overallAccuracy}%</p>
+            </div>
+            ${focusAreaHTML}
+        </div>
+
+        <!-- NEW: History Buttons -->
+        <div class="grid grid-cols-2 gap-4 mb-2">
+            <button id="btn-view-learning-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-indigo-600/40 to-blue-600/40 border border-white/10 hover:border-indigo-400/50 hover:from-indigo-600/60 hover:to-blue-600/60 transition-all duration-300 group text-left">
+                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <span class="block text-2xl mb-2">📚</span>
+                <span class="block text-sm font-bold text-white">Learning History</span>
+                <span class="block text-[10px] text-indigo-200 mt-1">View your quiz progress</span>
+            </button>
+
+            <button id="btn-view-arcade-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-pink-600/40 to-rose-600/40 border border-white/10 hover:border-pink-400/50 hover:from-pink-600/60 hover:to-rose-600/60 transition-all duration-300 group text-left">
+                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
+                </div>
+                <span class="block text-2xl mb-2">🕹️</span>
+                <span class="block text-sm font-bold text-white">Arcade Scores</span>
+                <span class="block text-[10px] text-pink-200 mt-1">View high scores</span>
+            </button>
+        </div>
+
+        ${adminButtonHTML}
+    `;
+
+    userProfileModal.classList.remove('hidden');
+
+    // Listeners
+    const focusCard = userProfileContent.querySelector('.focus-card');
+    if (focusCard && focusCard.dataset.category) focusCard.addEventListener('click', () => navigateToCategory(focusCard.dataset.category));
+    document.getElementById('edit-profile-btn').addEventListener('click', renderProfileEditView);
+    
+    const adminBtn = document.getElementById('admin-panel-btn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            userProfileModal.classList.add('hidden');
+            navStack.push({ view: 'profile' }); 
+            renderAdminPanel(); 
+        });
+    }
+
+    // --- Button Listeners for New Sub-Modals ---
+    document.getElementById('btn-view-learning-history').onclick = () => showHistorySubModal("Learning History", mainHistory, "No learning quizzes taken yet.");
+    document.getElementById('btn-view-arcade-history').onclick = () => showHistorySubModal("Arcade Scores", arcadeHistory, "No arcade games played yet.");
+
+    // --- Helper Function for Sub-Modals ---
+    function showHistorySubModal(title, list, emptyMsg) {
+        // Remove existing if any
+        const existing = document.getElementById('sub-history-modal');
+        if (existing) existing.remove();
+
+        const subModal = document.createElement('div');
+        subModal.id = 'sub-history-modal';
+        subModal.className = "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300";
+        
+        // Generate List HTML (Last 10)
+        const listHTML = (list && list.length > 0) 
+            ? list.slice(0, 10).map(r => `
+                <div class="flex justify-between items-center mb-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                    <div class="overflow-hidden mr-3">
+                        <p class="font-bold text-white text-sm truncate">${r.title}</p>
+                        <p class="text-[10px] text-slate-400">${r.date ? new Date(r.date).toLocaleDateString() + ' ' + new Date(r.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</p>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0">
+                        <span class="font-black text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</span>
+                        <span class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Score</span>
+                    </div>
+                </div>
+            `).join('')
+            : `<div class="flex flex-col items-center justify-center h-48 text-slate-500">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-3 opacity-50"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                 <p class="text-sm">${emptyMsg}</p>
+               </div>`;
+
+        subModal.innerHTML = `
+            <div class="glass-ui p-6 rounded-3xl w-full max-w-md pop-in relative flex flex-col max-h-[85vh] border border-white/10 shadow-2xl">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6 shrink-0 border-b border-white/10 pb-4">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                        <span class="text-2xl">${title === "Learning History" ? '📚' : '🕹️'}</span> ${title}
+                    </h3>
+                    <button id="close-sub-history" class="p-2 rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+                <!-- List Area -->
+                <div class="overflow-y-auto pr-1 custom-scrollbar flex-grow">
+                    ${listHTML}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(subModal);
+        
+        const close = () => subModal.remove();
+        subModal.querySelector('#close-sub-history').onclick = close;
+        subModal.onclick = (e) => { if (e.target === subModal) close(); };
+    }
 }
-// END: Add Admin Panel button listener
-            }
 
             function renderProfileEditView() {
                 userProfileContent.innerHTML = `<h2 class="text-2xl font-bold text-white mb-6 text-center">Edit Profile</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><label for="edit-firstname-input" class="block text-sm font-bold text-slate-200 mb-2">Name:</label><input type="text" id="edit-firstname-input" value="${userProfile.name || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div><div><label for="edit-lastname-input" class="block text-sm font-bold text-slate-200 mb-2">Last Name:</label><input type="text" id="edit-lastname-input" value="${userProfile.lastName || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div></div><div class="mb-6"><label class="block text-sm font-bold text-slate-200 mb-2">Your batch time:</label><div id="edit-batch-time-selector" class="grid grid-cols-3 gap-2"></div></div><div class="flex gap-4"><button id="cancel-edit-profile" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-lg">Cancel</button><button id="save-updated-profile" class="w-full grad-nav text-white font-bold py-2 px-4 rounded-lg">Save</button></div>`;
@@ -20740,33 +20875,58 @@ function openLevelOptions(levelIndex) {
 }
 
 function startPathQuiz(levelIndex) {
+    vibrate();
+    console.log("Starting Path Quiz for level:", levelIndex);
+
     try {
         const levelConfig = pathConfig[levelIndex];
+        if (!levelConfig) throw new Error("Level configuration not found.");
+
+        // Fetch words
         let words = [];
         const mainCat = vocabularyData[levelConfig.main];
+        
         if (mainCat) {
-            if (Array.isArray(mainCat[levelConfig.sub])) words = mainCat[levelConfig.sub];
-            else if (mainCat[levelConfig.sub] && mainCat[levelConfig.sub].sentences) words = mainCat[levelConfig.sub].sentences;
+            if (Array.isArray(mainCat[levelConfig.sub])) {
+                words = mainCat[levelConfig.sub];
+            } else if (mainCat[levelConfig.sub] && mainCat[levelConfig.sub].sentences) {
+                words = mainCat[levelConfig.sub].sentences;
+            }
         }
+        
+        // 1. Filter valid quiz words FIRST
         words = words.filter(w => w && !w.type && !w.isSentence);
 
         if (!words || words.length < 4) {
-            alert("Not enough words for a quiz.");
+            alert(`Not enough words found for "${levelConfig.sub}". Please add more words to this category in the Admin Panel.`);
             return;
         }
-        
-        // 50 Word Limit & Timer Logic
+
+        // 2. SHUFFLE FIRST, THEN SLICE (This fixes the issue)
+        // This ensures we pick a random 50 from the entire pool, not just the first 50
         words = words.sort(() => 0.5 - Math.random()).slice(0, 50);
+
+        // Timer Duration Logic
         let timerSeconds = 15; 
         if (levelConfig.main === "Vocabulary Builder") timerSeconds = 10; 
         else if (levelConfig.main === "Advanced Vocabulary") timerSeconds = (levelConfig.sub === "One Word Substitution") ? 30 : 20;
         else if (levelConfig.main === "Phrases & Idioms") timerSeconds = 30;
 
-        startQuiz(words, 'mixed', 'long', null, { title: levelConfig.sub }, null, { isPathMode: true, levelIndex: levelIndex, timerDuration: timerSeconds });
+        const quizId = `path-level-${levelIndex}`;
         
+        // Launch Quiz
+        // Note: We skip checkForSavedQuiz for Path Mode to ensure a fresh random set each time
+        // If you want to save progress within a 50-word set, you'd need to save the 'words' array to Firestore first.
+        // For now, a fresh start is cleaner for "Learning Path" attempts.
+        startQuiz(words, 'mixed', 'long', quizId, { title: levelConfig.sub }, null, { 
+            isPathMode: true, 
+            levelIndex: levelIndex,
+            timerDuration: timerSeconds
+        });
+
     } catch (error) {
-        console.error("Path Quiz Error:", error);
-        alert("Error starting quiz.");
+        console.error("Error starting path quiz:", error);
+        alert("Could not start quiz: " + error.message);
     }
 }
 
