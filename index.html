@@ -644,8 +644,8 @@
     animation: shake 0.4s;
 }
 
-/* --- TIMER BAR FOR CHALLENGE --- */
-.game-timer-bar {
+/* Moves Limit Indicator */
+.moves-limit-bar {
     width: 100%;
     height: 4px;
     background: #334155;
@@ -654,11 +654,11 @@
     left: 0;
     z-index: 100;
 }
-.game-timer-fill {
+.moves-limit-fill {
     height: 100%;
     background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
-    width: 100%;
-    transition: width 1s linear;
+    width: 0%;
+    transition: width 0.3s ease;
 }
         /* --- END: Flip Card Game Styles --- */
 
@@ -1663,18 +1663,18 @@
     
 <!-- FLIP CARD GAME TEMPLATE -->
 <template id="flip-card-game-template">
-    <div class="game-timer-bar"><div id="flip-timer-fill" class="game-timer-fill"></div></div>
+    <div class="moves-limit-bar"><div id="moves-limit-fill" class="moves-limit-fill"></div></div>
     
     <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="flip-card-game-container">
         <!-- Game Header -->
         <div class="flex justify-between items-center mb-4 px-2 pt-4">
             <div class="text-left">
-                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Pairs</span>
+                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Matches</span>
                 <p id="game-score" class="text-2xl font-black text-white">0/9</p>
             </div>
             <div class="text-right">
-                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Moves</span>
-                <p id="game-moves" class="text-2xl font-black text-amber-400">0</p>
+                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Moves Left</span>
+                <p id="game-moves" class="text-2xl font-black text-amber-400">30</p>
             </div>
         </div>
         
@@ -1688,7 +1688,7 @@
             <div class="glass-ui p-6 rounded-2xl text-center pop-in w-full max-w-sm border border-white/10">
                 <div id="game-over-icon" class="text-7xl mb-4 animate-bounce"></div>
                 <h2 class="text-2xl font-bold text-white mb-2" id="game-over-title">Game Over</h2>
-                <p class="text-sm text-slate-300 mb-6" id="final-moves">Time's Up!</p>
+                <p class="text-sm text-slate-300 mb-6" id="final-moves-msg"></p>
                 <button id="restart-game-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Play Again</button>
             </div>
         </div>
@@ -18306,154 +18306,184 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
     loop();
 }
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
             function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig) {
-                // --- START: HIDE NAVS ---
-                document.getElementById('top-nav').classList.add('hidden');
-                document.getElementById('bottom-nav').classList.add('hidden');
-                document.body.style.paddingTop = '0';
-                document.body.style.paddingBottom = '0';
-                // --- END: HIDE NAVS ---
+    // 1. Hide Navs
+    const tNav = document.getElementById('top-nav');
+    const bNav = document.getElementById('bottom-nav');
+    if(tNav) tNav.classList.add('hidden');
+    if(bNav) bNav.classList.add('hidden');
+    document.body.style.paddingTop = '0';
+    document.body.style.paddingBottom = '0';
 
-                mainContent.innerHTML = '';
-                mainContent.appendChild(document.getElementById('flip-card-game-template').content.cloneNode(true));
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('flip-card-game-template').content.cloneNode(true));
 
-                const gameContainer = document.getElementById('flip-card-game-container');
-                const grid = document.getElementById('flip-card-grid');
-                const scoreEl = document.getElementById('game-score');
-                const movesEl = document.getElementById('game-moves');
-                const modal = document.getElementById('game-over-modal');
-                const finalMovesEl = document.getElementById('final-moves');
-                const restartBtn = document.getElementById('restart-game-btn');
-                const gameOverIcon = document.getElementById('game-over-icon');
-                
-                // --- START: DYNAMIC GRID FIX ---
-                // These values now come from the difficulty selection
-                gameContainer.style.maxWidth = gridConfig.maxWidth;
-                grid.style.gridTemplateColumns = `repeat(${gridConfig.cols}, 1fr)`;
-                // --- END: DYNAMIC GRID FIX ---
+    const grid = document.getElementById('flip-card-grid');
+    const scoreEl = document.getElementById('game-score');
+    const movesEl = document.getElementById('game-moves');
+    const modal = document.getElementById('game-over-modal');
+    const finalMovesMsg = document.getElementById('final-moves-msg');
+    const restartBtn = document.getElementById('restart-game-btn');
+    const gameOverIcon = document.getElementById('game-over-icon');
+    const gameOverTitle = document.getElementById('game-over-title');
+    const quitBtn = document.getElementById('quit-game-btn');
+    const movesBar = document.getElementById('moves-limit-fill');
+    
+    // 2. Game Configuration
+    // 3x6 grid = 18 cards = 9 pairs
+    const TOTAL_PAIRS = 9; 
+    const MOVES_LIMIT = 30; // Challenge: Win in 30 moves
 
-                // --- START: ADD QUIT BUTTON LISTENER ---
-                const quitBtn = document.getElementById('quit-game-btn');
-                const quitGame = () => {
-                    // Restore navs
-                    document.getElementById('top-nav').classList.remove('hidden');
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-                    document.body.style.paddingTop = '56px';
-                    document.body.style.paddingBottom = '56px';
-                    // Go back to game zone
-                    switchView('gameZone', { forceRender: true });
-                };
-                quitBtn.addEventListener('click', quitGame);
-                // --- END: ADD QUIT BUTTON LISTENER ---
+    // 3. Prepare Cards
+    // Shuffle and pick 9 pairs
+    const gameWords = [...selectedWords].sort(() => 0.5 - Math.random()).slice(0, TOTAL_PAIRS);
+    
+    let gameCards = [];
+    gameWords.forEach((word, index) => {
+        gameCards.push({ pairId: index, content: word.word, type: 'word' });
+        gameCards.push({ pairId: index, content: word.meaning, type: 'meaning' });
+    });
+    gameCards.sort(() => 0.5 - Math.random());
 
-                let moves = 0;
-                let score = 0;
-                let firstCard = null;
-                let secondCard = null;
-                let lockBoard = false; 
+    // 4. Render Grid
+    grid.innerHTML = '';
+    gameCards.forEach(card => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'flip-card';
+        cardEl.dataset.pairId = card.pairId;
+        cardEl.innerHTML = `
+            <div class="flip-card-inner">
+                <div class="flip-card-front">?</div> 
+                <div class="flip-card-back">${card.content}</div>
+            </div>
+        `;
+        cardEl.addEventListener('click', onCardClick);
+        grid.appendChild(cardEl);
+    });
 
-                // 2. Create card pairs (word + meaning)
-                const gameCards = [];
-                selectedWords.forEach((word, index) => {
-                    gameCards.push({ id: index, content: word.word, type: 'word' });
-                    gameCards.push({ id: index, content: word.meaning, type: 'meaning' });
-                });
+    // 5. Game State
+    let movesTaken = 0;
+    let matches = 0;
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false; 
+    let isGameOver = false;
 
-                // 3. Shuffle the cards
-                const shuffledCards = gameCards.sort(() => 0.5 - Math.random());
+    // Init UI
+    movesEl.textContent = MOVES_LIMIT;
+    
+    function updateMoves(count) {
+        const movesLeft = MOVES_LIMIT - count;
+        movesEl.textContent = Math.max(0, movesLeft);
+        
+        // Update Bar width (starts at 0, fills to 100 at limit)
+        const percentUsed = (count / MOVES_LIMIT) * 100;
+        movesBar.style.width = `${percentUsed}%`;
+        
+        if (movesLeft <= 5) {
+            movesEl.classList.add('text-red-500', 'animate-pulse');
+            movesBar.style.background = '#ef4444';
+        }
+        
+        if (movesLeft <= 0) {
+            endGame(false);
+        }
+    }
 
-                // 4. Create card elements in HTML
-                shuffledCards.forEach(card => {
-                    const cardEl = document.createElement('div');
-                    cardEl.className = 'flip-card';
-                    cardEl.dataset.id = card.id; // This ID links the pair
-                    
-                    cardEl.innerHTML = `
-                        <div class="flip-card-inner">
-                            <div class="flip-card-front">
-                                <svg viewBox="0 0 260 60" xmlns="http://www.w3.org/2000/svg" class="w-3/4 h-3/4">
-                                    <defs>
-                                        <linearGradient id="logo-gradient-1-card" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4338ca"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient>
-                                        <linearGradient id="logo-gradient-2-card" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#be185d"/><stop offset="100%" stop-color="#ec4899"/></linearGradient>
-                                    </defs>
-                                    <text x="10" y="48" font-family="Nunito, sans-serif" font-size="40" font-weight="900" fill="url(#logo-gradient-1-card)">Lingo</text>
-                                    <text x="120" y="48" font-family="Nunito, sans-serif" font-size="40" font-weight="900" fill="url(#logo-gradient-2-card)">Quest</text>
-                                </svg>
-                            </div>
-                            <div class="flip-card-back">${card.content}</div>
-                        </div>
-                    `;
-                    cardEl.addEventListener('click', onCardClick);
-                    grid.appendChild(cardEl);
-                });
+    function endGame(win) {
+        isGameOver = true;
+        if (win) {
+            gameOverTitle.textContent = "You Won!";
+            gameOverIcon.textContent = '🏆';
+            finalMovesMsg.textContent = `Cleared with ${MOVES_LIMIT - movesTaken} moves left!`;
+            showConfetti();
+        } else {
+            gameOverTitle.textContent = "Out of Moves!";
+            gameOverIcon.textContent = '💔';
+            finalMovesMsg.textContent = `You found ${matches} pairs. Try again!`;
+        }
+        
+        modal.classList.remove('hidden');
+        quitBtn.parentElement.classList.add('hidden'); 
+    }
 
-                function onCardClick(e) {
-                    if (lockBoard) return;
-                    const clickedCard = e.currentTarget;
-                    if (clickedCard === firstCard) return; // Can't click the same card twice
+    function quitGame() {
+        if(confirm("Quit game?")) {
+            if(tNav) tNav.classList.remove('hidden');
+            if(bNav) bNav.classList.remove('hidden');
+            document.body.style.paddingTop = ''; 
+            document.body.style.paddingBottom = '';
+            switchView('gameZone', { forceRender: true });
+        }
+    }
+    quitBtn.onclick = quitGame;
 
-                    clickedCard.classList.add('flipped');
+    // 7. Interaction Logic
+    function onCardClick(e) {
+        if (lockBoard || isGameOver) return;
+        const clickedCard = e.currentTarget;
+        
+        if (clickedCard === firstCard || clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) return;
 
-                    if (!firstCard) {
-                        firstCard = clickedCard;
-                    } else {
-                        secondCard = clickedCard;
-                        moves++;
-                        movesEl.textContent = moves;
-                        lockBoard = true; // Lock the board while checking
-                        checkForMatch();
-                    }
-                }
+        clickedCard.classList.add('flipped');
+        vibrate(10);
 
-                function checkForMatch() {
-                    if (firstCard.dataset.id === secondCard.dataset.id) {
-                        // It's a match!
-                        score++;
-                        scoreEl.textContent = score;
-                        vibrate(50);
-                        
-                        // NEW: Wait for flip to finish (600ms), then add 'matched' class
-                        setTimeout(() => {
-                            firstCard.classList.add('matched');
-                            secondCard.classList.add('matched');
-                            
-                            if (score === totalPairs) {
-                                // Game over
-                                finalMovesEl.textContent = moves;
-                                if (moves > totalPairs * 2) gameOverIcon.textContent = '😅'; // Okay
-                                else gameOverIcon.textContent = '🎉'; // Great!
-                                setTimeout(() => {
-                                    modal.classList.remove('hidden');
-                                    quitBtn.classList.add('hidden'); // Hide quit btn on game-over modal
-                                }, 800); // Wait for 'tada' animation to finish
-                            }
-                            
-                            resetBoard(); // Reset board *after* match logic
-                        }, 600); // This delay matches the CSS flip duration
-
-                    } else {
-                        // Not a match
-                        vibrate(20);
-                        // lockBoard is already true, so just wait to flip back
-                        setTimeout(() => {
-                            firstCard.classList.remove('flipped');
-                            secondCard.classList.remove('flipped');
-                            resetBoard(); // Reset board *after* flip-back
-                        }, 1200); // Flip back after 1.2 seconds
-                    }
-                }
-
-                function resetBoard() {
-                    [firstCard, secondCard, lockBoard] = [null, null, false];
-                }
-
-                restartBtn.onclick = () => {
-                    modal.classList.add('hidden');
-                    // Relaunch the game with the same set of words
-                    startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig); 
-                };
+        if (!firstCard) {
+            firstCard = clickedCard;
+        } else {
+            secondCard = clickedCard;
+            // Move counted when second card is flipped
+            movesTaken++;
+            updateMoves(movesTaken);
+            
+            if (!isGameOver) { // Check if move didn't end game
+                lockBoard = true;
+                checkForMatch();
             }
+        }
+    }
+
+    function checkForMatch() {
+        if (firstCard.dataset.pairId === secondCard.dataset.pairId) {
+            // Match!
+            matches++;
+            scoreEl.textContent = `${matches}/${TOTAL_PAIRS}`;
+            vibrate(50);
+            
+            setTimeout(() => {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                resetBoard();
+                
+                if (matches === TOTAL_PAIRS) {
+                    endGame(true);
+                }
+            }, 400);
+        } else {
+            // No Match
+            vibrate(100);
+            setTimeout(() => {
+                firstCard.classList.add('incorrect');
+                secondCard.classList.add('incorrect');
+            }, 400);
+
+            setTimeout(() => {
+                firstCard.classList.remove('flipped', 'incorrect');
+                secondCard.classList.remove('flipped', 'incorrect');
+                resetBoard();
+            }, 1000);
+        }
+    }
+
+    function resetBoard() {
+        [firstCard, secondCard, lockBoard] = [null, null, false];
+    }
+
+    restartBtn.onclick = () => {
+        modal.classList.add('hidden');
+        startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs, gridConfig); 
+    };
+}
             // END: PASTE THIS REPLACEMENT FUNCTION
 
             // START: PASTE THIS REPLACEMENT FUNCTION
