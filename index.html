@@ -2068,14 +2068,24 @@
     </div>
 </div>
 
-<!-- Level Result Modal -->
+<!-- Level Result Modal (Updated for better messaging) -->
 <div id="level-result-modal" class="hidden fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
     <div class="glass-ui p-6 rounded-2xl text-center pop-in max-w-sm w-full border border-white/10">
-        <h2 id="level-result-title" class="text-2xl font-bold text-white mb-2">Level Complete!</h2>
-        <p id="level-result-msg" class="text-slate-300 mb-4">You mastered this topic.</p>
-        <div class="text-4xl font-bold text-white mb-6" id="level-score-display">95%</div>
-        <button id="level-next-btn" class="w-full grad-nav text-white font-bold py-3 rounded-xl mb-3">Continue</button>
-        <button id="level-retry-btn" class="w-full bg-white/10 text-white font-bold py-3 rounded-xl">Retry</button>
+        <h2 id="level-result-title" class="text-2xl font-bold text-white mb-4">Level Complete!</h2>
+        
+        <!-- Score Display -->
+        <div class="bg-white/5 rounded-xl p-4 mb-4 border border-white/5">
+            <span class="text-xs text-slate-400 uppercase tracking-widest mb-1 block">Your Score</span>
+            <div class="text-5xl font-black text-white" id="level-score-display">95%</div>
+        </div>
+
+        <!-- Dynamic Message Area (Stars & Text injected here) -->
+        <p id="level-result-msg" class="text-slate-300 mb-6 text-sm leading-relaxed">You mastered this topic.</p>
+        
+        <div class="space-y-3">
+            <button id="level-next-btn" class="w-full grad-nav text-white font-bold py-3 rounded-xl transition-transform hover:scale-105 shadow-lg">Continue</button>
+            <button id="level-retry-btn" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-colors">Retry</button>
+        </div>
     </div>
 </div>
 
@@ -20878,7 +20888,125 @@ async function updatePathProgress(levelIndex, stars) {
     }
 }
 
-// --- NEW: Fireworks Celebration Logic ---
+// --- FIXED: Celebration & Progress Logic ---
+
+function handlePathQuizResult(score, total, levelIndex) {
+    const percentage = Math.round((score / total) * 100);
+    
+    // Calculate Stars based on percentage
+    let stars = 0;
+    if (percentage >= 97) stars = 3;       // 3 Stars: 97-100%
+    else if (percentage >= 94) stars = 2;  // 2 Stars: 94-96%
+    else if (percentage >= 90) stars = 1;  // 1 Star:  90-93%
+    
+    const passed = stars > 0;
+
+    // Cleanup Overlay & Restore Navs
+    const overlay = document.querySelector('.fixed.z-\\[9999\\]');
+    if(overlay) overlay.remove();
+    
+    const tNav = document.getElementById('top-nav');
+    const bNav = document.getElementById('bottom-nav');
+    if(tNav) tNav.classList.remove('hidden');
+    if(bNav) bNav.classList.remove('hidden');
+
+    // Get Modal Elements
+    const modal = document.getElementById('level-result-modal');
+    const titleEl = document.getElementById('level-result-title');
+    const msgEl = document.getElementById('level-result-msg');
+    const scoreEl = document.getElementById('level-score-display');
+    const nextBtn = document.getElementById('level-next-btn');
+    const retryBtn = document.getElementById('level-retry-btn');
+    
+    // Star Elements for Modal (ensure these exist in your modal HTML, if not, add them)
+    // If you are using the previous modal HTML, you might need to add the star container manually or use this JS to inject them if missing.
+    // Assuming standard modal structure.
+    
+    modal.classList.remove('hidden');
+    scoreEl.textContent = `${percentage}%`;
+    scoreEl.className = passed ? "text-4xl font-bold text-green-400 mb-4" : "text-4xl font-bold text-red-400 mb-4";
+
+    if (passed) {
+        titleEl.textContent = "Level Complete!";
+        
+        // Update Progress & Save to DB
+        updatePathProgress(levelIndex, stars);
+
+        // Celebration Visuals
+        if (stars === 3) {
+            msgEl.innerHTML = "<span class='text-amber-400 font-bold text-xl block mb-2'>PERFECT! 🌟🌟🌟</span>You are a master!";
+            triggerFireworks(); // 3-Star Special
+        } else if (stars === 2) {
+            msgEl.innerHTML = "<span class='text-slate-200 font-bold text-lg block mb-2'>Great Job! 🌟🌟</span>Almost perfect!";
+            showConfetti(); // Standard Confetti
+        } else {
+            msgEl.innerHTML = "<span class='text-slate-300 font-bold text-lg block mb-2'>Good Work! 🌟</span>You passed!";
+            showConfetti();
+        }
+
+        nextBtn.textContent = "Next Level";
+        nextBtn.onclick = () => { 
+            modal.classList.add('hidden'); 
+            renderLearningPath(); // Refresh the path view to show unlocked level
+        };
+    } else {
+        titleEl.textContent = "Level Failed";
+        msgEl.innerHTML = "You need at least <span class='text-red-400 font-bold'>90%</span> to unlock the next level.";
+        
+        nextBtn.textContent = "Back to Path";
+        nextBtn.onclick = () => { 
+            modal.classList.add('hidden'); 
+            renderLearningPath(); 
+        };
+    }
+
+    retryBtn.onclick = () => {
+        modal.classList.add('hidden');
+        // Restart quiz with same settings
+        startPathQuiz(levelIndex);
+    };
+}
+
+async function updatePathProgress(levelIndex, stars) {
+    if (!userProfile) return;
+    
+    // Ensure profile structures exist
+    if (!userProfile.pathScores) userProfile.pathScores = {};
+    // Use Number() to prevent string concatenation errors
+    let currentProgress = Number(userProfile.pathProgress) || 0;
+
+    console.log(`Updating Progress: Level ${levelIndex}, Stars Earned: ${stars}`);
+
+    // 1. Update Stars (only if new score is better)
+    const currentStars = userProfile.pathScores[levelIndex] || 0;
+    if (stars > currentStars) {
+        userProfile.pathScores[levelIndex] = stars;
+    }
+
+    // 2. Unlock Next Level Logic
+    // If the user just beat the level that matches their current progress limit, increment progress.
+    // e.g., If I am at level 0 (Basic Vocab) and I beat it, progress becomes 1.
+    if (levelIndex === currentProgress) {
+        userProfile.pathProgress = currentProgress + 1;
+        console.log(`Level Up! New Progress: ${userProfile.pathProgress}`);
+    }
+
+    // 3. Save to Firestore
+    if (userId) {
+        const profileRef = doc(db, `artifacts/${appId}/users/${userId}`);
+        try {
+            await updateDoc(profileRef, { 
+                pathScores: userProfile.pathScores,
+                pathProgress: userProfile.pathProgress
+            });
+            console.log("Path progress synced to DB.");
+        } catch (e) { 
+            console.error("Save error:", e); 
+        }
+    }
+}
+
+// Ensure this function exists for the 3-star celebration
 function triggerFireworks() {
     var duration = 3 * 1000;
     var animationEnd = Date.now() + duration;
@@ -20888,11 +21016,9 @@ function triggerFireworks() {
 
     var interval = setInterval(function() {
         var timeLeft = animationEnd - Date.now();
-
         if (timeLeft <= 0) { return clearInterval(interval); }
 
         var particleCount = 50 * (timeLeft / duration);
-        // Launch fireworks from two random points near the top corners
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
     }, 250);
