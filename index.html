@@ -17202,55 +17202,81 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             }
 
             function renderHomeView() {
-                updateTopNav({ showLogo: true, showActions: true });
-                const template = document.getElementById('home-view-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                const categoryGridEl = mainContent.querySelector('#category-grid');
-                categoryGridEl.innerHTML = '';
-                let i = 0;
-                homeScreenOrder.forEach(categoryName => {
-                    const data = vocabularyData[categoryName];
-                    if (!data && categoryName !== 'Dictionary') return;
-                    const card = document.createElement('div');
-                    let gradClass;
+    // 1. RESTORE NAV BARS (Critical fix)
+    const topNav = document.getElementById('top-nav');
+    const bottomNav = document.getElementById('bottom-nav');
+    
+    if(topNav) {
+        topNav.classList.remove('hidden');
+        // Reset any custom styling that might have been applied by other views
+        topNav.className = "flex items-center justify-center px-4"; 
+    }
+    if(bottomNav) bottomNav.classList.remove('hidden');
+    
+    document.body.style.overflow = '';
+    document.body.style.paddingTop = '56px'; // Ensure padding for fixed header
 
-                    const specificGradients = {
-                        "Conversational English": 'grad-9',
-                        "Sentence Structure": 'grad-4',
-                        "Dictionary": 'grad-5',
-                        "Phrases & Idioms": 'grad-3',
-                    };
+    // 2. Set Standard Header Content
+    updateTopNav({ showLogo: true, showActions: true });
 
-                    if (specificGradients[categoryName]) {
-                        gradClass = specificGradients[categoryName];
-                    } else {
-                        gradClass = gradients[i % gradients.length];
-                    }
+    // 3. Render Home Template
+    const template = document.getElementById('home-view-template');
+    mainContent.innerHTML = '';
+    mainContent.appendChild(template.content.cloneNode(true));
 
-                    if (data) allCategoriesMap.set(categoryName, { data: data, gradClass: gradClass });
-                    card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${gradClass}`;
-                    card.style.animationDelay = `${i * 60}ms`;
-                    card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
-                    card.addEventListener('click', () => {
-                         vibrate(); // <-- ADD THIS LINE
-                         if (categoryName === 'Dictionary') {
-                            switchView('dictionary', { isSubView: true, from: { view: 'home' } });
-                         } else if (data === 'synonyms-view') {
-                            switchView('synonymsView', {isSubView: true, from: {view: 'home'}, gradClass: gradClass});
-                        } else if (Array.isArray(data)) {
-                            switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: data, gradClass: gradClass });
-                        } else if (data.content && Array.isArray(data.content)) {
-                            switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
-                        } else if (data.subtopics) {
-                            switchView('subtopicSelection', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
-                        } else {
-                            switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: gradClass });
-                        }
-                    });
-                    categoryGridEl.appendChild(card);
-                    i++;
-                });
+    // 4. Populate Grid
+    const categoryGridEl = mainContent.querySelector('#category-grid');
+    categoryGridEl.innerHTML = '';
+    
+    let i = 0;
+    homeScreenOrder.forEach(categoryName => {
+        const data = vocabularyData[categoryName];
+        if (!data && categoryName !== 'Dictionary' && categoryName !== 'Grammar & Rules') return;
+        
+        const card = document.createElement('div');
+        let gradClass;
+
+        const specificGradients = {
+            "Conversational English": 'grad-9',
+            "Sentence Structure": 'grad-4',
+            "Dictionary": 'grad-5',
+            "Phrases & Idioms": 'grad-3',
+            "Grammar & Rules": 'grad-7',
+            "Discussion Questions": 'grad-8'
+        };
+
+        if (specificGradients[categoryName]) {
+            gradClass = specificGradients[categoryName];
+        } else {
+            gradClass = gradients[i % gradients.length];
+        }
+
+        if (data) allCategoriesMap.set(categoryName, { data: data, gradClass: gradClass });
+        
+        card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${gradClass}`;
+        card.style.animationDelay = `${i * 60}ms`;
+        card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
+        
+        card.addEventListener('click', () => {
+            vibrate(); 
+            if (categoryName === 'Dictionary') {
+                switchView('dictionary', { isSubView: true, from: { view: 'home' } });
+            } else if (data === 'synonyms-view') {
+                switchView('synonymsView', {isSubView: true, from: {view: 'home'}, gradClass: gradClass});
+            } else if (Array.isArray(data)) {
+                switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: data, gradClass: gradClass });
+            } else if (data && data.content && Array.isArray(data.content)) {
+                switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
+            } else if (data && data.subtopics) {
+                switchView('subtopicSelection', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
+            } else {
+                switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: gradClass });
             }
+        });
+        categoryGridEl.appendChild(card);
+        i++;
+    });
+}
 
             // START: PASTE THIS REPLACEMENT FUNCTION
         function renderCategoryListView(categories, title, subtitle, gradClass) {
