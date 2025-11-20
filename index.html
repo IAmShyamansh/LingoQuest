@@ -673,70 +673,92 @@
         }
         /* --- END: Game Footer Bar Style --- */
 
-        /* --- START: Match the Columns Game Styles --- */
-        #match-game-board {
-            width: 100%;
-            max-width: 800px; /* Give it a wider max width */
-            margin: auto;
-        }
+        /* --- MATCH THE COLUMNS GAME STYLES (REDESIGNED) --- */
+#match-game-board {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+}
 
-        .match-game-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px; /* Vertical gap between rows */
-        }
+.match-game-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem; /* Space between columns */
+    position: relative;
+}
 
-        .match-item {
-            width: 50%;
-            padding: 1rem;
-            border-radius: 0.75rem; /* 12px */
-            font-weight: 600;
-            color: white;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            vertical-align: top; /* Align text to top */
-            font-family: 'Inter', sans-serif;
-            font-size: 0.875rem; /* 14px */
-            line-height: 1.4;
-        }
+.match-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 48%; /* Slightly less than half */
+}
 
-        .match-item.col-word {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-        .match-item.col-meaning {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
+.match-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    min-height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text */
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
 
-        .match-item.match-selected {
-            background-color: var(--accent-pink);
-            color: white;
-            transform: scale(1.03);
-            border-color: var(--accent-pink);
-        }
+/* Hover Effect */
+.match-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(0) scale(1.02);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
 
-        .match-item.match-correct {
-            background-color: var(--accent-green);
-            color: white;
-            opacity: 0.6;
-            pointer-events: none;
-            border-color: var(--accent-green);
-        }
+/* Selected State */
+.match-card.selected {
+    background: rgba(99, 102, 241, 0.2); /* Indigo Tint */
+    border-color: #6366f1;
+    color: white;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+}
 
-        .match-item.match-incorrect {
-            background-color: var(--accent-red);
-            color: white;
-            border-color: var(--accent-red);
-            animation: shake 0.4s ease-in-out;
-        }
+/* Correct Match State */
+.match-card.correct {
+    background: rgba(34, 197, 94, 0.2) !important; /* Green Tint */
+    border-color: #22c55e !important;
+    color: #4ade80 !important;
+    opacity: 0.5;
+    pointer-events: none;
+    transform: scale(0.98);
+}
 
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
+/* Incorrect Match State */
+.match-card.incorrect {
+    background: rgba(239, 68, 68, 0.2) !important; /* Red Tint */
+    border-color: #ef4444 !important;
+    color: #fca5a5 !important;
+    animation: shake 0.4s ease-in-out;
+}
+
+/* Column Headers */
+.col-header {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+}
         /* --- END: Match the Columns Game Styles --- */
 
         /* --- START: Jumbled Word Game Styles --- */
@@ -1090,6 +1112,157 @@
     min-height: 4rem; /* Ensure minimum height for touch targets */
 }
 
+/* --- GAME ZONE ARCADE STYLES --- */
+.game-zone-container {
+    padding: 1rem;
+    padding-bottom: 8rem; /* Space for bottom nav */
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* --- Hero Banner (Learning Path) --- */
+.hero-card {
+    position: relative;
+    background: #1e293b;
+    border-radius: 24px;
+    margin-bottom: 2.5rem;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+}
+
+/* Animated Gradient Border Effect */
+.hero-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b);
+    z-index: 1;
+}
+
+.hero-inner {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Subtle glow background */
+.hero-bg-glow {
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+}
+
+.hero-card:hover { transform: scale(1.02); border-color: rgba(255,255,255,0.2); }
+.hero-card:active { transform: scale(0.98); }
+
+.hero-icon {
+    font-size: 2.5rem;
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.5);
+    color: white;
+}
+
+/* --- Arcade Grid --- */
+.arcade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Columns */
+    gap: 1rem;
+}
+
+.arcade-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+    height: 100%;
+    min-height: 180px;
+}
+
+/* Hover Glow Effect */
+.arcade-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--glow-color, rgba(255,255,255,0.1)) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.arcade-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 15px 35px -10px rgba(0,0,0,0.5);
+}
+.arcade-card:hover::after { opacity: 0.4; }
+.arcade-card:active { transform: scale(0.96); }
+
+.card-icon-box {
+    width: 56px; height: 56px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    background: var(--icon-bg);
+    box-shadow: 0 8px 15px -5px var(--shadow-color);
+    z-index: 10;
+    transition: transform 0.3s ease;
+    color: white;
+}
+.arcade-card:hover .card-icon-box { transform: scale(1.1) rotate(6deg); }
+
+.card-title {
+    font-weight: 800;
+    font-size: 1rem;
+    color: white;
+    margin-bottom: 0.4rem;
+    z-index: 10;
+    line-height: 1.2;
+}
+.card-desc {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    line-height: 1.3;
+    z-index: 10;
+}
+
+/* Game Specific Colors */
+.card-match { --icon-bg: linear-gradient(135deg, #ec4899, #be185d); --shadow-color: rgba(190, 24, 93, 0.5); --glow-color: rgba(236, 72, 153, 0.2); }
+.card-flip { --icon-bg: linear-gradient(135deg, #3b82f6, #2563eb); --shadow-color: rgba(37, 99, 235, 0.5); --glow-color: rgba(59, 130, 246, 0.2); }
+.card-rain { --icon-bg: linear-gradient(135deg, #8b5cf6, #6d28d9); --shadow-color: rgba(109, 40, 217, 0.5); --glow-color: rgba(139, 92, 246, 0.2); }
+.card-jumble { --icon-bg: linear-gradient(135deg, #f59e0b, #d97706); --shadow-color: rgba(217, 119, 6, 0.5); --glow-color: rgba(245, 158, 11, 0.2); }
+
+.zone-header {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-left: 0.5rem;
+}
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -1126,31 +1299,39 @@
     <main id="main-content" class="w-full"></main>
     
     <nav id="bottom-nav">
-        <div class="max-w-2xl lg:max-w-5xl mx-auto px-4 py-1">
-            <div class="flex justify-around items-center">
-                <button id="nav-home" data-view="home" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                    <span class="text-xs font-bold">Home</span>
-                </button>
-                <button id="nav-favorites" data-view="favorites" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                    <span class="text-xs font-bold">Favorites</span>
-                </button>
-                <button id="nav-game-zone" data-view="gameZone" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12.5a8 8 0 1 1 15 0a8 8 0 1 1-15 0Z"></path><path d="M12 12v.01"></path><path d="M16 12v.01"></path><path d="M8 12v.01"></path><path d="M12 18s-4-3-4-6"></path><path d="M12 18s4-3 4-6"></path></svg>
-                    <span class="text-xs font-bold">Game Zone</span>
-                </button>
-                <button id="nav-quiz-hub" data-view="quizHub" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                    <span class="text-xs font-bold">Quiz Hub</span>
-                </button>
-                <button id="nav-profile" data-view="profile" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <span class="text-xs font-bold">Profile</span>
-                </button>
-            </div>
+    <div class="max-w-2xl lg:max-w-5xl mx-auto px-4">
+        <div class="flex justify-between items-end h-[56px] pb-2 relative">
+            
+            <!-- Left Side -->
+            <button id="nav-home" data-view="home" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span class="text-[10px] font-bold">Home</span>
+            </button>
+            <button id="nav-favorites" data-view="favorites" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                <span class="text-[10px] font-bold">Favorites</span>
+            </button>
+
+            <!-- Middle (Game Zone) - Standard -->
+            <button id="nav-game-zone" data-view="gameZone" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                <!-- Gamepad Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
+                <span class="text-[10px] font-bold">Game Zone</span>
+            </button>
+
+            <!-- Right Side -->
+            <button id="nav-quiz-hub" data-view="quizHub" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span class="text-[10px] font-bold">Quiz Hub</span>
+            </button>
+            <button id="nav-profile" data-view="profile" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="text-[10px] font-bold">Profile</span>
+            </button>
+
         </div>
-    </nav>
+    </div>
+</nav>
     
     <div id="about-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
@@ -1321,46 +1502,102 @@
     
     <!-- START: PASTE THIS NEW TEMPLATE CODE HERE -->
     <template id="game-zone-template">
-    <div class="pop-in p-4 max-w-3xl mx-auto">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-white">Game Zone</h1>
-            <p class="text-slate-300 mt-1">Learn and play with fun games!</p>
-        </div>
+    <div class="fixed inset-0 z-[50] flex flex-col bg-slate-900 text-white font-sans overflow-hidden">
+        
+        <!-- FIXED TOP NAV BAR -->
+<div class="relative z-50 grid grid-cols-[auto_1fr_auto] items-center px-4 py-3 bg-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-md shrink-0 h-[60px]">
+    <!-- Exit Button (Left) -->
+    <button id="exit-game-zone" class="p-2 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors border border-white/5">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
 
-        <!-- Learning Path Section (Updated) -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-white mb-4">Learning Path</h2>
-            <div id="open-learning-path" class="glass-ui p-6 rounded-xl text-center cursor-pointer hover:bg-white/10 transition-colors transform active:scale-95">
-                <p class="text-5xl mb-2">🗺️</p>
-                <h3 class="font-bold text-xl text-white">Start Your Journey</h3>
-                <p class="text-sm text-slate-300 mt-1">Master vocabulary level by level.</p>
-            </div>
-        </div>
+    <!-- Title (Center) -->
+    <h1 class="text-xl font-black tracking-tight text-white text-center">Game Zone</h1>
 
-        <!-- Game Arcade Section -->
-        <div class="mt-8">
-            <h2 class="text-2xl font-bold text-white mb-4">Game Arcade</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button class="mode-card grad-1 w-full p-4 rounded-xl text-left" data-game="match-columns">
-                    <h3 class="font-bold text-lg text-white">Match the Columns</h3>
-                    <p class="text-sm text-slate-200">Connect the word with its meaning.</p>
-                </button>
-                <button class="mode-card grad-2 w-full p-4 rounded-xl text-left" data-game="flip-cards">
-                    <h3 class="font-bold text-lg text-white">Flip Card Memory</h3>
-                    <p class="text-sm text-slate-200">Find the matching pairs.</p>
-                </button>
-                <button class="mode-card grad-3 w-full p-4 rounded-xl text-left" data-game="word-rain">
-                    <h3 class="font-bold text-lg text-white">Word Rain</h3>
-                    <p class="text-sm text-slate-200">Tap the meaning before the word drops!</p>
-                </button>
-                <button class="mode-card grad-4 w-full p-4 rounded-xl text-left" data-game="jumbled-word">
-                    <h3 class="font-bold text-lg text-white">Jumbled Word</h3>
-                    <p class="text-sm text-slate-200">Unscramble the letters.</p>
-                </button>
+    <!-- Empty Placeholder (Right) to balance layout and force center alignment -->
+    <div class="w-10"></div>
+</div>
+
+        <!-- SCROLLABLE CONTENT AREA -->
+        <div class="flex-grow overflow-y-auto no-scrollbar p-4 pb-24">
+            <div class="max-w-md mx-auto w-full">
+                
+                <!-- Hero Banner: Learning Path -->
+                <div class="mb-8 mt-2">
+                    <h2 class="zone-header">
+                        <span class="text-indigo-400">🚀</span> Your Journey
+                    </h2>
+                    <div id="open-learning-path" class="hero-card">
+                        <div class="hero-bg-glow"></div>
+                        <div class="hero-inner">
+                            <div class="hero-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+        <line x1="9" x2="9" y1="3" y2="18"/>
+        <line x1="15" x2="15" y1="6" y2="21"/>
+    </svg>
+</div>
+                            <div class="text-left z-10">
+                                <h3 class="text-xl font-bold text-white">Learning Path</h3>
+                                <p class="text-slate-300 text-sm">Master English level by level.</p>
+                            </div>
+                            <div class="ml-auto bg-white/10 p-2 rounded-full text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arcade Grid -->
+                <div>
+                    <h2 class="zone-header">
+                        <span class="text-pink-400">🕹️</span> Arcade Mode
+                    </h2>
+                    <div class="arcade-grid">
+                        
+                        <!-- Match Columns -->
+                        <div class="arcade-card card-match" data-game="match-columns">
+                            <div class="card-icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                            </div>
+                            <h3 class="card-title">Match It!</h3>
+                            <p class="card-desc">Connect words to meanings.</p>
+                        </div>
+
+                        <!-- Flip Card -->
+                        <div class="arcade-card card-flip" data-game="flip-cards">
+                            <div class="card-icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                            </div>
+                            <h3 class="card-title">Memory Flip</h3>
+                            <p class="card-desc">Find matching pairs.</p>
+                        </div>
+
+                        <!-- Word Rain -->
+                        <div class="arcade-card card-rain" data-game="word-rain">
+                            <div class="card-icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></svg>
+                            </div>
+                            <h3 class="card-title">Word Rain</h3>
+                            <p class="card-desc">Catch falling words!</p>
+                        </div>
+
+                        <!-- Jumbled Word -->
+                        <div class="arcade-card card-jumble" data-game="jumbled-word">
+                            <div class="card-icon-box">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                            </div>
+                            <h3 class="card-title">Unscramble</h3>
+                            <p class="card-desc">Fix jumbled letters.</p>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
+
     <!-- END: PASTE THIS NEW TEMPLATE CODE HERE -->
 
     <!-- START: PASTE THIS NEW TEMPLATE HERE -->
@@ -16942,23 +17179,60 @@ if (adminBtn) {
 
         // START: REPLACE the old renderGameZoneView with this one
             function renderGameZoneView() {
-    updateTopNav({ title: "Game Zone", showBack: false, showActions: true });
+    // 1. HIDE default Top Nav (Game Zone has its own fixed header)
+    const topNav = document.getElementById('top-nav');
+    if(topNav) topNav.classList.add('hidden');
+
+    // 2. Ensure Bottom Nav is visible
+    document.getElementById('bottom-nav').classList.remove('hidden');
+    document.body.style.overflow = '';
+
+    // 3. Clear & Render Template
     const template = document.getElementById('game-zone-template');
+    mainContent.innerHTML = ''; // CRITICAL: Clear previous content
     mainContent.appendChild(template.content.cloneNode(true));
     
-    document.getElementById('open-learning-path').addEventListener('click', () => {
-        vibrate();
-        switchView('learningPath', { isSubView: true, from: { view: 'gameZone' } });
-    });
+    // 4. Exit Button Logic
+    const exitBtn = document.getElementById('exit-game-zone');
+    if(exitBtn) {
+        exitBtn.addEventListener('click', () => {
+            vibrate();
+            if(topNav) topNav.classList.remove('hidden'); // Restore top nav
+            switchView('home');
+        });
+    }
 
-    mainContent.querySelectorAll('.mode-card[data-game]').forEach(card => {
+    // 5. Learning Path Listener
+    const lpBtn = document.getElementById('open-learning-path');
+    if(lpBtn) {
+        lpBtn.addEventListener('click', () => {
+            vibrate();
+            switchView('learningPath', { isSubView: true, from: { view: 'gameZone' } });
+        });
+    }
+
+    // 6. Arcade Game Listeners
+    mainContent.querySelectorAll('.arcade-card[data-game]').forEach(card => {
         card.addEventListener('click', () => {
             vibrate();
+            const gameType = card.dataset.game;
+            const gameTitle = card.querySelector('.card-title').textContent;
+            
+            let gradClass = 'grad-1';
+            if (gameType === 'match-columns') gradClass = 'grad-3';
+            if (gameType === 'flip-cards') gradClass = 'grad-7';
+            if (gameType === 'word-rain') gradClass = 'grad-9';
+            if (gameType === 'jumbled-word') gradClass = 'grad-4';
+
+            // Restore top nav for difficulty select (since that screen uses standard nav)
+            if(topNav) topNav.classList.remove('hidden');
+
             switchView('gameDifficultySelect', {
-                isSubView: true, from: { view: 'gameZone' },
-                gameType: card.dataset.game,
-                gameTitle: card.querySelector('h3').textContent,
-                gradClass: card.classList[1]
+                isSubView: true, 
+                from: { view: 'gameZone' }, 
+                gameType, 
+                gameTitle, 
+                gradClass 
             });
         });
     });
@@ -17967,145 +18241,148 @@ if (adminBtn) {
 
             // START: PASTE THIS REPLACEMENT FUNCTION
             function startMatchColumnsGame(selectedWords, originalTitle, gradClass) {
-                // 1. Hide navs and show game template
-                document.getElementById('top-nav').classList.add('hidden');
-                document.getElementById('bottom-nav').classList.add('hidden');
-                document.body.style.paddingTop = '0';
-                document.body.style.paddingBottom = '0';
+    // 1. Hide navs
+    document.getElementById('top-nav').classList.add('hidden');
+    document.getElementById('bottom-nav').classList.add('hidden');
+    document.body.style.paddingTop = '0';
+    document.body.style.paddingBottom = '0';
 
-                mainContent.innerHTML = '';
-                mainContent.appendChild(document.getElementById('match-game-template').content.cloneNode(true));
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('match-game-template').content.cloneNode(true));
 
-                // 2. Get all elements
-                const gameBoard = document.getElementById('match-game-board');
-                const scoreEl = document.getElementById('game-score');
-                const movesEl = document.getElementById('game-moves');
-                const modal = document.getElementById('match-over-modal');
-                const finalMovesEl = document.getElementById('final-moves-match');
-                const restartBtn = document.getElementById('restart-game-btn-match');
-                const gameOverIcon = document.getElementById('match-over-icon');
-                const quitBtn = document.getElementById('quit-game-btn');
-                
-                // 3. Setup Quit Button
-                const quitGame = () => {
-                    document.getElementById('top-nav').classList.remove('hidden');
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-                    document.body.style.paddingTop = '56px';
-                    document.body.style.paddingBottom = '56px';
-                    switchView('gameZone', { forceRender: true });
-                };
-                quitBtn.addEventListener('click', quitGame);
+    // 2. Elements
+    const gameBoard = document.getElementById('match-game-board');
+    const scoreEl = document.getElementById('game-score');
+    const movesEl = document.getElementById('game-moves');
+    const modal = document.getElementById('match-over-modal');
+    const finalMovesEl = document.getElementById('final-moves-match');
+    const restartBtn = document.getElementById('restart-game-btn-match');
+    const gameOverIcon = document.getElementById('match-over-icon');
+    const quitBtn = document.getElementById('quit-game-btn');
+    
+    // 3. Quit Logic
+    const quitGame = () => {
+        document.getElementById('top-nav').classList.remove('hidden');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+        document.body.style.paddingTop = ''; // Restore default padding
+        document.body.style.paddingBottom = '';
+        switchView('gameZone', { forceRender: true });
+    };
+    quitBtn.addEventListener('click', quitGame);
 
-                // 4. Initialize game state
-                let moves = 0;
-                let score = 0;
-                let firstSelection = null;
-                let lockBoard = false;
-                const totalPairs = selectedWords.length; // This will be 10
+    // 4. Game State
+    let moves = 0;
+    let score = 0;
+    let firstSelection = null;
+    let lockBoard = false;
+    const totalPairs = selectedWords.length;
 
-                // 5. Prepare and shuffle columns
-                let wordColumn = [];
-                let meaningColumn = [];
-                selectedWords.forEach((word, index) => {
-                    wordColumn.push({ id: index, content: word.word });
-                    meaningColumn.push({ id: index, content: word.meaning });
-                });
-                
-                // --- THIS IS THE FIX ---
-                // Shuffle just one column using the better shuffle function
-                meaningColumn = shuffleArray(meaningColumn);
-                // --- END OF FIX ---
+    // 5. Prepare Columns (Shuffle Meaning Column ONLY)
+    let wordColumn = selectedWords.map((w, i) => ({ id: i, content: w.word, type: 'word' }));
+    let meaningColumn = selectedWords.map((w, i) => ({ id: i, content: w.meaning, type: 'meaning' }));
+    
+    // Shuffle the meanings
+    for (let i = meaningColumn.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [meaningColumn[i], meaningColumn[j]] = [meaningColumn[j], meaningColumn[i]];
+    }
 
-                // 6. Build the game table
-                let tableHTML = '<table class="match-game-table"><tbody>';
-                for (let i = 0; i < totalPairs; i++) {
-                    tableHTML += `
-                        <tr>
-                            <td class="match-item col-word" data-id="${wordColumn[i].id}" data-col="word">${wordColumn[i].content}</td>
-                            <td class="match-item col-meaning" data-id="${meaningColumn[i].id}" data-col="meaning">${meaningColumn[i].content}</td>
-                        </tr>
-                    `;
-                }
-                tableHTML += '</tbody></table>';
-                gameBoard.innerHTML = tableHTML;
+    // 6. Render Board (Two Columns Layout)
+    let boardHTML = `
+        <div class="match-game-container">
+            <div class="match-column">
+                <div class="col-header">Terms</div>
+                ${wordColumn.map(item => `<div class="match-card" data-id="${item.id}" data-type="word">${item.content}</div>`).join('')}
+            </div>
+            <div class="match-column">
+                <div class="col-header">Definitions</div>
+                ${meaningColumn.map(item => `<div class="match-card" data-id="${item.id}" data-type="meaning">${item.content}</div>`).join('')}
+            </div>
+        </div>
+    `;
+    gameBoard.innerHTML = boardHTML;
 
-                // 7. Add click listeners to all items
-                gameBoard.querySelectorAll('.match-item').forEach(item => item.addEventListener('click', onMatchClick));
+    // 7. Click Logic
+    gameBoard.querySelectorAll('.match-card').forEach(card => {
+        card.addEventListener('click', e => {
+            if (lockBoard || card.classList.contains('correct')) return;
+            
+            const clickedCard = e.currentTarget;
 
-                function onMatchClick(e) {
-                    if (lockBoard) return;
-                    const clickedItem = e.currentTarget;
-
-                    if (!firstSelection) {
-                        // This is the first item clicked
-                        clickedItem.classList.add('match-selected');
-                        firstSelection = clickedItem;
-                        return;
-                    }
-
-                    // This is the second item clicked
-                    if (firstSelection.dataset.col === clickedItem.dataset.col) {
-                        // User clicked the same column. Deselect old, select new.
-                        firstSelection.classList.remove('match-selected');
-                        clickedItem.classList.add('match-selected');
-                        firstSelection = clickedItem;
-                        return;
-                    }
-
-                    // User clicked the other column. Time to check.
-                    lockBoard = true;
-                    moves++;
-                    movesEl.textContent = moves;
-                    clickedItem.classList.add('match-selected');
-
-                    if (firstSelection.dataset.id === clickedItem.dataset.id) {
-                        // It's a match!
-                        vibrate(50);
-                        score++;
-                        scoreEl.textContent = score;
-                        
-                        setTimeout(() => {
-                            firstSelection.classList.add('match-correct');
-                            clickedItem.classList.add('match-correct');
-                            firstSelection.classList.remove('match-selected');
-                            clickedItem.classList.remove('match-selected');
-
-                            if (score === totalPairs) {
-                                // Game over
-                                finalMovesEl.textContent = moves;
-                                if (moves > totalPairs * 2) gameOverIcon.textContent = '😅';
-                                else gameOverIcon.textContent = '🎉';
-                                setTimeout(() => {
-                                    modal.classList.remove('hidden');
-                                    quitBtn.classList.add('hidden');
-                                }, 500);
-                            }
-                            
-                            firstSelection = null;
-                            lockBoard = false;
-                        }, 300);
-
-                    } else {
-                        // Not a match
-                        vibrate(20);
-                        firstSelection.classList.add('match-incorrect');
-                        clickedItem.classList.add('match-incorrect');
-                        
-                        setTimeout(() => {
-                            firstSelection.classList.remove('match-selected', 'match-incorrect');
-                            clickedItem.classList.remove('match-selected', 'match-incorrect');
-                            firstSelection = null;
-                            lockBoard = false;
-                        }, 800);
-                    }
-                }
-
-                restartBtn.onclick = () => {
-                    modal.classList.add('hidden');
-                    // Relaunch the game with the same set of words but re-shuffled
-                    startMatchColumnsGame(selectedWords, originalTitle, gradClass); 
-                };
+            // Case 1: First click
+            if (!firstSelection) {
+                clickedCard.classList.add('selected');
+                firstSelection = clickedCard;
+                return;
             }
+
+            // Case 2: Clicked same card again -> Deselect
+            if (clickedCard === firstSelection) {
+                clickedCard.classList.remove('selected');
+                firstSelection = null;
+                return;
+            }
+
+            // Case 3: Clicked same column -> Switch selection
+            if (clickedCard.dataset.type === firstSelection.dataset.type) {
+                firstSelection.classList.remove('selected');
+                clickedCard.classList.add('selected');
+                firstSelection = clickedCard;
+                return;
+            }
+
+            // Case 4: Clicked different column -> Check Match
+            lockBoard = true;
+            moves++;
+            movesEl.textContent = moves;
+            clickedCard.classList.add('selected');
+
+            if (clickedCard.dataset.id === firstSelection.dataset.id) {
+                // MATCH!
+                vibrate(50);
+                score++;
+                scoreEl.textContent = score;
+                
+                setTimeout(() => {
+                    firstSelection.classList.add('correct');
+                    clickedCard.classList.add('correct');
+                    firstSelection.classList.remove('selected');
+                    clickedCard.classList.remove('selected');
+                    
+                    firstSelection = null;
+                    lockBoard = false;
+
+                    if (score === totalPairs) {
+                        finalMovesEl.textContent = moves;
+                        gameOverIcon.textContent = moves <= totalPairs + 2 ? '🏆' : '🎉';
+                        setTimeout(() => {
+                            modal.classList.remove('hidden');
+                            quitBtn.classList.add('hidden');
+                        }, 500);
+                    }
+                }, 300);
+
+            } else {
+                // NO MATCH
+                vibrate(200);
+                firstSelection.classList.add('incorrect');
+                clickedCard.classList.add('incorrect');
+
+                setTimeout(() => {
+                    firstSelection.classList.remove('selected', 'incorrect');
+                    clickedCard.classList.remove('selected', 'incorrect');
+                    firstSelection = null;
+                    lockBoard = false;
+                }, 800);
+            }
+        });
+    });
+
+    restartBtn.onclick = () => {
+        modal.classList.add('hidden');
+        startMatchColumnsGame(selectedWords, originalTitle, gradClass); 
+    };
+}
             // END: PASTE THIS REPLACEMENT FUNCTION
 
             function renderSynonymsView(gradClass) {
@@ -20485,48 +20762,140 @@ function startPathQuiz(levelIndex) {
 
 function handlePathQuizResult(score, total, levelIndex) {
     const percentage = Math.round((score / total) * 100);
-    const passed = percentage >= 90;
+    
+    // Calculate Stars based on percentage
+    let stars = 0;
+    if (percentage >= 97) stars = 3;       // 3 Stars: 97-100%
+    else if (percentage >= 94) stars = 2;  // 2 Stars: 94-96%
+    else if (percentage >= 90) stars = 1;  // 1 Star:  90-93%
+    
+    const passed = stars > 0;
 
-    // Remove Overlay
+    // Cleanup UI (remove quiz overlay and restore navs)
     const overlay = document.querySelector('.fixed.z-\\[9999\\]');
     if(overlay) overlay.remove();
     
     document.getElementById('top-nav').classList.remove('hidden');
     document.getElementById('bottom-nav').classList.remove('hidden');
 
+    // Get Result Modal Elements
     const modal = document.getElementById('level-result-modal');
-    document.getElementById('level-score-display').textContent = `${percentage}%`;
+    const titleEl = document.getElementById('level-result-title');
+    const msgEl = document.getElementById('level-result-msg');
+    const scoreEl = document.getElementById('level-score-display');
+    const nextBtn = document.getElementById('level-next-btn');
+    const retryBtn = document.getElementById('level-retry-btn');
     
+    // Get Star Elements
+    const s1 = document.getElementById('star-1');
+    const s2 = document.getElementById('star-2');
+    const s3 = document.getElementById('star-3');
+
+    // Reset Stars to "Empty" state for animation
+    [s1, s2, s3].forEach(s => {
+        s.className = "text-slate-700 text-5xl transform scale-0"; // Start hidden/small
+        s.style.display = "inline-block";
+    });
+
+    modal.classList.remove('hidden');
+    scoreEl.textContent = `${percentage}%`;
+    scoreEl.className = passed ? "text-4xl font-bold text-green-400 mb-6" : "text-4xl font-bold text-red-400 mb-6";
+
     if (passed) {
-        document.getElementById('level-result-title').textContent = "Level Complete!";
-        document.getElementById('level-result-msg').textContent = "You mastered this topic.";
-        showConfetti();
-        updatePathProgress(levelIndex);
-        document.getElementById('level-next-btn').textContent = "Next Level";
-        document.getElementById('level-next-btn').onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
+        titleEl.textContent = "Level Complete!";
+        updatePathProgress(levelIndex, stars);
+        
+        // --- CELEBRATION LOGIC ---
+        if (stars === 3) {
+            msgEl.innerHTML = "<span class='text-amber-400 font-bold text-lg'>PERFECT! 🌟🌟🌟</span><br>You are a master!";
+            // Trigger the Fireworks!
+            triggerFireworks(); 
+        } else {
+            msgEl.textContent = stars === 2 ? "Great job! 🌟🌟" : "Good work! 🌟";
+            // Trigger standard confetti for 1 or 2 stars
+            showConfetti(); 
+        }
+
+        // Sequential Star Animation (Pop one by one)
+        if(stars >= 1) setTimeout(() => { s1.className = "text-yellow-400 text-5xl star-celebrate star-gold"; vibrate(20); }, 300);
+        if(stars >= 2) setTimeout(() => { s2.className = "text-yellow-400 text-5xl star-celebrate star-gold"; vibrate(20); }, 800);
+        if(stars >= 3) setTimeout(() => { s3.className = "text-yellow-400 text-5xl star-celebrate star-gold"; vibrate(50); }, 1300);
+
+        nextBtn.textContent = "Next Level";
+        nextBtn.onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
     } else {
-        document.getElementById('level-result-title').textContent = "Level Failed";
-        document.getElementById('level-result-msg').textContent = "Score 90% to pass.";
-        document.getElementById('level-next-btn').textContent = "Back to Path";
-        document.getElementById('level-next-btn').onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
+        titleEl.textContent = "Level Failed";
+        msgEl.textContent = "You need at least 90% to unlock the next level.";
+        
+        // Show dull/empty stars
+        [s1, s2, s3].forEach(s => s.className = "text-slate-700 text-5xl scale-100");
+        
+        nextBtn.textContent = "Back to Path";
+        nextBtn.onclick = () => { modal.classList.add('hidden'); renderLearningPath(); };
     }
 
-    document.getElementById('level-retry-btn').onclick = () => {
+    retryBtn.onclick = () => {
         modal.classList.add('hidden');
         startPathQuiz(levelIndex);
     };
-    modal.classList.remove('hidden');
 }
 
-async function updatePathProgress(levelIndex) {
-    if (!userProfile) return;
-    if (levelIndex === userProfile.pathProgress) {
-        userProfile.pathProgress = levelIndex + 1;
-        const profileRef = doc(db, `artifacts/${appId}/users/${userId}`);
-        try {
-            await updateDoc(profileRef, { pathProgress: userProfile.pathProgress });
-        } catch (e) { console.error("Save error:", e); }
+async function updatePathProgress(levelIndex, stars) {
+    if (!userProfile || !userId) return;
+
+    // 1. Initialize pathScores object if missing
+    if (!userProfile.pathScores) userProfile.pathScores = {};
+    
+    // 2. Update Stars (Only if new score is better)
+    const currentStars = userProfile.pathScores[levelIndex] || 0;
+    if (stars > currentStars) {
+        userProfile.pathScores[levelIndex] = stars;
     }
+
+    // 3. Unlock Next Level (Only if we are at the current frontier)
+    // Ensure pathProgress is treated as a number
+    const currentProgress = Number(userProfile.pathProgress) || 0;
+    
+    if (levelIndex === currentProgress) {
+        userProfile.pathProgress = currentProgress + 1;
+    }
+
+    console.log(`Saving Progress: Level ${levelIndex}, Stars: ${stars}, Next Unlock: ${userProfile.pathProgress}`);
+
+    // 4. Persist to Firestore
+    try {
+        // Use setDoc with merge to be safe against missing fields
+        const profileRef = doc(db, `artifacts/${appId}/users/${userId}`);
+        await updateDoc(profileRef, { 
+            pathScores: userProfile.pathScores,
+            pathProgress: userProfile.pathProgress
+        });
+        console.log("Path progress saved successfully.");
+    } catch (e) { 
+        console.error("Save error:", e); 
+        // Fallback: Try saving to localStorage if offline so user doesn't lose progress immediately
+        // (Optional but good practice)
+    }
+}
+
+// --- NEW: Fireworks Celebration Logic ---
+function triggerFireworks() {
+    var duration = 3 * 1000;
+    var animationEnd = Date.now() + duration;
+    var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+    var interval = setInterval(function() {
+        var timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) { return clearInterval(interval); }
+
+        var particleCount = 50 * (timeLeft / duration);
+        // Launch fireworks from two random points near the top corners
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
 }
             
             // This block defines how the app starts.
