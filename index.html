@@ -18159,7 +18159,7 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     document.getElementById('bottom-nav').classList.add('hidden');
     document.body.style.overflow = 'hidden';
 
-    // 2. Inject Template (FIXED FOR KEYBOARD)
+    // 2. Inject Template (ADJUSTED SPACING)
     mainContent.innerHTML = '';
     
     const templateHTML = `
@@ -18170,7 +18170,7 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         </div>
 
-        <!-- Top Bar (Sticky to ensure visibility) -->
+        <!-- Top Bar -->
         <div class="sticky top-0 z-50 shrink-0 flex justify-between items-center p-4 pt-6 bg-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-md">
             <div class="flex items-center gap-4">
                 <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
@@ -18193,18 +18193,20 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
 
         <!-- Scrollable Game Area -->
         <div class="flex-1 overflow-y-auto w-full relative">
-            <!-- Container with my-auto for flexible centering -->
-            <div class="min-h-full flex flex-col p-4">
+            <!-- Reduced top padding (pt-2) to pull content up -->
+            <div class="min-h-full flex flex-col p-4 pt-2">
                 
-                <!-- Top Spacer to push content down when space is available -->
+                <!-- Spacer pushes content to center, but allows it to go higher -->
                 <div class="mt-auto"></div>
 
-                <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10">
+                <!-- Added negative margin (-mt-10) to pull it closer to the header visually -->
+                <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10 -mt-10">
                     <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg break-all">
                         <!-- Scrambled word -->
                     </div>
 
-                    <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-8 hidden"></p>
+                    <!-- Reduced margin bottom (mb-4 instead of mb-8) -->
+                    <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-4 hidden"></p>
                     
                     <input type="text" id="jumbled-answer-input" placeholder="YOUR ANSWER..." autocomplete="off" autocapitalize="off" class="w-full bg-white/10 text-white placeholder-white/30 border-2 border-white/20 focus:border-amber-500 rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4">
                     
@@ -18226,7 +18228,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                     </div>
                 </div>
 
-                <!-- Bottom Spacer to ensure content can be scrolled up above keyboard -->
                 <div class="mb-auto"></div>
                 <div class="h-48 shrink-0 w-full"></div> 
             </div>
