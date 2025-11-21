@@ -18159,21 +18159,19 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     document.getElementById('bottom-nav').classList.add('hidden');
     document.body.style.overflow = 'hidden';
 
-    // 2. Inject Template (UPDATED LAYOUT)
+    // 2. Inject Template (FIXED FOR KEYBOARD)
     mainContent.innerHTML = '';
     
-    // We define the template string here directly to ensure the fix is applied 
-    // regardless of what's in your HTML file.
     const templateHTML = `
-    <div id="jumbled-game-view" class="fixed inset-0 z-[200] bg-slate-900 flex flex-col overflow-hidden font-sans text-white">
+    <div id="jumbled-game-view" class="fixed inset-0 z-[200] bg-slate-900 flex flex-col h-[100dvh] font-sans text-white">
         <!-- Animated Background -->
         <div class="absolute inset-0 pointer-events-none">
             <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-amber-600/20 rounded-full blur-[100px] animate-pulse"></div>
             <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         </div>
 
-        <!-- Top Bar (Added shrink-0 so it never hides) -->
-        <div class="relative z-20 shrink-0 flex justify-between items-center p-4 pt-6 bg-slate-900/80 backdrop-blur-sm border-b border-white/5">
+        <!-- Top Bar (Sticky to ensure visibility) -->
+        <div class="sticky top-0 z-50 shrink-0 flex justify-between items-center p-4 pt-6 bg-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-md">
             <div class="flex items-center gap-4">
                 <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
@@ -18193,13 +18191,17 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             </div>
         </div>
 
-        <!-- Game Area (Updated for Keyboard Safety) -->
-        <div class="relative flex-grow w-full overflow-y-auto no-scrollbar">
-            <!-- Inner wrapper handles centering without clipping -->
-            <div class="min-h-full flex flex-col items-center justify-center p-4 pb-20">
-                <div id="jumbled-game-board" class="w-full max-w-md mx-auto">
-                    <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg">
-                        <!-- Scrambled word appears here -->
+        <!-- Scrollable Game Area -->
+        <div class="flex-1 overflow-y-auto w-full relative">
+            <!-- Container with my-auto for flexible centering -->
+            <div class="min-h-full flex flex-col p-4">
+                
+                <!-- Top Spacer to push content down when space is available -->
+                <div class="mt-auto"></div>
+
+                <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10">
+                    <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg break-all">
+                        <!-- Scrambled word -->
                     </div>
 
                     <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-8 hidden"></p>
@@ -18223,6 +18225,10 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                         </button>
                     </div>
                 </div>
+
+                <!-- Bottom Spacer to ensure content can be scrolled up above keyboard -->
+                <div class="mb-auto"></div>
+                <div class="h-48 shrink-0 w-full"></div> 
             </div>
         </div>
 
@@ -18268,12 +18274,11 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
 
     // 4. Game Config
     const TOTAL_QUESTIONS = 20;
-    // Ensure we have 20 words. If passed less (e.g. 10), cycle them or fill up.
     let gameQueue = [];
     while (gameQueue.length < TOTAL_QUESTIONS) {
-        gameQueue.push(...selectedWords); // Duplicate if needed
+        gameQueue.push(...selectedWords);
     }
-    gameQueue = gameQueue.slice(0, TOTAL_QUESTIONS); // Trim to exactly 20
+    gameQueue = gameQueue.slice(0, TOTAL_QUESTIONS);
 
     let score = 0;
     let currentQuestionIndex = 0;
@@ -18301,19 +18306,19 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             }
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                handleAnswer(null); // Time's up counts as wrong
+                handleAnswer(null);
             }
         }, 1000);
     }
 
     function displayQuestion() {
         if (currentQuestionIndex >= TOTAL_QUESTIONS) {
-            displayJumbledResults(true); // Win condition: Finished all words
+            displayJumbledResults(true);
             return;
         }
         
         if (lives <= 0) {
-            displayJumbledResults(false); // Loss condition: Out of lives
+            displayJumbledResults(false);
             return;
         }
 
@@ -18321,7 +18326,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         wordDisplay.textContent = scrambleWord(currentWord.word);
         scoreEl.textContent = `${score}/${TOTAL_QUESTIONS}`;
         
-        // Hint Logic
         if (difficulty === 'hard') {
             clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
             clueDisplay.classList.remove('hidden');
@@ -18330,7 +18334,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         }
 
         answerInput.value = '';
-        // Reset styling
         answerInput.classList.remove('border-red-500', 'bg-red-500/20', 'border-green-500', 'bg-green-500/20');
         feedbackEl.innerHTML = '';
         
@@ -18340,7 +18343,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         hintUsed = false; 
         hintBtn.disabled = false;
         
-        // Focus on input automatically (use timeout to ensure UI is ready)
         setTimeout(() => {
             answerInput.focus();
         }, 100);
@@ -18361,13 +18363,11 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         const correctAnswer = currentWordData.word.toUpperCase();
         
         if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
-            // Correct
             if(navigator.vibrate) navigator.vibrate(50);
             score++;
             answerInput.classList.add('border-green-500', 'bg-green-500/20');
             feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-lg">Correct!</p>`;
         } else {
-            // Wrong or Skipped
             if(navigator.vibrate) navigator.vibrate(200);
             lives--;
             updateLives();
@@ -18376,7 +18376,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-sm">${msg} Answer: <span class="text-white">${correctAnswer}</span></p>`;
         }
 
-        // Check for immediate loss
         if (lives <= 0) {
             setTimeout(() => displayJumbledResults(false), 1500);
         } else {
@@ -18425,7 +18424,7 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
 
     submitBtn.onclick = () => handleAnswer(answerInput.value);
     answerInput.onkeydown = (e) => { if (e.key === 'Enter') handleAnswer(answerInput.value); };
-    skipBtn.onclick = () => handleAnswer('SKIP'); // Treat skip as wrong answer (lose life) but show correct word
+    skipBtn.onclick = () => handleAnswer('SKIP');
 
     hintBtn.onclick = () => {
         if (hintUsed) return;
@@ -18435,7 +18434,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         const correctAnswer = gameQueue[currentQuestionIndex].word.toUpperCase();
         const userAnswer = answerInput.value.toUpperCase();
         
-        // Fill in the first few letters or correct mistakes
         for (let i = 0; i < correctAnswer.length; i++) {
             if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
                 answerInput.value = correctAnswer.slice(0, i + 1);
@@ -18447,7 +18445,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     
     restartBtn.onclick = () => {
         modal.classList.add('hidden');
-        // Relaunch via the main loader to get NEW words if possible
         launchGameFromWordList('jumbled-word', originalTitle, difficulty, gradClass);
     };
 
