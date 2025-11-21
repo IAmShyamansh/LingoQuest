@@ -1533,6 +1533,114 @@
 .stamp-nope { border-color: #ef4444; color: #ef4444; }
 .stamp-like { border-color: #22c55e; color: #22c55e; }
 
+/* --- FLASH RECALL GAME STYLES --- */
+#flash-game-container {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* The Flash Card (Central Display) */
+#flash-card {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.1s ease-out;
+}
+
+/* Text Styles */
+.flash-text-main {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    margin-bottom: 10px;
+}
+.flash-text-sub {
+    font-size: 1rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* The Options Grid */
+#flash-options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+    padding-bottom: 80px; /* Space for bottom nav if needed */
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Option Buttons */
+.flash-option-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 20px 10px;
+    border-radius: 16px;
+    transition: all 0.1s;
+    backdrop-filter: blur(5px);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    word-break: break-word;
+}
+.flash-option-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+
+/* Feedback States */
+.flash-correct {
+    background: #22c55e !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    animation: pulse 0.3s;
+}
+.flash-wrong {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+    animation: shake 0.4s;
+}
+
+/* Timer Bar */
+#flash-timer-bar {
+    height: 6px;
+    width: 100%;
+    background: #334155;
+    position: relative;
+    overflow: hidden;
+}
+#flash-timer-fill {
+    height: 100%;
+    background: #facc15; /* Yellow */
+    width: 100%;
+    transition: width 0.1s linear;
+}
+
+/* Animations */
+.flash-in { animation: flash-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes flash-pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -2442,6 +2550,62 @@
     </div>
 </div>
 
+<!-- START: PASTE THIS NEW TEMPLATE -->
+<template id="flash-recall-template">
+    <div id="flash-game-container">
+        <!-- Header -->
+        <div class="relative z-50 flex justify-between items-center p-4 pt-6 bg-slate-900/80 backdrop-blur-md border-b border-white/5 shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
+                    <span id="flash-score" class="text-xl font-black text-white leading-none">0</span>
+                </div>
+                <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Left</span>
+                    <span id="flash-count" class="text-xl font-black text-white leading-none">30</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div id="flash-lives" class="flex gap-1 text-2xl">❤️❤️❤️</div>
+                <button id="quit-flash-btn" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Timer Line -->
+        <div id="flash-timer-bar" class="shrink-0"><div id="flash-timer-fill"></div></div>
+
+        <!-- Game Area (Card) -->
+        <div id="flash-card">
+            <p id="flash-main-text" class="flash-text-main flash-in">...</p>
+            <p id="flash-sub-text" class="flash-text-sub">Memorize!</p>
+        </div>
+
+        <!-- Options Area -->
+        <div id="flash-options-container" class="w-full shrink-0 bg-slate-900/50 border-t border-white/5 backdrop-blur-sm">
+            <div id="flash-options-grid">
+                <!-- Buttons injected here -->
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="flash-over-modal" class="hidden absolute inset-0 z-[250] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
+            <div class="glass-ui p-8 rounded-3xl text-center w-full max-w-sm pop-in border border-white/20">
+                <div id="flash-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
+                <h2 class="text-3xl font-black text-white mb-2" id="flash-over-title">You Won!</h2>
+                <p class="text-lg text-slate-300 mb-6">Score: <strong id="final-score-flash" class="text-white">0</strong></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="exit-flash-modal-btn" class="py-3 px-4 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20 transition-colors">Exit</button>
+                    <button id="restart-flash-btn" class="py-3 px-4 rounded-xl grad-nav text-white font-bold hover:scale-105 transition-transform shadow-lg">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<!-- END: PASTE THIS NEW TEMPLATE -->
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -2639,6 +2803,49 @@ const simpleSynonyms = [
     { word: "Young", match: "Juvenile" },
     { word: "Zigzag", match: "Winding" }
 ];
+
+// --- PASTE THIS AT THE TOP OF YOUR SCRIPT VARIABLES ---
+
+const helpingVerbData = {
+    wave1: [ // Basics: Present & Habits
+        { prompt: "ता है", correct: "1st Form", wrong: ["Used to", "Can"] },
+        { prompt: "ता था", correct: "Used to", wrong: ["Has to", "Could"] },
+        { prompt: "रहा है", correct: "Is/Am/Are + ing", wrong: ["Was + ing", "Will be + ing"] },
+        { prompt: "रहा था", correct: "Was/Were + ing", wrong: ["Is + ing", "Has been + ing"] },
+        { prompt: "गा / गे / गी", correct: "Will", wrong: ["Can", "Should"] },
+        { prompt: "आ था", correct: "2nd Form", wrong: ["Has + 3rd", "Had + 3rd"] },
+        { prompt: "रहा होगा", correct: "Will be + ing", wrong: ["Might be + ing", "Is + ing"] }
+    ],
+    wave2: [ // Compulsion & Modals
+        { prompt: "पड़ता है", correct: "Has/Have got to", wrong: ["Has to", "Used to"] },
+        { prompt: "ना है", correct: "Has to / Have to", wrong: ["Had to", "Should"] },
+        { prompt: "पड़ता था", correct: "Had got to", wrong: ["Had to", "Used to"] },
+        { prompt: "ना था", correct: "Had to", wrong: ["Has to", "Should have"] },
+        { prompt: "सकता है", correct: "Can", wrong: ["May", "Could"] },
+        { prompt: "सका", correct: "Could", wrong: ["Can", "Should"] },
+        { prompt: "चाहिये", correct: "Should", wrong: ["Must", "Can"] },
+        { prompt: "पड़ेगा", correct: "Will have to", wrong: ["Will be able to", "Has to"] }
+    ],
+    wave3: [ // Complex Tenses
+        { prompt: "वाला है", correct: "Is/Am/Are + about to", wrong: ["Was about to", "Has to"] },
+        { prompt: "वाला था", correct: "Was/Were + about to", wrong: ["Is about to", "Had to"] },
+        { prompt: "चुका है", correct: "Has/Have + 3rd", wrong: ["Had + 3rd", "Did"] },
+        { prompt: "चुका था", correct: "Had + 3rd", wrong: ["Has + 3rd", "Was + ing"] },
+        { prompt: "रहा है + समय", correct: "Has/Have been + ing", wrong: ["Is + ing", "Had been + ing"] },
+        { prompt: "रहा था + समय", correct: "Had been + ing", wrong: ["Was + ing", "Has been + ing"] },
+        { prompt: "रहा होगा + समय", correct: "Will have been + ing", wrong: ["Will be + ing", "Might be + ing"] }
+    ],
+    wave4: [ // Probability & Advanced
+        { prompt: "सकता था", correct: "Could have + 3rd", wrong: ["Could", "Should have"] },
+        { prompt: "चाहिये था", correct: "Should have + 3rd", wrong: ["Should", "Must have"] },
+        { prompt: "सकूँगा", correct: "Will be able to", wrong: ["Can", "Will have to"] },
+        { prompt: "चुका होगा", correct: "Will have + 3rd", wrong: ["Will be", "Might have"] },
+        { prompt: "शायद + गा / गे / गी", correct: "Might + 1st", wrong: ["May", "Will"] },
+        { prompt: "शायद + चुका होगा", correct: "Might have + 3rd", wrong: ["Will have", "Must have"] },
+        { prompt: "शायद + रहा होगा", correct: "Might be + ing", wrong: ["Will be + ing", "May be"] },
+        { prompt: "शायद + रहा होगा + समय", correct: "Might have been + ing", wrong: ["Will have been", "Has been"] }
+    ]
+};
 
 
         // --- NEW FUNCTION: Haptic Feedback ---
@@ -17859,8 +18066,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                     // we just ignore it here, and its separate click listener from initApp() will work.
                 });
             }
-            // START: REPLACE the old renderGameZoneView with this one
-
+            
         // START: REPLACE renderGameZoneView
 function renderGameZoneView() {
     const topNav = document.getElementById('top-nav');
@@ -17890,13 +18096,13 @@ function renderGameZoneView() {
         });
     }
     
-    // --- ADD THE NEW CARD HERE MANUALLY IN JS IF NOT IN HTML TEMPLATE ---
-    // Or ideally, update the HTML template. 
-    // But for now, let's inject it dynamically if it's missing.
+    // --- ADD CARDS DYNAMICALLY IF MISSING IN TEMPLATE ---
     const arcadeGrid = mainContent.querySelector('.arcade-grid');
+    
+    // 1. Swipe Game Card
     if (arcadeGrid && !arcadeGrid.querySelector('[data-game="swipe-word"]')) {
         const swipeCard = document.createElement('div');
-        swipeCard.className = "arcade-card card-swipe"; // We need a style for card-swipe
+        swipeCard.className = "arcade-card card-swipe"; 
         swipeCard.dataset.game = "swipe-word";
         swipeCard.innerHTML = `
             <div class="card-icon-box" style="background: linear-gradient(135deg, #f43f5e, #fb923c); box-shadow: 0 8px 15px -5px rgba(244, 63, 94, 0.5);">
@@ -17907,12 +18113,41 @@ function renderGameZoneView() {
         `;
         arcadeGrid.appendChild(swipeCard);
     }
+    
+
+    // 3. Flash Recall Card (NEW)
+    if (arcadeGrid && !arcadeGrid.querySelector('[data-game="flash-recall"]')) {
+        const flashCard = document.createElement('div');
+        flashCard.className = "arcade-card card-flash";
+        flashCard.dataset.game = "flash-recall";
+        flashCard.innerHTML = `
+            <div class="card-icon-box" style="background: linear-gradient(135deg, #f59e0b, #ef4444); box-shadow: 0 8px 15px -5px rgba(245, 158, 11, 0.5);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3 class="card-title">Flash Recall</h3>
+            <p class="card-desc">Speed & Memory!</p>
+        `;
+        arcadeGrid.appendChild(flashCard);
+    }
 
     // Updated Listeners
     mainContent.querySelectorAll('.arcade-card[data-game]').forEach(card => {
         card.addEventListener('click', () => {
             vibrate();
             const gameType = card.dataset.game;
+            
+            // Check for direct launch games first
+            if (gameType === 'verb-highway') {
+                startHighwayGame(); 
+                return; 
+            }
+
+            if (gameType === 'flash-recall') {
+                startFlashRecallGame();
+                return;
+            }
+
+            // For other games, prepare difficulty selection
             const gameTitle = card.querySelector('.card-title').textContent;
             
             let gradClass = 'grad-1';
@@ -17920,7 +18155,7 @@ function renderGameZoneView() {
             if (gameType === 'flip-cards') gradClass = 'grad-7';
             if (gameType === 'word-rain') gradClass = 'grad-9';
             if (gameType === 'jumbled-word') gradClass = 'grad-4';
-            if (gameType === 'swipe-word') gradClass = 'grad-6'; // New Gradient
+            if (gameType === 'swipe-word') gradClass = 'grad-6'; 
 
             if(topNav) topNav.classList.remove('hidden');
 
@@ -19452,6 +19687,238 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     renderCard();
 }
 // END: REPLACE THE startSwipeGame FUNCTION
+
+// START: PASTE THIS NEW FUNCTION
+function startFlashRecallGame() {
+    // 1. Hide Navs & Set Fullscreen
+    document.getElementById('top-nav').classList.add('hidden');
+    document.getElementById('bottom-nav').classList.add('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // 2. Setup View
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('flash-recall-template').content.cloneNode(true));
+
+    // 3. Elements
+    const mainText = document.getElementById('flash-main-text');
+    const subText = document.getElementById('flash-sub-text');
+    const optionsGrid = document.getElementById('flash-options-grid');
+    const timerFill = document.getElementById('flash-timer-fill');
+    const scoreEl = document.getElementById('flash-score');
+    const countEl = document.getElementById('flash-count');
+    const livesEl = document.getElementById('flash-lives');
+    
+    const modal = document.getElementById('flash-over-modal');
+    const modalTitle = document.getElementById('flash-over-title');
+    const modalIcon = document.getElementById('flash-over-icon');
+    const finalScoreEl = document.getElementById('final-score-flash');
+    const quitBtn = document.getElementById('quit-flash-btn');
+
+    // 4. Game Config
+    // Combine all waves into one big pool of 30 verbs
+    const allVerbs = [
+        ...helpingVerbData.wave1, ...helpingVerbData.wave2, 
+        ...helpingVerbData.wave3, ...helpingVerbData.wave4
+    ];
+    
+    let gameQueue = [...allVerbs].sort(() => 0.5 - Math.random()); // Shuffle the 30
+    const TOTAL_ROUNDS = gameQueue.length;
+
+    let score = 0;
+    let lives = 3;
+    let currentRound = 0;
+    let isGameOver = false;
+    let timerInterval;
+    let isAnswerPhase = false;
+    let currentCorrectAnswer = "";
+
+    // 5. Render Lives
+    function updateLives() {
+        livesEl.innerHTML = '❤️'.repeat(lives);
+    }
+
+    // 6. Game Loop: Step 1 - The Flash
+    function startRound() {
+        if (gameQueue.length === 0) {
+            endGame(true);
+            return;
+        }
+        if (lives <= 0) {
+            endGame(false);
+            return;
+        }
+
+        currentRound++;
+        const data = gameQueue.pop(); // Get next item
+        countEl.textContent = gameQueue.length; // Remaining count
+
+        // Randomize Direction (Hindi->Eng OR Eng->Hindi)
+        const isHindiToEng = Math.random() > 0.5;
+        const promptText = isHindiToEng ? data.prompt : data.correct;
+        currentCorrectAnswer = isHindiToEng ? data.correct : data.prompt;
+        
+        // Get Distractors
+        const distractors = [];
+        while (distractors.length < 3) {
+            const randomItem = allVerbs[Math.floor(Math.random() * allVerbs.length)];
+            const distractorText = isHindiToEng ? randomItem.correct : randomItem.prompt;
+            // Ensure distractor is unique and not the correct answer
+            if (distractorText !== currentCorrectAnswer && !distractors.includes(distractorText)) {
+                distractors.push(distractorText);
+            }
+        }
+
+        // Prepare Options
+        const options = [currentCorrectAnswer, ...distractors].sort(() => 0.5 - Math.random());
+
+        // SHOW FLASH
+        isAnswerPhase = false;
+        optionsGrid.innerHTML = ''; // Clear buttons
+        optionsGrid.style.pointerEvents = 'none'; // Disable clicks
+        
+        mainText.textContent = promptText;
+        mainText.className = "flash-text-main flash-in text-white"; // Reset anim
+        subText.textContent = "Memorize!";
+        subText.className = "flash-text-sub text-amber-400";
+        
+        timerFill.style.width = '100%';
+        timerFill.style.backgroundColor = '#3b82f6'; // Blue for prep
+
+        // 1 Second Delay before showing options
+        setTimeout(() => {
+            showOptions(options);
+        }, 1000);
+    }
+
+    // 7. Game Loop: Step 2 - The Options
+    function showOptions(options) {
+        isAnswerPhase = true;
+        mainText.textContent = "?"; // Hide prompt
+        subText.textContent = "Choose Now!";
+        subText.className = "flash-text-sub text-white";
+        
+        optionsGrid.style.pointerEvents = 'auto'; // Enable clicks
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'flash-option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(opt, btn);
+            optionsGrid.appendChild(btn);
+        });
+
+        startAnswerTimer();
+    }
+
+    // 8. Timer Logic (3 Seconds)
+    function startAnswerTimer() {
+        clearInterval(timerInterval);
+        let timeLeft = 3000; // 3 seconds in ms
+        const totalTime = 3000;
+        
+        timerFill.style.backgroundColor = '#22c55e'; // Green start
+
+        timerInterval = setInterval(() => {
+            timeLeft -= 50;
+            const pct = (timeLeft / totalTime) * 100;
+            timerFill.style.width = `${pct}%`;
+
+            if (pct < 50) timerFill.style.backgroundColor = '#eab308'; // Yellow
+            if (pct < 20) timerFill.style.backgroundColor = '#ef4444'; // Red
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleAnswer(null, null); // Timeout
+            }
+        }, 50);
+    }
+
+    // 9. Handle Answer
+    function handleAnswer(selectedText, btn) {
+        if (!isAnswerPhase) return;
+        isAnswerPhase = false;
+        clearInterval(timerInterval);
+
+        const isCorrect = selectedText === currentCorrectAnswer;
+
+        if (isCorrect) {
+            // Correct
+            if (btn) btn.classList.add('flash-correct');
+            if(navigator.vibrate) navigator.vibrate(30);
+            score++;
+            scoreEl.textContent = score;
+            
+            // Fast transition to next
+            setTimeout(startRound, 600); 
+        } else {
+            // Wrong
+            if (btn) btn.classList.add('flash-wrong');
+            if(navigator.vibrate) navigator.vibrate(200);
+            lives--;
+            updateLives();
+
+            // Highlight correct answer
+            Array.from(optionsGrid.children).forEach(b => {
+                if (b.textContent === currentCorrectAnswer) {
+                    b.classList.add('flash-correct');
+                }
+            });
+
+            // Show original word briefly so they learn
+            mainText.textContent = "Wrong!";
+            mainText.className = "flash-text-main text-red-400";
+            subText.textContent = `Answer: ${currentCorrectAnswer}`;
+
+            setTimeout(startRound, 2000); // Longer delay for wrong answer to read
+        }
+    }
+
+    // 10. End Game
+    function endGame(win) {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        
+        finalScoreEl.textContent = score;
+        
+        if (win) {
+            modalTitle.textContent = "Perfect Memory!";
+            modalIcon.textContent = '🧠';
+            if(typeof showConfetti === 'function') showConfetti();
+        } else {
+            modalTitle.textContent = "Game Over";
+            modalIcon.textContent = '💔';
+        }
+        
+        modal.classList.remove('hidden');
+        quitBtn.style.display = 'none';
+        
+        if(typeof addQuizResult === 'function') {
+            addQuizResult("Flash Recall", Math.floor((score/TOTAL_ROUNDS)*10), 100);
+        }
+    }
+
+    function cleanup() {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        document.getElementById('top-nav').classList.remove('hidden');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+        document.body.style.overflow = '';
+        switchView('gameZone', { forceRender: true });
+    }
+
+    // Controls
+    quitBtn.onclick = () => { if(confirm("Quit Game?")) cleanup(); };
+    document.getElementById('exit-flash-modal-btn').onclick = cleanup;
+    document.getElementById('restart-flash-btn').onclick = () => {
+        modal.classList.add('hidden');
+        startFlashRecallGame();
+    };
+
+    // Init
+    updateLives();
+    startRound();
+}
+// END: PASTE THIS NEW FUNCTION
 
             function renderSynonymsView(gradClass) {
                 updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
