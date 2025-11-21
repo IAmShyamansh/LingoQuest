@@ -1384,6 +1384,159 @@
     padding-left: 0.5rem;
 }
 
+/* --- SWIPE GAME STYLES --- */
+#swipe-game-container {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: linear-gradient(to bottom, #0f172a 0%, #1e293b 100%);
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* The Frame for the Card Stack */
+#swipe-play-area {
+    position: relative;
+    flex-grow: 1;
+    width: 94%;
+    margin: 10px auto 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+}
+
+/* The Card Itself */
+.swipe-card {
+    position: absolute;
+    width: 90%;
+    max-width: 340px;
+    aspect-ratio: 3/4; /* Classic Card Ratio */
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    /* Vital for touch dragging */
+    touch-action: none; 
+    user-select: none;
+    transform-origin: 50% 100%;
+    transition: transform 0.1s linear; /* Smooth drag follow */
+    border: 4px solid white;
+}
+
+.swipe-card.next-card {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0.5;
+    z-index: 5;
+}
+
+.swipe-card.active-card {
+    z-index: 10;
+    cursor: grab;
+}
+
+.swipe-card.active-card:active {
+    cursor: grabbing;
+}
+
+/* Content on Card */
+.swipe-word-main {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.swipe-word-sub {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #6366f1;
+}
+
+.swipe-divider {
+    width: 40px;
+    height: 4px;
+    background: #cbd5e1;
+    margin: 20px 0;
+    border-radius: 2px;
+}
+
+/* Swipe Stamps (YES/NO overlays) */
+.swipe-stamp {
+    position: absolute;
+    top: 40px;
+    padding: 5px 10px;
+    border: 4px solid;
+    border-radius: 8px;
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    opacity: 0; /* Hidden by default */
+    transform: rotate(-15deg);
+}
+
+.stamp-nope {
+    right: 40px;
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.stamp-like {
+    left: 40px;
+    color: #22c55e;
+    border-color: #22c55e;
+}
+
+/* Animations for releasing the card */
+@keyframes fly-out-right {
+    to { transform: translate(150%, 20px) rotate(30deg); opacity: 0; }
+}
+@keyframes fly-out-left {
+    to { transform: translate(-150%, 20px) rotate(-30deg); opacity: 0; }
+}
+
+.fly-right { animation: fly-out-right 0.4s ease-out forwards; }
+.fly-left { animation: fly-out-left 0.4s ease-out forwards; }
+
+/* --- UPDATED SWIPE INDICATORS (Synonym / Antonym Labels) --- */
+.swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem; /* Smaller font for text */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.3; /* Subtle by default */
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 0;
+    writing-mode: vertical-rl; /* Vertical text on sides */
+    text-orientation: mixed;
+}
+
+.swipe-indicator.left { 
+    left: 10px; 
+    color: #ef4444; /* Red for Antonym/No */
+    transform: translateY(-50%) rotate(180deg); /* Adjust for vertical writing if needed */
+}
+
+.swipe-indicator.right { 
+    right: 10px; 
+    color: #22c55e; /* Green for Synonym/Yes */
+}
+
+/* Override generic stamp styles if needed for specific words */
+.stamp-nope { border-color: #ef4444; color: #ef4444; }
+.stamp-like { border-color: #22c55e; color: #22c55e; }
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -1961,6 +2114,55 @@
     </template>
     <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
 
+    <!-- START: REPLACE THIS TEMPLATE -->
+<template id="swipe-game-template">
+    <div id="swipe-game-container">
+        <!-- Header -->
+        <div class="relative z-20 flex justify-between items-center p-4 pt-6 bg-slate-900/80 backdrop-blur-sm border-b border-white/5">
+            <div id="swipe-timer-bar" class="absolute bottom-0 left-0 h-1 bg-amber-400 w-full transition-all duration-100 linear"></div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
+                    <span id="swipe-score" class="text-xl font-black text-white leading-none">0</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div id="swipe-lives" class="flex gap-1 text-2xl">❤️❤️❤️</div>
+                <!-- NEW EXIT BUTTON -->
+                <button id="quit-swipe-game" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Frame -->
+        <div id="swipe-play-area">
+            <!-- Background Indicators -->
+            <div id="ind-left" class="swipe-indicator left">ANTONYM</div>
+            <div id="ind-right" class="swipe-indicator right">SYNONYM</div>
+            
+            <!-- Card Stack injected here -->
+            <div id="card-stack" class="relative w-full h-full flex justify-center items-center"></div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="swipe-over-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
+            <div class="glass-ui p-6 rounded-3xl text-center w-full max-w-sm pop-in">
+                <div class="text-6xl mb-4">🃏</div>
+                <h2 class="text-2xl font-black text-white mb-2">Game Over</h2>
+                <p class="text-lg text-slate-200 mb-6">Final Score: <strong id="final-score-swipe">0</strong></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="exit-swipe-btn" class="py-3 px-4 rounded-xl bg-white/10 text-white font-bold">Exit</button>
+                    <button id="restart-swipe-btn" class="py-3 px-4 rounded-xl grad-nav text-white font-bold">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<!-- END: REPLACE THIS TEMPLATE -->
+
     <template id="admin-panel-view-template">
     <!-- Main Admin Dashboard View -->
     <div class="pop-in p-4 max-w-3xl mx-auto">
@@ -2259,6 +2461,166 @@
             "The journey of a thousand miles begins with a single step. Start speaking today."
         ];
         // END: PASTE THIS ARRAY
+
+        // --- PASTE THIS NEAR THE TOP OF YOUR SCRIPT VARIABLES ---
+
+const simpleSynonyms = [
+    { word: "Happy", match: "Joyful" },
+    { word: "Fast", match: "Quick" },
+    { word: "Big", match: "Large" },
+    { word: "Small", match: "Tiny" },
+    { word: "Smart", match: "Clever" },
+    { word: "Rich", match: "Wealthy" },
+    { word: "Sad", match: "Unhappy" },
+    { word: "Start", match: "Begin" },
+    { word: "End", match: "Finish" },
+    { word: "Hard", match: "Difficult" },
+    { word: "Easy", match: "Simple" },
+    { word: "Right", match: "Correct" },
+    { word: "Wrong", match: "Incorrect" },
+    { word: "Scared", match: "Afraid" },
+    { word: "Brave", match: "Courageous" },
+
+    { word: "Angry", match: "Mad" },
+    { word: "Beautiful", match: "Attractive" },
+    { word: "Quick", match: "Rapid" },
+    { word: "Slow", match: "Sluggish" },
+    { word: "Strong", match: "Powerful" },
+    { word: "Weak", match: "Fragile" },
+    { word: "Calm", match: "Peaceful" },
+    { word: "Loud", match: "Noisy" },
+    { word: "Quiet", match: "Silent" },
+    { word: "Funny", match: "Humorous" },
+    { word: "Rude", match: "Impolite" },
+    { word: "Polite", match: "Courteous" },
+    { word: "Lazy", match: "Idle" },
+    { word: "Active", match: "Energetic" },
+    { word: "Bright", match: "Shiny" },
+
+    { word: "Dark", match: "Dim" },
+    { word: "Clean", match: "Tidy" },
+    { word: "Dirty", match: "Filthy" },
+    { word: "Close", match: "Near" },
+    { word: "Far", match: "Distant" },
+    { word: "Old", match: "Ancient" },
+    { word: "Young", match: "Youthful" },
+    { word: "New", match: "Fresh" },
+    { word: "Tired", match: "Exhausted" },
+    { word: "Hungry", match: "Starving" },
+    { word: "Thirsty", match: "Parched" },
+    { word: "Pretty", match: "Lovely" },
+    { word: "Ugly", match: "Unattractive" },
+    { word: "Difficult", match: "Challenging" },
+    { word: "Simple", match: "Basic" },
+
+    { word: "Important", match: "Significant" },
+    { word: "Unimportant", match: "Insignificant" },
+    { word: "Brilliant", match: "Excellent" },
+    { word: "Terrible", match: "Awful" },
+    { word: "Amazing", match: "Incredible" },
+    { word: "Beautiful", match: "Gorgeous" },
+    { word: "Helpful", match: "Supportive" },
+    { word: "Kind", match: "Gentle" },
+    { word: "Cruel", match: "Harsh" },
+    { word: "Wide", match: "Broad" },
+    { word: "Narrow", match: "Thin" },
+    { word: "Deep", match: "Profound" },
+    { word: "Shallow", match: "Superficial" },
+    { word: "Heavy", match: "Weighty" },
+    { word: "Light", match: "Weightless" },
+
+    { word: "Cold", match: "Chilly" },
+    { word: "Hot", match: "Warm" },
+    { word: "Funny", match: "Comical" },
+    { word: "Serious", match: "Solemn" },
+    { word: "Sad", match: "Miserable" },
+    { word: "Happy", match: "Delighted" },
+    { word: "Busy", match: "Occupied" },
+    { word: "Free", match: "Available" },
+    { word: "Safe", match: "Secure" },
+    { word: "Dangerous", match: "Risky" },
+    { word: "Friendly", match: "Amiable" },
+    { word: "Unfriendly", match: "Hostile" },
+    { word: "Creative", match: "Innovative" },
+    { word: "Boring", match: "Dull" },
+    { word: "Exciting", match: "Thrilling" },
+
+    { word: "Famous", match: "Renowned" },
+    { word: "Unknown", match: "Obscure" },
+    { word: "Honest", match: "Truthful" },
+    { word: "Dishonest", match: "Deceitful" },
+    { word: "Early", match: "Premature" },
+    { word: "Late", match: "Delayed" },
+    { word: "Real", match: "Genuine" },
+    { word: "Fake", match: "Artificial" },
+    { word: "Bright", match: "Radiant" },
+    { word: "Strong", match: "Sturdy" },
+    { word: "Weak", match: "Feeble" },
+    { word: "Happy", match: "Cheerful" },
+    { word: "Sad", match: "Downcast" },
+    { word: "Angry", match: "Furious" },
+    { word: "Scared", match: "Terrified" },
+
+    { word: "Brave", match: "Valiant" },
+    { word: "Calm", match: "Serene" },
+    { word: "Rich", match: "Affluent" },
+    { word: "Poor", match: "Needy" },
+    { word: "Tall", match: "High" },
+    { word: "Short", match: "Brief" },
+    { word: "Soft", match: "Gentle" },
+    { word: "Hard", match: "Tough" },
+    { word: "Bright", match: "Luminous" },
+    { word: "Dark", match: "Shadowy" },
+    { word: "Dirty", match: "Grimy" },
+    { word: "Clean", match: "Spotless" },
+    { word: "Slow", match: "Lethargic" },
+    { word: "Fast", match: "Speedy" },
+    { word: "Huge", match: "Massive" },
+
+    { word: "Tiny", match: "Minuscule" },
+    { word: "Happy", match: "Content" },
+    { word: "Sad", match: "Gloomy" },
+    { word: "Good", match: "Excellent" },
+    { word: "Bad", match: "Poor" },
+    { word: "Nice", match: "Pleasant" },
+    { word: "Mean", match: "Cruel" },
+    { word: "Tough", match: "Rugged" },
+    { word: "Gentle", match: "Mild" },
+    { word: "Sharp", match: "Pointed" },
+    { word: "Blunt", match: "Dull" },
+    { word: "Open", match: "Unlocked" },
+    { word: "Closed", match: "Shut" },
+    { word: "Alive", match: "Living" },
+    { word: "Dead", match: "Lifeless" },
+
+    { word: "Accurate", match: "Precise" },
+    { word: "Brilliant", match: "Exceptional" },
+    { word: "Confident", match: "Self-assured" },
+    { word: "Delicious", match: "Tasty" },
+    { word: "Expensive", match: "Costly" },
+    { word: "Cheap", match: "Inexpensive" },
+    { word: "Famous", match: "Well-known" },
+    { word: "Funny", match: "Entertaining" },
+    { word: "Generous", match: "Giving" },
+    { word: "Hardworking", match: "Diligent" },
+    { word: "Honest", match: "Sincere" },
+    { word: "Jealous", match: "Envious" },
+    { word: "Lucky", match: "Fortunate" },
+    { word: "Mysterious", match: "Enigmatic" },
+    { word: "Quiet", match: "Hushed" },
+
+    { word: "Rapid", match: "Swift" },
+    { word: "Scary", match: "Frightening" },
+    { word: "Talkative", match: "Chatty" },
+    { word: "Tired", match: "Weary" },
+    { word: "Unique", match: "Special" },
+    { word: "Violent", match: "Aggressive" },
+    { word: "Wild", match: "Untamed" },
+    { word: "Wise", match: "Sage" },
+    { word: "Young", match: "Juvenile" },
+    { word: "Zigzag", match: "Winding" }
+];
+
 
         // --- NEW FUNCTION: Haptic Feedback ---
             function vibrate(duration = 20) {
@@ -17480,32 +17842,27 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             }
             // START: REPLACE the old renderGameZoneView with this one
 
-        // START: REPLACE the old renderGameZoneView with this one
-            function renderGameZoneView() {
-    // 1. HIDE default Top Nav (Game Zone has its own fixed header)
+        // START: REPLACE renderGameZoneView
+function renderGameZoneView() {
     const topNav = document.getElementById('top-nav');
     if(topNav) topNav.classList.add('hidden');
 
-    // 2. Ensure Bottom Nav is visible
     document.getElementById('bottom-nav').classList.remove('hidden');
     document.body.style.overflow = '';
 
-    // 3. Clear & Render Template
     const template = document.getElementById('game-zone-template');
-    mainContent.innerHTML = ''; // CRITICAL: Clear previous content
+    mainContent.innerHTML = ''; 
     mainContent.appendChild(template.content.cloneNode(true));
     
-    // 4. Exit Button Logic
     const exitBtn = document.getElementById('exit-game-zone');
     if(exitBtn) {
         exitBtn.addEventListener('click', () => {
             vibrate();
-            if(topNav) topNav.classList.remove('hidden'); // Restore top nav
+            if(topNav) topNav.classList.remove('hidden'); 
             switchView('home');
         });
     }
 
-    // 5. Learning Path Listener
     const lpBtn = document.getElementById('open-learning-path');
     if(lpBtn) {
         lpBtn.addEventListener('click', () => {
@@ -17513,8 +17870,26 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             switchView('learningPath', { isSubView: true, from: { view: 'gameZone' } });
         });
     }
+    
+    // --- ADD THE NEW CARD HERE MANUALLY IN JS IF NOT IN HTML TEMPLATE ---
+    // Or ideally, update the HTML template. 
+    // But for now, let's inject it dynamically if it's missing.
+    const arcadeGrid = mainContent.querySelector('.arcade-grid');
+    if (arcadeGrid && !arcadeGrid.querySelector('[data-game="swipe-word"]')) {
+        const swipeCard = document.createElement('div');
+        swipeCard.className = "arcade-card card-swipe"; // We need a style for card-swipe
+        swipeCard.dataset.game = "swipe-word";
+        swipeCard.innerHTML = `
+            <div class="card-icon-box" style="background: linear-gradient(135deg, #f43f5e, #fb923c); box-shadow: 0 8px 15px -5px rgba(244, 63, 94, 0.5);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3 class="card-title">Swipe It</h3>
+            <p class="card-desc">Yes or No? Think fast!</p>
+        `;
+        arcadeGrid.appendChild(swipeCard);
+    }
 
-    // 6. Arcade Game Listeners
+    // Updated Listeners
     mainContent.querySelectorAll('.arcade-card[data-game]').forEach(card => {
         card.addEventListener('click', () => {
             vibrate();
@@ -17526,8 +17901,8 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             if (gameType === 'flip-cards') gradClass = 'grad-7';
             if (gameType === 'word-rain') gradClass = 'grad-9';
             if (gameType === 'jumbled-word') gradClass = 'grad-4';
+            if (gameType === 'swipe-word') gradClass = 'grad-6'; // New Gradient
 
-            // Restore top nav for difficulty select (since that screen uses standard nav)
             if(topNav) topNav.classList.remove('hidden');
 
             switchView('gameDifficultySelect', {
@@ -17540,7 +17915,7 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
         });
     });
 }
-            // END: REPLACE the old renderGameZoneView
+// END: REPLACE renderGameZoneView
 
         // START: PASTE THIS ENTIRE NEW FUNCTION
         function renderGameDifficultySelectView(gameType, gameTitle, gradClass) {
@@ -17675,7 +18050,12 @@ function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
         }
         // Pass entire pool for variety in Word Rain
         startWordRainGame(wordPool, gameTitle, gradClass);
-    }
+    // START: UPDATE launchGameFromWordList (Add this block inside)
+} else if (gameType === 'swipe-word') {
+    // This game doesn't need a word pool from the DB, it uses its own internal generator
+    // so we just call it directly with the difficulty.
+    startSwipeGame(difficulty, gameTitle, gradClass);
+}
 }
 // END: PASTE THIS REPLACEMENT FUNCTION
 
@@ -18841,6 +19221,298 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     });
 }
 // END: PASTE THIS REPLACEMENT FUNCTION
+
+// REPLACE THE ENTIRE startSwipeGame FUNCTION
+function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
+    // 1. Hide Navs
+    document.getElementById('top-nav').classList.add('hidden');
+    document.getElementById('bottom-nav').classList.add('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // 2. Setup View
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('swipe-game-template').content.cloneNode(true));
+
+    // 3. Elements
+    const stackContainer = document.getElementById('card-stack');
+    const scoreEl = document.getElementById('swipe-score');
+    const livesEl = document.getElementById('swipe-lives');
+    const timerBar = document.getElementById('swipe-timer-bar');
+    const modal = document.getElementById('swipe-over-modal');
+    const indLeft = document.getElementById('ind-left');
+    const indRight = document.getElementById('ind-right');
+    const headerQuitBtn = document.getElementById('quit-swipe-game'); // <-- Get the button
+
+    // 4. Config & State
+    let score = 0;
+    let lives = 3;
+    let isGameOver = false;
+    let cardQueue = [];
+    let timerInterval;
+    let gameStartTime = Date.now(); 
+    
+    let timePerCard = 10; 
+    if (difficulty === 'medium') timePerCard = 5;
+    if (difficulty === 'hard') timePerCard = 3;
+
+    // 5. Generate Deck
+    function generateDeck() {
+        const synSource = simpleSynonyms.slice(0, 13); 
+        const validSynonyms = synSource.map(item => ({
+            main: item.word,
+            target: item.match, 
+            type: 'synonym', 
+            correctSwipe: 'right'
+        }));
+
+        const antSource = (vocabularyData["Advanced Vocabulary"]["Antonyms"] || []).slice(0, 12);
+        const validAntonyms = antSource.map(item => ({
+            main: item.word,
+            target: item.antonym,
+            type: 'antonym',
+            correctSwipe: 'left'
+        }));
+
+        let deck = [...validSynonyms, ...validAntonyms];
+        return deck.sort(() => 0.5 - Math.random());
+    }
+
+    cardQueue = generateDeck();
+    const totalCards = cardQueue.length; 
+
+    function updateLives() {
+        livesEl.innerHTML = '❤️'.repeat(lives);
+    }
+
+    // 6. Render Card
+    function renderCard() {
+        if (cardQueue.length === 0) {
+            endGame(true);
+            return;
+        }
+
+        stackContainer.innerHTML = '';
+
+        if (cardQueue.length > 1) {
+            const nextCard = document.createElement('div');
+            nextCard.className = 'swipe-card next-card';
+            nextCard.innerHTML = `<div class="w-full h-full bg-slate-100 rounded-xl"></div>`;
+            stackContainer.appendChild(nextCard);
+        }
+
+        const cardData = cardQueue[0];
+        const card = document.createElement('div');
+        card.className = 'swipe-card active-card';
+        
+        card.innerHTML = `
+            <div class="swipe-stamp stamp-nope">ANTONYM</div>
+            <div class="swipe-stamp stamp-like">SYNONYM</div>
+            
+            <div class="swipe-word-main">${cardData.main}</div>
+            <div class="swipe-divider"></div>
+            <div class="swipe-word-sub">${cardData.target}</div>
+        `;
+        
+        stackContainer.appendChild(card);
+        startCardTimer();
+        initDrag(card, cardData);
+    }
+
+    // 7. Timer
+    function startCardTimer() {
+        clearInterval(timerInterval);
+        let timeLeft = timePerCard;
+        timerBar.style.width = '100%';
+        timerBar.style.backgroundColor = '#fbbf24';
+
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.05;
+            const pct = (timeLeft / timePerCard) * 100;
+            timerBar.style.width = `${pct}%`;
+
+            if (pct < 30) timerBar.style.backgroundColor = '#ef4444';
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleResult(false); 
+                
+                const card = stackContainer.querySelector('.active-card');
+                if (card) {
+                    card.style.transition = "transform 0.5s";
+                    card.style.transform = "translateY(200%) rotate(20deg)";
+                    setTimeout(() => nextTurn(), 500);
+                }
+            }
+        }, 50);
+    }
+
+    // 8. Drag Physics
+    function initDrag(card, cardData) {
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        const stampNope = card.querySelector('.stamp-nope');
+        const stampLike = card.querySelector('.stamp-like');
+
+        const onStart = (e) => {
+            isDragging = true;
+            startX = e.touches ? e.touches[0].clientX : e.clientX;
+            card.style.transition = 'none';
+        };
+
+        const onMove = (e) => {
+            if (!isDragging) return;
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            currentX = x - startX;
+            
+            const rotate = currentX * 0.05;
+            card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+
+            if (currentX > 0) {
+                indRight.style.opacity = 1;
+                indRight.style.transform = 'translateY(-50%) scale(1.2)';
+                stampLike.style.opacity = Math.min(currentX / 100, 1);
+                card.style.borderColor = `rgba(34, 197, 94, ${Math.min(currentX / 200, 1)})`;
+            } else {
+                indLeft.style.opacity = 1;
+                indLeft.style.transform = 'translateY(-50%) scale(1.2) rotate(180deg)';
+                stampNope.style.opacity = Math.min(Math.abs(currentX) / 100, 1);
+                card.style.borderColor = `rgba(239, 68, 68, ${Math.min(Math.abs(currentX) / 200, 1)})`;
+            }
+        };
+
+        const onEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            indLeft.style.opacity = 0.3; indRight.style.opacity = 0.3;
+            indLeft.style.transform = 'translateY(-50%) rotate(180deg)'; 
+            indRight.style.transform = 'translateY(-50%)';
+
+            const threshold = 80;
+
+            if (currentX > threshold) {
+                card.classList.add('fly-right');
+                checkAnswer('right', cardData);
+            } else if (currentX < -threshold) {
+                card.classList.add('fly-left');
+                checkAnswer('left', cardData);
+            } else {
+                card.style.transition = 'transform 0.3s ease-out';
+                card.style.transform = 'translateX(0) rotate(0)';
+                card.style.borderColor = 'white';
+                stampLike.style.opacity = 0;
+                stampNope.style.opacity = 0;
+            }
+        };
+
+        card.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        card.addEventListener('touchstart', onStart);
+        window.addEventListener('touchmove', onMove);
+        window.addEventListener('touchend', onEnd);
+    }
+
+    function checkAnswer(direction, cardData) {
+        clearInterval(timerInterval);
+        let isCorrect = (direction === cardData.correctSwipe);
+        handleResult(isCorrect);
+        setTimeout(() => nextTurn(), 400);
+    }
+
+    function handleResult(isCorrect) {
+        if (isCorrect) {
+            score += 10;
+            scoreEl.textContent = score;
+            if(navigator.vibrate) navigator.vibrate(20);
+        } else {
+            lives--;
+            updateLives();
+            if(navigator.vibrate) navigator.vibrate(200);
+        }
+    }
+
+    function nextTurn() {
+        if (lives <= 0) {
+            endGame(false); 
+            return;
+        }
+        cardQueue.shift();
+        renderCard();
+    }
+
+    function endGame(win) {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        
+        // Hide the exit button when modal appears
+        if(headerQuitBtn) headerQuitBtn.style.display = 'none';
+
+        const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
+        
+        let stars = 0;
+        if (win) {
+            if (timeTakenSec <= 60) stars = 3;
+            else if (timeTakenSec <= 90) stars = 2;
+            else stars = 1;
+        }
+
+        let starHTML = '';
+        for(let i=1; i<=3; i++) {
+            starHTML += `<span class="text-5xl ${i <= stars ? 'text-amber-400 animate-bounce' : 'text-slate-600'}" style="animation-delay: ${i*0.2}s">★</span>`;
+        }
+
+        const modalContent = win 
+            ? `<div class="text-6xl mb-4 animate-bounce">🏆</div>
+               <h2 class="text-3xl font-black text-white mb-2">You Won!</h2>
+               <div class="flex justify-center gap-2 mb-4">${starHTML}</div>
+               <p class="text-sm text-slate-300 mb-6">Cleared in ${timeTakenSec} seconds!</p>
+               <p class="text-lg font-bold text-white">Score: ${score}</p>`
+            : `<div class="text-6xl mb-4">💔</div>
+               <h2 class="text-3xl font-black text-white mb-2">Game Over</h2>
+               <p class="text-lg text-slate-200 mb-6">Final Score: ${score}</p>`;
+
+        const modalInner = modal.querySelector('.glass-ui');
+        const buttonsHTML = modalInner.querySelector('.grid').outerHTML;
+        modalInner.innerHTML = modalContent + buttonsHTML;
+
+        document.getElementById('exit-swipe-btn').onclick = cleanup;
+        document.getElementById('restart-swipe-btn').onclick = () => {
+            modal.classList.add('hidden');
+            startSwipeGame(difficulty, originalTitle, gradClass);
+        };
+
+        modal.classList.remove('hidden');
+        
+        if(win && typeof showConfetti === 'function') showConfetti();
+        if(typeof addQuizResult === 'function') {
+            addQuizResult(`Swipe Game (${difficulty})`, Math.floor(score/10), totalCards * 10);
+        }
+    }
+
+    function cleanup() {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        document.getElementById('top-nav').classList.remove('hidden');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+        document.body.style.overflow = '';
+        switchView('gameZone', { forceRender: true });
+    }
+
+    // --- NEW: Add Click Listener for Exit Button ---
+    if(headerQuitBtn) {
+        headerQuitBtn.onclick = () => {
+            if(confirm("Quit Swipe Game?")) cleanup();
+        };
+    }
+    document.getElementById('exit-swipe-btn').onclick = cleanup;
+
+    updateLives();
+    renderCard();
+}
+// END: REPLACE THE startSwipeGame FUNCTION
 
             function renderSynonymsView(gradClass) {
                 updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
