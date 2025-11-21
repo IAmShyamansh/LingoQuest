@@ -19688,7 +19688,7 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
 }
 // END: REPLACE THE startSwipeGame FUNCTION
 
-// START: PASTE THIS NEW FUNCTION
+// START: REPLACE THE startFlashRecallGame FUNCTION
 function startFlashRecallGame() {
     // 1. Hide Navs & Set Fullscreen
     document.getElementById('top-nav').classList.add('hidden');
@@ -19715,13 +19715,12 @@ function startFlashRecallGame() {
     const quitBtn = document.getElementById('quit-flash-btn');
 
     // 4. Game Config
-    // Combine all waves into one big pool of 30 verbs
     const allVerbs = [
         ...helpingVerbData.wave1, ...helpingVerbData.wave2, 
         ...helpingVerbData.wave3, ...helpingVerbData.wave4
     ];
     
-    let gameQueue = [...allVerbs].sort(() => 0.5 - Math.random()); // Shuffle the 30
+    let gameQueue = [...allVerbs].sort(() => 0.5 - Math.random()); 
     const TOTAL_ROUNDS = gameQueue.length;
 
     let score = 0;
@@ -19732,9 +19731,40 @@ function startFlashRecallGame() {
     let isAnswerPhase = false;
     let currentCorrectAnswer = "";
 
-    // 5. Render Lives
     function updateLives() {
         livesEl.innerHTML = '❤️'.repeat(lives);
+    }
+
+    // --- NEW: COUNTDOWN OVERLAY ---
+    function startCountdown() {
+        const overlay = document.createElement('div');
+        overlay.className = 'fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-sm';
+        overlay.innerHTML = `<div id="flash-countdown" class="text-7xl font-black text-white animate-ping">3</div>`;
+        document.getElementById('flash-game-container').appendChild(overlay);
+
+        let count = 3;
+        const countEl = document.getElementById('flash-countdown');
+        
+        const interval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countEl.textContent = count;
+                // Reset animation
+                countEl.classList.remove('animate-ping');
+                void countEl.offsetWidth;
+                countEl.classList.add('animate-ping');
+                if(navigator.vibrate) navigator.vibrate(50);
+            } else if (count === 0) {
+                countEl.textContent = "GO!";
+                countEl.classList.remove('animate-ping');
+                countEl.classList.add('animate-bounce', 'text-green-400');
+                if(navigator.vibrate) navigator.vibrate([50, 50]);
+            } else {
+                clearInterval(interval);
+                overlay.remove();
+                startRound(); // Start the actual game
+            }
+        }, 1000);
     }
 
     // 6. Game Loop: Step 1 - The Flash
@@ -19749,55 +19779,51 @@ function startFlashRecallGame() {
         }
 
         currentRound++;
-        const data = gameQueue.pop(); // Get next item
-        countEl.textContent = gameQueue.length; // Remaining count
+        const data = gameQueue.pop(); 
+        countEl.textContent = gameQueue.length; 
 
-        // Randomize Direction (Hindi->Eng OR Eng->Hindi)
         const isHindiToEng = Math.random() > 0.5;
         const promptText = isHindiToEng ? data.prompt : data.correct;
         currentCorrectAnswer = isHindiToEng ? data.correct : data.prompt;
         
-        // Get Distractors
         const distractors = [];
         while (distractors.length < 3) {
             const randomItem = allVerbs[Math.floor(Math.random() * allVerbs.length)];
             const distractorText = isHindiToEng ? randomItem.correct : randomItem.prompt;
-            // Ensure distractor is unique and not the correct answer
             if (distractorText !== currentCorrectAnswer && !distractors.includes(distractorText)) {
                 distractors.push(distractorText);
             }
         }
 
-        // Prepare Options
         const options = [currentCorrectAnswer, ...distractors].sort(() => 0.5 - Math.random());
 
         // SHOW FLASH
         isAnswerPhase = false;
-        optionsGrid.innerHTML = ''; // Clear buttons
-        optionsGrid.style.pointerEvents = 'none'; // Disable clicks
+        optionsGrid.innerHTML = ''; 
+        optionsGrid.style.pointerEvents = 'none'; 
         
         mainText.textContent = promptText;
-        mainText.className = "flash-text-main flash-in text-white"; // Reset anim
+        mainText.className = "flash-text-main flash-in text-white"; 
         subText.textContent = "Memorize!";
         subText.className = "flash-text-sub text-amber-400";
         
         timerFill.style.width = '100%';
-        timerFill.style.backgroundColor = '#3b82f6'; // Blue for prep
+        timerFill.style.backgroundColor = '#3b82f6'; 
 
-        // 1 Second Delay before showing options
+        // --- UPDATED: 1.5 Seconds Delay ---
         setTimeout(() => {
             showOptions(options);
-        }, 1000);
+        }, 1500);
     }
 
     // 7. Game Loop: Step 2 - The Options
     function showOptions(options) {
         isAnswerPhase = true;
-        mainText.textContent = "?"; // Hide prompt
+        mainText.textContent = "?"; 
         subText.textContent = "Choose Now!";
         subText.className = "flash-text-sub text-white";
         
-        optionsGrid.style.pointerEvents = 'auto'; // Enable clicks
+        optionsGrid.style.pointerEvents = 'auto'; 
 
         options.forEach(opt => {
             const btn = document.createElement('button');
@@ -19810,25 +19836,25 @@ function startFlashRecallGame() {
         startAnswerTimer();
     }
 
-    // 8. Timer Logic (3 Seconds)
+    // 8. Timer Logic
     function startAnswerTimer() {
         clearInterval(timerInterval);
-        let timeLeft = 3000; // 3 seconds in ms
+        let timeLeft = 3000; 
         const totalTime = 3000;
         
-        timerFill.style.backgroundColor = '#22c55e'; // Green start
+        timerFill.style.backgroundColor = '#22c55e'; 
 
         timerInterval = setInterval(() => {
             timeLeft -= 50;
             const pct = (timeLeft / totalTime) * 100;
             timerFill.style.width = `${pct}%`;
 
-            if (pct < 50) timerFill.style.backgroundColor = '#eab308'; // Yellow
-            if (pct < 20) timerFill.style.backgroundColor = '#ef4444'; // Red
+            if (pct < 50) timerFill.style.backgroundColor = '#eab308'; 
+            if (pct < 20) timerFill.style.backgroundColor = '#ef4444'; 
 
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
-                handleAnswer(null, null); // Timeout
+                handleAnswer(null, null); 
             }
         }, 50);
     }
@@ -19842,34 +19868,29 @@ function startFlashRecallGame() {
         const isCorrect = selectedText === currentCorrectAnswer;
 
         if (isCorrect) {
-            // Correct
             if (btn) btn.classList.add('flash-correct');
             if(navigator.vibrate) navigator.vibrate(30);
             score++;
             scoreEl.textContent = score;
             
-            // Fast transition to next
             setTimeout(startRound, 600); 
         } else {
-            // Wrong
             if (btn) btn.classList.add('flash-wrong');
             if(navigator.vibrate) navigator.vibrate(200);
             lives--;
             updateLives();
 
-            // Highlight correct answer
             Array.from(optionsGrid.children).forEach(b => {
                 if (b.textContent === currentCorrectAnswer) {
                     b.classList.add('flash-correct');
                 }
             });
 
-            // Show original word briefly so they learn
             mainText.textContent = "Wrong!";
             mainText.className = "flash-text-main text-red-400";
             subText.textContent = `Answer: ${currentCorrectAnswer}`;
 
-            setTimeout(startRound, 2000); // Longer delay for wrong answer to read
+            setTimeout(startRound, 2000); 
         }
     }
 
@@ -19906,7 +19927,6 @@ function startFlashRecallGame() {
         switchView('gameZone', { forceRender: true });
     }
 
-    // Controls
     quitBtn.onclick = () => { if(confirm("Quit Game?")) cleanup(); };
     document.getElementById('exit-flash-modal-btn').onclick = cleanup;
     document.getElementById('restart-flash-btn').onclick = () => {
@@ -19916,9 +19936,10 @@ function startFlashRecallGame() {
 
     // Init
     updateLives();
-    startRound();
+    // START WITH COUNTDOWN INSTEAD OF DIRECT ROUND
+    startCountdown(); 
 }
-// END: PASTE THIS NEW FUNCTION
+// END: REPLACE THE startFlashRecallGame FUNCTION
 
             function renderSynonymsView(gradClass) {
                 updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
@@ -22841,4 +22862,3 @@ if ('serviceWorker' in navigator) {
     </script>
 </body>
 </html>
-
