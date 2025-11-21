@@ -1996,58 +1996,81 @@
 
         <!-- START: PASTE THIS NEW GAME TEMPLATE HERE -->
     <template id="jumbled-word-game-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto pb-24" id="jumbled-game-container">
-            <!-- Game Header: Score & Timer -->
-            <div class="flex justify-between items-center mb-6 px-2 max-w-[500px] mx-auto">
-                <div class="text-left">
-                    <span class="text-sm text-slate-300">Score</span>
-                    <p id="game-score" class="text-2xl font-bold text-white">0</p>
+    <div id="jumbled-game-view" class="fixed inset-0 z-[200] bg-slate-900 flex flex-col overflow-hidden font-sans text-white">
+        <!-- Animated Background -->
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-amber-600/20 rounded-full blur-[100px] animate-pulse"></div>
+            <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+
+        <!-- Top Bar -->
+        <div class="relative z-20 flex justify-between items-center p-4 pt-6 bg-slate-900/80 backdrop-blur-sm border-b border-white/5">
+            <div class="flex items-center gap-4">
+                <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Score</span>
+                    <span id="game-score" class="text-xl font-black text-white leading-none">0/20</span>
                 </div>
-                <div class="text-right">
-                    <span class="text-sm text-slate-300">Time Left</span>
-                    <p id="game-timer" class="text-2xl font-bold text-amber-400">30</p>
+                <div class="bg-amber-500/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-amber-500/20">
+                    <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Time</span>
+                    <span id="game-timer" class="text-xl font-black text-amber-400 leading-none">30</span>
                 </div>
             </div>
             
-            <!-- Game Board -->
-            <div id="jumbled-game-board" class="max-w-[500px] mx-auto">
-                <div id="jumbled-word-display" class="text-3xl text-white mb-6">
+            <div class="flex items-center gap-3">
+                <div id="jumbled-lives" class="flex gap-1 text-2xl">❤️❤️❤️</div>
+                <button id="quit-game-btn" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div class="relative flex-grow w-full overflow-y-auto p-4 flex flex-col items-center justify-center">
+            <div id="jumbled-game-board" class="w-full max-w-md mx-auto">
+                <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg">
                     <!-- Scrambled word appears here -->
                 </div>
 
-                <p id="jumbled-word-clue" class="hidden"></p>
+                <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-8 hidden"></p>
                 
-                <input type="text" id="jumbled-answer-input" placeholder="Your Answer..." autocomplete="off" autocapitalize="off">
+                <input type="text" id="jumbled-answer-input" placeholder="YOUR ANSWER..." autocomplete="off" autocapitalize="off" class="w-full bg-white/10 text-white placeholder-white/30 border-2 border-white/20 focus:border-amber-500 rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4">
                 
-                <div id="jumbled-feedback" class="text-center min-h-[2.5rem] mt-4 font-bold">
-                    <!-- Feedback "Correct!" or "Wrong!" appears here -->
-                </div>
+                <div id="jumbled-feedback" class="text-center h-8 font-bold mb-4"></div>
 
-                <div class="mt-4 grid grid-cols-3 gap-4">
-                    <button id="hint-word-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.3 18 9 18 7c0-2.2-1.8-4-4-4S10 4.8 10 7c0 2 1.3 4.3 2.5 5.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-                        Hint
+                <div class="grid grid-cols-3 gap-3">
+                    <button id="hint-word-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.3 18 9 18 7c0-2.2-1.8-4-4-4S10 4.8 10 7c0 2 1.3 4.3 2.5 5.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                        <span class="text-xs uppercase tracking-wide">Hint</span>
                     </button>
-                    <button id="skip-word-btn" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-lg">Skip Word</button>
-                    <button id="submit-word-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Submit</button>
+                    <button id="skip-word-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                        <span class="text-xs uppercase tracking-wide">Skip</span>
+                    </button>
+                    <button id="submit-word-btn" class="w-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span class="text-xs uppercase tracking-wide">Submit</span>
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Game Over Modal (hidden by default) -->
-            <div id="jumbled-over-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                <div class="glass-ui p-6 rounded-2xl text-center pop-in">
-                    <div id="jumbled-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
-                    <h2 class="text-2xl font-bold text-white mb-2">You Won!</h2>
-                    <p class="text-lg text-slate-200 mb-6">You scored <strong id="final-score-jumbled">0</strong>!</p>
-                    <button id="restart-game-btn-jumbled" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Play Again</button>
+        <!-- Game Over Modal -->
+        <div id="jumbled-over-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
+            <div class="glass-ui p-8 rounded-3xl text-center pop-in max-w-sm w-full border border-white/20">
+                <div id="jumbled-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
+                <h2 class="text-3xl font-black text-white mb-2" id="jumbled-over-title">You Won!</h2>
+                <div class="bg-white/5 rounded-xl p-4 mb-6">
+                     <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Final Score</p>
+                     <p class="text-lg text-slate-200"><strong id="final-score-jumbled" class="text-4xl text-white">0</strong> / 20</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="exit-jumbled-btn" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl transition-colors">Exit</button>
+                    <button id="restart-game-btn-jumbled" class="grad-nav text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Play Again</button>
                 </div>
             </div>
         </div>
-        <!-- Quit Game Button -->
-        <div id="game-footer-bar">
-            <button id="quit-game-btn" class="w-full max-w-xs bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg">Quit Game</button>
-        </div>
-    </template>
+    </div>
+</template>
     <!-- END: PASTE THIS NEW GAME TEMPLATE HERE -->
 
     
@@ -18129,387 +18152,223 @@ function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
 
 
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
-
-            /**
-
-             * Starts the Jumbled Word game.
-
-             */
-
-            function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty) {
-
-                // 1. Hide navs and show game template
-
-                document.getElementById('top-nav').classList.add('hidden');
-
-                document.getElementById('bottom-nav').classList.add('hidden');
-
-                document.body.style.paddingTop = '0';
-
-                document.body.style.paddingBottom = '0';
-
-
-
-                mainContent.innerHTML = '';
-
-                mainContent.appendChild(document.getElementById('jumbled-word-game-template').content.cloneNode(true));
-
-
-
-                // 2. Get all elements
-
-                const wordDisplay = document.getElementById('jumbled-word-display');
-
-                const clueDisplay = document.getElementById('jumbled-word-clue'); // <-- NEW
-
-                const answerInput = document.getElementById('jumbled-answer-input');
-
-                const feedbackEl = document.getElementById('jumbled-feedback');
-
-                const scoreEl = document.getElementById('game-score');
-
-                const timerEl = document.getElementById('game-timer');
-
-                const skipBtn = document.getElementById('skip-word-btn');
-
-                const submitBtn = document.getElementById('submit-word-btn');
-
-                const hintBtn = document.getElementById('hint-word-btn');
-
-                
-
-                const modal = document.getElementById('jumbled-over-modal');
-
-                const finalScoreEl = document.getElementById('final-score-jumbled');
-
-                const restartBtn = document.getElementById('restart-game-btn-jumbled');
-
-                const gameOverIcon = document.getElementById('jumbled-over-icon');
-
-                const quitBtn = document.getElementById('quit-game-btn');
-
-
-
-                // 3. Setup Quit Button
-
-                const quitGame = () => {
-
-                    clearInterval(timerInterval); // Stop the timer
-
-                    document.getElementById('top-nav').classList.remove('hidden');
-
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-
-                    document.body.style.paddingTop = '56px';
-
-                    document.body.style.paddingBottom = '56px';
-
-                    switchView('gameZone', { forceRender: true });
-
-                };
-
-                quitBtn.addEventListener('click', quitGame);
-
-
-
-                // 4. Initialize game state
-
-                let score = 0;
-
-                let currentQuestionIndex = 0;
-
-                const totalQuestions = selectedWords.length;
-
-                let timerInterval;
-
-                let timeLeft = 30;
-
-                let hintUsed = false;
-
-
-
-                function startTimer() {
-
-                    timeLeft = 30;
-
-                    timerEl.textContent = timeLeft;
-
-                    timerEl.classList.remove('text-red-500');
-
-
-
-                    clearInterval(timerInterval);
-
-                    timerInterval = setInterval(() => {
-
-                        timeLeft--;
-
-                        timerEl.textContent = timeLeft;
-
-                        if (timeLeft <= 5) {
-
-                            timerEl.classList.add('text-red-500');
-
-                        }
-
-                        if (timeLeft <= 0) {
-
-                            clearInterval(timerInterval);
-
-                            handleAnswer(null); // Time's up
-
-                        }
-
-                    }, 1000);
-
-                }
-
-
-
-                function displayQuestion() {
-
-                    if (currentQuestionIndex >= totalQuestions) {
-
-                        displayJumbledResults();
-
-                        return;
-
-                    }
-
-
-
-                    const currentWord = selectedWords[currentQuestionIndex];
-
-                    wordDisplay.textContent = scrambleWord(currentWord.word);
-
-                    
-
-                    // --- START: NEW HINT LOGIC FOR HARD MODE ---
-
-                    if (difficulty === 'hard') {
-
-                        clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
-
-                        clueDisplay.classList.remove('hidden');
-
-                    } else {
-
-                        clueDisplay.classList.add('hidden');
-
-                    }
-
-                    // --- END: NEW HINT LOGIC ---
-
-
-
-                    wordDisplay.classList.remove('celebrate');
-
-                    answerInput.value = '';
-
-                    answerInput.className = "w-full bg-white/90 text-slate-900 placeholder-slate-500 border-2 border-transparent focus:border-pink-500 rounded-lg py-4 px-4 outline-none transition-all text-center text-lg font-bold uppercase";
-
-                    feedbackEl.innerHTML = '';
-
-                    answerInput.disabled = false;
-
-                    submitBtn.disabled = false;
-
-                    skipBtn.disabled = false;
-
-                    
-
-                    hintUsed = false; 
-
-                    hintBtn.disabled = false;
-
-                    
-
-                    answerInput.focus();
-
-                    startTimer();
-
-                }
-
-
-
-                function handleAnswer(userAnswer) {
-
-                    clearInterval(timerInterval);
-
-                    answerInput.disabled = true;
-
-                    submitBtn.disabled = true;
-
-                    skipBtn.disabled = true;
-
-                    hintBtn.disabled = true;
-
-
-
-                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
-
-                    
-
-                    if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
-
-                        // Correct answer
-
-                        vibrate(50);
-
-                        score++;
-
-                        scoreEl.textContent = score;
-
-                        answerInput.classList.add('correct');
-
-                        feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-center">Correct!</p>`;
-
-                    } else if (userAnswer === null) {
-
-                        // Time's up
-
-                        vibrate(20);
-
-                        answerInput.classList.add('incorrect');
-
-                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Time's up! Answer: ${correctAnswer}</p>`;
-
-                    } else {
-
-                        // Wrong answer
-
-                        vibrate(20);
-
-                        answerInput.classList.add('incorrect');
-
-                        feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-center">Wrong! Answer: ${correctAnswer}</p>`;
-
-                    }
-
-
-
-                    // Move to the next question
-
-                    setTimeout(() => {
-
-                        currentQuestionIndex++;
-
-                        displayQuestion();
-
-                    }, 2000);
-
-                }
-
-
-
-                function displayJumbledResults() {
-
-                    addQuizResult(`${originalTitle} (Jumbled)`, score, totalQuestions);
-
-                    finalScoreEl.textContent = `${score} / ${totalQuestions}`;
-
-                    
-
-                    if(score / totalQuestions < 0.5) {
-
-                        gameOverIcon.textContent = '😅';
-
-                    } else {
-
-                        gameOverIcon.textContent = '🎉';
-
-                        showConfetti();
-
-                    }
-
-                    
-
-                    modal.classList.remove('hidden');
-
-                    quitBtn.classList.add('hidden');
-
-                }
-
-
-
-                // Attach event listeners
-
-                submitBtn.addEventListener('click', () => handleAnswer(answerInput.value));
-
-                answerInput.addEventListener('keydown', (e) => {
-
-                    if (e.key === 'Enter') {
-
-                        handleAnswer(answerInput.value);
-
-                    }
-
-                });
-
-                skipBtn.addEventListener('click', () => handleAnswer(null));
-
-                
-
-                hintBtn.addEventListener('click', () => {
-
-                    if (hintUsed) return;
-
-                    vibrate(20);
-
-                    hintUsed = true;
-
-                    hintBtn.disabled = true;
-
-
-
-                    const correctAnswer = selectedWords[currentQuestionIndex].word.toUpperCase();
-
-                    const userAnswer = answerInput.value.toUpperCase();
-
-                    
-
-                    // Find the first incorrect character
-
-                    for (let i = 0; i < correctAnswer.length; i++) {
-
-                        if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
-
-                            // Reveal the correct part of the answer
-
-                            answerInput.value = correctAnswer.slice(0, i + 1);
-
-                            answerInput.focus();
-
-                            return; // Give only one letter hint
-
-                        }
-
-                    }
-
-                });
-
-                
-
-                restartBtn.onclick = () => {
-
-                    modal.classList.add('hidden');
-
-                    // Relaunch the game with the same set of words but re-shuffled
-
-                    startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty); // Pass difficulty
-
-                };
-
-                
-
-                // Start the first question
-
-                displayQuestion();
-
+            // START: REPLACE THE startJumbledWordGame FUNCTION
+function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty) {
+    // 1. Hide Navs & Set Fullscreen
+    document.getElementById('top-nav').classList.add('hidden');
+    document.getElementById('bottom-nav').classList.add('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // 2. Inject Template
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('jumbled-word-game-template').content.cloneNode(true));
+
+    // 3. Get Elements
+    const wordDisplay = document.getElementById('jumbled-word-display');
+    const clueDisplay = document.getElementById('jumbled-word-clue');
+    const answerInput = document.getElementById('jumbled-answer-input');
+    const feedbackEl = document.getElementById('jumbled-feedback');
+    const scoreEl = document.getElementById('game-score');
+    const timerEl = document.getElementById('game-timer');
+    const livesEl = document.getElementById('jumbled-lives');
+    
+    const skipBtn = document.getElementById('skip-word-btn');
+    const submitBtn = document.getElementById('submit-word-btn');
+    const hintBtn = document.getElementById('hint-word-btn');
+    
+    const modal = document.getElementById('jumbled-over-modal');
+    const modalTitle = document.getElementById('jumbled-over-title');
+    const finalScoreEl = document.getElementById('final-score-jumbled');
+    const restartBtn = document.getElementById('restart-game-btn-jumbled');
+    const exitBtn = document.getElementById('exit-jumbled-btn');
+    const gameOverIcon = document.getElementById('jumbled-over-icon');
+    const quitBtn = document.getElementById('quit-game-btn');
+
+    // 4. Game Config
+    const TOTAL_QUESTIONS = 20;
+    // Ensure we have 20 words. If passed less (e.g. 10), cycle them or fill up.
+    let gameQueue = [];
+    while (gameQueue.length < TOTAL_QUESTIONS) {
+        gameQueue.push(...selectedWords); // Duplicate if needed
+    }
+    gameQueue = gameQueue.slice(0, TOTAL_QUESTIONS); // Trim to exactly 20
+
+    let score = 0;
+    let currentQuestionIndex = 0;
+    let lives = 3;
+    let timerInterval;
+    let timeLeft = 30;
+    let hintUsed = false;
+    let isGameOver = false;
+
+    function updateLives() {
+        livesEl.innerHTML = '❤️'.repeat(lives);
+    }
+
+    function startTimer() {
+        timeLeft = 30;
+        timerEl.textContent = timeLeft;
+        timerEl.classList.remove('text-red-500', 'animate-pulse');
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = timeLeft;
+            if (timeLeft <= 5) {
+                timerEl.classList.add('text-red-500', 'animate-pulse');
             }
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                handleAnswer(null); // Time's up counts as wrong
+            }
+        }, 1000);
+    }
 
-            // END: PASTE THIS REPLACEMENT FUNCTION
+    function displayQuestion() {
+        if (currentQuestionIndex >= TOTAL_QUESTIONS) {
+            displayJumbledResults(true); // Win condition: Finished all words
+            return;
+        }
+        
+        if (lives <= 0) {
+            displayJumbledResults(false); // Loss condition: Out of lives
+            return;
+        }
+
+        const currentWord = gameQueue[currentQuestionIndex];
+        wordDisplay.textContent = scrambleWord(currentWord.word);
+        scoreEl.textContent = `${score}/${TOTAL_QUESTIONS}`;
+        
+        // Hint Logic
+        if (difficulty === 'hard') {
+            clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
+            clueDisplay.classList.remove('hidden');
+        } else {
+            clueDisplay.classList.add('hidden');
+        }
+
+        answerInput.value = '';
+        answerInput.className = "w-full bg-white/10 text-white placeholder-white/30 border-2 border-white/20 focus:border-amber-500 rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4";
+        feedbackEl.innerHTML = '';
+        
+        answerInput.disabled = false;
+        submitBtn.disabled = false;
+        skipBtn.disabled = false;
+        hintUsed = false; 
+        hintBtn.disabled = false;
+        
+        answerInput.focus();
+        startTimer();
+    }
+
+    function handleAnswer(userAnswer) {
+        if (isGameOver) return;
+        clearInterval(timerInterval);
+        
+        answerInput.disabled = true;
+        submitBtn.disabled = true;
+        skipBtn.disabled = true;
+        hintBtn.disabled = true;
+
+        const currentWordData = gameQueue[currentQuestionIndex];
+        const correctAnswer = currentWordData.word.toUpperCase();
+        
+        if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
+            // Correct
+            if(navigator.vibrate) navigator.vibrate(50);
+            score++;
+            answerInput.classList.add('border-green-500', 'bg-green-500/20');
+            feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-lg">Correct!</p>`;
+        } else {
+            // Wrong or Skipped
+            if(navigator.vibrate) navigator.vibrate(200);
+            lives--;
+            updateLives();
+            answerInput.classList.add('border-red-500', 'bg-red-500/20');
+            const msg = userAnswer === null ? "Time's Up!" : (userAnswer === 'SKIP' ? "Skipped!" : "Wrong!");
+            feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-sm">${msg} Answer: <span class="text-white">${correctAnswer}</span></p>`;
+        }
+
+        // Check for immediate loss
+        if (lives <= 0) {
+            setTimeout(() => displayJumbledResults(false), 1500);
+        } else {
+            setTimeout(() => {
+                currentQuestionIndex++;
+                displayQuestion();
+            }, 1500);
+        }
+    }
+
+    function displayJumbledResults(win) {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        
+        if(typeof addQuizResult === 'function') {
+             addQuizResult(`${originalTitle} (Unscramble)`, score, TOTAL_QUESTIONS);
+        }
+        
+        finalScoreEl.textContent = score;
+        
+        if (win) {
+            modalTitle.textContent = "You Won!";
+            gameOverIcon.textContent = '🏆';
+            if(typeof showConfetti === 'function') showConfetti();
+        } else {
+            modalTitle.textContent = "Game Over";
+            gameOverIcon.textContent = '💔';
+        }
+        
+        modal.classList.remove('hidden');
+        quitBtn.style.display = 'none';
+    }
+
+    function quitGame() {
+        isGameOver = true;
+        clearInterval(timerInterval);
+        document.getElementById('top-nav').classList.remove('hidden');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+        document.body.style.overflow = '';
+        switchView('gameZone', { forceRender: true });
+    }
+
+    // Attach Listeners
+    quitBtn.onclick = () => { if(confirm("Quit game?")) quitGame(); };
+    exitBtn.onclick = quitGame;
+
+    submitBtn.onclick = () => handleAnswer(answerInput.value);
+    answerInput.onkeydown = (e) => { if (e.key === 'Enter') handleAnswer(answerInput.value); };
+    skipBtn.onclick = () => handleAnswer('SKIP'); // Treat skip as wrong answer (lose life) but show correct word
+
+    hintBtn.onclick = () => {
+        if (hintUsed) return;
+        if(navigator.vibrate) navigator.vibrate(20);
+        hintUsed = true;
+        hintBtn.disabled = true;
+        const correctAnswer = gameQueue[currentQuestionIndex].word.toUpperCase();
+        const userAnswer = answerInput.value.toUpperCase();
+        
+        // Fill in the first few letters or correct mistakes
+        for (let i = 0; i < correctAnswer.length; i++) {
+            if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
+                answerInput.value = correctAnswer.slice(0, i + 1);
+                answerInput.focus();
+                break;
+            }
+        }
+    };
+    
+    restartBtn.onclick = () => {
+        modal.classList.add('hidden');
+        // Relaunch via the main loader to get NEW words if possible
+        launchGameFromWordList('jumbled-word', originalTitle, difficulty, gradClass);
+    };
+
+    // Init
+    updateLives();
+    displayQuestion();
+}
+// END: REPLACE THE startJumbledWordGame FUNCTION
 
             /**
              * Starts the Word Rain game (Fullscreen Version).
