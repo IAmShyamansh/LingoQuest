@@ -1385,6 +1385,7 @@
 }
 
 /* --- SWIPE GAME STYLES --- */
+/* --- UPDATED SWIPE GAME STYLES (Mobile Fixed) --- */
 #swipe-game-container {
     position: fixed;
     inset: 0;
@@ -1396,24 +1397,31 @@
     overflow: hidden;
 }
 
-/* The Frame for the Card Stack */
+/* The "Frame" - Consistent with Bubble Game */
 #swipe-play-area {
     position: relative;
     flex-grow: 1;
-    width: 94%;
+    width: 96%;
     margin: 10px auto 20px auto;
     display: flex;
     align-items: center;
     justify-content: center;
     perspective: 1000px;
+    
+    /* Frame Styling */
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    overflow: hidden; /* Keep cards inside visual bounds */
 }
 
-/* The Card Itself */
+/* The Card - Smaller for Mobile */
 .swipe-card {
     position: absolute;
-    width: 90%;
-    max-width: 340px;
-    aspect-ratio: 3/4; /* Classic Card Ratio */
+    width: 70%; /* Reduced from 90% to show side labels */
+    max-width: 320px; /* Cap width for tablets/desktop */
+    aspect-ratio: 3/4;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 24px;
     box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3);
@@ -1423,85 +1431,73 @@
     justify-content: center;
     text-align: center;
     padding: 20px;
-    /* Vital for touch dragging */
     touch-action: none; 
     user-select: none;
     transform-origin: 50% 100%;
-    transition: transform 0.1s linear; /* Smooth drag follow */
+    transition: transform 0.1s linear;
     border: 4px solid white;
+    z-index: 10;
 }
 
 .swipe-card.next-card {
-    transform: scale(0.95) translateY(10px);
+    transform: scale(0.9) translateY(15px); /* Smaller background card */
     opacity: 0.5;
     z-index: 5;
 }
 
-.swipe-card.active-card {
-    z-index: 10;
-    cursor: grab;
-}
-
-.swipe-card.active-card:active {
-    cursor: grabbing;
-}
-
-/* Content on Card */
-.swipe-word-main {
-    font-size: 2.5rem;
+/* Side Indicators (Vertical Text) */
+.swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem; 
     font-weight: 900;
-    color: #1e293b;
-    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    opacity: 0.4; 
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 1;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-.swipe-word-sub {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #6366f1;
+.swipe-indicator.left { 
+    left: 12px; 
+    color: #ef4444; 
+    transform: translateY(-50%) rotate(180deg); 
 }
 
-.swipe-divider {
-    width: 40px;
-    height: 4px;
-    background: #cbd5e1;
-    margin: 20px 0;
-    border-radius: 2px;
+.swipe-indicator.right { 
+    right: 12px; 
+    color: #22c55e; 
 }
 
-/* Swipe Stamps (YES/NO overlays) */
+/* Content Styling */
+.swipe-word-main { font-size: 2rem; font-weight: 900; color: #1e293b; margin-bottom: 8px; }
+.swipe-word-sub { font-size: 1.5rem; font-weight: 700; color: #6366f1; }
+.swipe-divider { width: 40px; height: 4px; background: #cbd5e1; margin: 15px 0; border-radius: 2px; }
+
+/* Stamps */
 .swipe-stamp {
     position: absolute;
-    top: 40px;
+    top: 20px;
     padding: 5px 10px;
     border: 4px solid;
     border-radius: 8px;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 900;
     text-transform: uppercase;
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
     transform: rotate(-15deg);
 }
+.stamp-nope { right: 20px; color: #ef4444; border-color: #ef4444; }
+.stamp-like { left: 20px; color: #22c55e; border-color: #22c55e; }
 
-.stamp-nope {
-    right: 40px;
-    color: #ef4444;
-    border-color: #ef4444;
-}
-
-.stamp-like {
-    left: 40px;
-    color: #22c55e;
-    border-color: #22c55e;
-}
-
-/* Animations for releasing the card */
-@keyframes fly-out-right {
-    to { transform: translate(150%, 20px) rotate(30deg); opacity: 0; }
-}
-@keyframes fly-out-left {
-    to { transform: translate(-150%, 20px) rotate(-30deg); opacity: 0; }
-}
-
+/* Animations */
+@keyframes fly-out-right { to { transform: translate(200%, 50px) rotate(30deg); opacity: 0; } }
+@keyframes fly-out-left { to { transform: translate(-200%, 50px) rotate(-30deg); opacity: 0; } }
 .fly-right { animation: fly-out-right 0.4s ease-out forwards; }
 .fly-left { animation: fly-out-left 0.4s ease-out forwards; }
 
@@ -19222,7 +19218,7 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
 }
 // END: PASTE THIS REPLACEMENT FUNCTION
 
-// REPLACE THE ENTIRE startSwipeGame FUNCTION
+// START: REPLACE THE startSwipeGame FUNCTION
 function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     // 1. Hide Navs
     document.getElementById('top-nav').classList.add('hidden');
@@ -19241,7 +19237,7 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     const modal = document.getElementById('swipe-over-modal');
     const indLeft = document.getElementById('ind-left');
     const indRight = document.getElementById('ind-right');
-    const headerQuitBtn = document.getElementById('quit-swipe-game'); // <-- Get the button
+    const headerQuitBtn = document.getElementById('quit-swipe-game');
 
     // 4. Config & State
     let score = 0;
@@ -19386,16 +19382,18 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
             if (!isDragging) return;
             isDragging = false;
             
-            indLeft.style.opacity = 0.3; indRight.style.opacity = 0.3;
+            indLeft.style.opacity = 0.4; indRight.style.opacity = 0.4;
             indLeft.style.transform = 'translateY(-50%) rotate(180deg)'; 
             indRight.style.transform = 'translateY(-50%)';
 
             const threshold = 80;
 
             if (currentX > threshold) {
+                if(navigator.vibrate) navigator.vibrate(50); // Vibrate on Swipe
                 card.classList.add('fly-right');
                 checkAnswer('right', cardData);
             } else if (currentX < -threshold) {
+                if(navigator.vibrate) navigator.vibrate(50); // Vibrate on Swipe
                 card.classList.add('fly-left');
                 checkAnswer('left', cardData);
             } else {
@@ -19426,11 +19424,10 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         if (isCorrect) {
             score += 10;
             scoreEl.textContent = score;
-            if(navigator.vibrate) navigator.vibrate(20);
         } else {
             lives--;
             updateLives();
-            if(navigator.vibrate) navigator.vibrate(200);
+            if(navigator.vibrate) navigator.vibrate(200); // Error Vibe
         }
     }
 
@@ -19447,7 +19444,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         isGameOver = true;
         clearInterval(timerInterval);
         
-        // Hide the exit button when modal appears
         if(headerQuitBtn) headerQuitBtn.style.display = 'none';
 
         const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
@@ -19501,7 +19497,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         switchView('gameZone', { forceRender: true });
     }
 
-    // --- NEW: Add Click Listener for Exit Button ---
     if(headerQuitBtn) {
         headerQuitBtn.onclick = () => {
             if(confirm("Quit Swipe Game?")) cleanup();
