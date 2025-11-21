@@ -2808,12 +2808,12 @@ const simpleSynonyms = [
 
 const helpingVerbData = {
     wave1: [ // Basics: Present & Habits
-        { prompt: "ता है", correct: "1st Form", wrong: ["Used to", "Can"] },
+        { prompt: "ता है", correct: "Verb 1st Form", wrong: ["Used to", "Can"] },
         { prompt: "ता था", correct: "Used to", wrong: ["Has to", "Could"] },
         { prompt: "रहा है", correct: "Is/Am/Are + ing", wrong: ["Was + ing", "Will be + ing"] },
         { prompt: "रहा था", correct: "Was/Were + ing", wrong: ["Is + ing", "Has been + ing"] },
         { prompt: "गा / गे / गी", correct: "Will", wrong: ["Can", "Should"] },
-        { prompt: "आ था", correct: "2nd Form", wrong: ["Has + 3rd", "Had + 3rd"] },
+        { prompt: "आ था", correct: "Verb 2nd Form", wrong: ["Has + 3rd", "Had + 3rd"] },
         { prompt: "रहा होगा", correct: "Will be + ing", wrong: ["Might be + ing", "Is + ing"] }
     ],
     wave2: [ // Compulsion & Modals
@@ -2823,7 +2823,7 @@ const helpingVerbData = {
         { prompt: "ना था", correct: "Had to", wrong: ["Has to", "Should have"] },
         { prompt: "सकता है", correct: "Can", wrong: ["May", "Could"] },
         { prompt: "सका", correct: "Could", wrong: ["Can", "Should"] },
-        { prompt: "चाहिये", correct: "Should", wrong: ["Must", "Can"] },
+        { prompt: "चाहिए", correct: "Should", wrong: ["Must", "Can"] },
         { prompt: "पड़ेगा", correct: "Will have to", wrong: ["Will be able to", "Has to"] }
     ],
     wave3: [ // Complex Tenses
@@ -2831,19 +2831,19 @@ const helpingVerbData = {
         { prompt: "वाला था", correct: "Was/Were + about to", wrong: ["Is about to", "Had to"] },
         { prompt: "चुका है", correct: "Has/Have + 3rd", wrong: ["Had + 3rd", "Did"] },
         { prompt: "चुका था", correct: "Had + 3rd", wrong: ["Has + 3rd", "Was + ing"] },
-        { prompt: "रहा है + समय", correct: "Has/Have been + ing", wrong: ["Is + ing", "Had been + ing"] },
-        { prompt: "रहा था + समय", correct: "Had been + ing", wrong: ["Was + ing", "Has been + ing"] },
-        { prompt: "रहा होगा + समय", correct: "Will have been + ing", wrong: ["Will be + ing", "Might be + ing"] }
+        { prompt: "रहा है + समय", correct: "Has/Have been + ing + time", wrong: ["Is + ing", "Had been + ing"] },
+        { prompt: "रहा था + समय", correct: "Had been + ing + time", wrong: ["Was + ing", "Has been + ing"] },
+        { prompt: "रहा होगा + समय", correct: "Will have been + ing + time", wrong: ["Will be + ing", "Might be + ing"] }
     ],
     wave4: [ // Probability & Advanced
         { prompt: "सकता था", correct: "Could have + 3rd", wrong: ["Could", "Should have"] },
-        { prompt: "चाहिये था", correct: "Should have + 3rd", wrong: ["Should", "Must have"] },
-        { prompt: "सकूँगा", correct: "Will be able to", wrong: ["Can", "Will have to"] },
+        { prompt: "चाहिए था", correct: "Should have + 3rd", wrong: ["Should", "Must have"] },
+        { prompt: "सकेगा", correct: "Will be able to", wrong: ["Can", "Will have to"] },
         { prompt: "चुका होगा", correct: "Will have + 3rd", wrong: ["Will be", "Might have"] },
-        { prompt: "शायद + गा / गे / गी", correct: "Might + 1st", wrong: ["May", "Will"] },
+        { prompt: "शायद + गा / गे / गी", correct: "Might", wrong: ["May", "Will"] },
         { prompt: "शायद + चुका होगा", correct: "Might have + 3rd", wrong: ["Will have", "Must have"] },
         { prompt: "शायद + रहा होगा", correct: "Might be + ing", wrong: ["Will be + ing", "May be"] },
-        { prompt: "शायद + रहा होगा + समय", correct: "Might have been + ing", wrong: ["Will have been", "Has been"] }
+        { prompt: "शायद + रहा होगा + समय", correct: "Might have been + ing + time", wrong: ["Will have been", "Has been"] }
     ]
 };
 
@@ -22841,3 +22841,4 @@ if ('serviceWorker' in navigator) {
     </script>
 </body>
 </html>
+
