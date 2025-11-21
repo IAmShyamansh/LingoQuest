@@ -17572,121 +17572,112 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
 
             // START: PASTE THIS REPLACEMENT FUNCTION
-            function getWordsForDifficulty(difficulty) {
-                let wordPool = [];
-                
-                // Helper to filter for valid game words (non-sentences, non-types)
-                const isValidGameWord = (w) => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence && !w.synonyms;
+function getWordsForDifficulty(difficulty) {
+    let wordPool = [];
+    
+    // Helper to clean text (take first part if "/" exists)
+    const clean = (text) => {
+        if (!text) return "";
+        return text.split('/')[0].trim();
+    };
 
-                if (difficulty === 'easy') {
-                    // 1. Get ONLY Easy words
-                    const basicVocab = (vocabularyData["Vocabulary Builder"]["Basic Vocabulary"] || []).filter(isValidGameWord);
-                    const dailyActions = (vocabularyData["Vocabulary Builder"]["Daily Actions & Verbs"] || []).filter(isValidGameWord);
-                    wordPool = [...basicVocab, ...dailyActions];
-                    console.log(`Loading Easy pool: ${wordPool.length} words`);
-                    
-                } else if (difficulty === 'medium') {
-                    // 2. Get ONLY Medium words
-                    const travel = (vocabularyData["Vocabulary Builder"]["Travel & Adventure"] || []).filter(isValidGameWord);
-                    const emotions = (vocabularyData["Vocabulary Builder"]["Emotions & Feelings"] || []).filter(isValidGameWord);
-                    const business = (vocabularyData["Advanced Vocabulary"]["Business Vocab"] || []).filter(isValidGameWord);
-                    wordPool = [...travel, ...emotions, ...business];
-                    console.log(`Loading Medium pool: ${wordPool.length} words`);
-
-                } else if (difficulty === 'hard') {
-                    // 3. Get ONLY Hard words
-                    const oneWord = (vocabularyData["Advanced Vocabulary"]["One Word Substitution"] || []).filter(isValidGameWord);
-                    let idiomWords = [];
-                    // Loop through all idiom sub-categories
-                    for(const key in vocabularyData["Phrases & Idioms"]) {
-                        idiomWords = [...idiomWords, ...(vocabularyData["Phrases & Idioms"][key] || []).filter(isValidGameWord)];
-                    }
-                    wordPool = [...oneWord, ...idiomWords];
-                    console.log(`Loading Hard pool: ${wordPool.length} words`);
-                }
+    // Helper to safely add words from a specific category
+    const addFromCategory = (mainCat, subCat) => {
+        if (vocabularyData[mainCat] && vocabularyData[mainCat][subCat]) {
+            const list = vocabularyData[mainCat][subCat];
+            if (Array.isArray(list)) {
+                // Filter out headers/metadata, keep only valid word objects
+                const validItems = list.filter(w => w && typeof w === 'object' && w.word && w.meaning && !w.type && !w.isSentence);
                 
-                // --- START: NEW LOGIC TO CLEAN WORDS ---
-                const cleanedWordPool = wordPool.map(wordObj => {
-                    // Check if the word contains a ' / '
-                    if (wordObj.word.includes(' / ')) {
-                        // Split by ' / ' and take the first part
-                        const newWord = wordObj.word.split(' / ')[0].trim();
-                        // Return a new object so we don't modify the original vocabularyData
-                        return { ...wordObj, word: newWord };
-                    }
-                    // If no ' / ', return the object as is
-                    return wordObj;
-                });
+                // Clean the word and meaning
+                const cleanedItems = validItems.map(w => ({
+                    ...w,
+                    word: clean(w.word),
+                    meaning: clean(w.meaning)
+                }));
                 
-                return cleanedWordPool; // Return the cleaned pool
-                // --- END: NEW LOGIC ---
+                wordPool.push(...cleanedItems);
             }
-            // END: PASTE THIS REPLACEMENT FUNCTION
+        }
+    };
+
+    if (difficulty === 'easy') {
+        // Easy: Basic Vocab + Daily Actions
+        addFromCategory("Vocabulary Builder", "Basic Vocabulary");
+        addFromCategory("Vocabulary Builder", "Daily Actions & Verbs");
+        console.log(`Loaded Easy Pool: ${wordPool.length} words`);
+        
+    } else if (difficulty === 'medium') {
+        // Medium: Travel, Emotions, Business
+        addFromCategory("Vocabulary Builder", "Travel & Adventure");
+        addFromCategory("Vocabulary Builder", "Emotions & Feelings");
+        addFromCategory("Advanced Vocabulary", "Business Vocab");
+        console.log(`Loaded Medium Pool: ${wordPool.length} words`);
+
+    } else if (difficulty === 'hard') {
+        // Hard: One Word Substitution + ALL Idioms
+        addFromCategory("Advanced Vocabulary", "One Word Substitution");
+        
+        // Add ALL Idiom sub-categories
+        const idiomCats = vocabularyData["Phrases & Idioms"];
+        if (idiomCats) {
+            for (const subCat in idiomCats) {
+                addFromCategory("Phrases & Idioms", subCat);
+            }
+        }
+        console.log(`Loaded Hard Pool: ${wordPool.length} words`);
+    }
+    
+    // SHUFFLE the entire pool so we get random words every time
+    return wordPool.sort(() => 0.5 - Math.random());
+}
+// END: PASTE THIS REPLACEMENT FUNCTION
 
         // START: PASTE THIS REPLACEMENT FUNCTION
-            function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
-                // Get the correct pool of words based on difficulty
-                const wordPool = getWordsForDifficulty(difficulty);
-                
-                if (gameType === 'flip-cards') {
-                    // --- FLIP CARD LOGIC ---
-                    const totalPairs = 9; // 3x6 grid = 18 cards = 9 pairs
-                    const gridConfig = { cols: 3, maxWidth: "28rem" }; 
-                    
-                    if (wordPool.length < totalPairs) {
-                        alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
-                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
-                        return;
-                    }
-                    // Get 9 random words
-                    const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-                    // Start the game with these settings
-                    startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs, gridConfig); 
-                
-                } else if (gameType === 'match-columns') {
-                    // --- MATCH COLUMN LOGIC ---
-                    const totalPairs = 10; // Always 10 questions
-                    
-                    if (wordPool.length < totalPairs) {
-                        alert(`Sorry, there are not enough words (min ${totalPairs}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
-                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
-                        return;
-                    }
-                    // Get 10 random words
-                    const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-                    // Start the game
-                    startMatchColumnsGame(selectedWords, gameTitle, gradClass);
-                
-                } else if (gameType === 'jumbled-word') {
-                    // --- JUMBLED WORD LOGIC ---
-                    const totalQuestions = 10; // 10 words to unscramble
-                    
-                    if (wordPool.length < totalQuestions) {
-                        alert(`Sorry, there are not enough words (min ${totalQuestions}) in the ${difficulty} pool to start this game. Please try an easier difficulty.`);
-                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
-                        return;
-                    }
-                    const selectedWords = [...wordPool].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
-                    
-                    // --- THIS IS THE MODIFIED LINE ---
-                    startJumbledWordGame(selectedWords, gameTitle, gradClass, difficulty);
-                
-                } else if (gameType === 'word-rain') {
-                    // --- NEW WORD RAIN LOGIC ---
-                    // Needs a decent pool to pull random wrong answers from
-                    if (wordPool.length < 10) {
-                        alert("Not enough words to play Word Rain. Need at least 10.");
-                        renderGameDifficultySelectView(gameType, gameTitle, gradClass);
-                        return;
-                    }
-                    // We use the WHOLE pool for this game to ensure variety
-                    startWordRainGame(wordPool, gameTitle, gradClass);
-
-                } else {
-                    alert(`Starting "${gameTitle}" (${difficulty}) soon!`);
-                }
-            }
-            // END: PASTE THIS REPLACEMENT FUNCTION
+function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
+    // 1. Get a FRESH, shuffled pool of words based on difficulty
+    const wordPool = getWordsForDifficulty(difficulty);
+    
+    if (gameType === 'flip-cards') {
+        const totalPairs = 9;
+        if (wordPool.length < totalPairs) {
+            alert(`Not enough words in ${difficulty} mode (Need ${totalPairs}).`);
+            return;
+        }
+        const selectedWords = wordPool.slice(0, totalPairs);
+        startFlipCardGame(selectedWords, gameTitle, gradClass, totalPairs);
+    
+    } else if (gameType === 'match-columns') {
+        const totalPairs = 10;
+        if (wordPool.length < totalPairs) {
+            alert(`Not enough words in ${difficulty} mode (Need ${totalPairs}).`);
+            return;
+        }
+        // Slice the first 10 (since pool is already shuffled)
+        const selectedWords = wordPool.slice(0, totalPairs);
+        
+        // Pass difficulty so restart button knows what to reload
+        startMatchColumnsGame(selectedWords, gameTitle, gradClass, difficulty);
+    
+    } else if (gameType === 'jumbled-word') {
+        const totalQuestions = 10;
+        if (wordPool.length < totalQuestions) {
+            alert(`Not enough words in ${difficulty} mode.`);
+            return;
+        }
+        const selectedWords = wordPool.slice(0, totalQuestions);
+        startJumbledWordGame(selectedWords, gameTitle, gradClass, difficulty);
+    
+    } else if (gameType === 'word-rain') {
+        if (wordPool.length < 10) {
+            alert("Not enough words to play Word Rain.");
+            return;
+        }
+        // Pass entire pool for variety in Word Rain
+        startWordRainGame(wordPool, gameTitle, gradClass);
+    }
+}
+// END: PASTE THIS REPLACEMENT FUNCTION
 
             // START: PASTE THIS REPLACEMENT FUNCTION
 
@@ -18616,18 +18607,10 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     const exitModalBtn = document.getElementById('exit-bubble-btn');
 
     // 3. Config
-    const PAIRS_COUNT = 10;
-    // Detect mobile by width to set stricter size limits
+    // Use the selected words passed in
+    const gamePool = [...selectedWords]; 
+    const PAIRS_COUNT = gamePool.length;
     const isMobile = window.innerWidth < 600;
-
-    const validPool = selectedWords.filter(w => w.word && w.meaning);
-    if (validPool.length < 5) {
-        alert("Not enough words.");
-        quitGame();
-        return;
-    }
-    
-    const gamePool = [...validPool].sort(() => 0.5 - Math.random()).slice(0, PAIRS_COUNT);
     
     let timeLimit = 120;
     if (difficulty === 'easy') timeLimit = 90;
@@ -18643,7 +18626,7 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
 
     // 4. Create Bubbles
     function createBubbles() {
-        // Get the dimensions of the FRAME, not the window
+        // Get dimensions of the FRAME
         const boxWidth = container.offsetWidth;
         const boxHeight = container.offsetHeight;
 
@@ -18660,30 +18643,25 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             el.dataset.id = item.id;
             el.dataset.type = item.type;
             
-            // --- DYNAMIC SIZING FOR FRAME ---
+            // --- DYNAMIC SIZING ---
             const textLen = item.text.length;
-            
-            // Mobile: Smaller bubbles, fit more
-            // Desktop: Larger bubbles
             let diameter = isMobile 
-                ? Math.max(60, 55 + textLen * 1.2)  // Min 60px, grow slightly
-                : Math.max(80, 70 + textLen * 2);   // Min 80px, grow more
+                ? Math.max(60, 55 + textLen * 1.2)  
+                : Math.max(80, 70 + textLen * 2);   
             
-            // Cap size to ensure they fit in the box
-            diameter = Math.min(diameter, Math.min(boxWidth, boxHeight) / 3);
+            // Cap size to ensure they fit
+            diameter = Math.min(diameter, Math.min(boxWidth, boxHeight) / 3.5);
 
             el.style.width = `${diameter}px`;
             el.style.height = `${diameter}px`;
 
-            // Font Size Calculation
-            // If text is long, shrink font
+            // Font Size
             let fSize = isMobile ? 11 : 14;
             if (textLen > 10) fSize -= 1;
             if (textLen > 20) fSize -= 2;
             el.style.fontSize = `${fSize}px`;
             
-            // Random Position INSIDE THE FRAME
-            // Subtract diameter to keep fully inside
+            // Random Position INSIDE FRAME
             const maxX = boxWidth - diameter;
             const maxY = boxHeight - diameter;
             
@@ -18691,13 +18669,12 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             const y = Math.random() * maxY;
 
             // Physics
-            const speed = isMobile ? 0.5 : 0.8; // Slower on mobile for easier tapping
+            const speed = isMobile ? 0.5 : 0.8; 
             const vx = (Math.random() - 0.5) * speed * 2;
             const vy = (Math.random() - 0.5) * speed * 2;
 
             el.style.transform = `translate(${x}px, ${y}px)`;
 
-            // Click Event
             el.addEventListener('click', (e) => handleBubbleClick(e, item, el));
             
             container.appendChild(el);
@@ -18709,7 +18686,6 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     function updatePhysics() {
         if (isGameOver) return;
 
-        // Recalculate bounds every frame (handles screen rotation/resize)
         const boxW = container.offsetWidth;
         const boxH = container.offsetHeight;
 
@@ -18717,27 +18693,11 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             b.x += b.vx;
             b.y += b.vy;
 
-            // Bounce off RIGHT wall
-            if (b.x + b.size >= boxW) {
-                b.x = boxW - b.size;
-                b.vx *= -1;
-            }
-            // Bounce off LEFT wall
-            else if (b.x <= 0) {
-                b.x = 0;
-                b.vx *= -1;
-            }
+            if (b.x + b.size >= boxW) { b.x = boxW - b.size; b.vx *= -1; }
+            else if (b.x <= 0) { b.x = 0; b.vx *= -1; }
 
-            // Bounce off BOTTOM wall
-            if (b.y + b.size >= boxH) {
-                b.y = boxH - b.size;
-                b.vy *= -1;
-            }
-            // Bounce off TOP wall
-            else if (b.y <= 0) {
-                b.y = 0;
-                b.vy *= -1;
-            }
+            if (b.y + b.size >= boxH) { b.y = boxH - b.size; b.vy *= -1; }
+            else if (b.y <= 0) { b.y = 0; b.vy *= -1; }
 
             b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
         });
@@ -18745,28 +18705,22 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
         animationId = requestAnimationFrame(updatePhysics);
     }
 
-    // 6. Interaction & Burst
+    // 6. Interaction
     function handleBubbleClick(e, item, el) {
         if (isGameOver) return;
-        
-        // Haptic Feedback (Light)
         if(navigator.vibrate) navigator.vibrate(15);
 
         if (selectedBubble && selectedBubble.el === el) {
-            // Deselect if clicking same bubble
             el.classList.remove('selected');
             selectedBubble = null;
             return;
         }
 
         if (!selectedBubble) {
-            // First Selection
             selectedBubble = { el, id: item.id, type: item.type };
             el.classList.add('selected');
         } else {
-            // Second Selection
             if (selectedBubble.type === item.type) {
-                // Changed mind (clicked another word/meaning)
                 selectedBubble.el.classList.remove('selected');
                 selectedBubble = { el, id: item.id, type: item.type };
                 el.classList.add('selected');
@@ -18774,33 +18728,29 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             }
 
             if (selectedBubble.id === item.id) {
-                // --- MATCH FOUND ---
-                if(navigator.vibrate) navigator.vibrate([50, 30, 50]); // Success Vibe
-                
-                // Create Burst Particles
+                // Match
+                if(navigator.vibrate) navigator.vibrate([50, 30, 50]); 
                 spawnBurst(el);
                 spawnBurst(selectedBubble.el);
 
-                // Animate Bubbles Popping
                 el.classList.add('bursting');
                 selectedBubble.el.classList.add('bursting');
                 
                 el.classList.remove('selected');
                 selectedBubble.el.classList.remove('selected');
 
-                // Remove from physics loop immediately so they stop colliding conceptually
                 bubbles = bubbles.filter(b => b.el !== el && b.el !== selectedBubble.el);
 
                 matches++;
-                scoreEl.textContent = `${matches}/${gamePool.length}`;
+                scoreEl.textContent = `${matches}/${PAIRS_COUNT}`;
                 selectedBubble = null;
 
-                if (matches === gamePool.length) {
+                if (matches === PAIRS_COUNT) {
                     setTimeout(() => endGame(true), 600);
                 }
             } else {
-                // --- MISMATCH ---
-                if(navigator.vibrate) navigator.vibrate(100); // Error Vibe
+                // Mismatch
+                if(navigator.vibrate) navigator.vibrate(100); 
                 el.classList.add('selected'); 
                 setTimeout(() => {
                     if(el) el.classList.remove('selected');
@@ -18812,11 +18762,8 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     }
 
     function spawnBurst(targetEl) {
-        // Get current visual position from transform
         const rect = targetEl.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
-        
-        // Calculate center relative to container
         const centerX = (rect.left - containerRect.left) + (rect.width / 2);
         const centerY = (rect.top - containerRect.top) + (rect.height / 2);
 
@@ -18825,13 +18772,10 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             p.className = 'burst-particle';
             p.style.left = centerX + 'px';
             p.style.top = centerY + 'px';
-            
-            // Random explosion direction
             const angle = Math.random() * Math.PI * 2;
             const dist = 30 + Math.random() * 30;
             p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
             p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-            
             container.appendChild(p);
             setTimeout(() => p.remove(), 600);
         }
@@ -18852,7 +18796,7 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
         isGameOver = true;
         clearInterval(timerInterval);
         cancelAnimationFrame(animationId);
-        
+
         if (win) {
             titleEl.textContent = "Awesome!";
             msgEl.textContent = `Cleared in ${timeLimit - timeLeft}s!`;
@@ -18865,7 +18809,6 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
             iconEl.textContent = '⏰';
         }
         modal.classList.remove('hidden');
-        // Hide header quit button to force modal interaction
         const headerQuit = document.getElementById('quit-bubble-game');
         if(headerQuit) headerQuit.style.display = 'none';
     }
@@ -18882,13 +18825,15 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
 
     quitBtn.onclick = () => { if(confirm("Quit Bubble Match?")) quitGame(); };
     exitModalBtn.onclick = quitGame;
+    
+    // --- UPDATED RESTART LOGIC ---
     restartBtn.onclick = () => {
         modal.classList.add('hidden');
-        startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficulty);
+        // Calling launchGameFromWordList to get NEW random words
+        launchGameFromWordList('match-columns', originalTitle, difficulty, gradClass);
     };
 
     // Init
-    // Wait 1 frame to ensure container has size before spawning
     requestAnimationFrame(() => {
         createBubbles();
         updatePhysics();
