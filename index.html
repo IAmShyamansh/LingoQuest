@@ -18171,28 +18171,100 @@ function renderGameZoneView() {
 }
 // END: REPLACE renderGameZoneView
 
-        // START: PASTE THIS ENTIRE NEW FUNCTION
-        function renderGameDifficultySelectView(gameType, gameTitle, gradClass) {
-            updateTopNav({ title: "Select Difficulty", showBack: true, gradClass: gradClass });
+        // START: REPLACE renderGameDifficultySelectView
+function renderGameDifficultySelectView(gameType, gameTitle, gradClass) {
+    updateTopNav({ title: "Select Difficulty", showBack: true, gradClass: gradClass });
 
-            // Use the new template
-            const template = document.getElementById('game-difficulty-select-template');
-            mainContent.appendChild(template.content.cloneNode(true));
+    const template = document.getElementById('game-difficulty-select-template');
+    mainContent.appendChild(template.content.cloneNode(true));
 
-            // Set the custom title
-            mainContent.querySelector('#game-difficulty-title').textContent = `Select Difficulty for ${gameTitle}`;
+    mainContent.querySelector('#game-difficulty-title').textContent = `Play ${gameTitle}`;
 
-            mainContent.querySelectorAll('.mode-card[data-difficulty]').forEach(card => {
-                card.addEventListener('click', () => {
-                    vibrate();
-                    const difficulty = card.dataset.difficulty;
+    // Update Difficulty Cards to handle both Solo and Challenge
+    mainContent.querySelectorAll('.mode-card[data-difficulty]').forEach(card => {
+        card.addEventListener('click', () => {
+            vibrate();
+            const difficulty = card.dataset.difficulty;
+            
+            // 1. Show Modal to choose Solo or Multiplayer
+            showGameModeModal(gameType, gameTitle, difficulty, gradClass);
+        });
+    });
+}
 
-                    // Launch the game with the selected difficulty
-                    launchGameFromWordList(gameType, gameTitle, difficulty, gradClass);
-                });
-            });
-        }
-        // END: PASTE THIS ENTIRE NEW FUNCTION
+// Helper Modal for Game Modes
+function showGameModeModal(gameType, gameTitle, difficulty, gradClass) {
+    const modalHTML = `
+    <div id="mode-select-modal" class="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass-ui p-6 rounded-2xl w-full max-w-sm pop-in text-center border border-white/10">
+            <h2 class="text-2xl font-bold text-white mb-2">${gameTitle}</h2>
+            <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-6">${difficulty} Mode</p>
+            
+            <div class="space-y-3">
+                <button id="btn-solo" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-3 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Play Solo
+                </button>
+                
+                <button id="btn-challenge" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-4 px-4 rounded-xl flex items-center justify-center gap-3 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Challenge Friend
+                </button>
+            </div>
+            
+            <button id="btn-cancel-mode" class="mt-6 text-slate-400 hover:text-white text-sm">Cancel</button>
+        </div>
+    </div>`;
+
+    const div = document.createElement('div');
+    div.innerHTML = modalHTML;
+    document.body.appendChild(div);
+
+    // Listeners
+    document.getElementById('btn-solo').onclick = () => {
+        div.remove();
+        launchGameFromWordList(gameType, gameTitle, difficulty, gradClass); // Standard Solo Launch
+    };
+
+    document.getElementById('btn-challenge').onclick = () => {
+        div.remove();
+        // Ask for player count
+        showPlayerCountModal((playerCount) => {
+             // Initiate Challenge Creation
+             const wordPool = getWordsForDifficulty(difficulty);
+             createQuizChallenge(wordPool, gameType, 'long', {title: gameTitle}, playerCount, difficulty, gradClass);
+        });
+    };
+
+    document.getElementById('btn-cancel-mode').onclick = () => div.remove();
+}
+
+function showPlayerCountModal(callback) {
+    const modalHTML = `
+    <div class="fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+        <div class="glass-ui p-6 rounded-2xl w-full max-w-sm pop-in text-center">
+            <h3 class="text-xl font-bold text-white mb-4">How many players?</h3>
+            <div class="grid grid-cols-5 gap-2 mb-4">
+                ${[2,3,4,5,6].map(n => `<button class="p-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-bold player-cnt-btn" data-n="${n}">${n}</button>`).join('')}
+            </div>
+            <button id="cancel-player-cnt" class="text-slate-400">Cancel</button>
+        </div>
+    </div>`;
+    
+    const div = document.createElement('div');
+    div.innerHTML = modalHTML;
+    document.body.appendChild(div);
+
+    div.querySelectorAll('.player-cnt-btn').forEach(btn => {
+        btn.onclick = () => {
+            div.remove();
+            callback(parseInt(btn.dataset.n));
+        };
+    });
+    
+    document.getElementById('cancel-player-cnt').onclick = () => div.remove();
+}
+// END: REPLACE renderGameDifficultySelectView
             
 
         // START: PASTE THESE TWO NEW FUNCTIONS
@@ -18387,25 +18459,19 @@ function launchGameFromWordList(gameType, gameTitle, difficulty, gradClass) {
 
 
 
-            // START: REPLACE THE startJumbledWordGame FUNCTION
-function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty) {
-    // 1. Hide Navs & Set Fullscreen
+            // START: REPLACE startJumbledWordGame
+function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficulty, challengeOptions = null) {
     document.getElementById('top-nav').classList.add('hidden');
     document.getElementById('bottom-nav').classList.add('hidden');
     document.body.style.overflow = 'hidden';
-
-    // 2. Inject Template (ADJUSTED SPACING)
     mainContent.innerHTML = '';
     
     const templateHTML = `
     <div id="jumbled-game-view" class="fixed inset-0 z-[200] bg-slate-900 flex flex-col h-[100dvh] font-sans text-white">
-        <!-- Animated Background -->
         <div class="absolute inset-0 pointer-events-none">
             <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-amber-600/20 rounded-full blur-[100px] animate-pulse"></div>
             <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         </div>
-
-        <!-- Top Bar -->
         <div class="sticky top-0 z-50 shrink-0 flex justify-between items-center p-4 pt-6 bg-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-md">
             <div class="flex items-center gap-4">
                 <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
@@ -18417,7 +18483,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                     <span id="game-timer" class="text-xl font-black text-amber-400 leading-none">30</span>
                 </div>
             </div>
-            
             <div class="flex items-center gap-3">
                 <div id="jumbled-lives" class="flex gap-1 text-2xl">❤️❤️❤️</div>
                 <button id="quit-game-btn" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
@@ -18425,50 +18490,24 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                 </button>
             </div>
         </div>
-
-        <!-- Scrollable Game Area -->
         <div class="flex-1 overflow-y-auto w-full relative">
-            <!-- Reduced top padding (pt-2) to pull content up -->
             <div class="min-h-full flex flex-col p-4 pt-2">
-                
-                <!-- Spacer pushes content to center, but allows it to go higher -->
                 <div class="mt-auto"></div>
-
-                <!-- Added negative margin (-mt-20) to pull it closer to the header visually -->
-                <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10 -mt-20">
-                    <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg break-all">
-                        <!-- Scrambled word -->
-                    </div>
-
-                    <!-- Reduced margin bottom (mb-4 instead of mb-8) -->
+                <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10 -mt-10">
+                    <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg break-all"></div>
                     <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-4 hidden"></p>
-                    
                     <input type="text" id="jumbled-answer-input" placeholder="YOUR ANSWER..." autocomplete="off" autocapitalize="off" class="w-full bg-white/10 text-white placeholder-white/30 border-2 border-white/20 focus:border-amber-500 rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4">
-                    
                     <div id="jumbled-feedback" class="text-center h-8 font-bold mb-4"></div>
-
                     <div class="grid grid-cols-3 gap-3">
-                        <button id="hint-word-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.3 18 9 18 7c0-2.2-1.8-4-4-4S10 4.8 10 7c0 2 1.3 4.3 2.5 5.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
-                            <span class="text-xs uppercase tracking-wide">Hint</span>
-                        </button>
-                        <button id="skip-word-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                            <span class="text-xs uppercase tracking-wide">Skip</span>
-                        </button>
-                        <button id="submit-word-btn" class="w-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span class="text-xs uppercase tracking-wide">Submit</span>
-                        </button>
+                        <button id="hint-word-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><span class="text-xs uppercase tracking-wide">Hint</span></button>
+                        <button id="skip-word-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><span class="text-xs uppercase tracking-wide">Skip</span></button>
+                        <button id="submit-word-btn" class="w-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><span class="text-xs uppercase tracking-wide">Submit</span></button>
                     </div>
                 </div>
-
                 <div class="mb-auto"></div>
                 <div class="h-48 shrink-0 w-full"></div> 
             </div>
         </div>
-
-        <!-- Game Over Modal -->
         <div id="jumbled-over-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
             <div class="glass-ui p-8 rounded-3xl text-center pop-in max-w-sm w-full border border-white/20">
                 <div id="jumbled-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
@@ -18487,7 +18526,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     `;
     mainContent.innerHTML = templateHTML;
 
-    // 3. Get Elements
     const wordDisplay = document.getElementById('jumbled-word-display');
     const clueDisplay = document.getElementById('jumbled-word-clue');
     const answerInput = document.getElementById('jumbled-answer-input');
@@ -18495,11 +18533,9 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     const scoreEl = document.getElementById('game-score');
     const timerEl = document.getElementById('game-timer');
     const livesEl = document.getElementById('jumbled-lives');
-    
     const skipBtn = document.getElementById('skip-word-btn');
     const submitBtn = document.getElementById('submit-word-btn');
     const hintBtn = document.getElementById('hint-word-btn');
-    
     const modal = document.getElementById('jumbled-over-modal');
     const modalTitle = document.getElementById('jumbled-over-title');
     const finalScoreEl = document.getElementById('final-score-jumbled');
@@ -18508,12 +18544,9 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     const gameOverIcon = document.getElementById('jumbled-over-icon');
     const quitBtn = document.getElementById('quit-game-btn');
 
-    // 4. Game Config
     const TOTAL_QUESTIONS = 20;
     let gameQueue = [];
-    while (gameQueue.length < TOTAL_QUESTIONS) {
-        gameQueue.push(...selectedWords);
-    }
+    while (gameQueue.length < TOTAL_QUESTIONS) { gameQueue.push(...selectedWords); }
     gameQueue = gameQueue.slice(0, TOTAL_QUESTIONS);
 
     let score = 0;
@@ -18523,81 +18556,48 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     let timeLeft = 30;
     let hintUsed = false;
     let isGameOver = false;
+    let gameStartTime = Date.now();
 
-    function updateLives() {
-        livesEl.innerHTML = '❤️'.repeat(lives);
-    }
+    function updateLives() { livesEl.innerHTML = '❤️'.repeat(lives); }
 
     function startTimer() {
         timeLeft = 30;
         timerEl.textContent = timeLeft;
         timerEl.classList.remove('text-red-500', 'animate-pulse');
-
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             timeLeft--;
             timerEl.textContent = timeLeft;
-            if (timeLeft <= 5) {
-                timerEl.classList.add('text-red-500', 'animate-pulse');
-            }
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                handleAnswer(null);
-            }
+            if (timeLeft <= 5) timerEl.classList.add('text-red-500', 'animate-pulse');
+            if (timeLeft <= 0) { clearInterval(timerInterval); handleAnswer(null); }
         }, 1000);
     }
 
     function displayQuestion() {
-        if (currentQuestionIndex >= TOTAL_QUESTIONS) {
-            displayJumbledResults(true);
-            return;
-        }
-        
-        if (lives <= 0) {
-            displayJumbledResults(false);
-            return;
-        }
+        if (currentQuestionIndex >= TOTAL_QUESTIONS) { displayJumbledResults(true); return; }
+        if (lives <= 0) { displayJumbledResults(false); return; }
 
         const currentWord = gameQueue[currentQuestionIndex];
         wordDisplay.textContent = scrambleWord(currentWord.word);
         scoreEl.textContent = `${score}/${TOTAL_QUESTIONS}`;
         
-        if (difficulty === 'hard') {
-            clueDisplay.textContent = `Hint: ${currentWord.meaning}`;
-            clueDisplay.classList.remove('hidden');
-        } else {
-            clueDisplay.classList.add('hidden');
-        }
+        if (difficulty === 'hard') { clueDisplay.textContent = `Hint: ${currentWord.meaning}`; clueDisplay.classList.remove('hidden'); }
+        else { clueDisplay.classList.add('hidden'); }
 
         answerInput.value = '';
         answerInput.classList.remove('border-red-500', 'bg-red-500/20', 'border-green-500', 'bg-green-500/20');
         feedbackEl.innerHTML = '';
-        
-        answerInput.disabled = false;
-        submitBtn.disabled = false;
-        skipBtn.disabled = false;
-        hintUsed = false; 
-        hintBtn.disabled = false;
-        
-        setTimeout(() => {
-            answerInput.focus();
-        }, 100);
-        
+        answerInput.disabled = false; submitBtn.disabled = false; skipBtn.disabled = false; hintUsed = false; hintBtn.disabled = false;
+        setTimeout(() => answerInput.focus(), 100);
         startTimer();
     }
 
     function handleAnswer(userAnswer) {
         if (isGameOver) return;
         clearInterval(timerInterval);
-        
-        answerInput.disabled = true;
-        submitBtn.disabled = true;
-        skipBtn.disabled = true;
-        hintBtn.disabled = true;
-
+        answerInput.disabled = true; submitBtn.disabled = true; skipBtn.disabled = true; hintBtn.disabled = true;
         const currentWordData = gameQueue[currentQuestionIndex];
         const correctAnswer = currentWordData.word.toUpperCase();
-        
         if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
             if(navigator.vibrate) navigator.vibrate(50);
             score++;
@@ -18605,42 +18605,38 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-lg">Correct!</p>`;
         } else {
             if(navigator.vibrate) navigator.vibrate(200);
-            lives--;
-            updateLives();
+            lives--; updateLives();
             answerInput.classList.add('border-red-500', 'bg-red-500/20');
             const msg = userAnswer === null ? "Time's Up!" : (userAnswer === 'SKIP' ? "Skipped!" : "Wrong!");
             feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-sm">${msg} Answer: <span class="text-white">${correctAnswer}</span></p>`;
         }
-
-        if (lives <= 0) {
-            setTimeout(() => displayJumbledResults(false), 1500);
-        } else {
-            setTimeout(() => {
-                currentQuestionIndex++;
-                displayQuestion();
-            }, 1500);
-        }
+        if (lives <= 0) setTimeout(() => displayJumbledResults(false), 1500);
+        else setTimeout(() => { currentQuestionIndex++; displayQuestion(); }, 1500);
     }
 
     function displayJumbledResults(win) {
         isGameOver = true;
         clearInterval(timerInterval);
-        
-        if(typeof addQuizResult === 'function') {
-             addQuizResult(`${originalTitle} (Unscramble)`, score, TOTAL_QUESTIONS);
+
+        // --- CHALLENGE LOGIC ---
+        if (challengeOptions && challengeOptions.isChallenge) {
+            if(quitBtn) quitBtn.style.display = 'none';
+            // Win: Time Taken (seconds). Lose: 9999
+            const timeTaken = Math.floor((Date.now() - gameStartTime) / 1000);
+            const finalScore = win ? timeTaken : 9999;
+            saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
+            return; 
         }
+        // -----------------------
         
+        if(typeof addQuizResult === 'function') addQuizResult(`${originalTitle} (Unscramble)`, score, TOTAL_QUESTIONS);
         finalScoreEl.textContent = score;
-        
         if (win) {
-            modalTitle.textContent = "You Won!";
-            gameOverIcon.textContent = '🏆';
+            modalTitle.textContent = "You Won!"; gameOverIcon.textContent = '🏆';
             if(typeof showConfetti === 'function') showConfetti();
         } else {
-            modalTitle.textContent = "Game Over";
-            gameOverIcon.textContent = '💔';
+            modalTitle.textContent = "Game Over"; gameOverIcon.textContent = '💔';
         }
-        
         modal.classList.remove('hidden');
         quitBtn.style.display = 'none';
     }
@@ -18654,47 +18650,30 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         switchView('gameZone', { forceRender: true });
     }
 
-    // Attach Listeners
     quitBtn.onclick = () => { if(confirm("Quit game?")) quitGame(); };
     exitBtn.onclick = quitGame;
-
     submitBtn.onclick = () => handleAnswer(answerInput.value);
     answerInput.onkeydown = (e) => { if (e.key === 'Enter') handleAnswer(answerInput.value); };
     skipBtn.onclick = () => handleAnswer('SKIP');
-
     hintBtn.onclick = () => {
         if (hintUsed) return;
         if(navigator.vibrate) navigator.vibrate(20);
-        hintUsed = true;
-        hintBtn.disabled = true;
+        hintUsed = true; hintBtn.disabled = true;
         const correctAnswer = gameQueue[currentQuestionIndex].word.toUpperCase();
         const userAnswer = answerInput.value.toUpperCase();
-        
         for (let i = 0; i < correctAnswer.length; i++) {
             if (i >= userAnswer.length || userAnswer[i] !== correctAnswer[i]) {
-                answerInput.value = correctAnswer.slice(0, i + 1);
-                answerInput.focus();
-                break;
+                answerInput.value = correctAnswer.slice(0, i + 1); answerInput.focus(); break;
             }
         }
     };
-    
-    restartBtn.onclick = () => {
-        modal.classList.add('hidden');
-        launchGameFromWordList('jumbled-word', originalTitle, difficulty, gradClass);
-    };
-
-    // Init
-    updateLives();
-    displayQuestion();
+    restartBtn.onclick = () => { modal.classList.add('hidden'); launchGameFromWordList('jumbled-word', originalTitle, difficulty, gradClass); };
+    updateLives(); displayQuestion();
 }
-// END: REPLACE THE startJumbledWordGame FUNCTION
+// END: REPLACE startJumbledWordGame
 
-            /**
-             * Starts the Word Rain game (Fullscreen Version).
-             */
-            function startWordRainGame(allWordsPool, originalTitle, gradClass) {
-    // 1. Hide Navs & Set Fullscreen
+            // START: REPLACE startWordRainGame
+function startWordRainGame(allWordsPool, originalTitle, gradClass, challengeOptions = null) {
     const topNav = document.getElementById('top-nav');
     const bottomNav = document.getElementById('bottom-nav');
     if(topNav) topNav.classList.add('hidden');
@@ -18702,16 +18681,12 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     document.body.style.paddingTop = '0';
     document.body.style.paddingBottom = '0';
 
-    // 2. Inject Template
     mainContent.innerHTML = `
         <div id="rain-game-view" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col overflow-hidden font-sans text-white">
-            <!-- Animated Background -->
             <div class="absolute inset-0 pointer-events-none">
                 <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px] animate-pulse"></div>
                 <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
             </div>
-
-            <!-- Top Bar -->
             <div class="relative z-20 flex justify-between items-center p-4 pt-6 bg-slate-900/80 backdrop-blur-sm border-b border-white/5">
                 <div class="flex items-center gap-4">
                     <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
@@ -18723,7 +18698,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                         <span id="rain-streak" class="text-xl font-black text-amber-400 leading-none">0</span>
                     </div>
                 </div>
-                
                 <div class="flex items-center gap-3">
                     <div id="rain-lives" class="flex gap-1"></div>
                     <button id="quit-rain-game" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
@@ -18731,24 +18705,15 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                     </button>
                 </div>
             </div>
-
-            <!-- Game Area -->
             <div id="rain-game-container" class="relative flex-grow w-full overflow-hidden">
-                <!-- Cloud Decor -->
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-32 bg-slate-800/50 blur-xl rounded-full pointer-events-none"></div>
-                
-                <!-- Water Line -->
                 <div id="water-line" class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-blue-500/30 to-transparent border-b-4 border-blue-500 z-10 flex items-end justify-center pb-2">
                     <span class="text-blue-300 text-xs font-bold tracking-widest uppercase animate-pulse">Danger Zone</span>
                 </div>
             </div>
-
-            <!-- Options Area -->
             <div class="relative z-30 bg-slate-900 border-t border-white/10 p-4 pb-8 shrink-0">
                 <div id="rain-options-grid" class="grid grid-cols-2 gap-3 max-w-md mx-auto"></div>
             </div>
-
-            <!-- Game Over Modal -->
             <div id="rain-over-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
                 <div class="bg-slate-800 border border-white/10 p-6 rounded-3xl text-center w-full max-w-sm pop-in shadow-2xl">
                     <div class="text-6xl mb-4">⛈️</div>
@@ -18766,7 +18731,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         </div>
     `;
 
-    // 3. State & Config
     let score = 0;
     let lives = 3;
     let streak = 0;
@@ -18775,7 +18739,6 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     let isGameOver = false;
     let dropSpeed = 1.5; 
 
-    // 4. Elements
     const container = document.getElementById('rain-game-container');
     const optionsGrid = document.getElementById('rain-options-grid');
     const scoreEl = document.getElementById('rain-score');
@@ -18783,8 +18746,8 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     const streakEl = document.getElementById('rain-streak');
     const modal = document.getElementById('rain-over-modal');
     const finalScoreEl = document.getElementById('final-score-rain');
+    const quitBtn = document.getElementById('quit-rain-game');
 
-    // 5. Lifecycle Functions
     const updateLives = () => {
         livesEl.innerHTML = '';
         for(let i=0; i<3; i++) {
@@ -18804,16 +18767,11 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         switchView('gameZone', { forceRender: true });
     };
 
-    // 6. Game Logic
     const spawnWord = () => {
         if (isGameOver) return;
-
         if (currentFallingWord && currentFallingWord.el) currentFallingWord.el.remove();
 
-        // Pick Word
         const wordData = allWordsPool[Math.floor(Math.random() * allWordsPool.length)];
-        
-        // Generate Options
         const options = [wordData];
         while (options.length < 4) {
             const w = allWordsPool[Math.floor(Math.random() * allWordsPool.length)];
@@ -18823,30 +18781,24 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         }
         const shuffledOptions = options.sort(() => 0.5 - Math.random());
 
-        // Render Buttons
         optionsGrid.innerHTML = '';
         shuffledOptions.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = "bg-slate-800 hover:bg-slate-700 active:scale-95 border border-white/10 text-white font-bold py-4 px-2 rounded-xl text-sm leading-tight transition-all shadow-lg";
             btn.textContent = opt.meaning;
-            
             btn.onclick = () => {
                 if (isGameOver || !currentFallingWord) return;
                 Array.from(optionsGrid.children).forEach(b => b.disabled = true);
 
                 if (opt.word === wordData.word) {
-                    // Correct
                     vibrate(20);
                     score += 10 + (streak * 2);
                     streak++;
                     scoreEl.textContent = score;
                     streakEl.textContent = streak;
-                    
                     btn.className = "bg-green-500 text-white font-bold py-4 px-2 rounded-xl text-sm shadow-lg transform scale-105 border border-green-400";
-                    
                     currentFallingWord.el.style.transform = `translate(-50%, -20px) scale(1.5)`;
                     currentFallingWord.el.style.opacity = '0';
-                    
                     if(streak % 5 === 0) showConfetti();
                     dropSpeed = Math.min(4, 1.5 + (score / 200));
 
@@ -18855,23 +18807,18 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                         currentFallingWord = null;
                         spawnWord();
                     }, 200);
-
                 } else {
-                    // Incorrect
                     vibrate(100);
                     streak = 0;
                     streakEl.textContent = 0;
                     lives--;
                     updateLives();
-                    
                     btn.className = "bg-red-500 text-white font-bold py-4 px-2 rounded-xl text-sm shadow-lg animate-shake border border-red-400";
-                    
                     Array.from(optionsGrid.children).forEach(b => {
                         if (b.textContent === wordData.meaning) {
                             b.className = "bg-green-500/50 text-white font-bold py-4 px-2 rounded-xl text-sm border border-green-500/50";
                         }
                     });
-
                     if (lives <= 0) { endGame(); } 
                     else {
                         setTimeout(() => {
@@ -18885,47 +18832,33 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             optionsGrid.appendChild(btn);
         });
 
-        // Create Droplet
         const el = document.createElement('div');
-        el.className = "raindrop"; // Use our new CSS class
-        
-        // --- SAFE POSITIONING LOGIC ---
-        // Generate a random percentage between 15% and 85% to keep away from edges
+        el.className = "raindrop"; 
         const randomLeft = 15 + Math.random() * 70; 
         el.style.left = `${randomLeft}%`;
-        
         el.textContent = wordData.word;
         container.appendChild(el);
 
-        currentFallingWord = {
-            el: el,
-            y: -60,
-            speed: dropSpeed
-        };
+        currentFallingWord = { el: el, y: -60, speed: dropSpeed };
     };
 
     const loop = () => {
         if (isGameOver) return;
-
         if (currentFallingWord) {
             currentFallingWord.y += currentFallingWord.speed;
             currentFallingWord.el.style.top = `${currentFallingWord.y}px`;
-
             if (currentFallingWord.y > container.clientHeight - 60) {
                 vibrate(200);
                 lives--;
                 streak = 0;
                 updateLives();
                 streakEl.textContent = 0;
-                
                 currentFallingWord.el.style.transition = "all 0.2s";
                 currentFallingWord.el.style.transform = "translateX(-50%) scale(0)";
                 currentFallingWord.el.style.opacity = 0;
-
                 const oldEl = currentFallingWord.el;
                 currentFallingWord = null;
                 setTimeout(() => oldEl.remove(), 200);
-
                 if (lives <= 0) { endGame(); } 
                 else { spawnWord(); }
             }
@@ -18938,41 +18871,47 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     const endGame = () => {
         isGameOver = true;
         cancelAnimationFrame(gameLoopId);
+
+        // --- CHALLENGE LOGIC ---
+        if (challengeOptions && challengeOptions.isChallenge) {
+            if(quitBtn) quitBtn.style.display = 'none';
+            saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, score);
+            return; 
+        }
+        // -----------------------
+
         finalScoreEl.textContent = score;
         modal.classList.remove('hidden');
         if (typeof addQuizResult === 'function') {
             addQuizResult(`${originalTitle} (Word Rain)`, Math.floor(score/10), 0); 
         }
+        quitBtn.style.display = 'none';
     };
 
-    // 7. Bind Controls
-    document.getElementById('quit-rain-game').onclick = () => { if(confirm("Quit game?")) cleanup(); };
+    quitBtn.onclick = () => { if(confirm("Quit game?")) cleanup(); };
     document.getElementById('exit-game-btn-modal').onclick = cleanup;
     document.getElementById('restart-game-btn-rain').onclick = () => {
         modal.classList.add('hidden');
         startWordRainGame(allWordsPool, originalTitle, gradClass);
     };
 
-    // Init
     updateLives();
     spawnWord();
     loop();
 }
+// END: REPLACE startWordRainGame
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
-function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs = 9, gridConfig) {
-    // 1. Hide Navs & Disable Scroll
+            // START: REPLACE startFlipCardGame
+function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs = 9, gridConfig, challengeOptions = null) {
     const tNav = document.getElementById('top-nav');
     const bNav = document.getElementById('bottom-nav');
     if(tNav) tNav.classList.add('hidden');
     if(bNav) bNav.classList.add('hidden');
     document.body.style.overflow = 'hidden'; 
 
-    // 2. Inject Template
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('flip-card-game-template').content.cloneNode(true));
 
-    // 3. Get Elements
     const grid = document.getElementById('flip-card-grid');
     const scoreEl = document.getElementById('game-score');
     const movesEl = document.getElementById('game-moves');
@@ -18981,20 +18920,14 @@ function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs =
     const modalIcon = document.getElementById('game-over-icon');
     const modalTitle = document.getElementById('game-over-title');
     const quitBtn = document.getElementById('quit-flip-game');
-    const exitBtn = document.getElementById('exit-flip-btn');
     const restartBtn = document.getElementById('restart-flip-btn');
+    const exitBtn = document.getElementById('exit-flip-btn');
 
-    // 4. Data Prep
+    // Prepare Cards
     const validWords = selectedWords.filter(w => w.word && w.meaning);
-    if (validWords.length < totalPairs) {
-        alert("Not enough words for this game mode. Try a harder difficulty.");
-        quitGame();
-        return;
-    }
+    if (validWords.length < totalPairs) { alert("Not enough words."); quitGame(); return; }
 
-    // Pick Pairs
     const gameWords = [...validWords].sort(() => 0.5 - Math.random()).slice(0, totalPairs);
-    
     let gameCards = [];
     gameWords.forEach((word, index) => {
         gameCards.push({ pairId: index, content: word.word, type: 'word' });
@@ -19002,31 +18935,16 @@ function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs =
     });
     gameCards.sort(() => 0.5 - Math.random());
 
-    // 5. Render Cards
     grid.innerHTML = '';
     gameCards.forEach(card => {
         const cardEl = document.createElement('div');
         cardEl.className = 'flip-card-fixed'; 
         cardEl.dataset.pairId = card.pairId;
-        
-        // HTML with Star Icon
-        cardEl.innerHTML = `
-            <div class="flip-card-inner">
-                <div class="flip-front">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-white drop-shadow-md">
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                    </svg>
-                </div>
-                <div class="flip-back">
-                    <span>${card.content}</span>
-                </div>
-            </div>
-        `;
+        cardEl.innerHTML = `<div class="flip-card-inner"><div class="flip-front"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-white drop-shadow-md"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div><div class="flip-back"><span>${card.content}</span></div></div>`;
         cardEl.addEventListener('click', onCardClick);
         grid.appendChild(cardEl);
     });
 
-    // 6. Game State
     let movesTaken = 0;
     let matches = 0;
     let firstCard = null;
@@ -19037,29 +18955,21 @@ function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs =
     scoreEl.textContent = `0/${totalPairs}`;
     movesEl.textContent = movesTaken;
 
-    // 7. Logic
     function onCardClick(e) {
         if (lockBoard) return;
         const clickedCard = e.currentTarget;
-        
-        // Ignore if clicked same card or already matched/flipped
         if (clickedCard === firstCard || clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) return;
 
-        // Flip Animation
         clickedCard.classList.add('flipped');
         if(navigator.vibrate) navigator.vibrate(10);
 
         if (!firstCard) {
-            // 1st Card Turned
             firstCard = clickedCard;
         } else {
-            // 2nd Card Turned -> Count Move Here
             secondCard = clickedCard;
-            movesTaken++; // Increment Move Count
+            movesTaken++;
             movesEl.textContent = movesTaken;
-            
             if (movesTaken > MOVES_LIMIT) movesEl.classList.add('text-red-500');
-
             lockBoard = true;
             checkForMatch();
         }
@@ -19067,46 +18977,36 @@ function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs =
 
     function checkForMatch() {
         const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
-
         if (isMatch) {
-            // MATCH FOUND
             matches++;
             scoreEl.textContent = `${matches}/${totalPairs}`;
             if(navigator.vibrate) navigator.vibrate(50);
-            
-            // Wait a tiny bit to show the match, then disappear
             setTimeout(() => {
                 firstCard.classList.add('matched');
                 secondCard.classList.add('matched');
                 resetBoard();
-                
-                if (matches === totalPairs) {
-                    // Wait for disappearance animation to finish before showing modal
-                    setTimeout(() => endGame(true), 800); 
-                }
+                if (matches === totalPairs) setTimeout(() => endGame(true), 800);
             }, 600);
         } else {
-            // NO MATCH
             if(navigator.vibrate) navigator.vibrate(100);
-            
-            setTimeout(() => {
-                firstCard.classList.add('incorrect');
-                secondCard.classList.add('incorrect');
-            }, 400);
-
-            setTimeout(() => {
-                firstCard.classList.remove('flipped', 'incorrect');
-                secondCard.classList.remove('flipped', 'incorrect');
-                resetBoard();
-            }, 1200);
+            setTimeout(() => { firstCard.classList.add('incorrect'); secondCard.classList.add('incorrect'); }, 400);
+            setTimeout(() => { firstCard.classList.remove('flipped', 'incorrect'); secondCard.classList.remove('flipped', 'incorrect'); resetBoard(); }, 1200);
         }
     }
 
-    function resetBoard() {
-        [firstCard, secondCard, lockBoard] = [null, null, false];
-    }
+    function resetBoard() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
 
     function endGame(win) {
+        // --- CHALLENGE LOGIC: Moves Based ---
+        if (challengeOptions && challengeOptions.isChallenge) {
+            if(quitBtn) quitBtn.style.display = 'none';
+            // If Win: Score = Moves. If Lose (unlikely here unless quit): Score = 9999
+            const finalScore = win ? movesTaken : 9999;
+            saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
+            return; 
+        }
+        // ------------------------------------
+
         if (win) {
             if(typeof showConfetti === 'function') showConfetti();
             if (typeof addQuizResult === 'function') {
@@ -19135,18 +19035,16 @@ function startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs =
         startFlipCardGame(selectedWords, originalTitle, gradClass, totalPairs);
     };
 }
-// END: PASTE THIS REPLACEMENT FUNCTION
+// END: REPLACE startFlipCardGame
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
-function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficulty = 'medium') { 
-    // 1. Hide standard UI
+            // START: REPLACE startMatchColumnsGame
+function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficulty = 'medium', challengeOptions = null) { 
     const tNav = document.getElementById('top-nav');
     const bNav = document.getElementById('bottom-nav');
     if(tNav) tNav.classList.add('hidden');
     if(bNav) bNav.classList.add('hidden');
     document.body.style.overflow = 'hidden'; 
 
-    // 2. Setup Game View
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('bubble-match-template').content.cloneNode(true));
 
@@ -19161,8 +19059,6 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     const quitBtn = document.getElementById('quit-bubble-game');
     const exitModalBtn = document.getElementById('exit-bubble-btn');
 
-    // 3. Config
-    // Use the selected words passed in
     const gamePool = [...selectedWords]; 
     const PAIRS_COUNT = gamePool.length;
     const isMobile = window.innerWidth < 600;
@@ -19179,160 +19075,69 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
     let animationId;
     let timerInterval;
 
-    // 4. Create Bubbles
+    // (Physics & Creation functions same as before - abbreviated for chat length)
     function createBubbles() {
-        // Get dimensions of the FRAME
-        const boxWidth = container.offsetWidth;
-        const boxHeight = container.offsetHeight;
-
+        const boxWidth = container.offsetWidth; const boxHeight = container.offsetHeight;
         const items = [];
-        gamePool.forEach((item, index) => {
-            items.push({ id: index, text: item.word, type: 'word' });
-            items.push({ id: index, text: item.meaning, type: 'meaning' });
-        });
-
+        gamePool.forEach((item, index) => { items.push({ id: index, text: item.word, type: 'word' }); items.push({ id: index, text: item.meaning, type: 'meaning' }); });
         items.forEach(item => {
-            const el = document.createElement('div');
-            el.className = `bubble-card bubble-${item.type}`;
-            el.textContent = item.text;
-            el.dataset.id = item.id;
-            el.dataset.type = item.type;
-            
-            // --- DYNAMIC SIZING ---
+            const el = document.createElement('div'); el.className = `bubble-card bubble-${item.type}`; el.textContent = item.text; el.dataset.id = item.id; el.dataset.type = item.type;
             const textLen = item.text.length;
-            let diameter = isMobile 
-                ? Math.max(60, 55 + textLen * 1.2)  
-                : Math.max(80, 70 + textLen * 2);   
-            
-            // Cap size to ensure they fit
+            let diameter = isMobile ? Math.max(60, 55 + textLen * 1.2) : Math.max(80, 70 + textLen * 2);   
             diameter = Math.min(diameter, Math.min(boxWidth, boxHeight) / 3.5);
-
-            el.style.width = `${diameter}px`;
-            el.style.height = `${diameter}px`;
-
-            // Font Size
-            let fSize = isMobile ? 11 : 14;
-            if (textLen > 10) fSize -= 1;
-            if (textLen > 20) fSize -= 2;
-            el.style.fontSize = `${fSize}px`;
-            
-            // Random Position INSIDE FRAME
-            const maxX = boxWidth - diameter;
-            const maxY = boxHeight - diameter;
-            
-            const x = Math.random() * maxX;
-            const y = Math.random() * maxY;
-
-            // Physics
+            el.style.width = `${diameter}px`; el.style.height = `${diameter}px`;
+            let fSize = isMobile ? 11 : 14; if (textLen > 10) fSize -= 1; if (textLen > 20) fSize -= 2; el.style.fontSize = `${fSize}px`;
+            const x = Math.random() * (boxWidth - diameter); const y = Math.random() * (boxHeight - diameter);
             const speed = isMobile ? 0.5 : 0.8; 
-            const vx = (Math.random() - 0.5) * speed * 2;
-            const vy = (Math.random() - 0.5) * speed * 2;
-
+            const vx = (Math.random() - 0.5) * speed * 2; const vy = (Math.random() - 0.5) * speed * 2;
             el.style.transform = `translate(${x}px, ${y}px)`;
-
             el.addEventListener('click', (e) => handleBubbleClick(e, item, el));
-            
             container.appendChild(el);
             bubbles.push({ el, x, y, vx, vy, size: diameter });
         });
     }
-
-    // 5. Physics Loop
     function updatePhysics() {
         if (isGameOver) return;
-
-        const boxW = container.offsetWidth;
-        const boxH = container.offsetHeight;
-
+        const boxW = container.offsetWidth; const boxH = container.offsetHeight;
         bubbles.forEach(b => {
-            b.x += b.vx;
-            b.y += b.vy;
-
-            if (b.x + b.size >= boxW) { b.x = boxW - b.size; b.vx *= -1; }
-            else if (b.x <= 0) { b.x = 0; b.vx *= -1; }
-
-            if (b.y + b.size >= boxH) { b.y = boxH - b.size; b.vy *= -1; }
-            else if (b.y <= 0) { b.y = 0; b.vy *= -1; }
-
+            b.x += b.vx; b.y += b.vy;
+            if (b.x + b.size >= boxW) { b.x = boxW - b.size; b.vx *= -1; } else if (b.x <= 0) { b.x = 0; b.vx *= -1; }
+            if (b.y + b.size >= boxH) { b.y = boxH - b.size; b.vy *= -1; } else if (b.y <= 0) { b.y = 0; b.vy *= -1; }
             b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
         });
-
         animationId = requestAnimationFrame(updatePhysics);
     }
-
-    // 6. Interaction
     function handleBubbleClick(e, item, el) {
         if (isGameOver) return;
         if(navigator.vibrate) navigator.vibrate(15);
-
-        if (selectedBubble && selectedBubble.el === el) {
-            el.classList.remove('selected');
-            selectedBubble = null;
-            return;
-        }
-
-        if (!selectedBubble) {
-            selectedBubble = { el, id: item.id, type: item.type };
-            el.classList.add('selected');
-        } else {
-            if (selectedBubble.type === item.type) {
-                selectedBubble.el.classList.remove('selected');
-                selectedBubble = { el, id: item.id, type: item.type };
-                el.classList.add('selected');
-                return;
-            }
-
+        if (selectedBubble && selectedBubble.el === el) { el.classList.remove('selected'); selectedBubble = null; return; }
+        if (!selectedBubble) { selectedBubble = { el, id: item.id, type: item.type }; el.classList.add('selected'); } 
+        else {
+            if (selectedBubble.type === item.type) { selectedBubble.el.classList.remove('selected'); selectedBubble = { el, id: item.id, type: item.type }; el.classList.add('selected'); return; }
             if (selectedBubble.id === item.id) {
-                // Match
                 if(navigator.vibrate) navigator.vibrate([50, 30, 50]); 
-                spawnBurst(el);
-                spawnBurst(selectedBubble.el);
-
-                el.classList.add('bursting');
-                selectedBubble.el.classList.add('bursting');
-                
-                el.classList.remove('selected');
-                selectedBubble.el.classList.remove('selected');
-
+                spawnBurst(el); spawnBurst(selectedBubble.el);
+                el.classList.add('bursting'); selectedBubble.el.classList.add('bursting');
+                el.classList.remove('selected'); selectedBubble.el.classList.remove('selected');
                 bubbles = bubbles.filter(b => b.el !== el && b.el !== selectedBubble.el);
-
-                matches++;
-                scoreEl.textContent = `${matches}/${PAIRS_COUNT}`;
-                selectedBubble = null;
-
-                if (matches === PAIRS_COUNT) {
-                    setTimeout(() => endGame(true), 600);
-                }
+                matches++; scoreEl.textContent = `${matches}/${PAIRS_COUNT}`; selectedBubble = null;
+                if (matches === PAIRS_COUNT) setTimeout(() => endGame(true), 600);
             } else {
-                // Mismatch
                 if(navigator.vibrate) navigator.vibrate(100); 
                 el.classList.add('selected'); 
-                setTimeout(() => {
-                    if(el) el.classList.remove('selected');
-                    if(selectedBubble && selectedBubble.el) selectedBubble.el.classList.remove('selected');
-                    selectedBubble = null;
-                }, 500);
+                setTimeout(() => { if(el) el.classList.remove('selected'); if(selectedBubble && selectedBubble.el) selectedBubble.el.classList.remove('selected'); selectedBubble = null; }, 500);
             }
         }
     }
-
     function spawnBurst(targetEl) {
-        const rect = targetEl.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const centerX = (rect.left - containerRect.left) + (rect.width / 2);
-        const centerY = (rect.top - containerRect.top) + (rect.height / 2);
-
+        const rect = targetEl.getBoundingClientRect(); const containerRect = container.getBoundingClientRect();
+        const centerX = (rect.left - containerRect.left) + (rect.width / 2); const centerY = (rect.top - containerRect.top) + (rect.height / 2);
         for(let i=0; i<8; i++) {
-            const p = document.createElement('div');
-            p.className = 'burst-particle';
-            p.style.left = centerX + 'px';
-            p.style.top = centerY + 'px';
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 30 + Math.random() * 30;
-            p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-            p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-            container.appendChild(p);
-            setTimeout(() => p.remove(), 600);
+            const p = document.createElement('div'); p.className = 'burst-particle';
+            p.style.left = centerX + 'px'; p.style.top = centerY + 'px';
+            const angle = Math.random() * Math.PI * 2; const dist = 30 + Math.random() * 30;
+            p.style.setProperty('--tx', Math.cos(angle) * dist + 'px'); p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            container.appendChild(p); setTimeout(() => p.remove(), 600);
         }
     }
 
@@ -19351,6 +19156,16 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
         isGameOver = true;
         clearInterval(timerInterval);
         cancelAnimationFrame(animationId);
+
+        // --- CHALLENGE LOGIC: Time Based ---
+        if (challengeOptions && challengeOptions.isChallenge) {
+            if(quitBtn) quitBtn.style.display = 'none';
+            // Win: Time Taken. Lose: 9999
+            const finalScore = win ? (timeLimit - timeLeft) : 9999;
+            saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
+            return; 
+        }
+        // -----------------------------------
 
         if (win) {
             titleEl.textContent = "Awesome!";
@@ -19380,35 +19195,21 @@ function startMatchColumnsGame(selectedWords, originalTitle, gradClass, difficul
 
     quitBtn.onclick = () => { if(confirm("Quit Bubble Match?")) quitGame(); };
     exitModalBtn.onclick = quitGame;
-    
-    // --- UPDATED RESTART LOGIC ---
-    restartBtn.onclick = () => {
-        modal.classList.add('hidden');
-        // Calling launchGameFromWordList to get NEW random words
-        launchGameFromWordList('match-columns', originalTitle, difficulty, gradClass);
-    };
+    restartBtn.onclick = () => { modal.classList.add('hidden'); launchGameFromWordList('match-columns', originalTitle, difficulty, gradClass); };
 
-    // Init
-    requestAnimationFrame(() => {
-        createBubbles();
-        updatePhysics();
-        startTimer();
-    });
+    requestAnimationFrame(() => { createBubbles(); updatePhysics(); startTimer(); });
 }
-// END: PASTE THIS REPLACEMENT FUNCTION
+// END: REPLACE startMatchColumnsGame
 
-// START: REPLACE THE startSwipeGame FUNCTION
-function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
-    // 1. Hide Navs
+// START: REPLACE startSwipeGame
+function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, challengeOptions = null) {
     document.getElementById('top-nav').classList.add('hidden');
     document.getElementById('bottom-nav').classList.add('hidden');
     document.body.style.overflow = 'hidden';
 
-    // 2. Setup View
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('swipe-game-template').content.cloneNode(true));
 
-    // 3. Elements
     const stackContainer = document.getElementById('card-stack');
     const scoreEl = document.getElementById('swipe-score');
     const livesEl = document.getElementById('swipe-lives');
@@ -19418,7 +19219,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     const indRight = document.getElementById('ind-right');
     const headerQuitBtn = document.getElementById('quit-swipe-game');
 
-    // 4. Config & State
     let score = 0;
     let lives = 3;
     let isGameOver = false;
@@ -19430,7 +19230,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     if (difficulty === 'medium') timePerCard = 5;
     if (difficulty === 'hard') timePerCard = 3;
 
-    // 5. Generate Deck
     function generateDeck() {
         const synSource = simpleSynonyms.slice(0, 13); 
         const validSynonyms = synSource.map(item => ({
@@ -19459,15 +19258,12 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         livesEl.innerHTML = '❤️'.repeat(lives);
     }
 
-    // 6. Render Card
     function renderCard() {
         if (cardQueue.length === 0) {
             endGame(true);
             return;
         }
-
         stackContainer.innerHTML = '';
-
         if (cardQueue.length > 1) {
             const nextCard = document.createElement('div');
             nextCard.className = 'swipe-card next-card';
@@ -19482,7 +19278,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         card.innerHTML = `
             <div class="swipe-stamp stamp-nope">ANTONYM</div>
             <div class="swipe-stamp stamp-like">SYNONYM</div>
-            
             <div class="swipe-word-main">${cardData.main}</div>
             <div class="swipe-divider"></div>
             <div class="swipe-word-sub">${cardData.target}</div>
@@ -19493,7 +19288,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         initDrag(card, cardData);
     }
 
-    // 7. Timer
     function startCardTimer() {
         clearInterval(timerInterval);
         let timeLeft = timePerCard;
@@ -19504,13 +19298,10 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
             timeLeft -= 0.05;
             const pct = (timeLeft / timePerCard) * 100;
             timerBar.style.width = `${pct}%`;
-
             if (pct < 30) timerBar.style.backgroundColor = '#ef4444';
-
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 handleResult(false); 
-                
                 const card = stackContainer.querySelector('.active-card');
                 if (card) {
                     card.style.transition = "transform 0.5s";
@@ -19521,12 +19312,10 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         }, 50);
     }
 
-    // 8. Drag Physics
     function initDrag(card, cardData) {
         let startX = 0;
         let currentX = 0;
         let isDragging = false;
-
         const stampNope = card.querySelector('.stamp-nope');
         const stampLike = card.querySelector('.stamp-like');
 
@@ -19540,7 +19329,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
             if (!isDragging) return;
             const x = e.touches ? e.touches[0].clientX : e.clientX;
             currentX = x - startX;
-            
             const rotate = currentX * 0.05;
             card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
 
@@ -19560,19 +19348,17 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         const onEnd = () => {
             if (!isDragging) return;
             isDragging = false;
-            
-            indLeft.style.opacity = 0.4; indRight.style.opacity = 0.4;
+            indLeft.style.opacity = 0.3; indRight.style.opacity = 0.3;
             indLeft.style.transform = 'translateY(-50%) rotate(180deg)'; 
             indRight.style.transform = 'translateY(-50%)';
-
             const threshold = 80;
 
             if (currentX > threshold) {
-                if(navigator.vibrate) navigator.vibrate(50); // Vibrate on Swipe
+                if(navigator.vibrate) navigator.vibrate(50); 
                 card.classList.add('fly-right');
                 checkAnswer('right', cardData);
             } else if (currentX < -threshold) {
-                if(navigator.vibrate) navigator.vibrate(50); // Vibrate on Swipe
+                if(navigator.vibrate) navigator.vibrate(50); 
                 card.classList.add('fly-left');
                 checkAnswer('left', cardData);
             } else {
@@ -19603,10 +19389,11 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         if (isCorrect) {
             score += 10;
             scoreEl.textContent = score;
+            if(navigator.vibrate) navigator.vibrate(20);
         } else {
             lives--;
             updateLives();
-            if(navigator.vibrate) navigator.vibrate(200); // Error Vibe
+            if(navigator.vibrate) navigator.vibrate(200);
         }
     }
 
@@ -19623,8 +19410,19 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         isGameOver = true;
         clearInterval(timerInterval);
         
-        if(headerQuitBtn) headerQuitBtn.style.display = 'none';
+        // --- CHALLENGE LOGIC ---
+        if (challengeOptions && challengeOptions.isChallenge) {
+            const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
+            const timeBonus = win ? Math.max(0, 300 - timeTakenSec) : 0;
+            const finalScore = score + timeBonus;
+            
+            if(headerQuitBtn) headerQuitBtn.style.display = 'none';
+            saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
+            return; 
+        }
+        // -----------------------
 
+        if(headerQuitBtn) headerQuitBtn.style.display = 'none';
         const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
         
         let stars = 0;
@@ -19660,7 +19458,6 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
         };
 
         modal.classList.remove('hidden');
-        
         if(win && typeof showConfetti === 'function') showConfetti();
         if(typeof addQuizResult === 'function') {
             addQuizResult(`Swipe Game (${difficulty})`, Math.floor(score/10), totalCards * 10);
@@ -19677,16 +19474,14 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass) {
     }
 
     if(headerQuitBtn) {
-        headerQuitBtn.onclick = () => {
-            if(confirm("Quit Swipe Game?")) cleanup();
-        };
+        headerQuitBtn.onclick = () => { if(confirm("Quit Swipe Game?")) cleanup(); };
     }
     document.getElementById('exit-swipe-btn').onclick = cleanup;
 
     updateLives();
     renderCard();
 }
-// END: REPLACE THE startSwipeGame FUNCTION
+// END: REPLACE startSwipeGame
 
 // START: REPLACE THE startFlashRecallGame FUNCTION
 function startFlashRecallGame() {
@@ -20802,69 +20597,91 @@ function startFlashRecallGame() {
                 }, 1000);
             }
 
-            // --- NEW FUNCTION ---
-            function showChallengeLobby(challengeDocId, options = { isCreator: false }) {
-                mainContent.innerHTML = ''; // Clear the main content area
-                mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
-                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full text-center">
-                    <h2 class="text-2xl font-bold text-white mb-4">Challenge Lobby</h2>
-                    <p class="text-slate-300 mb-6">Share this code with your friends to join:</p>
-                    <div class="bg-black/20 p-4 rounded-lg mb-6">
-                        <p id="challenge-code-display" class="text-4xl font-bold text-amber-400 tracking-widest">...</p>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Players Joined</h3>
-                    <div id="player-list-container" class="space-y-2 min-h-[100px] max-h-40 overflow-y-auto">
-                        <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    </div>
-                    <p id="player-count-display" class="text-slate-400 text-sm mt-4">Waiting for players...</p>
-                </div>`;
+            // START: REPLACE showChallengeLobby FUNCTION
+function showChallengeLobby(challengeDocId, options = { isCreator: false }) {
+    mainContent.innerHTML = ''; 
+    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full');
+    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full text-center">
+        <h2 class="text-2xl font-bold text-white mb-4">Challenge Lobby</h2>
+        <p class="text-slate-300 mb-6">Share this code with your friends to join:</p>
+        <div class="bg-black/20 p-4 rounded-lg mb-6">
+            <p id="challenge-code-display" class="text-4xl font-bold text-amber-400 tracking-widest">...</p>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Players Joined</h3>
+        <div id="player-list-container" class="space-y-2 min-h-[100px] max-h-40 overflow-y-auto">
+            <svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        </div>
+        <p id="player-count-display" class="text-slate-400 text-sm mt-4">Waiting for players...</p>
+    </div>`;
 
-                const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDocId);
-                const playerListContainer = document.getElementById('player-list-container');
-                const playerCountDisplay = document.getElementById('player-count-display');
-                const challengeCodeDisplay = document.getElementById('challenge-code-display');
+    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeDocId);
+    const playerListContainer = document.getElementById('player-list-container');
+    const playerCountDisplay = document.getElementById('player-count-display');
+    const challengeCodeDisplay = document.getElementById('challenge-code-display');
 
-                const unsubscribe = onSnapshot(challengeDocRef, async (docSnap) => {
-                    const data = docSnap.data();
-                    if (!data) {
-                        unsubscribe();
-                        return;
-                    }
+    const unsubscribe = onSnapshot(challengeDocRef, async (docSnap) => {
+        const data = docSnap.data();
+        if (!data) { unsubscribe(); return; }
 
-                    // Update UI with current players
-                    challengeCodeDisplay.textContent = data.code;
-                    playerListContainer.innerHTML = '';
-                    data.players.forEach(player => {
-                        const playerEl = document.createElement('p');
-                        playerEl.className = 'text-white font-semibold text-lg';
-                        playerEl.textContent = player.name;
-                        playerListContainer.appendChild(playerEl);
-                    });
-                    playerCountDisplay.textContent = `${data.players.length} / ${data.maxPlayers} players joined`;
+        challengeCodeDisplay.textContent = data.code;
+        playerListContainer.innerHTML = '';
+        data.players.forEach(player => {
+            const playerEl = document.createElement('p');
+            playerEl.className = 'text-white font-semibold text-lg';
+            playerEl.textContent = player.name;
+            playerListContainer.appendChild(playerEl);
+        });
+        playerCountDisplay.textContent = `${data.players.length} / ${data.maxPlayers} players joined`;
 
-                    // Check for start condition
-                    if (data.status === 'active') {
-                        // Game is starting!
-                        unsubscribe();
-                        const listContext = { title: data.quizTitle };
-                        showCountdown(() => {
-                            startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, listContext, null, { isChallenge: true, challengeId: challengeDocId, playerId: userId });
-                        });
-                    } else if (data.status === 'waiting' && options.isCreator && data.players.length === data.maxPlayers) {
-                        // This user is the creator and the lobby is full.
-                        // This user is responsible for starting the game.
-                        unsubscribe(); // Stop listening to prevent double-triggers
-                        await updateDoc(challengeDocRef, { status: "active" });
-                        // The 'active' status will be caught by this same listener on its final fire,
-                        // or by the listeners of all other players.
-                        // We will also call countdown for the creator immediately.
-                        const listContext = { title: data.quizTitle };
-                        showCountdown(() => {
-                            startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, listContext, null, { isChallenge: true, challengeId: challengeDocId, playerId: userId });
-                        });
-                    }
-                });
-            }
+        // --- START GAME LOGIC ---
+        if (data.status === 'active') {
+            unsubscribe();
+            
+            const commonOptions = { 
+                isChallenge: true, 
+                challengeId: challengeDocId, 
+                playerId: userId 
+            };
+
+            showCountdown(() => {
+                // Router: Launch the correct game based on 'quizType'
+                if (data.quizType === 'flip-cards') {
+                    startFlipCardGame(data.questions, data.quizTitle, data.gradClass, 9, null, commonOptions);
+                } else if (data.quizType === 'match-columns') {
+                    startMatchColumnsGame(data.questions, data.quizTitle, data.gradClass, data.difficulty, commonOptions);
+                } else if (data.quizType === 'jumbled-word') {
+                    startJumbledWordGame(data.questions, data.quizTitle, data.gradClass, data.difficulty, commonOptions);
+                } else if (data.quizType === 'word-rain') {
+                    startWordRainGame(data.questions, data.quizTitle, data.gradClass, commonOptions);
+                } else if (data.quizType === 'swipe-word') {
+                    // Swipe game creates its own deck, so we just pass difficulty
+                    startSwipeGame(data.difficulty, data.quizTitle, data.gradClass, commonOptions);
+                } else {
+                    // Default to standard quiz
+                    const listContext = { title: data.quizTitle };
+                    startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, listContext, null, commonOptions);
+                }
+            });
+
+        } else if (data.status === 'waiting' && options.isCreator && data.players.length === data.maxPlayers) {
+            unsubscribe(); 
+            await updateDoc(challengeDocRef, { status: "active" });
+            
+            // Creator starts immediately too (same logic as above)
+            const commonOptions = { isChallenge: true, challengeId: challengeDocId, playerId: userId };
+            showCountdown(() => {
+                if (data.quizType === 'flip-cards') startFlipCardGame(data.questions, data.quizTitle, data.gradClass, 9, null, commonOptions);
+                else if (data.quizType === 'match-columns') startMatchColumnsGame(data.questions, data.quizTitle, data.gradClass, data.difficulty, commonOptions);
+                else if (data.quizType === 'jumbled-word') startJumbledWordGame(data.questions, data.quizTitle, data.gradClass, data.difficulty, commonOptions);
+                else if (data.quizType === 'word-rain') startWordRainGame(data.questions, data.quizTitle, data.gradClass, commonOptions);
+                else if (data.quizType === 'swipe-word') startSwipeGame(data.difficulty, data.quizTitle, data.gradClass, commonOptions);
+                else startQuiz(data.questions, data.quizType, data.quizLength, challengeDocId, { title: data.quizTitle }, null, commonOptions);
+            });
+        }
+    });
+}
+// END: REPLACE showChallengeLobby
+
             function generateChallengeCode() {
                 const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
                 let code = '';
@@ -20875,43 +20692,117 @@ function startFlashRecallGame() {
                 return code;
             }
 
-            async function createQuizChallenge(words, quizType, quizLength, listContext, maxPlayers) {
-                const quizWords = words.filter(w => !w.type);
-                const originalTitle = listContext.title;
-                const questions = (quizLength === 'short' ? [...quizWords].sort(() => 0.5 - Math.random()).slice(0, 10) : [...quizWords].sort(() => 0.5 - Math.random()));
-                const challengeCode = generateChallengeCode();
+            // START: REPLACE createQuizChallenge FUNCTION
 
-                try {
-                    // 1. Create the new challenge structure in Firestore
-                    const challengeRef = collection(db, `artifacts/${appId}/public/data/challenges`);
-                    const creatorPlayer = {
-                        id: userId,
-                        name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
-                        score: null,
-                        isCreator: true
-                    };
+async function createQuizChallenge(words, quizType, quizLength, listContext, maxPlayers, difficulty = 'medium', gradClass = 'grad-1') {
 
-                    const challengeDoc = await addDoc(challengeRef, {
-                        code: challengeCode,
-                        quizTitle: originalTitle,
-                        questions: questions,
-                        quizType: quizType,
-                        quizLength: quizLength,
-                        players: [creatorPlayer], // Add creator to the players array
-                        maxPlayers: maxPlayers,
-                        status: 'waiting', // waiting -> active -> finished
-                        createdAt: serverTimestamp()
-                    });
+    const quizWords = words.filter(w => !w.type);
 
-                    // 2. Show the new "Lobby" screen
-                    // This new function will show the UI and start the listener.
-                    showChallengeLobby(challengeDoc.id, { isCreator: true });
+    const originalTitle = listContext.title;
 
-                } catch (e) {
-                    console.error("Error creating challenge: ", e);
-                    mainContent.innerHTML = `<p class="text-red-400 p-8 text-center">Could not create challenge. Please check your connection and try again.</p>`;
-                }
-            }
+    
+
+    // --- FIX: LIMIT QUESTIONS BASED ON GAME TYPE ---
+
+    // This ensures the game gets exactly the amount of data it is designed to handle
+
+    let limit = 0;
+
+    
+
+    if (quizType === 'flip-cards') limit = 9;          // Grid is 3x6 (9 pairs)
+
+    else if (quizType === 'match-columns') limit = 10; // Standard match round
+
+    else if (quizType === 'jumbled-word') limit = 20;  // Standard jumbled round
+
+    else if (quizType === 'word-rain') limit = 40;     // Good duration for rain
+
+    else if (quizType === 'swipe-word') limit = 25;    // Standard swipe deck size
+
+    else {
+
+        // Standard Text Quiz
+
+        limit = (quizLength === 'short') ? 10 : 50;    // Cap 'Long' quizzes at 50 to keep them playable
+
+    }
+
+
+
+    // Shuffle and Slice the pool to the specific game limit
+
+    const questions = [...quizWords].sort(() => 0.5 - Math.random()).slice(0, limit);
+
+    // -----------------------------------------------
+
+    
+
+    const challengeCode = generateChallengeCode();
+
+
+
+    try {
+
+        const challengeRef = collection(db, `artifacts/${appId}/public/data/challenges`);
+
+        const creatorPlayer = {
+
+            id: userId,
+
+            name: (userProfile && userProfile.name) ? `${userProfile.name} ${userProfile.lastName || ''}`.trim() : 'Guest Player',
+
+            score: null,
+
+            isCreator: true
+
+        };
+
+
+
+        const challengeDoc = await addDoc(challengeRef, {
+
+            code: challengeCode,
+
+            quizTitle: originalTitle,
+
+            questions: questions,
+
+            quizType: quizType, 
+
+            quizLength: quizLength,
+
+            difficulty: difficulty, 
+
+            gradClass: gradClass,   
+
+            players: [creatorPlayer],
+
+            maxPlayers: maxPlayers,
+
+            status: 'waiting',
+
+            createdAt: serverTimestamp()
+
+        });
+
+
+
+        showChallengeLobby(challengeDoc.id, { isCreator: true });
+
+
+
+    } catch (e) {
+
+        console.error("Error creating challenge: ", e);
+
+        alert("Could not create challenge.");
+
+    }
+
+}
+
+// END: REPLACE createQuizChallenge
             
             async function joinQuizChallenge() {
                 const code = challengeCodeInput.value.trim().toUpperCase();
@@ -20980,84 +20871,88 @@ function startFlashRecallGame() {
                 }
             }
 
-            function showChallengeResults(challengeId, challengeData) {
-                mainContent.classList.remove('h-full');
-                
-                const sortedPlayers = [...challengeData.players].sort((a, b) => b.score - a.score);
-                const yourResult = sortedPlayers.find(p => p.id === userId);
-                const yourScore = yourResult ? yourResult.score : -1;
-                const yourRank = yourResult ? sortedPlayers.indexOf(yourResult) + 1 : -1;
-                
-                let resultText = "";
-                let resultColor = "text-white";
-                
-                // --- START: New Confetti/Quote/Animation Logic ---
-                let animationClass = "";
-                let randomQuoteHTML = "";
-                const topScore = sortedPlayers.length > 0 ? sortedPlayers[0].score : 0;
+            // START: REPLACE showChallengeResults FUNCTION
+function showChallengeResults(challengeId, challengeData) {
+    mainContent.classList.remove('h-full');
+    
+    // 1. Determine Scoring Logic
+    // Arcade games = Lower is Better (Time/Moves)
+    // Standard Quiz = Higher is Better (Points)
+    const isArcade = ['flip-cards', 'match-columns', 'jumbled-word', 'word-rain', 'swipe-word', 'verb-highway'].includes(challengeData.quizType);
+    const isMoveBased = challengeData.quizType === 'flip-cards';
+    
+    // 2. Sort Players
+    const sortedPlayers = [...challengeData.players].sort((a, b) => {
+        // Handle unfinished/failed players (treat null or 9999 as worst)
+        const scoreA = (a.score === null) ? 99999 : a.score;
+        const scoreB = (b.score === null) ? 99999 : b.score;
+        
+        if (isArcade) {
+            return scoreA - scoreB; // Ascending (Lower is better)
+        } else {
+            return scoreB - scoreA; // Descending (Higher is better)
+        }
+    });
 
-                if (yourScore === topScore && topScore >= 0) {
-                    const winners = sortedPlayers.filter(p => p.score === topScore);
-                    if (winners.length > 1) {
-                        resultText = "It's a Tie!";
-                        resultColor = "text-amber-400";
-                        animationClass = "animate-tie-pulse"; // Add pulse animation
-                        showConfetti(); // Add confetti for a tie
-                    } else {
-                        resultText = "You Won!";
-                        resultColor = "text-green-400";
-                        showConfetti(); // Add confetti for a win
-                    }
-                } else {
-                    if (yourRank === sortedPlayers.length && sortedPlayers.length > 1) {
-                        resultText = "You Lost";
-                        resultColor = "text-red-500";
-                        // Add a motivational quote
-                        const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
-                        randomQuoteHTML = `<p class="text-base text-slate-400 mt-4 italic">"${quote}"</p>`;
-                    } else {
-                        resultText = `You finished ${yourRank} / ${sortedPlayers.length}`;
-                        resultColor = "text-slate-300";
-                    }
-                }
-                // --- END: New Logic ---
+    const yourResult = sortedPlayers.find(p => p.id === userId);
+    const topScore = sortedPlayers[0].score; // Best score
+    
+    // Check if you won (Your score equals the best score, and best score isn't a failure)
+    const isWinner = yourResult && yourResult.score === topScore && topScore < 9999;
+    
+    let resultText = isWinner ? "You Won!" : (yourResult && yourResult.score < 9999 ? `#${sortedPlayers.indexOf(yourResult)+1} Place` : "Challenge Failed");
+    let resultColor = isWinner ? "text-green-400" : (yourResult && yourResult.score < 9999 ? "text-white" : "text-red-500");
 
-                const leaderboardHTML = sortedPlayers.map((player, index) => {
-                    const rank = index + 1;
-                    const isYou = player.id === userId;
-                    let rankDisplay;
-                    if (player.score === topScore && topScore >= 0) {
-                        rankDisplay = `<span class="text-lg font-bold w-6 text-amber-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5z"></path><path d="M3 18h18v2H3z"></path></svg></span>`;
-                    } else {
-                        rankDisplay = `<span class="text-lg font-bold w-6 text-slate-400">#${rank}</span>`;
-                    }
-                    return `
-                        <div class="flex items-center justify-between p-3 rounded-lg ${isYou ? 'bg-indigo-900/50' : 'bg-slate-800/50'}">
-                            <div class="flex items-center gap-4">
-                                ${rankDisplay}
-                                <span class="font-semibold text-white">${player.name}${isYou ? ' (You)' : ''}</span>
-                            </div>
-                            <span class="text-xl font-bold text-white">${player.score}</span>
-                        </div>
-                    `;
-                }).join('');
+    if (isWinner) showConfetti();
 
-                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
-                    <h2 class="text-3xl font-bold text-white mb-4">Challenge Over!</h2>
-                    <h3 class="text-4xl font-bold mb-8 ${resultColor} ${animationClass}">${resultText}</h3>
-                    ${randomQuoteHTML} <!-- Quote will appear here -->
-                    
-                    <div class="text-left space-y-2 max-h-64 overflow-y-auto pr-2 mt-6">
-                        ${leaderboardHTML}
-                    </div>
+    // 3. Generate Leaderboard HTML
+    const leaderboardHTML = sortedPlayers.map((player, index) => {
+        const isYou = player.id === userId;
+        const val = player.score;
+        let displayScore = "";
+        let rankDisplay = "";
 
-                    <div class="flex justify-center gap-4 mt-8">
-                        <button id="back-to-hub" class="font-bold py-2 px-6 rounded-lg transition-transform hover:scale-105 bg-pink-600 hover:bg-pink-700 text-white">Done</button>
-                    </div>
-                </div>`;
-                
-                document.getElementById('back-to-hub').onclick = () => switchView('quizHub', { forceRender: true });
+        // Format Score Display
+        if (val === null || val >= 9999) {
+            displayScore = `<span class="text-red-400 text-sm">Failed</span>`;
+        } else {
+            if (isArcade) {
+                displayScore = isMoveBased ? `${val} Moves` : `${val}s`;
+            } else {
+                displayScore = `${val} Pts`;
             }
+        }
+
+        // Rank Icon
+        if (index === 0 && val < 9999) rankDisplay = `👑`;
+        else rankDisplay = `<span class="text-slate-500 text-sm font-bold">#${index + 1}</span>`;
+
+        return `
+            <div class="flex items-center justify-between p-3 rounded-xl mb-2 ${isYou ? 'bg-indigo-600/40 border border-indigo-500/50' : 'bg-white/5 border border-white/5'}">
+                <div class="flex items-center gap-3">
+                    <div class="w-6 text-center">${rankDisplay}</div>
+                    <span class="font-bold text-white ${isYou ? 'text-indigo-100' : ''}">${player.name} ${isYou ? '(You)' : ''}</span>
+                </div>
+                <span class="font-mono font-bold text-amber-400">${displayScore}</span>
+            </div>
+        `;
+    }).join('');
+
+    // 4. Render View
+    mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto">
+        <h2 class="text-2xl font-bold text-slate-300 mb-2">Challenge Results</h2>
+        <h3 class="text-4xl font-black mb-8 ${resultColor} drop-shadow-lg">${resultText}</h3>
+        
+        <div class="text-left space-y-1 max-h-[50vh] overflow-y-auto pr-1 custom-scrollbar mb-6">
+            ${leaderboardHTML}
+        </div>
+
+        <button id="back-to-hub" class="w-full grad-nav text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105">Back to Quiz Hub</button>
+    </div>`;
+    
+    document.getElementById('back-to-hub').onclick = () => switchView('quizHub', { forceRender: true });
+}
+// END: REPLACE showChallengeResults
             
             function startQuiz(words, quizType, quizLength, quizId, listContext, savedState = null, challengeOptions = { isChallenge: false, playerNum: 'player1' }) {
     
@@ -22593,6 +22488,60 @@ function triggerFireworks() {
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
         confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
     }, 250);
+}
+
+// --- PASTE THIS IN YOUR SCRIPT ---
+
+// 1. Save Arcade Score to Firestore
+async function saveChallengeScore(challengeId, playerId, score) {
+    const mainContainer = document.getElementById('main-content');
+    // Show loading screen
+    mainContainer.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl text-center mx-4 max-w-3xl my-auto"><h2 class="text-2xl font-bold text-white mb-4">Challenge Complete!</h2><p class="text-xl mb-6 text-gray-200">Score: ${score}</p><p class="text-slate-400 text-sm">Syncing with other players...</p><svg class="animate-spin h-8 w-8 text-white mx-auto mt-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>`;
+
+    try {
+        const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
+        const docSnap = await getDoc(challengeDocRef);
+        
+        if (!docSnap.exists()) throw new Error("Challenge not found");
+
+        const data = docSnap.data();
+        let updatedPlayers = [...data.players];
+        const playerIndex = updatedPlayers.findIndex(p => p.id === playerId);
+        
+        if (playerIndex > -1) {
+            updatedPlayers[playerIndex].score = score;
+        }
+
+        // Check if everyone has finished
+        const allFinished = updatedPlayers.every(p => p.score !== null);
+        
+        await updateDoc(challengeDocRef, { 
+            players: updatedPlayers, 
+            status: allFinished ? "finished" : "active" 
+        });
+
+        // Wait for results
+        listenForChallengeResults(challengeId);
+
+    } catch (e) {
+        console.error("Error saving score:", e);
+        alert("Error saving score. Please check connection.");
+        switchView('gameZone');
+    }
+}
+
+// 2. Listen for Results (Reuse existing logic but ensure it's available globally)
+// Note: You likely already have a similar function inside startQuiz. 
+// Ensure this version is available globally in the script scope.
+function listenForChallengeResults(challengeId) {
+    const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
+    const unsubscribe = onSnapshot(challengeDocRef, (docSnap) => {
+        const data = docSnap.data();
+        if (data && data.status === 'finished') {
+            unsubscribe();
+            showChallengeResults(challengeId, data);
+        }
+    });
 }
             
             // This block defines how the app starts.
