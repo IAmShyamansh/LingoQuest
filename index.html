@@ -1978,12 +1978,19 @@
 
     <!-- END: PASTE THIS NEW TEMPLATE CODE HERE -->
 
-    <!-- START: PASTE THIS NEW TEMPLATE HERE -->
     <template id="quiz-hub-template">
-        <div class="pop-in p-4 max-w-3xl mx-auto">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white">Quiz Hub</h1>
-                <p class="text-slate-300 mt-1">Test your knowledge or challenge a friend.</p>
+        <div class="pop-in p-4 max-w-3xl mx-auto relative">
+            <!-- Header with Exit Button -->
+            <div class="flex justify-between items-start mb-8 relative">
+                <div class="text-center w-full">
+                    <h1 class="text-3xl font-bold text-white">Quiz Hub</h1>
+                    <p class="text-slate-300 mt-1">Test your knowledge or challenge a friend.</p>
+                </div>
+                
+                <!-- EXIT BUTTON -->
+                <button id="exit-quiz-hub" class="absolute top-0 right-0 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors border border-white/10" aria-label="Exit Quiz Hub">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
 
             <!-- Join a Challenge -->
@@ -2015,7 +2022,6 @@
             </div>
         </div>
     </template>
-    <!-- END: PASTE THIS NEW TEMPLATE -->
     
 <!-- START: REPLACE FLIP CARD TEMPLATE -->
 <template id="flip-card-game-template">
@@ -18029,9 +18035,24 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             }
 
             function renderQuizHubView() {
-                updateTopNav({ title: "Quiz Hub", showBack: false, showActions: true });
+                // Hide top nav since we have a custom header in the template
+                const topNav = document.getElementById('top-nav');
+                if(topNav) topNav.classList.add('hidden');
+                
                 const template = document.getElementById('quiz-hub-template');
+                mainContent.innerHTML = ''; // Clear previous content first
                 mainContent.appendChild(template.content.cloneNode(true));
+
+                // --- NEW: Exit Button Logic ---
+                const exitBtn = document.getElementById('exit-quiz-hub');
+                if (exitBtn) {
+                    exitBtn.addEventListener('click', () => {
+                        vibrate();
+                        if(topNav) topNav.classList.remove('hidden'); // Restore main nav
+                        switchView('home'); // Go back to home
+                    });
+                }
+                // ------------------------------
 
                 mainContent.querySelectorAll('.mode-card').forEach(card => {
                     // Check if the card has a 'data-quiz-target' attribute
@@ -18058,13 +18079,26 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                         } else {
                             card.addEventListener('click', () => {
                                 const quizId = `vocab-hub-${targetCategory}`;
+                                // Restore nav when starting quiz so back button works
+                                if(topNav) topNav.classList.remove('hidden');
                                 checkForSavedQuiz(quizId, wordsForQuiz, {title: `${targetCategory} Quiz`, originalWords: wordsForQuiz}, (qWords, qData, qId, savedState) => startQuiz(qWords, 'word-to-meaning', 'short', qId, qData, savedState));
                             });
                         }
                     } 
-                    // If the card has no 'data-quiz-target' (like the "Join" button), 
-                    // we just ignore it here, and its separate click listener from initApp() will work.
                 });
+
+                // Re-attach listener for the Join Challenge button (it was in the HTML template)
+                const joinBtn = document.getElementById('join-challenge-btn');
+                if(joinBtn) {
+                    joinBtn.addEventListener('click', () => {
+                        vibrate();
+                        const joinError = document.getElementById('join-challenge-error');
+                        const codeInput = document.getElementById('challenge-code-input');
+                        if(joinError) joinError.textContent = '';
+                        if(codeInput) codeInput.value = '';
+                        document.getElementById('join-challenge-modal').classList.remove('hidden');
+                    });
+                }
             }
             
         // START: REPLACE renderGameZoneView
@@ -20875,33 +20909,53 @@ async function createQuizChallenge(words, quizType, quizLength, listContext, max
 function showChallengeResults(challengeId, challengeData) {
     mainContent.classList.remove('h-full');
     
-    // 1. Determine Scoring Logic
-    // Arcade games = Lower is Better (Time/Moves)
-    // Standard Quiz = Higher is Better (Points)
-    const isArcade = ['flip-cards', 'match-columns', 'jumbled-word', 'word-rain', 'swipe-word', 'verb-highway'].includes(challengeData.quizType);
-    const isMoveBased = challengeData.quizType === 'flip-cards';
+    // 1. Define Winning Logic per Game Type
+    let sortAscending = false; // Default: Higher Score is Better
+    let scoreLabel = "Pts";
+
+    if (challengeData.quizType === 'flip-cards') {
+        sortAscending = true; // Lower Time is Better
+        scoreLabel = "Time (s)";
+    } else if (challengeData.quizType === 'match-columns') {
+        sortAscending = true; // Lower Time is Better
+        scoreLabel = "Time (s)";
+    } else if (challengeData.quizType === 'jumbled-word') {
+        sortAscending = true; // Lower Time is Better
+        scoreLabel = "Time (s)";
+    } else if (challengeData.quizType === 'word-rain') {
+        sortAscending = false; // Higher Score is Better
+        scoreLabel = "Pts";
+    } else if (challengeData.quizType === 'swipe-word') {
+        sortAscending = false; // Higher Score is Better
+        scoreLabel = "Pts";
+    }
     
     // 2. Sort Players
     const sortedPlayers = [...challengeData.players].sort((a, b) => {
-        // Handle unfinished/failed players (treat null or 9999 as worst)
-        const scoreA = (a.score === null) ? 99999 : a.score;
-        const scoreB = (b.score === null) ? 99999 : b.score;
+        const scoreA = (a.score === null) ? (sortAscending ? 99999 : -1) : a.score;
+        const scoreB = (b.score === null) ? (sortAscending ? 99999 : -1) : b.score;
         
-        if (isArcade) {
-            return scoreA - scoreB; // Ascending (Lower is better)
+        if (sortAscending) {
+            return scoreA - scoreB; // Lower is Better
         } else {
-            return scoreB - scoreA; // Descending (Higher is better)
+            return scoreB - scoreA; // Higher is Better
         }
     });
 
     const yourResult = sortedPlayers.find(p => p.id === userId);
-    const topScore = sortedPlayers[0].score; // Best score
+    const topScore = sortedPlayers[0].score;
     
-    // Check if you won (Your score equals the best score, and best score isn't a failure)
-    const isWinner = yourResult && yourResult.score === topScore && topScore < 9999;
+    // Winner Check:
+    // If Ascending (Time): Lower is better, but 9999 (fail) is not a win.
+    // If Descending (Points): Higher is better, but -1 (fail) is not a win.
+    let isWinner = false;
+    if (yourResult && yourResult.score === topScore) {
+        if (sortAscending && topScore < 9999) isWinner = true;
+        if (!sortAscending && topScore > 0) isWinner = true;
+    }
     
-    let resultText = isWinner ? "You Won!" : (yourResult && yourResult.score < 9999 ? `#${sortedPlayers.indexOf(yourResult)+1} Place` : "Challenge Failed");
-    let resultColor = isWinner ? "text-green-400" : (yourResult && yourResult.score < 9999 ? "text-white" : "text-red-500");
+    let resultText = isWinner ? "You Won!" : (yourResult && (yourResult.score !== null && yourResult.score < 9999 && yourResult.score > -1) ? `#${sortedPlayers.indexOf(yourResult)+1} Place` : "Challenge Failed");
+    let resultColor = isWinner ? "text-green-400" : (yourResult && (yourResult.score !== null && yourResult.score < 9999 && yourResult.score > -1) ? "text-white" : "text-red-500");
 
     if (isWinner) showConfetti();
 
@@ -20912,19 +20966,16 @@ function showChallengeResults(challengeId, challengeData) {
         let displayScore = "";
         let rankDisplay = "";
 
-        // Format Score Display
-        if (val === null || val >= 9999) {
+        // Format Score Display based on Game Type validity
+        if (val === null || (sortAscending && val >= 9999) || (!sortAscending && val <= -1)) {
             displayScore = `<span class="text-red-400 text-sm">Failed</span>`;
         } else {
-            if (isArcade) {
-                displayScore = isMoveBased ? `${val} Moves` : `${val}s`;
-            } else {
-                displayScore = `${val} Pts`;
-            }
+            // Special formatting for Time games if needed, otherwise standard unit
+            displayScore = `${val} ${scoreLabel}`;
         }
 
         // Rank Icon
-        if (index === 0 && val < 9999) rankDisplay = `👑`;
+        if (index === 0 && ((sortAscending && val < 9999) || (!sortAscending && val > 0))) rankDisplay = `👑`;
         else rankDisplay = `<span class="text-slate-500 text-sm font-bold">#${index + 1}</span>`;
 
         return `
@@ -20947,10 +20998,58 @@ function showChallengeResults(challengeId, challengeData) {
             ${leaderboardHTML}
         </div>
 
-        <button id="back-to-hub" class="w-full grad-nav text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-transform hover:scale-105">Back to Quiz Hub</button>
+        <div class="grid grid-cols-2 gap-4">
+            <button id="go-back-btn" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-4 rounded-xl transition-colors">Go Back</button>
+            <button id="restart-challenge-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Restart Challenge</button>
+        </div>
     </div>`;
     
-    document.getElementById('back-to-hub').onclick = () => switchView('quizHub', { forceRender: true });
+    // 5. Button Logic
+    document.getElementById('go-back-btn').onclick = () => {
+        vibrate();
+        const amICreator = challengeData.players.find(p => p.id === userId)?.isCreator;
+        if (amICreator) {
+            switchView('gameZone', { forceRender: true });
+        } else {
+            switchView('home', { forceRender: true });
+        }
+    };
+
+    document.getElementById('restart-challenge-btn').onclick = async () => {
+        vibrate();
+        const restartBtn = document.getElementById('restart-challenge-btn');
+        restartBtn.disabled = true;
+        restartBtn.textContent = "Restarting...";
+        
+        try {
+            const challengeDocRef = doc(db, `artifacts/${appId}/public/data/challenges`, challengeId);
+            
+            const resetPlayers = challengeData.players.map(p => ({ ...p, score: null }));
+            
+            await updateDoc(challengeDocRef, {
+                players: resetPlayers,
+                status: 'active' 
+            });
+            
+            // Re-launch game for self
+            const commonOptions = { isChallenge: true, challengeId: challengeId, playerId: userId };
+            
+            showCountdown(() => {
+                if (challengeData.quizType === 'flip-cards') startFlipCardGame(challengeData.questions, challengeData.quizTitle, challengeData.gradClass, 9, null, commonOptions);
+                else if (challengeData.quizType === 'match-columns') startMatchColumnsGame(challengeData.questions, challengeData.quizTitle, challengeData.gradClass, challengeData.difficulty, commonOptions);
+                else if (challengeData.quizType === 'jumbled-word') startJumbledWordGame(challengeData.questions, challengeData.quizTitle, challengeData.gradClass, challengeData.difficulty, commonOptions);
+                else if (challengeData.quizType === 'word-rain') startWordRainGame(challengeData.questions, challengeData.quizTitle, challengeData.gradClass, commonOptions);
+                else if (challengeData.quizType === 'swipe-word') startSwipeGame(challengeData.difficulty, challengeData.quizTitle, challengeData.gradClass, commonOptions);
+                else startQuiz(challengeData.questions, challengeData.quizType, challengeData.quizLength, challengeId, { title: challengeData.quizTitle }, null, commonOptions);
+            });
+
+        } catch (e) {
+            console.error("Restart error", e);
+            alert("Could not restart. Please try again.");
+            restartBtn.disabled = false;
+            restartBtn.textContent = "Restart Challenge";
+        }
+    };
 }
 // END: REPLACE showChallengeResults
             
