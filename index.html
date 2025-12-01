@@ -1641,6 +1641,156 @@
     100% { transform: scale(1); opacity: 1; }
 }
 
+/* --- SWIPE FLASHCARD STYLES --- */
+.flashcard-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+.swipe-card {
+    position: absolute;
+    width: 85%;
+    max-width: 350px;
+    /* Rectangular Portrait Ratio (Mobile Friendly) */
+    aspect-ratio: 3/4.5; 
+    max-height: 65vh;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    transition: transform 0.1s; /* Fast response for drag */
+    transform-style: preserve-3d;
+    
+    /* FIX: Remove background, shadow, AND border */
+    background: transparent; 
+    box-shadow: none; 
+    border: none; /* This removes the white outline */
+}
+
+.swipe-card.is-animating {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.swipe-card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+/* Inner Container for Flip */
+.swipe-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.swipe-card.is-flipped .swipe-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Common Face Styles (Clean & Solid - No Border/Box Effect) */
+.swipe-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 32px; /* Slightly rounder for a softer look */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    
+    /* Pure White Background */
+    background: #ffffff;
+    
+    /* Soft, Deep Shadow (No Border) */
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); 
+    border: none; /* Removed the border causing the "box" outline */
+    
+    /* Text Styling */
+    color: #1F2335;
+}
+
+/* Back Face specific */
+.swipe-face-back {
+    transform: rotateY(180deg);
+    background: #f8fafc; /* Very light grey for back */
+    border: none; /* Removed border here too */
+}
+
+/* Indicators (Mastered / Need Focus) - Vertical Side Text */
+.swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    font-size: 1.2rem; /* Adjusted size */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    
+    /* Make them visible but faint by default */
+    opacity: 0.2; 
+    transition: opacity 0.2s ease;
+    
+    z-index: 1; /* Behind the card if it overlaps, but visible on sides */
+    pointer-events: none; /* Click through them */
+    
+    /* Vertical Text Layout */
+    writing-mode: vertical-rl;
+    text-orientation: mixed; 
+    
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.ind-mastered {
+    right: 10px; /* Hug the Right Edge */
+    color: #22c55e; /* Green */
+    transform: translateY(-50%) rotate(180deg); 
+}
+
+.ind-focus {
+    left: 10px; /* Hug the Left Edge */
+    color: #ef4444; /* Red */
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* --- PERCENTAGE CIRCLE ON TILES --- */
+.percent-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.percent-badge.completed {
+    border-color: #22c55e;
+    color: #22c55e;
+    background: rgba(0, 0, 0, 0.6);
+}
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -17680,173 +17830,209 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             }
 
             function displayProfileModal() {
-    if (!userProfile) return;
+                if (!userProfile) return;
 
-    const fullHistory = userProfile.quizHistory || [];
+                const fullHistory = userProfile.quizHistory || [];
 
-    // 1. Separate Main Quizzes vs Arcade Games
-    const arcadeKeywords = ['(Match)', '(Flip)', '(Jumbled)', '(Word Rain)'];
-    
-    const arcadeHistory = fullHistory.filter(r => 
-        arcadeKeywords.some(keyword => r.title.includes(keyword))
-    );
-    
-    const mainHistory = fullHistory.filter(r => 
-        !arcadeKeywords.some(keyword => r.title.includes(keyword))
-    );
+                // 1. Strict Separation Logic
+                // Any title containing these strings is considered a GAME/ARCADE entry.
+                // Everything else is a LEARNING/QUIZ entry.
+                const gameIdentifiers = [
+                    '(Match)', 
+                    '(Flip)', 
+                    '(Unscramble)', 
+                    '(Jumbled)',    // Legacy check just in case
+                    '(Word Rain)', 
+                    'Swipe Game', 
+                    'Flash Recall'
+                ];
+                
+                // Filter: Arcade vs Learning
+                const arcadeHistory = fullHistory.filter(r => 
+                    gameIdentifiers.some(keyword => r.title.includes(keyword))
+                );
+                
+                const learningHistory = fullHistory.filter(r => 
+                    !gameIdentifiers.some(keyword => r.title.includes(keyword))
+                );
 
-    // 2. Calculate Stats (Focus on Main Learning metrics only)
-    const totalMainQuizzes = mainHistory.length;
-    let totalScore = 0, totalPossibleScore = 0;
-    if (totalMainQuizzes > 0) mainHistory.forEach(r => { totalScore += r.score; totalPossibleScore += r.total; });
-    const overallAccuracy = totalPossibleScore > 0 ? ((totalScore / totalPossibleScore) * 100).toFixed(0) : 0;
-    
-    const focusArea = getFocusArea();
-    const userFullName = `${userProfile.name} ${userProfile.lastName || ''}`.trim();
-    
-    // Admin Button Logic
-    const isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
-    const adminButtonHTML = isAdmin ? `<div class="mt-4 border-t border-white/20 pt-4"><button id="admin-panel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg">Admin Panel</button></div>` : '';
+                // 2. Calculate Stats (Strictly on Learning History)
+                const totalMainQuizzes = learningHistory.length;
+                let totalScore = 0, totalPossibleScore = 0;
+                
+                if (totalMainQuizzes > 0) {
+                    learningHistory.forEach(r => { 
+                        totalScore += r.score; 
+                        totalPossibleScore += r.total; 
+                    });
+                }
+                
+                const overallAccuracy = totalPossibleScore > 0 ? ((totalScore / totalPossibleScore) * 100).toFixed(0) : 0;
+                
+                // 3. Calculate Focus Area (Strictly on Learning History)
+                // We calculate it here locally to ensure it uses the filtered list
+                let focusArea = null;
+                if (learningHistory.length >= 3) { // Require at least 3 quizzes to determine focus
+                    const categoryScores = learningHistory.reduce((acc, result) => {
+                        // Strip " Quiz" from title to get category name
+                        const category = result.title.replace(' Quiz', '').trim();
+                        if (!acc[category]) acc[category] = { totalScore: 0, totalPossible: 0 };
+                        acc[category].totalScore += result.score;
+                        acc[category].totalPossible += result.total;
+                        return acc;
+                    }, {});
 
-    // Focus Area Card HTML
-    const focusAreaHTML = focusArea 
-        ? `<div class="stat-card focus-card cursor-pointer hover:bg-white/10 transition-colors p-3 rounded-lg bg-white/5 border border-white/10" data-category="${focusArea}">
-             <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
-             <p class="text-base font-bold text-white truncate">${focusArea}</p>
-             <p class="text-[10px] text-amber-400 mt-1">Tap to practice</p>
-           </div>` 
-        : `<div class="stat-card p-3 rounded-lg bg-white/5 border border-white/10">
-             <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
-             <p class="text-xs font-normal text-slate-400">Keep learning to unlock!</p>
-           </div>`;
+                    let lowestAvg = 101;
+                    for(const category in categoryScores) {
+                        const avg = (categoryScores[category].totalScore / categoryScores[category].totalPossible) * 100;
+                        if (avg < lowestAvg) {
+                            lowestAvg = avg;
+                            focusArea = category;
+                        }
+                    }
+                }
+                
+                const userFullName = `${userProfile.name} ${userProfile.lastName || ''}`.trim();
+                
+                // Admin Button Logic
+                const isAdmin = localStorage.getItem(ADMIN_KEY) === "true";
+                const adminButtonHTML = isAdmin ? `<div class="mt-4 border-t border-white/20 pt-4"><button id="admin-panel-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg">Admin Panel</button></div>` : '';
 
-    // 4. Render Modal Content
-    userProfileContent.innerHTML = `
-        <!-- Header -->
-        <div class="text-center mb-6">
-            <div class="flex justify-center items-center gap-2 mb-1">
-                <h2 class="text-2xl font-bold text-white">${userFullName}</h2>
-                <button id="edit-profile-btn" class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                </button>
-            </div>
-            <p class="text-amber-400 text-sm font-semibold">${userProfile.batchTime || 'No batch selected'}</p>
-        </div>
+                // Focus Area Card HTML
+                const focusAreaHTML = focusArea 
+                    ? `<div class="stat-card focus-card cursor-pointer hover:bg-white/10 transition-colors p-3 rounded-lg bg-white/5 border border-white/10" data-category="${focusArea}">
+                        <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
+                        <p class="text-base font-bold text-white truncate">${focusArea}</p>
+                        <p class="text-[10px] text-amber-400 mt-1">Tap to practice</p>
+                    </div>` 
+                    : `<div class="stat-card p-3 rounded-lg bg-white/5 border border-white/10">
+                        <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Focus Area</h3>
+                        <p class="text-xs font-normal text-slate-400">Play more quizzes to unlock!</p>
+                    </div>`;
 
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-3 gap-3 mb-6">
-            <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
-                <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Streak</h3>
-                <p class="text-2xl font-extrabold text-amber-400 flex items-center justify-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-                    ${userProfile.streak || 0}
-                </p>
-            </div>
-            <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
-                <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Accuracy</h3>
-                <p class="text-2xl font-extrabold text-white">${overallAccuracy}%</p>
-            </div>
-            ${focusAreaHTML}
-        </div>
-
-        <!-- NEW: History Buttons -->
-        <div class="grid grid-cols-2 gap-4 mb-2">
-            <button id="btn-view-learning-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-indigo-600/40 to-blue-600/40 border border-white/10 hover:border-indigo-400/50 hover:from-indigo-600/60 hover:to-blue-600/60 transition-all duration-300 group text-left">
-                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </div>
-                <span class="block text-2xl mb-2">📚</span>
-                <span class="block text-sm font-bold text-white">Learning History</span>
-                <span class="block text-[10px] text-indigo-200 mt-1">View your quiz progress</span>
-            </button>
-
-            <button id="btn-view-arcade-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-pink-600/40 to-rose-600/40 border border-white/10 hover:border-pink-400/50 hover:from-pink-600/60 hover:to-rose-600/60 transition-all duration-300 group text-left">
-                <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
-                </div>
-                <span class="block text-2xl mb-2">🕹️</span>
-                <span class="block text-sm font-bold text-white">Arcade Scores</span>
-                <span class="block text-[10px] text-pink-200 mt-1">View high scores</span>
-            </button>
-        </div>
-
-        ${adminButtonHTML}
-    `;
-
-    userProfileModal.classList.remove('hidden');
-
-    // Listeners
-    const focusCard = userProfileContent.querySelector('.focus-card');
-    if (focusCard && focusCard.dataset.category) focusCard.addEventListener('click', () => navigateToCategory(focusCard.dataset.category));
-    document.getElementById('edit-profile-btn').addEventListener('click', renderProfileEditView);
-    
-    const adminBtn = document.getElementById('admin-panel-btn');
-    if (adminBtn) {
-        adminBtn.addEventListener('click', () => {
-            userProfileModal.classList.add('hidden');
-            navStack.push({ view: 'profile' }); 
-            renderAdminPanel(); 
-        });
-    }
-
-    // --- Button Listeners for New Sub-Modals ---
-    document.getElementById('btn-view-learning-history').onclick = () => showHistorySubModal("Learning History", mainHistory, "No learning quizzes taken yet.");
-    document.getElementById('btn-view-arcade-history').onclick = () => showHistorySubModal("Arcade Scores", arcadeHistory, "No arcade games played yet.");
-
-    // --- Helper Function for Sub-Modals ---
-    function showHistorySubModal(title, list, emptyMsg) {
-        // Remove existing if any
-        const existing = document.getElementById('sub-history-modal');
-        if (existing) existing.remove();
-
-        const subModal = document.createElement('div');
-        subModal.id = 'sub-history-modal';
-        subModal.className = "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300";
-        
-        // Generate List HTML (Last 10)
-        const listHTML = (list && list.length > 0) 
-            ? list.slice(0, 10).map(r => `
-                <div class="flex justify-between items-center mb-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
-                    <div class="overflow-hidden mr-3">
-                        <p class="font-bold text-white text-sm truncate">${r.title}</p>
-                        <p class="text-[10px] text-slate-400">${r.date ? new Date(r.date).toLocaleDateString() + ' ' + new Date(r.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</p>
+                // 4. Render Modal Content
+                userProfileContent.innerHTML = `
+                    <!-- Header -->
+                    <div class="text-center mb-6">
+                        <div class="flex justify-center items-center gap-2 mb-1">
+                            <h2 class="text-2xl font-bold text-white">${userFullName}</h2>
+                            <button id="edit-profile-btn" class="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                            </button>
+                        </div>
+                        <p class="text-amber-400 text-sm font-semibold">${userProfile.batchTime || 'No batch selected'}</p>
                     </div>
-                    <div class="flex flex-col items-end shrink-0">
-                        <span class="font-black text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</span>
-                        <span class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Score</span>
-                    </div>
-                </div>
-            `).join('')
-            : `<div class="flex flex-col items-center justify-center h-48 text-slate-500">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-3 opacity-50"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                 <p class="text-sm">${emptyMsg}</p>
-               </div>`;
 
-        subModal.innerHTML = `
-            <div class="glass-ui p-6 rounded-3xl w-full max-w-md pop-in relative flex flex-col max-h-[85vh] border border-white/10 shadow-2xl">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-6 shrink-0 border-b border-white/10 pb-4">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-3">
-                        <span class="text-2xl">${title === "Learning History" ? '📚' : '🕹️'}</span> ${title}
-                    </h3>
-                    <button id="close-sub-history" class="p-2 rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-                <!-- List Area -->
-                <div class="overflow-y-auto pr-1 custom-scrollbar flex-grow">
-                    ${listHTML}
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(subModal);
-        
-        const close = () => subModal.remove();
-        subModal.querySelector('#close-sub-history').onclick = close;
-        subModal.onclick = (e) => { if (e.target === subModal) close(); };
-    }
-}
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
+                            <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Streak</h3>
+                            <p class="text-2xl font-extrabold text-amber-400 flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                                ${userProfile.streak || 0}
+                            </p>
+                        </div>
+                        <div class="stat-card text-center bg-white/5 p-3 rounded-lg border border-white/10">
+                            <h3 class="text-[10px] font-bold text-slate-300 uppercase mb-1 tracking-wider">Accuracy</h3>
+                            <p class="text-2xl font-extrabold text-white">${overallAccuracy}%</p>
+                        </div>
+                        ${focusAreaHTML}
+                    </div>
+
+                    <!-- History Buttons -->
+                    <div class="grid grid-cols-2 gap-4 mb-2">
+                        <button id="btn-view-learning-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-indigo-600/40 to-blue-600/40 border border-white/10 hover:border-indigo-400/50 hover:from-indigo-600/60 hover:to-blue-600/60 transition-all duration-300 group text-left">
+                            <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            </div>
+                            <span class="block text-2xl mb-2">📚</span>
+                            <span class="block text-sm font-bold text-white">Learning History</span>
+                            <span class="block text-[10px] text-indigo-200 mt-1">View quiz results</span>
+                        </button>
+
+                        <button id="btn-view-arcade-history" class="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-pink-600/40 to-rose-600/40 border border-white/10 hover:border-pink-400/50 hover:from-pink-600/60 hover:to-rose-600/60 transition-all duration-300 group text-left">
+                            <div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
+                            </div>
+                            <span class="block text-2xl mb-2">🕹️</span>
+                            <span class="block text-sm font-bold text-white">Arcade Scores</span>
+                            <span class="block text-[10px] text-pink-200 mt-1">View game results</span>
+                        </button>
+                    </div>
+
+                    ${adminButtonHTML}
+                `;
+
+                userProfileModal.classList.remove('hidden');
+
+                // Listeners
+                const focusCard = userProfileContent.querySelector('.focus-card');
+                if (focusCard && focusCard.dataset.category) focusCard.addEventListener('click', () => navigateToCategory(focusCard.dataset.category));
+                document.getElementById('edit-profile-btn').addEventListener('click', renderProfileEditView);
+                
+                const adminBtn = document.getElementById('admin-panel-btn');
+                if (adminBtn) {
+                    adminBtn.addEventListener('click', () => {
+                        userProfileModal.classList.add('hidden');
+                        navStack.push({ view: 'profile' }); 
+                        renderAdminPanel(); 
+                    });
+                }
+
+                // Pass filtered lists to sub-modals
+                document.getElementById('btn-view-learning-history').onclick = () => showHistorySubModal("Learning History", learningHistory, "No learning quizzes taken yet.");
+                document.getElementById('btn-view-arcade-history').onclick = () => showHistorySubModal("Arcade Scores", arcadeHistory, "No arcade games played yet.");
+
+                // Helper for Sub-Modals
+                function showHistorySubModal(title, list, emptyMsg) {
+                    const existing = document.getElementById('sub-history-modal');
+                    if (existing) existing.remove();
+
+                    const subModal = document.createElement('div');
+                    subModal.id = 'sub-history-modal';
+                    subModal.className = "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300";
+                    
+                    const listHTML = (list && list.length > 0) 
+                        ? list.slice(0, 10).map(r => `
+                            <div class="flex justify-between items-center mb-3 p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                                <div class="overflow-hidden mr-3">
+                                    <p class="font-bold text-white text-sm truncate">${r.title}</p>
+                                    <p class="text-[10px] text-slate-400">${r.date ? new Date(r.date).toLocaleDateString() + ' ' + new Date(r.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</p>
+                                </div>
+                                <div class="flex flex-col items-end shrink-0">
+                                    <span class="font-black text-lg ${r.score / r.total >= 0.7 ? 'text-green-400' : 'text-amber-400'}">${r.score}/${r.total}</span>
+                                    <span class="text-[9px] text-slate-500 uppercase font-bold tracking-wider">Score</span>
+                                </div>
+                            </div>
+                        `).join('')
+                        : `<div class="flex flex-col items-center justify-center h-48 text-slate-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-3 opacity-50"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <p class="text-sm">${emptyMsg}</p>
+                        </div>`;
+
+                    subModal.innerHTML = `
+                        <div class="glass-ui p-6 rounded-3xl w-full max-w-md pop-in relative flex flex-col max-h-[85vh] border border-white/10 shadow-2xl">
+                            <div class="flex justify-between items-center mb-6 shrink-0 border-b border-white/10 pb-4">
+                                <h3 class="text-xl font-bold text-white flex items-center gap-3">
+                                    <span class="text-2xl">${title === "Learning History" ? '📚' : '🕹️'}</span> ${title}
+                                </h3>
+                                <button id="close-sub-history" class="p-2 rounded-full bg-white/5 hover:bg-white/20 text-slate-300 hover:text-white transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                            <div class="overflow-y-auto pr-1 custom-scrollbar flex-grow">
+                                ${listHTML}
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(subModal);
+                    
+                    const close = () => subModal.remove();
+                    subModal.querySelector('#close-sub-history').onclick = close;
+                    subModal.onclick = (e) => { if (e.target === subModal) close(); };
+                }
+            }
 
             function renderProfileEditView() {
                 userProfileContent.innerHTML = `<h2 class="text-2xl font-bold text-white mb-6 text-center">Edit Profile</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><label for="edit-firstname-input" class="block text-sm font-bold text-slate-200 mb-2">Name:</label><input type="text" id="edit-firstname-input" value="${userProfile.name || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div><div><label for="edit-lastname-input" class="block text-sm font-bold text-slate-200 mb-2">Last Name:</label><input type="text" id="edit-lastname-input" value="${userProfile.lastName || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div></div><div class="mb-6"><label class="block text-sm font-bold text-slate-200 mb-2">Your batch time:</label><div id="edit-batch-time-selector" class="grid grid-cols-3 gap-2"></div></div><div class="flex gap-4"><button id="cancel-edit-profile" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-lg">Cancel</button><button id="save-updated-profile" class="w-full grad-nav text-white font-bold py-2 px-4 rounded-lg">Save</button></div>`;
@@ -17981,51 +18167,83 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
 
             // START: PASTE THIS REPLACEMENT FUNCTION
         function renderCategoryListView(categories, title, subtitle, gradClass) {
-            updateTopNav({ title: title, showBack: true, gradClass: gradClass });
+                updateTopNav({ title: title, showBack: true, gradClass: gradClass });
 
-            const template = document.getElementById('home-view-template');
-            mainContent.appendChild(template.content.cloneNode(true));
-            const categoryGridEl = mainContent.querySelector('#category-grid');
-            categoryGridEl.innerHTML = '';
-            let i = 0;
-            for(const categoryName in categories) {
-                const data = categories[categoryName];
-                const card = document.createElement('div');
-                let newGradClass = (title === 'Advanced Vocabulary' && (categoryName === 'Latin Roots' || categoryName === 'Greek Roots')) ? gradClass : gradients[i % gradients.length];
-                card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${newGradClass}`;
-                card.style.animationDelay = `${i * 60}ms`;
-                card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
+                const template = document.getElementById('home-view-template');
+                mainContent.appendChild(template.content.cloneNode(true));
+                const categoryGridEl = mainContent.querySelector('#category-grid');
+                categoryGridEl.innerHTML = '';
+                let i = 0;
+                
+                for(const categoryName in categories) {
+                    const data = categories[categoryName];
+                    
+                    // --- Calculate Mastery Percentage ---
+                    let percentHTML = '';
+                    let totalWords = 0;
+                    let masteredCount = 0;
 
-                card.addEventListener('click', () => {
-                    vibrate(); 
-
-                    // This is the original "Study Mode" logic
-                    const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
-                    if (data === 'synonyms-view') {
-                        switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
-                    } else if (Array.isArray(data)) {
-                        const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
-                        const transformedData = data.map(item => {
-                            if (typeof item === 'string') return item; // Keep strings as strings
-                            if (item.hindi) return { ...item, isSentence: true };
-                            return item;
-                        });
-                        switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, extra });
-                    } else if (data.sentences) { 
-                        const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
-                        switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass });
-                    } else if (data.subtopics) {
-                        switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                    } else if (data.content) {
-                        switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                    } else {
-                        switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: newGradClass });
+                    // Determine word count based on data structure
+                    if (Array.isArray(data)) {
+                        totalWords = data.length;
+                    } else if (data.sentences && Array.isArray(data.sentences)) {
+                        totalWords = data.sentences.length;
                     }
-                });
-                categoryGridEl.appendChild(card);
-                i++;
+                    
+                    // Only show percentage if we have words and it's not a special view like synonyms
+                    if (totalWords > 0 && data !== 'synonyms-view') {
+                        const storageKey = `lingoquest_mastery_${categoryName}`;
+                        const masteredList = JSON.parse(localStorage.getItem(storageKey)) || [];
+                        masteredCount = masteredList.length;
+                        const percent = Math.round((masteredCount / totalWords) * 100);
+                        
+                        const colorClass = percent === 100 ? 'completed' : '';
+                        percentHTML = `<div class="percent-badge ${colorClass}">${percent}%</div>`;
+                    }
+
+                    const card = document.createElement('div');
+                    let newGradClass = (title === 'Advanced Vocabulary' && (categoryName === 'Latin Roots' || categoryName === 'Greek Roots')) ? gradClass : gradients[i % gradients.length];
+                    
+                    // Added 'relative' for badge positioning
+                    card.className = `category-card relative p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${newGradClass}`;
+                    card.style.animationDelay = `${i * 60}ms`;
+                    
+                    // Insert Badge and Title
+                    card.innerHTML = `
+                        ${percentHTML}
+                        <p class="text-white font-bold text-sm sm:text-lg mt-2">${categoryName}</p>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        vibrate(); 
+
+                        const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
+                        if (data === 'synonyms-view') {
+                            switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
+                        } else if (Array.isArray(data)) {
+                            const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
+                            const transformedData = data.map(item => {
+                                if (typeof item === 'string') return item; 
+                                if (item.hindi) return { ...item, isSentence: true };
+                                return item;
+                            });
+                            // Default to card view for supported categories
+                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, extra, viewMode: 'card' });
+                        } else if (data.sentences) { 
+                            const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
+                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, viewMode: 'card' });
+                        } else if (data.subtopics) {
+                            switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
+                        } else if (data.content) {
+                            switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
+                        } else {
+                            switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: newGradClass });
+                        }
+                    });
+                    categoryGridEl.appendChild(card);
+                    i++;
+                }
             }
-        }
         // END: PASTE THIS REPLACEMENT FUNCTION
             
             function renderFavoritesView() {
@@ -20265,59 +20483,123 @@ function startFlashRecallGame() {
                 displayPracticeQuestion();
             }
             
+            // --- REPLACEMENT: renderWords Function with Flashcard Toggle ---
+            
             function renderWords(title, words, gradientClass, options = {}) {
                 const { isFavorites, isSearch, isSynonymSublist, isRootList, quizData, isReview } = options;
                 activeWordItem = null;
                 currentWordListData = { title, words, gradClass: gradientClass, options };
+                
+                // Determine if Flashcard Mode is supported
+                const isConfusingWords = title === 'Confusing Words';
+                const isOneWordSub = title === 'One Word Substitution';
+                const isAntonyms = title === 'Antonyms';
+                const isProverbs = title === 'Proverbs and Sayings';
+                const isIdioms = title.includes('Idioms') || title.includes('Expressions');
+                const isVocabBuilder = title === 'Basic Vocabulary' || title === 'Daily Actions & Verbs' || title === 'Travel & Adventure' || title === 'Emotions & Feelings';
+                const isAdvancedMisc = title === 'Business Vocab' || title === 'Foreign Loanwords' || title === 'Phobias & Manias';
+
+                const supportsFlashcards = !isSearch && !isFavorites && !isReview && (isConfusingWords || isOneWordSub || isAntonyms || isProverbs || isIdioms || isVocabBuilder || isAdvancedMisc);
+
+                if (options.viewMode === undefined) options.viewMode = 'list';
+
                 updateTopNav({ title: isFavorites ? "Favorites" : title, showBack: !isFavorites, gradClass: isFavorites ? 'grad-fav' : gradientClass, showActions: isFavorites || isSearch });
+                
+                mainContent.innerHTML = '';
                 mainContent.appendChild(document.getElementById('word-list-template').content.cloneNode(true));
                 const listContainer = mainContent.querySelector('#word-list-container');
                 mainContent.querySelector('#word-list-title').classList.add('hidden');
                 listContainer.innerHTML = '';
-                const list = document.createElement('div');
-                list.className = "space-y-4";
-                // --- START: New Code for Checkboxes ---
-                const isADiscussionSubCategory = title.includes('Discussion'); // Check if we are in a discussion sub-category
-                const mainStorageKey = 'lingoquest_done_DiscussionQuestions'; // Use ONE key for all discussion topics
-                let doneList = JSON.parse(localStorage.getItem(mainStorageKey)) || []; // Always load the main list
 
-                if (isADiscussionSubCategory && words.length > 0) {
+                // --- CONTROLS AREA ---
+                const controlsDiv = document.createElement('div');
+                controlsDiv.className = "flex flex-col gap-3 mb-4";
+
+                // Flashcard Toggle
+                if (supportsFlashcards && words.length > 0) {
+                    const toggleBtn = document.createElement('button');
+                    const isCard = options.viewMode === 'card';
+                    // FIX: 'self-center' centers the button horizontally
+                    toggleBtn.className = "self-center px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 " + (isCard ? "bg-pink-600 text-white shadow-lg transform scale-105" : "bg-white/10 text-slate-300 hover:bg-white/20");
+                    toggleBtn.innerHTML = isCard 
+                        ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> List View`
+                        : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Flashcards`;
+                    
+                    toggleBtn.onclick = () => {
+                        vibrate();
+                        options.viewMode = isCard ? 'list' : 'card';
+                        options.cardIndex = 0; 
+                        renderWords(title, words, gradientClass, options);
+                    };
+                    controlsDiv.appendChild(toggleBtn);
+                }
+
+                // Clear Checkboxes Button (List Mode Only)
+                const isADiscussionSubCategory = title.includes('Discussion');
+                const mainStorageKey = 'lingoquest_done_DiscussionQuestions';
+                if (isADiscussionSubCategory && words.length > 0 && options.viewMode === 'list') {
                     const clearBtn = document.createElement('button');
                     clearBtn.className = 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in';
                     clearBtn.innerHTML = 'Clear All Checked Topics';
                     clearBtn.onclick = (e) => {
                         e.stopPropagation();
-                        localStorage.removeItem(mainStorageKey); // <-- Use the new main key
-                        // Re-render this view to show the change
-                        renderWords(title, words, gradientClass, options);
+                        if(confirm("Are you sure you want to uncheck all topics?")) {
+                            localStorage.removeItem(mainStorageKey);
+                            renderWords(title, words, gradientClass, options);
+                        }
                     };
-                    list.appendChild(clearBtn);
+                    controlsDiv.appendChild(clearBtn);
                 }
-                // --- END: New Code for Checkboxes ---
                 
-                if (words.length === 0) list.innerHTML = `<p class="text-center text-gray-400 mt-4">${isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.')}</p>`;
-                if (quizData) { const quizBtn = document.createElement('button'); quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; quizBtn.innerHTML = 'Take the Sentence Scramble Quiz'; quizBtn.onclick = () => checkForSavedQuiz(`jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`, quizData.questions, { title }, startJumbledQuiz); list.appendChild(quizBtn); }
-                if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { const quizBtn = document.createElement('button'); quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; quizBtn.innerHTML = 'Take the Quiz'; quizBtn.onclick = () => showQuizOptions(currentWordListData); list.appendChild(quizBtn); }
-                // START: Add Challenge Button
-                if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { 
-                    const challengeBtn = document.createElement('button'); 
-                    challengeBtn.className = 'w-full grad-4 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
-                    challengeBtn.innerHTML = 'Challenge a Friend'; 
-                    challengeBtn.onclick = () => showQuizOptions(currentWordListData, { isChallenge: true }); // Pass a flag
-                    list.appendChild(challengeBtn); 
+                // Quiz/Challenge Buttons (List Mode Only)
+                if (options.viewMode === 'list') {
+                    if (quizData) { 
+                        const quizBtn = document.createElement('button'); 
+                        quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
+                        quizBtn.innerHTML = 'Take the Sentence Scramble Quiz'; 
+                        quizBtn.onclick = () => checkForSavedQuiz(`jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`, quizData.questions, { title }, startJumbledQuiz); 
+                        controlsDiv.appendChild(quizBtn); 
+                    }
+                    if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { 
+                        const quizBtn = document.createElement('button'); 
+                        quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in mb-2'; 
+                        quizBtn.innerHTML = 'Take the Quiz'; 
+                        quizBtn.onclick = () => showQuizOptions(currentWordListData); 
+                        controlsDiv.appendChild(quizBtn); 
+
+                        const challengeBtn = document.createElement('button'); 
+                        challengeBtn.className = 'w-full grad-4 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
+                        challengeBtn.innerHTML = 'Challenge a Friend'; 
+                        challengeBtn.onclick = () => showQuizOptions(currentWordListData, { isChallenge: true }); 
+                        controlsDiv.appendChild(challengeBtn); 
+                    }
                 }
-                // END: Add Challenge Button
+
+                listContainer.appendChild(controlsDiv);
+
+                if (words.length === 0) {
+                    listContainer.innerHTML += `<p class="text-center text-gray-400 mt-4">${isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.')}</p>`;
+                    return;
+                }
+
+                if (options.viewMode === 'card') {
+                    if (typeof options.cardIndex === 'undefined') options.cardIndex = 0;
+                    renderFlashcardSingle(listContainer, words, title, gradientClass, options);
+                    return;
+                }
+
+                const list = document.createElement('div');
+                list.className = "space-y-4";
+                let doneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
+
                 words.forEach(item => {
                     if (typeof item === 'string') {
-                        // This handles simple string-based lists like Discussion Questions
                         const uniqueId = item;
-                        // Check favorite status
                         const isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
-                        // Check done status
                         const isDone = doneList.includes(uniqueId);
 
                         const sentenceItem = document.createElement('div');
-                        sentenceItem.className = 'sentence-item p-3 sm:p-4'; // Use sentence-item style
+                        sentenceItem.className = 'sentence-item p-3 sm:p-4';
                         sentenceItem.innerHTML = `
                             <div class="flex justify-between items-start w-full gap-3">
                                 <input type="checkbox" class="done-checkbox flex-shrink-0 w-5 h-5 mt-1 rounded text-pink-600 focus:ring-pink-500" ${isDone ? 'checked' : ''} style="accent-color: var(--accent-pink);">
@@ -20330,43 +20612,34 @@ function startFlashRecallGame() {
                                 </div>
                             </div>`;
                         
-                        // Add checkbox listener
                         const checkbox = sentenceItem.querySelector('.done-checkbox');
                         checkbox.addEventListener('change', () => {
-                            let currentDoneList = JSON.parse(localStorage.getItem(mainStorageKey)) || []; // <-- Use the new main key
-                            if (checkbox.checked) {
-                                if (!currentDoneList.includes(uniqueId)) currentDoneList.push(uniqueId);
-                            } else {
-                                currentDoneList = currentDoneList.filter(q => q !== uniqueId);
-                            }
-                            localStorage.setItem(mainStorageKey, JSON.stringify(currentDoneList)); // <-- Use the new main key
-                            // Update the master list in memory
+                            let currentDoneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
+                            if (checkbox.checked) { if (!currentDoneList.includes(uniqueId)) currentDoneList.push(uniqueId); } 
+                            else { currentDoneList = currentDoneList.filter(q => q !== uniqueId); }
+                            localStorage.setItem(mainStorageKey, JSON.stringify(currentDoneList));
                             doneList = currentDoneList;
                         });
 
-                        // Main item listener (for favorite/speak)
                         sentenceItem.addEventListener('click', e => { 
                             const target = e.target;
-                            if (target.classList.contains('done-checkbox')) return; // Ignore clicks on the checkbox
+                            if (target.classList.contains('done-checkbox')) return;
                             if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } 
                             else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
                         });
                         list.appendChild(sentenceItem);
-                    
                     } else if (item.type === 'explanation') {
                         const explanationItem = document.createElement('div');
                         explanationItem.className = 'explanation-card p-3 sm:p-4';
                         explanationItem.innerHTML = `<p class="text-sm sm:text-base font-semibold">${item.title}</p>${item.meaning ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}`;
                         explanationItem.addEventListener('click', () => showExplanationModal(item.title));
                         list.appendChild(explanationItem);
-                    
                     } else if (isRootList) {
                         const rootItem = document.createElement('div');
                         rootItem.className = 'root-item-card p-3 sm:p-4 bg-white/5 hover:bg-white/10 transition-colors';
                         rootItem.innerHTML = `<h3 class="text-lg font-bold text-white">${item.word}</h3><p class="text-sm text-slate-400 font-sans">${item.meaning}</p>`;
                         rootItem.addEventListener('click', () => showExplanationModal(item.word));
                         list.appendChild(rootItem);
-                    
                     } else if (item.isSentence) {
                         const uniqueId = item.hindi, isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
                         const sentenceItem = document.createElement('div');
@@ -20374,7 +20647,6 @@ function startFlashRecallGame() {
                         sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-sm sm:text-base font-semibold flex-grow">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-slate-300 mt-3"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-700 leading-tight flex-grow">${item.english}</p><div class="speak-button flex-shrink-0" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
                         sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
                         list.appendChild(sentenceItem);
-                    
                     } else {
                         const isFavorited = favorites.some(fav => !fav.isSentence && fav.word === item.word);
                         const wordItem = document.createElement('div');
@@ -20398,7 +20670,325 @@ function startFlashRecallGame() {
                 });
                 listContainer.appendChild(list);
             }
+
+            // --- REPLACEMENT: Single Flashcard with Swipe & Mastery Logic ---
+
+            // --- Helper to save progress to LocalStorage ---
+            function saveMasteryProgress(categoryTitle, wordId, isMastered) {
+                const storageKey = `lingoquest_mastery_${categoryTitle}`;
+                let masteredList = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+                if (isMastered) {
+                    if (!masteredList.includes(wordId)) {
+                        masteredList.push(wordId);
+                    }
+                } else {
+                    // Remove from mastered if marked "Need Focus" (Swipe Left)
+                    masteredList = masteredList.filter(id => id !== wordId);
+                }
+
+                localStorage.setItem(storageKey, JSON.stringify(masteredList));
+            }
+
+            function renderFlashcardSingle(container, words, title, gradientClass, options) {
+                const currentIndex = options.cardIndex || 0;
+                
+                // Check if we are done
+                if (currentIndex >= words.length) {
+                    // Render Completion Screen
+                    const storageKey = `lingoquest_mastery_${title}`;
+                    const masteredCount = (JSON.parse(localStorage.getItem(storageKey)) || []).length;
+                    const percent = Math.round((masteredCount / words.length) * 100);
+
+                    container.innerHTML = `
+                        <div class="flex flex-col items-center justify-center h-[calc(100vh-180px)] pop-in text-center px-6">
+                            <div class="text-6xl mb-4">🎉</div>
+                            <h2 class="text-3xl font-bold text-white mb-2">Session Complete!</h2>
+                            <p class="text-slate-300 mb-6">You have reviewed all cards.</p>
+                            
+                            <div class="bg-white/10 p-6 rounded-2xl border border-white/10 mb-8 w-full max-w-xs">
+                                <div class="text-sm text-slate-400 uppercase tracking-widest font-bold mb-1">Mastery Level</div>
+                                <div class="text-4xl font-black ${percent >= 80 ? 'text-green-400' : (percent >= 50 ? 'text-amber-400' : 'text-white')}">${percent}%</div>
+                                <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-indigo-500 to-pink-500" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+
+                            <button id="reset-deck-btn" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">
+                                Review Again
+                            </button>
+                        </div>
+                    `;
+                    document.getElementById('reset-deck-btn').onclick = () => {
+                        options.cardIndex = 0;
+                        renderWords(title, words, gradientClass, options);
+                    };
+                    return;
+                }
+
+                const item = words[currentIndex];
+                const content = getFlashcardContent(title, item); 
+                if (!content) return;
+
+                // --- 1. MAIN LAYOUT ---
+                container.innerHTML = '';
+                
+                // Wrapper (The Stage)
+                const wrapper = document.createElement('div');
+                wrapper.className = "flashcard-container";
+                wrapper.style.height = "calc(100vh - 180px)";
+                wrapper.style.width = "100%";
+
+                // Progress Indicator
+                const progressDiv = document.createElement('div');
+                progressDiv.className = "absolute top-0 w-full flex justify-center py-4 z-20 pointer-events-none";
+                progressDiv.innerHTML = `<span class="bg-black/30 backdrop-blur-sm text-white/80 text-xs font-bold px-3 py-1 rounded-full border border-white/10">CARD ${currentIndex + 1} / ${words.length}</span>`;
+                wrapper.appendChild(progressDiv);
+
+                // --- 2. INDICATORS (OUTSIDE THE CARD NOW) ---
+                // These will sit on the background layer
+                const indMastered = document.createElement('div');
+                indMastered.className = "swipe-indicator ind-mastered";
+                indMastered.textContent = "MASTERED";
+                wrapper.appendChild(indMastered);
+
+                const indFocus = document.createElement('div');
+                indFocus.className = "swipe-indicator ind-focus";
+                indFocus.textContent = "NEED FOCUS";
+                wrapper.appendChild(indFocus);
+
+                // --- 3. CARD ELEMENT ---
+                const card = document.createElement('div');
+                card.className = "swipe-card";
+                
+                // Card HTML Structure
+                card.innerHTML = `
+                    <div class="swipe-card-inner">
+                        <!-- Front Face -->
+                        <div class="swipe-face swipe-face-front">
+                            ${content.frontHTML}
+                            <div class="mt-auto pt-4 text-slate-400 text-xs flex items-center gap-2 opacity-60">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Tap to Flip
+                            </div>
+                        </div>
+                        <!-- Back Face -->
+                        <div class="swipe-face swipe-face-back">
+                            ${content.backHTML}
+                        </div>
+                    </div>
+                `;
+                
+                wrapper.appendChild(card);
+                container.appendChild(wrapper);
+
+                // --- 4. SWIPE PHYSICS LOGIC ---
+                let startX = 0, currentX = 0, isDragging = false;
+                const threshold = 80; // Reduced slightly for easier swiping
+
+                // Interaction Handlers
+                const onStart = (e) => {
+                    if (e.target.closest('button')) return;
+                    isDragging = true;
+                    startX = e.touches ? e.touches[0].clientX : e.clientX;
+                    card.classList.remove('is-animating');
+                };
+
+                const onMove = (e) => {
+                    if (!isDragging) return;
+                    if(e.touches) e.preventDefault();
+                    
+                    const x = e.touches ? e.touches[0].clientX : e.clientX;
+                    currentX = x - startX;
+                    
+                    // Rotate and Move Card
+                    const rotate = currentX * 0.05;
+                    card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+
+                    // Update Indicators Opacity based on drag
+                    // Base opacity 0.2, max 1.0
+                    const intensity = Math.min(Math.abs(currentX) / 100, 1);
+                    
+                    if (currentX > 0) {
+                        indMastered.style.opacity = 0.2 + (intensity * 0.8);
+                        indFocus.style.opacity = 0.2;
+                    } else {
+                        indFocus.style.opacity = 0.2 + (intensity * 0.8);
+                        indMastered.style.opacity = 0.2;
+                    }
+                };
+
+                const onEnd = (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    card.classList.add('is-animating');
+
+                    // Detect Click vs Swipe
+                    if (Math.abs(currentX) < 5) {
+                        if (!e.target.closest('button')) {
+                            vibrate(10);
+                            card.classList.toggle('is-flipped');
+                        }
+                        card.style.transform = `translateX(0px) rotate(0deg)`;
+                        // Reset indicators
+                        indMastered.style.opacity = 0.2;
+                        indFocus.style.opacity = 0.2;
+                        return;
+                    }
+
+                    // Detect Threshold
+                    if (currentX > threshold) {
+                        finishSwipe('right');
+                    } else if (currentX < -threshold) {
+                        finishSwipe('left');
+                    } else {
+                        // Reset
+                        card.style.transform = `translateX(0px) rotate(0deg)`;
+                        indMastered.style.opacity = 0.2;
+                        indFocus.style.opacity = 0.2;
+                    }
+                    
+                    currentX = 0;
+                };
+
+                function finishSwipe(direction) {
+                    vibrate(30);
+                    const endX = direction === 'right' ? window.innerWidth : -window.innerWidth;
+                    card.style.transform = `translateX(${endX}px) rotate(${direction === 'right' ? 20 : -20}deg)`;
+                    
+                    // Save Data
+                    const uniqueId = item.word || item.hindi || item.title;
+                    saveMasteryProgress(title, uniqueId, direction === 'right');
+
+                    // Next Card
+                    setTimeout(() => {
+                        options.cardIndex++;
+                        renderWords(title, words, gradientClass, options);
+                    }, 300);
+                }
+
+                // Event Listeners
+                card.addEventListener('mousedown', onStart);
+                window.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onEnd);
+                
+                card.addEventListener('touchstart', onStart);
+                window.addEventListener('touchmove', onMove, { passive: false });
+                window.addEventListener('touchend', onEnd);
+            }
+
+            // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
+            // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
+            function getFlashcardContent(categoryTitle, item) {
+                let frontHTML = "", backHTML = "";
+                
+                // Speak Button Helper
+                const getSpeakBtn = (text) => `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${text.replace(/'/g, "\\'")}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
+
+                if (categoryTitle === 'Confusing Words') {
+                    const fullHTML = detailedExplanations[item.title];
+                    if (!fullHTML) return null;
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = fullHTML;
+                    const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
+                    
+                    if (childDivs.length >= 2) {
+                        frontHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[0].innerHTML}</div>`;
+                        backHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[1].innerHTML}</div>`;
+                    } else {
+                        frontHTML = `<h3 class="text-2xl font-bold mb-2">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
+                        backHTML = `<div class="text-left w-full overflow-y-auto">${fullHTML}</div>`;
+                    }
+
+                } else if (categoryTitle === 'One Word Substitution') {
+                    // FIX: Wrapped in flex-grow for vertical centering
+                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="text-xl font-medium text-center leading-relaxed">${item.meaning}</p></div>`;
+                    backHTML = `<div class="flex flex-col items-center"><h3 class="text-3xl font-extrabold text-pink-600 mb-2">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
+
+                } else if (categoryTitle === 'Antonyms') {
+                    frontHTML = `
+                        <div class="flex flex-col items-center h-full justify-center">
+                            <h3 class="text-3xl font-extrabold mb-2">${item.word}</h3>
+                            <p class="text-lg text-slate-500 mb-4">${item.meaning}</p>
+                            ${getSpeakBtn(item.word)}
+                            <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
+                        </div>
+                    `;
+                    backHTML = `
+                        <div class="flex flex-col items-center h-full justify-center">
+                            <h3 class="text-3xl font-extrabold mb-2 text-pink-600">${item.antonym}</h3>
+                            <p class="text-lg text-slate-500 mb-4">${item.antonym_meaning}</p>
+                            ${getSpeakBtn(item.antonym)}
+                            <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
+                        </div>
+                    `;
+
+                } else if (categoryTitle === 'Proverbs and Sayings') {
+                    // FIX: Wrapped in flex-grow for vertical centering
+                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="font-bold text-2xl italic text-center text-slate-800">"${item.word}"</p></div>`;
+                    backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
+
+                } else if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases')) {
+                     // FIX: Wrapped in flex-grow for vertical centering
+                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><h3 class="text-3xl font-bold text-center text-slate-800 leading-tight">${item.word}</h3></div>`;
+                    backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
+
+                } else {
+                    // Default (Vocab Builder, Business, etc.)
+                    
+                    // Check if meaning exists
+                    if (!item.meaning || item.meaning.trim() === "") {
+                        // NO MEANING (e.g. Sentence Mode) -> Simple Centered Layout using flex-grow
+                        frontHTML = `
+                            <div class="flex-grow flex flex-col items-center justify-center p-4">
+                                <h3 class="text-2xl font-bold text-slate-900 text-center italic mb-4">"${item.word}"</h3>
+                                ${getSpeakBtn(item.word)}
+                            </div>
+                        `;
+                    } else {
+                        // HAS MEANING -> Partitioned Layout
+                        frontHTML = `
+                            <div class="flex flex-col h-full w-full justify-center items-center">
+                                <!-- Top: Word -->
+                                <div class="flex-grow flex flex-col justify-end pb-4">
+                                    <h3 class="text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight">${item.word}</h3>
+                                </div>
+                                
+                                <!-- Middle: Speaker -->
+                                <div class="flex-shrink-0 py-2">
+                                    ${getSpeakBtn(item.word)}
+                                </div>
+                                
+                                <!-- Bottom: Meaning -->
+                                <div class="flex-grow flex flex-col justify-start pt-4">
+                                    <p class="text-2xl font-medium text-slate-500 text-center">${item.meaning}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    if (item.example) {
+                        backHTML = `
+                            <div class="text-center w-full h-full flex flex-col justify-center">
+                                <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-6">EXAMPLE</p>
+                                <p class="text-xl font-bold italic text-slate-800 leading-relaxed">"${item.example}"</p>
+                                <div class="mt-6">
+                                    ${getSpeakBtn(item.example)}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Fallback if no example
+                        backHTML = `<div class="text-center"><p class="text-xl font-medium text-slate-600">${item.meaning || "Flip back"}</p></div>`;
+                    }
+                }
+
+                return { frontHTML, backHTML };
+            }
             
+            // --- END: REPLACEMENT FUNCTIONS ---
+
             function flattenVocabulary(data, path = []) {
                 let words = [];
                 for (const key in data) {
@@ -21408,36 +21998,62 @@ function showChallengeResults(challengeId, challengeData) {
             
             // --- MODIFIED FUNCTION: speakText ---
             // Added 'buttonElement' as the second argument, made onEndCallback the third
-            function speakText(textToSpeak, buttonElement = null, onEndCallback = null) {
+            // --- MODIFIED FUNCTION: speakText (Global + Color Change) ---
+            // Attached to window so inline onclick handlers can find it
+            window.speakText = function(textToSpeak, buttonElement = null, onEndCallback = null) {
                 speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(textToSpeak.replace(/[*_`]/g, '').replace(/\s*\/\s*/g, ', '));
                 
+                // Clean text
+                const cleanText = textToSpeak.replace(/[*_`]/g, '').replace(/\s*\/\s*/g, ', ');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                
+                // Voice selection
                 if (synthVoices.length > 0) { 
                     const voice = synthVoices.find(v => v.lang === 'en-US' && /female|woman/i.test(v.name)) || synthVoices.find(v => v.lang === 'en-US'); 
                     if (voice) utterance.voice = voice; 
                 }
                 utterance.lang = 'en-US';
 
-                // --- START: New logic for button animation ---
-                const svg = buttonElement ? buttonElement.querySelector('svg') : null;
-                if (svg) {
-                    // Add red color and scale classes
-                    svg.classList.add('text-red-500', 'scale-110');
+                // --- COLOR CHANGE LOGIC ---
+                let svg = null;
+                if (buttonElement) {
+                    // Handle cases where buttonElement might be the button itself or a child
+                    const btn = buttonElement.closest('button') || buttonElement;
+                    svg = btn.querySelector('svg');
+                    
+                    if (svg) {
+                        // Add red color class (Tailwind 'text-red-500')
+                        // If you aren't using Tailwind, you can use style.color = 'red'
+                        svg.classList.add('text-red-500', 'scale-110'); 
+                        // For non-Tailwind fallback or overrides:
+                        svg.style.color = '#ef4444'; 
+                        svg.style.fill = '#ef4444'; // Fill for solid icons
+                    }
                 }
                 
                 utterance.onend = () => {
                     if (svg) {
-                        // Remove red color and scale classes
+                        // Reset color
                         svg.classList.remove('text-red-500', 'scale-110');
+                        svg.style.color = ''; 
+                        svg.style.fill = ''; 
                     }
                     if (onEndCallback) {
-                        onEndCallback(); // Call the original callback if it exists
+                        onEndCallback(); 
                     }
                 };
-                // --- END: New logic ---
+                
+                utterance.onerror = () => {
+                     // Ensure reset on error too
+                    if (svg) {
+                        svg.classList.remove('text-red-500', 'scale-110');
+                        svg.style.color = '';
+                        svg.style.fill = '';
+                    }
+                };
 
                 setTimeout(() => speechSynthesis.speak(utterance), 50);
-            }
+            };
 
             const goBack = () => { if (navStack.length > 0) { const prevState = navStack.pop(); switchView(prevState.view, prevState.options); } else { switchView('home'); } };
             
