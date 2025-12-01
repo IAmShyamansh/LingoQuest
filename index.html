@@ -19939,124 +19939,202 @@ function startFlashRecallGame() {
             }
             
              function startConversationPractice(conversationData, lessonContext) {
-                mainContent.innerHTML = '';
-                mainContent.appendChild(document.getElementById('conversation-practice-template').content.cloneNode(true));
-                mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full', 'pb-10');
-                
-                let currentLineIndex = 0;
-                const logContainer = document.getElementById('conversation-practice-log');
-                const feedbackContainer = document.getElementById('conversation-practice-feedback');
-                const micButton = document.getElementById('mic-button');
+    // 1. Setup UI
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('conversation-practice-template').content.cloneNode(true));
+    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full', 'pb-10');
 
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                const recognition = new SpeechRecognition();
-                recognition.lang = 'en-US';
-                recognition.interimResults = false;
+    let currentLineIndex = 0;
+    const logContainer = document.getElementById('conversation-practice-log');
+    const feedbackContainer = document.getElementById('conversation-practice-feedback');
+    const micButton = document.getElementById('mic-button');
 
-                function validateSpeech(transcript, validation) {
-                    if (!validation) return { success: true, feedback: "Let's continue!" }; 
-                    const transcriptLower = transcript.toLowerCase();
-                    
-                    const primaryFound = validation.primary.every(kw => transcriptLower.includes(kw.toLowerCase()));
-                    if (!primaryFound) return { success: false, feedback: "Missing key words. Try again." };
+    // 2. Initialize Speech Recognition safely
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        feedbackContainer.innerHTML = `<p class="text-red-400">Speech Recognition not supported in this browser.</p>`;
+        micButton.disabled = true;
+        return;
+    }
 
-                    let secondaryScore = 0;
-                    let totalSecondary = 0;
-                    if (validation.secondary) {
-                        for (const key in validation.secondary) {
-                            totalSecondary++;
-                            if (validation.secondary[key].some(kw => transcriptLower.includes(kw.toLowerCase()))) {
-                                secondaryScore++;
-                            }
-                        }
-                    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-                    if (totalSecondary > 0 && secondaryScore / totalSecondary < 0.5) {
-                        return { success: true, feedback: "Good! Try adding more detail." };
-                    }
-                    
-                    return { success: true, feedback: "Great!" };
-                }
+    let isUserTurn = false;
 
-                function handleConversationTurn() {
-                    if (currentLineIndex >= conversationData.length) {
-                        logContainer.innerHTML += `<p class="text-center font-bold text-green-400">Conversation Complete!</p>`;
-                        feedbackContainer.innerHTML = '';
-                        micButton.disabled = true;
-                        return;
-                    }
+    // 3. Validation Logic
+    function validateSpeech(transcript, validation) {
+        if (!validation) return { success: true, feedback: "Let's continue!" };
+        const transcriptLower = transcript.toLowerCase();
+        
+        // Check if primary keywords exist in what the user said
+        const primaryFound = validation.primary.every(kw => transcriptLower.includes(kw.toLowerCase()));
+        
+        if (!primaryFound) {
+            return { 
+                success: false, 
+                feedback: `Missed keywords. I heard: "${transcript}". Try again!` 
+            };
+        }
+        return { success: true, feedback: "Great job!" };
+    }
 
-                    const currentLine = conversationData[currentLineIndex];
-                    const isUserTurn = currentLine.speaker.toLowerCase() === 'you';
-                    
-                    const lineElement = document.createElement('div');
-                    lineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm ${isUserTurn ? 'bg-indigo-900/50' : 'bg-slate-800/50'}`;
-                    lineElement.innerHTML = `<div class="flex-shrink-0 font-bold ${isUserTurn ? 'text-pink-400' : 'text-cyan-400'} w-14 text-right">${currentLine.speaker}:</div><div class="flex-grow"><p class="font-semibold">${currentLine.line}</p></div>`;
-                    
-                    if (!isUserTurn) {
-                        micButton.disabled = true;
-                        logContainer.appendChild(lineElement);
-                        logContainer.scrollTop = logContainer.scrollHeight;
-                        speakText(currentLine.line, () => {
-                            currentLineIndex++;
-                            setTimeout(handleConversationTurn, 500);
-                        });
-                    } else {
-                        feedbackContainer.innerHTML = `<p class="text-cyan-300">Your turn! Tap the mic to speak.</p>`;
-                        micButton.disabled = false;
-                        micButton.onclick = () => {
-                            try {
-                                recognition.start();
-                            } catch(e) {
-                                feedbackContainer.innerHTML = `<p class="text-red-400">Mic already active. Please speak.</p>`;
-                            }
-                        };
-                    }
-                }
+    // 4. Helper to speak system lines
+    function speakSystemLine(text, callback) {
+        micButton.disabled = true;
+        micButton.classList.remove('mic-listening', 'bg-pink-600');
+        micButton.classList.add('bg-slate-600'); // Visual cue it's disabled
+        
+        // Use the global speakText function
+        speakText(text, null, () => {
+            if (callback) callback();
+        });
+    }
 
-                recognition.onstart = () => {
-                    micButton.classList.add('mic-listening');
-                    feedbackContainer.innerHTML = `<p class="text-amber-400">Listening...</p>`;
-                };
+    // 5. Prepare UI for User Turn
+    function setupUserTurn() {
+        const currentLine = conversationData[currentLineIndex];
+        isUserTurn = true;
+        
+        // Visual cues
+        feedbackContainer.innerHTML = `<p class="text-cyan-300 font-bold animate-pulse">Your turn! Tap mic & say: <br>"<span class="text-white">${currentLine.line}</span>"</p>`;
+        micButton.disabled = false;
+        micButton.classList.remove('bg-slate-600', 'mic-listening');
+        micButton.classList.add('bg-pink-600');
+    }
 
-                recognition.onend = () => {
-                    micButton.classList.remove('mic-listening');
-                    if(feedbackContainer.innerHTML.includes('Listening')) {
-                       feedbackContainer.innerHTML = `<p class="text-cyan-300">Tap the mic to try again.</p>`;
-                    }
-                };
+    // 6. Mic Button Click Handler
+    micButton.onclick = () => {
+        if (!isUserTurn) return;
 
-                recognition.onerror = (event) => {
-                    micButton.classList.remove('mic-listening');
-                    feedbackContainer.innerHTML = `<p class="text-red-400">Error or no speech detected. Please try again.</p>`;
-                };
-                
-                recognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    const currentLine = conversationData[currentLineIndex];
+        try {
+            recognition.start();
+            feedbackContainer.innerHTML = `<p class="text-amber-400 font-bold">Listening...</p>`;
+            micButton.classList.add('mic-listening');
+        } catch (e) {
+            console.warn("Recognition start error:", e);
+            // If already started, stop it so user can click again
+            recognition.stop();
+            feedbackContainer.innerHTML = `<p class="text-amber-400">Reseting mic... tap again.</p>`;
+            micButton.classList.remove('mic-listening');
+        }
+    };
 
-                    const userLineElement = document.createElement('div');
-                    userLineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm bg-indigo-900/50`;
-                    
-                    const validationResult = validateSpeech(transcript, currentLine.validation);
+    // 7. Recognition Events
+    recognition.onstart = () => {
+        micButton.classList.add('mic-listening');
+    };
 
-                    if (validationResult.success) {
-                        userLineElement.innerHTML = `<div class="flex-shrink-0 font-bold text-pink-400 w-14 text-right">You:</div><div class="flex-grow"><p class="font-semibold">${transcript}</p></div><div class="text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>`;
-                        feedbackContainer.innerHTML = `<p class="text-green-400 font-bold">${validationResult.feedback}</p>`;
-                        logContainer.appendChild(userLineElement);
-                        logContainer.scrollTop = logContainer.scrollHeight;
-                        currentLineIndex++;
-                        setTimeout(handleConversationTurn, 1200);
-                    } else {
-                         userLineElement.innerHTML = `<div class="flex-shrink-0 font-bold text-pink-400 w-14 text-right">You:</div><div class="flex-grow"><p class="font-semibold">${transcript}</p></div><div class="text-red-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>`;
-                        feedbackContainer.innerHTML = `<p class="text-red-400">Not quite. Try saying: "${currentLine.line}"</p>`;
-                        logContainer.appendChild(userLineElement);
-                        logContainer.scrollTop = logContainer.scrollHeight;
-                    }
-                };
-                
+    recognition.onend = () => {
+        micButton.classList.remove('mic-listening');
+        // If it stopped but we are still on the user's turn (no success yet), prompt to try again
+        if (isUserTurn) {
+             // Only update text if we haven't moved on
+             const currentText = feedbackContainer.innerText;
+             if(currentText.includes('Listening')) {
+                 feedbackContainer.innerHTML = `<p class="text-red-300">Didn't catch that. Tap to try again.</p>`;
+             }
+        }
+    };
+
+    recognition.onerror = (event) => {
+        micButton.classList.remove('mic-listening');
+        if (event.error === 'not-allowed') {
+            feedbackContainer.innerHTML = `<p class="text-red-500">Mic access denied. Check settings.</p>`;
+        } else if (event.error === 'no-speech') {
+            feedbackContainer.innerHTML = `<p class="text-orange-400">No speech detected. Tap again.</p>`;
+        } else {
+            feedbackContainer.innerHTML = `<p class="text-red-400">Error: ${event.error}. Tap again.</p>`;
+        }
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const currentLine = conversationData[currentLineIndex];
+        const validationResult = validateSpeech(transcript, currentLine.validation);
+
+        if (validationResult.success) {
+            // Success Logic
+            const userLineElement = document.createElement('div');
+            userLineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm bg-indigo-900/50 border border-indigo-500/30`;
+            userLineElement.innerHTML = `
+                <div class="flex-shrink-0 font-bold text-pink-400 w-14 text-right">You:</div>
+                <div class="flex-grow"><p class="font-semibold text-white">${transcript}</p></div>
+                <div class="text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+            `;
+            logContainer.appendChild(userLineElement);
+            feedbackContainer.innerHTML = `<p class="text-green-400 font-bold">${validationResult.feedback}</p>`;
+            
+            isUserTurn = false; // Stop allowing clicks
+            micButton.classList.remove('mic-listening');
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Advance to next line
+            currentLineIndex++;
+            setTimeout(handleConversationTurn, 1000);
+        } else {
+            // Failure Logic
+            feedbackContainer.innerHTML = `<p class="text-red-400 text-sm font-bold">${validationResult.feedback}</p>`;
+        }
+    };
+
+    // 8. Main Conversation Flow Control
+    function handleConversationTurn() {
+        // Check if conversation ended
+        if (currentLineIndex >= conversationData.length) {
+            logContainer.innerHTML += `
+                <div class="p-4 mt-4 bg-green-900/30 rounded-xl border border-green-500/30 text-center pop-in">
+                    <p class="font-bold text-green-400 text-lg">Conversation Complete! 🎉</p>
+                    <button id="restart-convo-btn" class="mt-3 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg transition-transform hover:scale-105">Practice Again</button>
+                </div>`;
+            feedbackContainer.innerHTML = '';
+            micButton.disabled = true;
+            micButton.classList.add('hidden');
+            
+            document.getElementById('restart-convo-btn').addEventListener('click', () => {
+                startConversationPractice(conversationData, lessonContext);
+            });
+            logContainer.scrollTop = logContainer.scrollHeight;
+            return;
+        }
+
+        const currentLine = conversationData[currentLineIndex];
+        const isUser = currentLine.speaker.toLowerCase() === 'you';
+
+        if (!isUser) {
+            // System Speaker Logic
+            const lineElement = document.createElement('div');
+            lineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm bg-slate-800/50 opacity-0 pop-in`;
+            lineElement.style.animationFillMode = 'forwards';
+            
+            lineElement.innerHTML = `
+                <div class="flex-shrink-0 font-bold text-cyan-400 w-14 text-right">${currentLine.speaker}:</div>
+                <div class="flex-grow">
+                    <p class="font-semibold text-white">${currentLine.line}</p>
+                    <p class="text-xs text-slate-400 mt-1">${currentLine.hindi}</p>
+                </div>
+            `;
+            logContainer.appendChild(lineElement);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            feedbackContainer.innerHTML = `<p class="text-slate-400 text-xs italic">Listening to ${currentLine.speaker}...</p>`;
+            
+            // Speak, then callback to move to next turn
+            speakSystemLine(currentLine.line, () => {
+                currentLineIndex++;
                 handleConversationTurn();
-            }
+            });
+        } else {
+            // User Turn Setup
+            setupUserTurn();
+        }
+    }
+
+    // Start the loop
+    handleConversationTurn();
+}
 
             function startJumbledQuiz(questions, lessonData, quizId, savedState = null) {
                 let score = savedState?.score || 0;
