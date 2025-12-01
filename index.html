@@ -18733,21 +18733,31 @@ function startWordRainGame(allWordsPool, originalTitle, gradClass, challengeOpti
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <div id="rain-lives" class="flex gap-1"></div>
-                    <button id="quit-rain-game" class="p-2 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20">
+                    <div id="rain-lives" class="flex gap-1 text-lg">
+                        <span class="rain-heart">❤️</span><span class="rain-heart">❤️</span><span class="rain-heart">❤️</span>
+                    </div>
+                    <!-- Compact Quit Button (X Icon) -->
+                    <!-- FIX: ID changed to 'quit-rain-game' to match JS selector -->
+                    <button id="quit-rain-game" class="bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-200 p-2 rounded-full transition-colors ml-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
             </div>
+
+            <!-- Game Area (Fills Remaining Space) -->
             <div id="rain-game-container" class="relative flex-grow w-full overflow-hidden">
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-32 bg-slate-800/50 blur-xl rounded-full pointer-events-none"></div>
                 <div id="water-line" class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-blue-500/30 to-transparent border-b-4 border-blue-500 z-10 flex items-end justify-center pb-2">
                     <span class="text-blue-300 text-xs font-bold tracking-widest uppercase animate-pulse">Danger Zone</span>
                 </div>
             </div>
+
+            <!-- Options Area (Fixed at Bottom) -->
             <div class="relative z-30 bg-slate-900 border-t border-white/10 p-4 pb-8 shrink-0">
                 <div id="rain-options-grid" class="grid grid-cols-2 gap-3 max-w-md mx-auto"></div>
             </div>
+
+            <!-- Game Over Modal -->
             <div id="rain-over-modal" class="hidden absolute inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
                 <div class="bg-slate-800 border border-white/10 p-6 rounded-3xl text-center w-full max-w-sm pop-in shadow-2xl">
                     <div class="text-6xl mb-4">⛈️</div>
@@ -18768,10 +18778,11 @@ function startWordRainGame(allWordsPool, originalTitle, gradClass, challengeOpti
     let score = 0;
     let lives = 3;
     let streak = 0;
+    let wordsCorrectCount = 0; 
     let gameLoopId;
     let currentFallingWord = null;
     let isGameOver = false;
-    let dropSpeed = 1.5; 
+    let dropSpeed = 1.0; 
 
     const container = document.getElementById('rain-game-container');
     const optionsGrid = document.getElementById('rain-options-grid');
@@ -18828,13 +18839,17 @@ function startWordRainGame(allWordsPool, originalTitle, gradClass, challengeOpti
                     vibrate(20);
                     score += 10 + (streak * 2);
                     streak++;
+                    wordsCorrectCount++; 
+                    
                     scoreEl.textContent = score;
                     streakEl.textContent = streak;
                     btn.className = "bg-green-500 text-white font-bold py-4 px-2 rounded-xl text-sm shadow-lg transform scale-105 border border-green-400";
                     currentFallingWord.el.style.transform = `translate(-50%, -20px) scale(1.5)`;
                     currentFallingWord.el.style.opacity = '0';
                     if(streak % 5 === 0) showConfetti();
-                    dropSpeed = Math.min(4, 1.5 + (score / 200));
+                    
+                    // Speed Logic
+                    dropSpeed = Math.min(5.0, 1.0 + (Math.floor(wordsCorrectCount / 5) * 0.2));
 
                     setTimeout(() => {
                         if(currentFallingWord) currentFallingWord.el.remove();
@@ -18906,23 +18921,25 @@ function startWordRainGame(allWordsPool, originalTitle, gradClass, challengeOpti
         isGameOver = true;
         cancelAnimationFrame(gameLoopId);
 
-        // --- CHALLENGE LOGIC ---
         if (challengeOptions && challengeOptions.isChallenge) {
             if(quitBtn) quitBtn.style.display = 'none';
             saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, score);
             return; 
         }
-        // -----------------------
 
         finalScoreEl.textContent = score;
         modal.classList.remove('hidden');
         if (typeof addQuizResult === 'function') {
             addQuizResult(`${originalTitle} (Word Rain)`, Math.floor(score/10), 0); 
         }
-        quitBtn.style.display = 'none';
+        if(quitBtn) quitBtn.style.display = 'none';
     };
 
-    quitBtn.onclick = () => { if(confirm("Quit game?")) cleanup(); };
+    // Safety check in case quitBtn is null (though it shouldn't be with fixed ID)
+    if (quitBtn) {
+        quitBtn.onclick = () => { if(confirm("Quit game?")) cleanup(); };
+    }
+    
     document.getElementById('exit-game-btn-modal').onclick = cleanup;
     document.getElementById('restart-game-btn-rain').onclick = () => {
         modal.classList.add('hidden');
@@ -21644,43 +21661,73 @@ function showChallengeResults(challengeId, challengeData) {
             }
 
             async function addQuizResult(title, score, total) {
-                if (!userProfile || !userId) return;
+                if (!userProfile || !userId) {
+                    console.warn("Skipping quiz save: User not authenticated.");
+                    return;
+                }
 
-                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizResult"; // <<< PASTE URL HERE
+                const functionUrl = "https://us-central1-lingoquest-876e1.cloudfunctions.net/saveQuizResult"; 
                 
+                // --- DATA SANITIZATION (Fixes the 400 Error) ---
+                // 1. Ensure title is a string
+                const cleanTitle = String(title || "Unknown Activity");
+                
+                // 2. Ensure score is a number
+                const cleanScore = parseInt(score) || 0;
+                
+                // 3. Ensure total is a valid number > 0. 
+                // If total is 0 (like in endless games), we set it equal to score 
+                // (implying 100% accuracy for the points earned) or default to 10 to avoid divide-by-zero errors.
+                let cleanTotal = parseInt(total) || 0;
+                if (cleanTotal <= 0) {
+                    cleanTotal = cleanScore > 0 ? cleanScore : 10;
+                }
+
                 try {
                     const response = await fetch(functionUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             userId: userId,
-                            title: title,
-                            score: score,
-                            total: total
+                            title: cleanTitle,
+                            score: cleanScore,
+                            total: cleanTotal
                         }),
                     });
 
                     if (!response.ok) {
-                        throw new Error(`Server responded with status: ${response.status}`);
+                        // Log the actual server error message for debugging
+                        const errorDetails = await response.text();
+                        throw new Error(`Server responded with status: ${response.status}. Details: ${errorDetails}`);
                     }
 
                     const result = await response.json();
-                    console.log("Quiz result saved and streak updated:", result);
+                    console.log("Quiz result saved successfully:", result);
 
-                    // The server function now handles the streak.
-                    // We just need to update our local userProfile object with the new streak info.
+                    // Update local user profile with new streak
                     userProfile.streak = result.newStreak;
-                    userProfile.lastQuizDate = new Date(result.lastQuizDate); // Convert ISO string to Date
                     
-                    // Manually add the new quiz to the local history for UI refresh
+                    // Safely parse the date
+                    try {
+                        userProfile.lastQuizDate = new Date(result.lastQuizDate); 
+                    } catch (e) {
+                        userProfile.lastQuizDate = new Date();
+                    }
+                    
+                    // Update local history UI
                     if (!userProfile.quizHistory) userProfile.quizHistory = [];
-                    userProfile.quizHistory.unshift({ title, score, total, date: new Date() });
-                    if (userProfile.quizHistory.length > 10) userProfile.quizHistory.pop(); // Keep list at 10
+                    userProfile.quizHistory.unshift({ 
+                        title: cleanTitle, 
+                        score: cleanScore, 
+                        total: cleanTotal, 
+                        date: new Date() 
+                    });
+                    
+                    // Keep history list manageable (max 20 items)
+                    if (userProfile.quizHistory.length > 20) userProfile.quizHistory.pop();
 
                 } catch (error) {
                     console.error("Error saving quiz result via Cloud Function:", error);
-                    // MODIFIED: Commented out alert to prevent user interruption on game over
-                    // alert("Could not save your quiz result. Please check your connection.");
                 }
             }
 
