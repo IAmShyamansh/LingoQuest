@@ -34,64 +34,80 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Nunito:wght@900&display=swap');
         
-        :root {
-            --bg-dark: #1F2335;
-            --text-light: #f1f5f9;
-            --text-muted: #a1a1aa;
-            --accent-pink: #ec4899;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-yellow: #f59e0b;
-        }
 
-        html, body { overflow-x: hidden; }
+:root {
+    --bg-light: #F8FAFC;      /* Light Slate Background */
+    --text-dark: #1e293b;     /* Dark Navy Text */
+    --text-muted: #64748b;
+    
+    /* Keep accents for game logic, but UI will use pastels */
+    --accent-pink: #ec4899;
+    --accent-green: #10b981; 
+}
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            overscroll-behavior-y: none;
-            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
-            background-size: 1.5rem 1.5rem;
-            position: relative;
-        }
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    overscroll-behavior-y: none;
+    /* Subtle dot pattern for texture */
+    background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    background-size: 20px 20px;
+    position: relative;
+    padding-top: 60px;    /* Space for top nav */
+    padding-bottom: 70px; /* Space for bottom nav */
+}
 
-        .word-item p, #header-subtitle, #search-bar, .quiz-option, #search-suggestions div, .glass-ui h2, .dictionary-result, .mode-card p, .explanation-card p, .lesson-content, .sentence-item {
-             font-family: 'Inter', sans-serif;
-        }
+/* The Bento Card Class */
+.bento-card {
+    position: relative;
+    border-radius: 24px; /* Super rounded corners */
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    overflow: hidden;
+    border-bottom-width: 4px; /* 3D effect */
+    /* Default shadow */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
 
-        .category-card {
-            background-size: 200% 200%;
-            transition: transform 0.3s ease, background-position 0.5s ease;
-            aspect-ratio: 1 / 1;
-        }
-        .category-card:hover {
-            transform: scale(1.03);
-            background-position: right center;
-        }
-        
-        .mode-card { transition: transform 0.3s ease, background-color 0.3s; }
-        .mode-card:not([disabled]):hover {
-            transform: scale(1.05);
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-        .mode-card[disabled] {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+.bento-card:active {
+    transform: scale(0.96);
+    border-bottom-width: 0px; /* Press down effect */
+    margin-top: 4px;          /* Maintain alignment */
+}
 
-        .grad-1 { background-image: linear-gradient(to right, #4338ca, #6d28d9, #be185d); }
-        .grad-2 { background-image: linear-gradient(to right, #059669, #1d4ed8, #4f46e5); }
-        .grad-3 { background-image: linear-gradient(to right, #db2777, #9333ea, #4a044e); }
-        .grad-4 { background-image: linear-gradient(to right, #ea580c, #c026d3, #7e22ce); }
-        .grad-5 { background-image: linear-gradient(to right, #16a34a, #0284c7, #4f46e5); }
-        .grad-6 { background-image: linear-gradient(to right, #be123c, #b91c1c, #7f1d1d); }
-        .grad-7 { background-image: linear-gradient(to right, #1d4ed8, #0ea5e9, #0284c7); }
-        .grad-8 { background-image: linear-gradient(to right, #0891b2, #06b6d4, #22d3ee); }
-        .grad-9 { background-image: linear-gradient(to right, #d946ef, #8b5cf6, #3b82f6); }
-        .grad-10 { background-image: linear-gradient(to right, #14b8a6, #22c55e, #84cc16); }
-        .grad-fav { background-image: linear-gradient(to right, #f59e0b, #facc15, #eab308); }
-        .grad-nav { background-image: linear-gradient(to right, #4338ca, #be185d); }
+/* Sub-Category List Bar */
+.list-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    border-radius: 16px;
+    background-color: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.list-bar:active {
+    transform: scale(0.98);
+    background-color: #f1f5f9;
+}
+
+/* Nav Bars - Switch to White Glass */
+#top-nav, #bottom-nav {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(0,0,0,0.05);
+}
+
+/* Text Updates */
+#top-nav-title { color: #0f172a !important; } 
+.nav-btn { color: #94a3b8; }
+.nav-btn.active { color: #ec4899; }
+.nav-btn:hover { color: #334155; }
         
         .word-item, .explanation-card, .sentence-item {
             cursor: pointer;
@@ -1791,6 +1807,228 @@
     background: rgba(0, 0, 0, 0.6);
 }
 
+/* --- LIGHT MODE NAV BAR OVERRIDES --- */
+
+/* Force the nav bars to be light glass */
+#top-nav, #bottom-nav {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(0,0,0,0.1) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+/* Force the top title to be dark */
+#top-nav-title {
+    color: #1e293b !important; /* Dark Navy */
+    text-shadow: none !important;
+}
+
+/* Force bottom nav icons to be dark grey (inactive) */
+.nav-btn {
+    color: #94a3b8 !important; /* Slate 400 */
+}
+
+/* Force bottom nav active state to be Pink */
+.nav-btn.active {
+    color: #ec4899 !important; /* Pink 600 */
+    transform: scale(1.1);
+}
+
+/* Ensure text inside bento boxes is readable */
+.bento-card h2, .bento-card p {
+    color: inherit; /* Uses the text color defined in bentoConfig */
+}
+
+/* --- LIGHT MODE VISIBILITY FIXES --- */
+
+/* --- LIGHT MODE VISIBILITY FIXES (UPDATED) --- */
+
+/* 1. Fix List Items (Words & Sentences) */
+.word-content.front, 
+.sentence-item, 
+.explanation-card {
+    /* Background color removed here so JS can set pastel colors */
+    border: 1px solid rgba(0,0,0,0.05) !important; 
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important; 
+    color: #0f172a !important; /* Dark Text */
+    margin-bottom: 0.75rem; 
+}
+
+/* 2. Fix Toggle Button (List/Flashcard) */
+.toggle-btn-light {
+    background-color: #1e293b !important; /* Dark Navy */
+    color: #ffffff !important; /* White Text */
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+}
+.toggle-btn-light:hover {
+    background-color: #334155 !important;
+}
+
+/* 3. Fix Checkbox Visibility */
+.done-checkbox {
+    border: 2px solid #cbd5e1 !important;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* --- MOBILE FIT & COLOR UPDATES --- */
+
+/* 1. Home Grid Container: Locks height on mobile to prevent scrolling */
+#bento-grid-container {
+    height: calc(100vh - 120px); /* Viewport - Nav Bars (Top 56 + Bottom 64 approx) */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 4px; /* Tiny buffer */
+}
+
+#bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr); /* Force 5 equal rows */
+    gap: 0.75rem;
+    height: 100%;
+    width: 100%;
+}
+
+/* 2. Cards stretch to fill their grid slots */
+.bento-card {
+    height: 100%; 
+    width: 100%;
+    border-radius: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically center content */
+    border-bottom-width: 4px;
+}
+
+/* 3. Colorful Buttons (High Visibility) */
+.btn-gradient-quiz {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important; /* Indigo */
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+    border: none !important;
+}
+.btn-gradient-challenge {
+    background: linear-gradient(135deg, #ec4899, #f43f5e) !important; /* Pink */
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4) !important;
+    border: none !important;
+}
+.btn-gradient-scramble {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important; /* Amber */
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+    border: none !important;
+}
+
+/* 4. Pastel Word Cards */
+.pastel-card {
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+    color: #1e293b !important;
+}
+
+/* Mobile Text Adjustment for Home Grid */
+@media (max-height: 700px) {
+    .bento-card h2 { font-size: 0.85rem !important; }
+    .bento-card svg { width: 24px; height: 24px; }
+}
+
+/* --- FIX MODAL & TEXT VISIBILITY --- */
+
+/* 1. Force Modal Backgrounds to be Solid White (Not Glass) in Light Mode */
+#quiz-length-selection .mode-card,
+#quiz-mode-selection .mode-card,
+#game-difficulty-select-template .mode-card,
+.glass-ui {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important; /* Light Grey Border */
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 2. Force Headings in Modals to be Dark */
+.glass-ui h2, .glass-ui h1, .glass-ui h3 {
+    color: #1e293b !important; /* Dark Navy */
+}
+
+/* 3. Force Paragraphs in Modals to be Dark Grey */
+.glass-ui p {
+    color: #64748b !important; /* Slate 500 */
+}
+
+/* 4. Top Nav Colored Title Pill */
+#top-nav-title.colored-pill {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* --- FINAL VISIBILITY POLISH --- */
+.colored-pill {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+#quiz-length-selection button, 
+#quiz-mode-selection button {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+#quiz-length-selection button:active, 
+#quiz-mode-selection button:active {
+    transform: scale(0.98);
+}
+/* Make Dictionary Input Text Dark */
+#dictionary-search-input {
+    color: #1e293b !important;
+}
+
+/* --- QUIZ & PASSKEY VISIBILITY FIXES --- */
+
+/* 1. Quiz Options: Make them look like separate colorful buttons */
+.quiz-option {
+    background-color: #ffffff !important;
+    color: #334155 !important; /* Slate 700 */
+    border: 2px solid #e2e8f0 !important; /* Visible Grey Border */
+    border-radius: 16px !important;
+    padding: 16px 20px !important;
+    margin-bottom: 12px !important; /* Adds gap between buttons */
+    box-shadow: 0 4px 0 #e2e8f0 !important; /* 3D Bottom Shadow */
+    transition: all 0.1s ease !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+/* 2. Quiz Option Hover/Active Effect */
+.quiz-option:active {
+    transform: translateY(4px) !important; /* Press down effect */
+    box-shadow: none !important;
+    background-color: #f1f5f9 !important;
+}
+
+/* 3. Correct Answer (Green) */
+.quiz-option.correct {
+    background-color: #d1fae5 !important; /* Light Green */
+    border-color: #10b981 !important;
+    color: #065f46 !important;
+    box-shadow: 0 4px 0 #10b981 !important;
+}
+
+/* 4. Incorrect Answer (Red) */
+.quiz-option.incorrect {
+    background-color: #fee2e2 !important; /* Light Red */
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+    box-shadow: 0 4px 0 #ef4444 !important;
+}
+
+/* 5. Quiz Question Text */
+#quiz-content-container p.text-2xl {
+    color: #1e293b !important; /* Dark Navy */
+    text-shadow: none !important;
+}
+
     </style>
 </head>
 <body class="min-h-screen">
@@ -1914,16 +2152,25 @@
              <div id="user-profile-content" class="text-white"></div>
         </div>
     </div>
-    <div id="passkey-modal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-    <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
-         <h2 class="text-2xl font-bold text-white mb-2 text-center">Enter Passkey</h2>
-         <p class="text-slate-300 text-center mb-6">This app is restricted. Please enter the passkey to proceed.</p>
-         <div class="mb-4">
-            <label for="passkey-input" class="block text-sm font-bold text-slate-200 mb-2">Passkey:</label>
-            <input type="password" id="passkey-input" placeholder="Enter passkey..." class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
+    <div id="passkey-modal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-white p-8 rounded-3xl max-w-sm w-full relative pop-in border border-slate-200 shadow-2xl">
+         <div class="text-center mb-6">
+             <div class="w-12 h-12 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+             </div>
+             <h2 class="text-2xl font-black text-slate-900">Enter Passkey</h2>
+             <p class="text-slate-500 text-sm mt-1">This area is restricted.</p>
          </div>
-         <p id="passkey-error" class="text-red-400 text-sm text-center mb-4 hidden">Invalid passkey. Please try again.</p>
-         <button id="save-passkey-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Submit</button>
+         
+         <div class="mb-6">
+            <input type="password" id="passkey-input" placeholder="Type passkey here..." class="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border-2 border-slate-200 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 rounded-xl py-3 px-4 outline-none transition-all font-bold text-center tracking-widest">
+         </div>
+         
+         <p id="passkey-error" class="text-red-500 text-sm text-center mb-4 font-bold hidden bg-red-50 p-2 rounded-lg border border-red-100">Invalid passkey.</p>
+         
+         <button id="save-passkey-btn" class="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-pink-200 transition-transform active:scale-95">
+            Submit
+         </button>
     </div>
 </div>
 <!-- END: Add this Passkey Modal -->
@@ -3111,6 +3358,50 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
             let allWords = [];
             let allCategoriesMap = new Map();
             const batchTimes = ["7:30 AM", "9:00 AM", "10:30 AM", "4:00 PM", "5:30 PM", "7:00 PM"];
+
+            // Configuration for Bento Grid (Icons, Colors, Sizes)
+const bentoConfig = {
+    "Vocabulary Builder": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M12 22v-9"/><path d="M9 8a3 3 0 0 1 3-3 3 3 0 0 1 3 3"/><path d="M12 13a4 4 0 0 0-4-4H6"/><path d="M12 13a4 4 0 0 1 4-4h2"/></svg>`, 
+        bg: "bg-emerald-100", text: "text-emerald-900", border: "border-emerald-200",
+        span: "col-span-1" // Small Box
+    },
+    "Advanced Vocabulary": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.1 4-1 4-1s.38 2.38-1 4z"/><path d="M12 15v5s3.03-.55 4-2c1.1-1.62 1-4 1-4s-2.38-.38-4 1z"/></svg>`, 
+        bg: "bg-violet-100", text: "text-violet-900", border: "border-violet-200",
+        span: "col-span-1" // Small Box
+    },
+    "Phrases & Idioms": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`, 
+        bg: "bg-orange-100", text: "text-orange-900", border: "border-orange-200",
+        span: "col-span-2" // Big Box
+    },
+    "Conversational English": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>`, 
+        bg: "bg-sky-100", text: "text-sky-900", border: "border-sky-200",
+        span: "col-span-1" // Small Box
+    },
+    "Discussion Questions": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`, 
+        bg: "bg-yellow-100", text: "text-yellow-900", border: "border-yellow-200",
+        span: "col-span-1" // Small Box
+    },
+    "Sentence Structure": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`, 
+        bg: "bg-teal-100", text: "text-teal-900", border: "border-teal-200",
+        span: "col-span-1" // Small Box
+    },
+    "Grammar & Rules": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`, 
+        bg: "bg-pink-100", text: "text-pink-900", border: "border-pink-200",
+        span: "col-span-1" // Small Box
+    },
+    "Dictionary": { 
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-2 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`, 
+        bg: "bg-indigo-100", text: "text-indigo-900", border: "border-indigo-200",
+        span: "col-span-2" // Big Box at bottom for balance
+    }
+};
 
             const originalSynonymsData = {
                 "A":[
@@ -17668,71 +17959,118 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 return array;
             }
 
-            function updateTopNav({ title = '', showBack = false, showLogo = false, showActions = false, gradClass = null } = {}) {
-                topNavLeft.innerHTML = '';
-                topNavTitle.textContent = title;
-                topNavRight.innerHTML = '';
+            function updateTopNav({ title = '', showBack = false, showLogo = false, showActions = false, gradClass = null, theme = null } = {}) {
+    topNavLeft.innerHTML = '';
+    topNavTitle.textContent = title;
+    topNavRight.innerHTML = '';
 
-                if (showActions) {
-                    const actionsTemplate = document.getElementById('top-nav-actions-template');
-                    topNavRight.appendChild(actionsTemplate.content.cloneNode(true));
-                    topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); aboutModal.classList.remove('hidden'); });
-                    topNavRight.querySelector('#search-btn').addEventListener('click', () => {
-                        vibrate();
-                        searchModalSuggestions.innerHTML = '';
-                        searchModalBar.value = '';
-                        searchOverlay.classList.remove('hidden');
-                        searchModalBar.focus();
-                    });
-                }
+    // 1. Setup Actions (Search, About)
+    if (showActions) {
+        const actionsTemplate = document.getElementById('top-nav-actions-template');
+        topNavRight.appendChild(actionsTemplate.content.cloneNode(true));
+        
+        const icons = topNavRight.querySelectorAll('svg');
+        icons.forEach(icon => icon.classList.add('text-slate-400')); // Made slightly darker for visibility
 
-                topNavTitle.className = 'text-lg font-bold text-white w-full text-center truncate px-2';
-                topNavTitle.onclick = null;
+        topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); aboutModal.classList.remove('hidden'); });
+        topNavRight.querySelector('#search-btn').addEventListener('click', () => {
+            vibrate();
+            searchModalSuggestions.innerHTML = '';
+            searchModalBar.value = '';
+            searchOverlay.classList.remove('hidden');
+            searchModalBar.focus();
+        });
+    }
 
-                if (gradClass) {
-                    topNavTitle.classList.remove('text-lg');
-                    topNavTitle.classList.add(gradClass, 'px-6', 'py-2', 'rounded-full', 'text-base', 'font-bold', 'cursor-pointer', 'transition-transform', 'hover:scale-105', 'shadow-lg', 'whitespace-nowrap');
-                    topNavTitle.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+    // 2. Interactive Title (Scroll to Top Button)
+    topNavTitle.className = 'text-lg font-black text-slate-800 w-full text-center truncate px-4 cursor-pointer active:scale-95 transition-transform duration-200 select-none';
+    
+    topNavTitle.onclick = () => {
+        vibrate(10);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-                if (showBack) {
-                    const backButtonTemplate = document.getElementById('back-button-template');
-                    topNavLeft.appendChild(backButtonTemplate.content.cloneNode(true));
-                    topNavLeft.querySelector('#back-btn').addEventListener('click', () => { vibrate(); goBack(); });
-                } else if (showLogo) {
-                    const logoTemplate = document.getElementById('logo-template');
-                    topNavLeft.appendChild(logoTemplate.content.cloneNode(true));
-                }
-            }
+    // 3. Apply Theme or Gradient Styles
+    if (theme && typeof theme === 'object') {
+        topNavTitle.classList.remove('text-lg', 'text-slate-800');
+        // Add background colors/borders from theme + White Text
+        topNavTitle.className += ` px-6 py-2 rounded-full text-sm shadow-md border border-white/20 text-white ${theme.bg || ''} ${theme.text || ''}`;
+        // Ensure text is visible on colored backgrounds (override if theme.text is dark)
+        if (theme.bg.includes('bg-white') || theme.bg.includes('bg-slate-50')) {
+             // keep dark text
+        } else {
+             // force white text for colored pills
+             topNavTitle.classList.remove('text-slate-800');
+             topNavTitle.classList.add('text-white'); 
+        }
+    } 
+    else if (gradClass && typeof gradClass === 'string') {
+        topNavTitle.classList.remove('text-lg', 'text-slate-800');
+        topNavTitle.classList.add(gradClass, 'px-6', 'py-2', 'rounded-full', 'text-white', 'text-sm', 'shadow-md');
+    }
+
+    // 4. Setup Left Side (Back Button or Logo)
+    if (showBack) {
+        const backButtonTemplate = document.getElementById('back-button-template');
+        topNavLeft.appendChild(backButtonTemplate.content.cloneNode(true));
+        const backBtn = topNavLeft.querySelector('#back-btn');
+        
+        // FIX: Force visibility. Remove old classes and add specific high-contrast ones.
+        backBtn.className = 'p-2 rounded-full bg-white shadow-sm border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors';
+        
+        backBtn.addEventListener('click', () => { vibrate(); goBack(); });
+    } else if (showLogo) {
+        const logoTemplate = document.getElementById('logo-template');
+        topNavLeft.appendChild(logoTemplate.content.cloneNode(true));
+    }
+}
             
             function updateBottomNavActiveState(viewName) {
                 document.querySelectorAll('#bottom-nav button').forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewName));
             }
 
-            function switchView(viewName, options = {}) {
-                if (activeView === viewName && !options.forceRender) return;
-                if (options.isSubView) navStack.push({ view: activeView, options: options.from || {} });
-                activeView = viewName;
-                mainContent.innerHTML = ''; 
-                window.scrollTo(0, 0); 
-                updateBottomNavActiveState(viewName);
-                
-                switch (viewName) {
-                    case 'home': renderHomeView(); break;
-                    case 'favorites': renderFavoritesView(); break;
-                    case 'gameZone': renderGameZoneView(); break;
-                    case 'learningPath': renderLearningPath(); break;
-                    case 'gameDifficultySelect': renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); break;
-                    case 'quizHub': renderQuizHubView(); break;
-                    case 'profile': displayProfileModal(); break;
-                    case 'dictionary': renderDictionaryView(); break;
-                    case 'synonymsView': renderSynonymsView(options.gradClass); break;
-                    case 'wordList': renderWords(options.title, options.words, options.gradClass, options.extra); break;
-                    case 'categoryList': renderCategoryListView(options.categories, options.title, options.subtitle, options.gradClass); break;
-                    case 'studyLesson': renderStudyHallLesson(options.title, options.subtitle, options.content, options.gradClass); break;
-                    case 'subtopicSelection': renderSubtopicSelection(options.title, options.subtitle, options.subtopics, options.gradClass); break;
-                }
-            }
+            // --- REPLACE YOUR EXISTING switchView FUNCTION WITH THIS ---
+
+function switchView(viewName, options = {}) {
+    // --- GLOBAL RESET: Fix Scrolling Issues ---
+    // Always enable scrolling and reset padding when switching views
+    document.body.style.overflow = 'auto'; 
+    document.body.style.paddingTop = '56px'; 
+    document.body.style.paddingBottom = '56px';
+
+    // Ensure Nav bars are visible by default (Games can hide them later)
+    const topNav = document.getElementById('top-nav');
+    const bottomNav = document.getElementById('bottom-nav');
+    if(topNav) {
+        topNav.classList.remove('hidden');
+        topNav.className = "flex items-center justify-center px-4"; // Reset layout
+    }
+    if(bottomNav) bottomNav.classList.remove('hidden');
+
+    if (activeView === viewName && !options.forceRender) return;
+    if (options.isSubView) navStack.push({ view: activeView, options: options.from || {} });
+    
+    activeView = viewName;
+    mainContent.innerHTML = ''; 
+    window.scrollTo(0, 0); 
+    updateBottomNavActiveState(viewName);
+    
+    switch (viewName) {
+        case 'home': renderHomeView(); break; // This function will re-lock scroll specifically for Home
+        case 'favorites': renderFavoritesView(); break;
+        case 'gameZone': renderGameZoneView(); break;
+        case 'learningPath': renderLearningPath(); break;
+        case 'gameDifficultySelect': renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); break;
+        case 'quizHub': renderQuizHubView(); break;
+        case 'profile': displayProfileModal(); break;
+        case 'dictionary': renderDictionaryView(); break;
+        case 'synonymsView': renderSynonymsView(options.gradClass); break;
+        case 'wordList': renderWords(options.title, options.words, options.gradClass, options.extra); break;
+        case 'categoryList': renderCategoryListView(options.categories, options.title, options.subtitle, options.gradClass); break;
+        case 'studyLesson': renderStudyHallLesson(options.title, options.subtitle, options.content, options.gradClass); break;
+        case 'subtopicSelection': renderSubtopicSelection(options.title, options.subtitle, options.subtopics, options.gradClass); break;
+    }
+}
             
             function isSameDay(d1, d2) {
                 return d1 && d2 && d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
@@ -18088,162 +18426,256 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 }
             }
 
-            function renderHomeView() {
-    // 1. RESTORE NAV BARS (Critical fix)
+            // --- REPLACE THIS FUNCTION ---
+function renderHomeView() {
     const topNav = document.getElementById('top-nav');
     const bottomNav = document.getElementById('bottom-nav');
-    
-    if(topNav) {
-        topNav.classList.remove('hidden');
-        // Reset any custom styling that might have been applied by other views
-        topNav.className = "flex items-center justify-center px-4"; 
-    }
+    if(topNav) topNav.classList.remove('hidden');
     if(bottomNav) bottomNav.classList.remove('hidden');
     
-    document.body.style.overflow = '';
-    document.body.style.paddingTop = '56px'; // Ensure padding for fixed header
+    // Lock scroll ONLY for home view
+    document.body.style.overflow = 'hidden'; 
 
-    // 2. Set Standard Header Content
     updateTopNav({ showLogo: true, showActions: true });
 
-    // 3. Render Home Template
-    const template = document.getElementById('home-view-template');
-    mainContent.innerHTML = '';
-    mainContent.appendChild(template.content.cloneNode(true));
+    // We use the specific ID 'bento-grid-container' to target the CSS height calculation
+    mainContent.innerHTML = `
+    <div id="bento-grid-container" class="w-full max-w-lg mx-auto p-3">
+        <div id="bento-grid"></div>
+    </div>`;
 
-    // 4. Populate Grid
-    const categoryGridEl = mainContent.querySelector('#category-grid');
-    categoryGridEl.innerHTML = '';
-    
+    const gridEl = document.getElementById('bento-grid');
     let i = 0;
+
     homeScreenOrder.forEach(categoryName => {
-        const data = vocabularyData[categoryName];
-        if (!data && categoryName !== 'Dictionary' && categoryName !== 'Grammar & Rules') return;
+        const config = bentoConfig[categoryName] || { icon: '📁', bg: 'bg-slate-100', span: 'col-span-1' };
         
         const card = document.createElement('div');
-        let gradClass;
-
-        const specificGradients = {
-            "Conversational English": 'grad-9',
-            "Sentence Structure": 'grad-4',
-            "Dictionary": 'grad-5',
-            "Phrases & Idioms": 'grad-3',
-            "Grammar & Rules": 'grad-7',
-            "Discussion Questions": 'grad-8'
-        };
-
-        if (specificGradients[categoryName]) {
-            gradClass = specificGradients[categoryName];
+        // Apply config styles
+        card.className = `bento-card pop-in ${config.bg} ${config.border} ${config.span} px-4 py-2 relative cursor-pointer`;
+        card.style.animationDelay = `${i * 50}ms`;
+        
+        // Layout logic: Wide vs Square
+        if (config.span === 'col-span-2') {
+            // Wide Card (Horizontal Layout)
+            card.innerHTML = `
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex flex-col items-start">
+                        <div class="mb-1 text-slate-800 opacity-90">${config.icon}</div>
+                        <h2 class="text-lg font-black leading-none ${config.text}">${categoryName}</h2>
+                    </div>
+                    <div class="opacity-10 transform scale-150 origin-right">
+                        ${config.icon}
+                    </div>
+                </div>
+            `;
         } else {
-            gradClass = gradients[i % gradients.length];
+            // Square Card (Vertical Layout)
+            card.innerHTML = `
+                <div class="flex flex-col items-start h-full justify-between py-1">
+                    <div class="mb-1 text-slate-800 opacity-90 scale-90 origin-left">${config.icon}</div>
+                    <h2 class="text-xs sm:text-sm font-extrabold leading-tight ${config.text}">${categoryName}</h2>
+                </div>
+            `;
         }
 
-        if (data) allCategoriesMap.set(categoryName, { data: data, gradClass: gradClass });
-        
-        card.className = `category-card p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${gradClass}`;
-        card.style.animationDelay = `${i * 60}ms`;
-        card.innerHTML = `<p class="text-white font-bold text-sm sm:text-lg">${categoryName}</p>`;
-        
         card.addEventListener('click', () => {
-            vibrate(); 
+            vibrate();
             if (categoryName === 'Dictionary') {
                 switchView('dictionary', { isSubView: true, from: { view: 'home' } });
-            } else if (data === 'synonyms-view') {
-                switchView('synonymsView', {isSubView: true, from: {view: 'home'}, gradClass: gradClass});
-            } else if (Array.isArray(data)) {
-                switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: data, gradClass: gradClass });
-            } else if (data && data.content && Array.isArray(data.content)) {
-                switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
-            } else if (data && data.subtopics) {
-                switchView('subtopicSelection', { isSubView: true, from: { view: 'home' }, ...data, gradClass: gradClass });
             } else {
-                switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: gradClass });
+                navigateToCategoryBento(categoryName, config.bg, config.text);
             }
         });
-        categoryGridEl.appendChild(card);
+
+        gridEl.appendChild(card);
         i++;
     });
 }
 
-            // START: PASTE THIS REPLACEMENT FUNCTION
-        function renderCategoryListView(categories, title, subtitle, gradClass) {
-                updateTopNav({ title: title, showBack: true, gradClass: gradClass });
+// --- NEW HELPER FOR BENTO NAVIGATION ---
+function navigateToCategoryBento(categoryName, bgClass, textClass) {
+    const categoryData = allCategoriesMap.get(categoryName);
+    if (categoryData) {
+        const data = categoryData.data;
+        // Forward the pastel theme to the sub-view
+        const theme = { bg: bgClass, text: textClass }; 
 
-                const template = document.getElementById('home-view-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                const categoryGridEl = mainContent.querySelector('#category-grid');
-                categoryGridEl.innerHTML = '';
-                let i = 0;
-                
-                for(const categoryName in categories) {
-                    const data = categories[categoryName];
-                    
-                    // --- Calculate Mastery Percentage ---
-                    let percentHTML = '';
-                    let totalWords = 0;
-                    let masteredCount = 0;
+        if (data === 'synonyms-view') {
+            switchView('synonymsView', {isSubView: true, from: {view: 'home'}, theme});
+        } else if (Array.isArray(data)) {
+            const transformedData = data.map(item => item.hindi ? { ...item, isSentence: true } : item);
+            switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: transformedData, theme });
+        } else if (data.content) {
+            switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, theme });
+        } else {
+            // Default: Sub-Category List
+            switchView('categoryList', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                categories: data, 
+                title: categoryName, 
+                theme: theme // Passing the pastel theme
+            });
+        }
+    }
+}
 
-                    // Determine word count based on data structure
-                    if (Array.isArray(data)) {
-                        totalWords = data.length;
-                    } else if (data.sentences && Array.isArray(data.sentences)) {
-                        totalWords = data.sentences.length;
-                    }
-                    
-                    // Only show percentage if we have words and it's not a special view like synonyms
-                    if (totalWords > 0 && data !== 'synonyms-view') {
-                        const storageKey = `lingoquest_mastery_${categoryName}`;
-                        const masteredList = JSON.parse(localStorage.getItem(storageKey)) || [];
-                        masteredCount = masteredList.length;
-                        const percent = Math.round((masteredCount / totalWords) * 100);
-                        
-                        const colorClass = percent === 100 ? 'completed' : '';
-                        percentHTML = `<div class="percent-badge ${colorClass}">${percent}%</div>`;
-                    }
+// --- REPLACEMENT FUNCTION (Fixes the "Not Opening" issue) ---
+function navigateToCategoryBento(categoryName, bgClass, textClass) {
+    // 1. Direct lookup in your main data object
+    const data = vocabularyData[categoryName]; 
+    
+    // 2. Define the theme based on the clicked card
+    const theme = { bg: bgClass, text: textClass }; 
 
-                    const card = document.createElement('div');
-                    let newGradClass = (title === 'Advanced Vocabulary' && (categoryName === 'Latin Roots' || categoryName === 'Greek Roots')) ? gradClass : gradients[i % gradients.length];
-                    
-                    // Added 'relative' for badge positioning
-                    card.className = `category-card relative p-3 sm:p-4 rounded-2xl flex flex-col justify-center items-center text-center cursor-pointer pop-in ${newGradClass}`;
-                    card.style.animationDelay = `${i * 60}ms`;
-                    
-                    // Insert Badge and Title
-                    card.innerHTML = `
-                        ${percentHTML}
-                        <p class="text-white font-bold text-sm sm:text-lg mt-2">${categoryName}</p>
-                    `;
+    if (data) {
+        // Case A: It's the special Synonyms view
+        if (data === 'synonyms-view') {
+            switchView('synonymsView', {
+                isSubView: true, 
+                from: {view: 'home'}, 
+                theme
+            });
+        } 
+        // Case B: It's a simple list of words (e.g. a direct list)
+        else if (Array.isArray(data)) {
+            const transformedData = data.map(item => item.hindi ? { ...item, isSentence: true } : item);
+            switchView('wordList', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                title: categoryName, 
+                words: transformedData, 
+                theme 
+            });
+        } 
+        // Case C: It's a Lesson (Study Hall)
+        else if (data.content) {
+            switchView('studyLesson', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                ...data, 
+                theme 
+            });
+        } 
+        // Case D: It's a nested category (The most common case)
+        else {
+            switchView('categoryList', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                categories: data, 
+                title: categoryName, 
+                subtitle: "Select a sub-category", 
+                theme 
+            });
+        }
+    } else {
+        console.error("No data found for category:", categoryName);
+    }
+}
 
-                    card.addEventListener('click', () => {
-                        vibrate(); 
+// --- REPLACE THIS FUNCTION ---
+function renderCategoryListView(categories, title, subtitle, gradClass) {
+    updateTopNav({ title: title, showBack: true, gradClass: gradClass });
 
-                        const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
-                        if (data === 'synonyms-view') {
-                            switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: newGradClass});
-                        } else if (Array.isArray(data)) {
-                            const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
-                            const transformedData = data.map(item => {
-                                if (typeof item === 'string') return item; 
-                                if (item.hindi) return { ...item, isSentence: true };
-                                return item;
-                            });
-                            // Default to card view for supported categories
-                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, extra, viewMode: 'card' });
-                        } else if (data.sentences) { 
-                            const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
-                            switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: newGradClass, viewMode: 'card' });
-                        } else if (data.subtopics) {
-                            switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                        } else if (data.content) {
-                            switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: newGradClass });
-                        } else {
-                            switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: newGradClass });
-                        }
-                    });
-                    categoryGridEl.appendChild(card);
-                    i++;
-                }
+    // 1. Create a clean container for the list (Vertical Layout)
+    mainContent.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 flex flex-col gap-3 animate-fade-in";
+    
+    // 2. Header (Optional)
+    const header = document.createElement('div');
+    header.className = "mb-2 px-1 text-center sm:text-left";
+    header.innerHTML = `<p class="text-slate-400 text-sm font-bold tracking-wider uppercase">${subtitle || 'Select a topic'}</p>`;
+    container.appendChild(header);
+
+    // 3. Pastel Theme Colors Cycle
+    const pastelThemes = [
+        { bg: "bg-emerald-50", border: "border-emerald-100", text: "text-emerald-900", iconBg: "bg-emerald-200", iconText: "text-emerald-800" },
+        { bg: "bg-blue-50", border: "border-blue-100", text: "text-blue-900", iconBg: "bg-blue-200", iconText: "text-blue-800" },
+        { bg: "bg-purple-50", border: "border-purple-100", text: "text-purple-900", iconBg: "bg-purple-200", iconText: "text-purple-800" },
+        { bg: "bg-amber-50", border: "border-amber-100", text: "text-amber-900", iconBg: "bg-amber-200", iconText: "text-amber-800" },
+        { bg: "bg-rose-50", border: "border-rose-100", text: "text-rose-900", iconBg: "bg-rose-200", iconText: "text-rose-800" },
+        { bg: "bg-cyan-50", border: "border-cyan-100", text: "text-cyan-900", iconBg: "bg-cyan-200", iconText: "text-cyan-800" }
+    ];
+
+    let i = 0;
+    for(const categoryName in categories) {
+        const data = categories[categoryName];
+        const theme = pastelThemes[i % pastelThemes.length];
+        
+        // --- Calculate Mastery Percentage ---
+        let percentBadge = '';
+        let totalWords = 0;
+        let masteredCount = 0;
+
+        if (Array.isArray(data)) {
+            totalWords = data.length;
+        } else if (data.sentences && Array.isArray(data.sentences)) {
+            totalWords = data.sentences.length;
+        }
+        
+        if (totalWords > 0 && data !== 'synonyms-view') {
+            const storageKey = `lingoquest_mastery_${categoryName}`;
+            const masteredList = JSON.parse(localStorage.getItem(storageKey)) || [];
+            masteredCount = masteredList.length;
+            const percent = Math.round((masteredCount / totalWords) * 100);
+            
+            // Grey badge for 0%, Colored for progress
+            const badgeBg = percent > 0 ? 'bg-white/40 text-slate-700' : 'bg-black/5 text-slate-400';
+            percentBadge = `<span class="${badgeBg} px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-sm">${percent}%</span>`;
+        }
+
+        // --- Create Button Item ---
+        const button = document.createElement('button');
+        button.className = `w-full p-4 rounded-2xl border flex items-center justify-between transition-transform active:scale-95 shadow-sm hover:shadow-md pop-in ${theme.bg} ${theme.border}`;
+        button.style.animationDelay = `${i * 50}ms`;
+
+        button.innerHTML = `
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center ${theme.iconBg} ${theme.iconText}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+                <span class="text-lg font-bold ${theme.text} text-left">${categoryName}</span>
+            </div>
+            ${percentBadge}
+        `;
+
+        button.addEventListener('click', () => {
+            vibrate();
+            const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
+            
+            // Pass the theme color to the next view for consistency
+            const nextGradClass = theme.bg.replace('bg-', 'grad-'); 
+
+            if (data === 'synonyms-view') {
+                switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: gradClass});
+            } else if (Array.isArray(data)) {
+                const extra = data.length > 0 && data[0].type === 'root' ? { isRootList: true } : {};
+                const transformedData = data.map(item => {
+                    if (typeof item === 'string') return item; 
+                    if (item.hindi) return { ...item, isSentence: true };
+                    return item;
+                });
+                switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: gradClass, extra, viewMode: 'card' });
+            } else if (data.sentences) { 
+                const transformedData = data.sentences.map(item => ({...item, isSentence: true}));
+                switchView('wordList', { isSubView: true, from: fromOpts, title: categoryName, words: transformedData, gradClass: gradClass, viewMode: 'card' });
+            } else if (data.subtopics) {
+                switchView('subtopicSelection', { isSubView: true, from: fromOpts, ...data, gradClass: gradClass });
+            } else if (data.content) {
+                switchView('studyLesson', { isSubView: true, from: fromOpts, ...data, gradClass: gradClass });
+            } else {
+                switchView('categoryList', { isSubView: true, from: fromOpts, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: gradClass });
             }
+        });
+
+        container.appendChild(button);
+        i++;
+    }
+
+    mainContent.appendChild(container);
+}
         // END: PASTE THIS REPLACEMENT FUNCTION
             
             function renderFavoritesView() {
@@ -18251,73 +18683,130 @@ const PASSKEY_KEY = "lingoquest_passkey_verified";
                 const transformedData = favorites.map(item => item.hindi ? { ...item, isSentence: true } : item);
                 renderWords("Favorites", transformedData, 'grad-fav', { isFavorites: true });
             }
+function renderQuizHubView() {
+    const topNav = document.getElementById('top-nav');
+    const bottomNav = document.getElementById('bottom-nav');
+    if(topNav) topNav.classList.add('hidden');
+    if(bottomNav) bottomNav.classList.remove('hidden');
 
-            function renderQuizHubView() {
-                // Hide top nav since we have a custom header in the template
-                const topNav = document.getElementById('top-nav');
-                if(topNav) topNav.classList.add('hidden');
-                
-                const template = document.getElementById('quiz-hub-template');
-                mainContent.innerHTML = ''; // Clear previous content first
-                mainContent.appendChild(template.content.cloneNode(true));
+    // 1. Render Colorful Layout
+    mainContent.innerHTML = `
+        <div class="max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 animate-fade-in">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6 pt-4">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900">Quiz Hub</h1>
+                    <p class="text-slate-500 text-sm font-bold mt-1">Challenge yourself or a friend.</p>
+                </div>
+                <button id="exit-quiz-hub" class="p-3 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
 
-                // --- NEW: Exit Button Logic ---
-                const exitBtn = document.getElementById('exit-quiz-hub');
-                if (exitBtn) {
-                    exitBtn.addEventListener('click', () => {
-                        vibrate();
-                        if(topNav) topNav.classList.remove('hidden'); // Restore main nav
-                        switchView('home'); // Go back to home
-                    });
-                }
-                // ------------------------------
+            <!-- Multiplayer Section (Colorful Join Button) -->
+            <div class="mb-8">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Multiplayer</h2>
+                <button id="join-challenge-btn" class="w-full bg-gradient-to-br from-pink-500 to-rose-600 text-white p-5 rounded-3xl shadow-lg shadow-pink-200/50 transform transition-all active:scale-95 flex items-center gap-4">
+                    <div class="p-3 bg-white/20 rounded-2xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-xl">Join a Challenge</h3>
+                        <p class="text-pink-100 text-sm font-medium">Enter code to play</p>
+                    </div>
+                </button>
+            </div>
 
-                mainContent.querySelectorAll('.mode-card').forEach(card => {
-                    // Check if the card has a 'data-quiz-target' attribute
-                    const targetCategory = card.dataset.quizTarget;
+            <!-- Solo Quizzes Section (Pastel Cards) -->
+            <div>
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 pl-1">Practice Quizzes</h2>
+                <div class="grid grid-cols-1 gap-4">
+                    
+                    <!-- 1. Vocabulary Builder (Green) -->
+                    <button class="mode-card w-full p-4 rounded-3xl text-left bg-emerald-50 border border-emerald-100 flex items-center gap-4 transition-all active:scale-95 hover:shadow-md" data-quiz-target="Vocabulary Builder">
+                        <div class="p-4 bg-white rounded-2xl text-emerald-500 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 22h20"/><path d="M12 22v-9"/><path d="M9 8a3 3 0 0 1 3-3 3 3 0 0 1 3 3"/><path d="M12 13a4 4 0 0 0-4-4H6"/><path d="M12 13a4 4 0 0 1 4-4h2"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-emerald-900">Vocabulary Builder</h3>
+                            <p class="text-sm text-emerald-600 font-medium">Basic words & actions</p>
+                        </div>
+                    </button>
 
-                    if (targetCategory) {
-                        // This is a "Create Quiz" button, so we check for words
-                        const wordsForQuiz = [];
-                        function collectWords(data) {
-                            for (const key in data) {
-                                if(['Synonyms', 'Confusing Words', 'Latin Roots', 'Greek Roots'].includes(key)) continue; 
-                                const value = data[key];
-                                if(Array.isArray(value)) wordsForQuiz.push(...value.filter(v => !v.type));
-                                else if(typeof value === 'object' && value !== null && value !== 'synonyms-view') collectWords(value);
-                            }
-                        }
-                        if (targetCategory === 'Phrases & Idioms') collectWords(vocabularyData['Phrases & Idioms']);
-                        else if (targetCategory === 'Advanced Vocabulary') collectWords({"Antonyms": vocabularyData['Advanced Vocabulary']['Antonyms'], "One Word Substitution": vocabularyData['Advanced Vocabulary']['One Word Substitution'], "Proverbs and Sayings": vocabularyData['Advanced Vocabulary']['Proverbs and Sayings'], "Business Vocab": vocabularyData['Advanced Vocabulary']['Business Vocab']});
-                        else if (targetCategory === 'Vocabulary Builder') collectWords(vocabularyData['Vocabulary Builder']);
+                    <!-- 2. Advanced Vocabulary (Purple) -->
+                    <button class="mode-card w-full p-4 rounded-3xl text-left bg-violet-50 border border-violet-100 flex items-center gap-4 transition-all active:scale-95 hover:shadow-md" data-quiz-target="Advanced Vocabulary">
+                        <div class="p-4 bg-white rounded-2xl text-violet-500 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.1 4-1 4-1s.38 2.38-1 4z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-violet-900">Advanced Vocabulary</h3>
+                            <p class="text-sm text-violet-600 font-medium">Antonyms & substitutions</p>
+                        </div>
+                    </button>
 
-                        if (wordsForQuiz.length < 4) {
-                            card.disabled = true;
-                            if(card.querySelector('p')) card.querySelector('p').textContent = "Needs at least 4 items for a quiz.";
-                        } else {
-                            card.addEventListener('click', () => {
-                                const quizId = `vocab-hub-${targetCategory}`;
-                                // Restore nav when starting quiz so back button works
-                                if(topNav) topNav.classList.remove('hidden');
-                                checkForSavedQuiz(quizId, wordsForQuiz, {title: `${targetCategory} Quiz`, originalWords: wordsForQuiz}, (qWords, qData, qId, savedState) => startQuiz(qWords, 'word-to-meaning', 'short', qId, qData, savedState));
-                            });
-                        }
-                    } 
-                });
+                    <!-- 3. Phrases & Idioms (Orange) -->
+                    <button class="mode-card w-full p-4 rounded-3xl text-left bg-orange-50 border border-orange-100 flex items-center gap-4 transition-all active:scale-95 hover:shadow-md" data-quiz-target="Phrases & Idioms">
+                        <div class="p-4 bg-white rounded-2xl text-orange-500 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-orange-900">Phrases & Idioms</h3>
+                            <p class="text-sm text-orange-600 font-medium">Idioms & proverbs</p>
+                        </div>
+                    </button>
 
-                // Re-attach listener for the Join Challenge button (it was in the HTML template)
-                const joinBtn = document.getElementById('join-challenge-btn');
-                if(joinBtn) {
-                    joinBtn.addEventListener('click', () => {
-                        vibrate();
-                        const joinError = document.getElementById('join-challenge-error');
-                        const codeInput = document.getElementById('challenge-code-input');
-                        if(joinError) joinError.textContent = '';
-                        if(codeInput) codeInput.value = '';
-                        document.getElementById('join-challenge-modal').classList.remove('hidden');
-                    });
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 2. Attach Listeners
+    document.getElementById('exit-quiz-hub').addEventListener('click', () => { 
+        vibrate(); 
+        if(topNav) topNav.classList.remove('hidden'); 
+        switchView('home'); 
+    });
+
+    document.getElementById('join-challenge-btn').addEventListener('click', () => { 
+        vibrate(); 
+        const joinError = document.getElementById('join-challenge-error');
+        const codeInput = document.getElementById('challenge-code-input');
+        if(joinError) joinError.textContent = '';
+        if(codeInput) codeInput.value = '';
+        document.getElementById('join-challenge-modal').classList.remove('hidden'); 
+    });
+
+    mainContent.querySelectorAll('button[data-quiz-target]').forEach(card => {
+        const targetCategory = card.dataset.quizTarget;
+        if (targetCategory) {
+            const wordsForQuiz = [];
+            function collectWords(data) {
+                for (const key in data) {
+                    if(['Synonyms', 'Confusing Words', 'Latin Roots', 'Greek Roots'].includes(key)) continue; 
+                    const value = data[key];
+                    if(Array.isArray(value)) wordsForQuiz.push(...value.filter(v => !v.type));
+                    else if(typeof value === 'object' && value !== null && value !== 'synonyms-view') collectWords(value);
                 }
             }
+            
+            if (targetCategory === 'Phrases & Idioms') collectWords(vocabularyData['Phrases & Idioms']);
+            else if (targetCategory === 'Advanced Vocabulary') collectWords({"Antonyms": vocabularyData['Advanced Vocabulary']['Antonyms'], "One Word Substitution": vocabularyData['Advanced Vocabulary']['One Word Substitution'], "Proverbs and Sayings": vocabularyData['Advanced Vocabulary']['Proverbs and Sayings'], "Business Vocab": vocabularyData['Advanced Vocabulary']['Business Vocab']});
+            else if (targetCategory === 'Vocabulary Builder') collectWords(vocabularyData['Vocabulary Builder']);
+
+            if (wordsForQuiz.length < 4) {
+                card.style.opacity = "0.5"; card.style.cursor = "not-allowed";
+            } else {
+                card.addEventListener('click', () => {
+                    vibrate();
+                    const quizId = `vocab-hub-${targetCategory}`;
+                    if(topNav) topNav.classList.remove('hidden');
+                    checkForSavedQuiz(quizId, wordsForQuiz, {title: `${targetCategory} Quiz`, originalWords: wordsForQuiz}, (qWords, qData, qId, savedState) => startQuiz(qWords, 'word-to-meaning', 'short', qId, qData, savedState));
+                });
+            }
+        } 
+    });
+}
+            
             
         // START: REPLACE renderGameZoneView
 function renderGameZoneView() {
@@ -20006,188 +20495,275 @@ function startFlashRecallGame() {
 // END: REPLACE THE startFlashRecallGame FUNCTION
 
             function renderSynonymsView(gradClass) {
-                updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
-                const template = document.getElementById('synonyms-view-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                const grid = mainContent.querySelector('#alphabet-grid');
-                for (let i = 65; i <= 90; i++) {
-                    const letter = String.fromCharCode(i);
-                    const button = document.createElement('button');
-                    button.textContent = letter;
-                    button.className = "bg-white/10 hover:bg-white/20 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center transition";
-                    button.addEventListener('click', () => {
-                        const fromOpts = { view: 'synonymsView', gradClass: gradClass };
-                        const words = originalSynonymsData[letter] || [];
-                        switchView('wordList', { isSubView: true, from: fromOpts, title: `Synonyms: ${letter}`, words: words, gradClass: gradClass, extra: { isSynonymSublist: true } });
-                    });
-                    grid.appendChild(button);
-                }
-            }
+    updateTopNav({ title: "Synonyms", showBack: true, gradClass: gradClass });
+    const template = document.getElementById('synonyms-view-template');
+    mainContent.innerHTML = ''; // Ensure main content is clear
+    mainContent.appendChild(template.content.cloneNode(true));
+    const grid = mainContent.querySelector('#alphabet-grid');
+    
+    // Bright/Vibrant colors for the buttons
+    const colors = [
+        "bg-red-500", "bg-orange-500", "bg-amber-500", "bg-yellow-500", "bg-lime-500",
+        "bg-green-500", "bg-emerald-500", "bg-teal-500", "bg-cyan-500", "bg-sky-500",
+        "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-purple-500", "bg-fuchsia-500",
+        "bg-pink-500", "bg-rose-500"
+    ];
+
+    for (let i = 65; i <= 90; i++) {
+        const letter = String.fromCharCode(i);
+        const button = document.createElement('button');
+        button.textContent = letter;
+        
+        // Cycle through colors based on index
+        const colorClass = colors[(i - 65) % colors.length];
+        
+        button.className = `${colorClass} text-white font-bold text-lg rounded-2xl w-12 h-12 flex items-center justify-center transition-transform hover:scale-110 shadow-lg border border-white/20`;
+        
+        button.addEventListener('click', () => {
+            vibrate();
+            const fromOpts = { view: 'synonymsView', gradClass: gradClass };
+            const words = originalSynonymsData[letter] || [];
+            switchView('wordList', { 
+                isSubView: true, 
+                from: fromOpts, 
+                title: `Synonyms: ${letter}`, 
+                words: words, 
+                gradClass: gradClass, 
+                extra: { isSynonymSublist: true } // This flag prevents the quiz buttons from rendering
+            });
+        });
+        grid.appendChild(button);
+    }
+}
 
             function renderSubtopicSelection(title, subtitle, subtopics, gradClass) {
-                updateTopNav({ title: title, showBack: true, gradClass: gradClass });
-                const template = document.getElementById('study-hall-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                mainContent.querySelector('#lesson-title').textContent = title;
-                mainContent.querySelector('#lesson-subtitle').textContent = subtitle;
-                const contentContainer = mainContent.querySelector('#lesson-content-container');
-                contentContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-4'; 
-                contentContainer.classList.remove('lesson-content');
-                for (const key in subtopics) {
-                    const subtopic = subtopics[key];
-                    const card = document.createElement('button');
-                    card.className = 'mode-card p-4 rounded-xl text-left';
-                    card.innerHTML = `<h3 class="font-bold text-lg text-white">${subtopic.title}</h3><p class="text-sm text-slate-300">${subtopic.subtitle}</p>`;
-                    card.addEventListener('click', () => switchView('studyLesson', { isSubView: true, from: { view: 'subtopicSelection', title, subtitle, subtopics, gradClass }, ...subtopic, gradClass: gradClass }));
-                    contentContainer.appendChild(card);
-                }
-            }
+    updateTopNav({ title: title, showBack: true, gradClass: gradClass });
+
+    // 1. Pastel Themes Cycle (Matches the Category List style)
+    const pastelThemes = [
+        { bg: "bg-emerald-50", border: "border-emerald-100", text: "text-emerald-900", iconBg: "bg-emerald-200", iconText: "text-emerald-800" },
+        { bg: "bg-blue-50", border: "border-blue-100", text: "text-blue-900", iconBg: "bg-blue-200", iconText: "text-blue-800" },
+        { bg: "bg-purple-50", border: "border-purple-100", text: "text-purple-900", iconBg: "bg-purple-200", iconText: "text-purple-800" },
+        { bg: "bg-amber-50", border: "border-amber-100", text: "text-amber-900", iconBg: "bg-amber-200", iconText: "text-amber-800" },
+        { bg: "bg-rose-50", border: "border-rose-100", text: "text-rose-900", iconBg: "bg-rose-200", iconText: "text-rose-800" },
+        { bg: "bg-cyan-50", border: "border-cyan-100", text: "text-cyan-900", iconBg: "bg-cyan-200", iconText: "text-cyan-800" }
+    ];
+
+    // 2. Setup Container
+    mainContent.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 flex flex-col gap-3 animate-fade-in";
+
+    // 3. Add Header
+    const header = document.createElement('div');
+    header.className = "mb-2 px-1 text-center sm:text-left";
+    header.innerHTML = `<p class="text-slate-400 text-sm font-bold tracking-wider uppercase">${subtitle || 'Select a topic'}</p>`;
+    container.appendChild(header);
+
+    let i = 0;
+    for (const key in subtopics) {
+        const subtopic = subtopics[key];
+        const theme = pastelThemes[i % pastelThemes.length];
+        
+        // 4. Create Colorful Card Button
+        const card = document.createElement('button');
+        card.className = `w-full p-4 rounded-2xl border flex items-center justify-between transition-transform active:scale-95 shadow-sm hover:shadow-md pop-in ${theme.bg} ${theme.border}`;
+        card.style.animationDelay = `${i * 50}ms`;
+        
+        card.innerHTML = `
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center ${theme.iconBg} ${theme.iconText} text-xl font-bold shadow-sm">
+                    ${subtopic.title.charAt(0)}
+                </div>
+                <div class="text-left">
+                    <h3 class="text-lg font-bold ${theme.text}">${subtopic.title}</h3>
+                    <p class="text-xs opacity-70 ${theme.text}">${subtopic.subtitle || 'Learn more'}</p>
+                </div>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-white/40 flex items-center justify-center ${theme.text}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => {
+            vibrate();
+            switchView('studyLesson', { 
+                isSubView: true, 
+                from: { view: 'subtopicSelection', title, subtitle, subtopics, gradClass }, 
+                ...subtopic, 
+                gradClass: gradClass 
+            });
+        });
+        
+        container.appendChild(card);
+        i++;
+    }
+
+    mainContent.appendChild(container);
+}
 
             function renderStudyHallLesson(title, subtitle, content, gradClass) {
-                updateTopNav({ title: title, showBack: true, gradClass: gradClass });
-                const template = document.getElementById('study-hall-template');
-                mainContent.appendChild(template.content.cloneNode(true));
-                mainContent.querySelector('#lesson-title').textContent = title;
-                mainContent.querySelector('#lesson-subtitle').textContent = subtitle;
-                const contentContainer = mainContent.querySelector('#lesson-content-container');
-                contentContainer.innerHTML = '';
-                content.forEach(item => {
-                    let element;
-                    switch (item.type) {
-                        case 'practice_prompt':
-                            element = document.createElement('button');
-                            element.className = 'w-full grad-nav text-white font-bold py-4 px-4 rounded-xl text-center transition-transform hover:scale-105 pop-in mb-6 disabled:opacity-60 disabled:cursor-not-allowed';
-                            const conversationDataForPractice = content.find(c => c.type === 'conversation')?.data;
-                            if (isSpeechRecognitionSupported && conversationDataForPractice) {
-                                element.disabled = false;
-                                element.innerHTML = `<div class="flex items-center justify-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg><span class="text-lg">${item.text}</span></div>`;
-                                element.onclick = () => startConversationPractice(conversationDataForPractice, { title, subtitle, content, gradClass });
-                            } else {
-                                element.disabled = true;
-                                element.innerHTML = `<div class="flex items-center justify-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg><span class="text-lg">${isSpeechRecognitionSupported ? item.text : 'Speech Practice Not Supported'}</span></div>`;
-                            }
-                            break;
-                        case 'heading': element = document.createElement('h2'); element.className = 'text-2xl font-bold text-white mt-6 mb-4 border-b border-white/20 pb-2'; element.innerHTML = item.text; break;
-                        case 'subheading': element = document.createElement('h3'); element.className = 'text-xl font-bold text-pink-400 mt-5 mb-3'; element.innerHTML = item.text; break;
-                        case 'paragraph': element = document.createElement('p'); element.className = 'text-slate-300 mb-4 leading-relaxed'; element.innerHTML = item.text; break;
-                        case 'example': element = document.createElement('div'); element.className = 'bg-black/20 p-4 rounded-lg text-slate-300 italic mb-4'; element.innerHTML = item.text; break;
-                        case 'list':
-                            element = document.createElement('ul');
-                            element.className = 'list-disc list-inside space-y-2 mb-4 text-slate-300';
-                            item.items.forEach(liText => {
-                                const li = document.createElement('li');
-                                li.innerHTML = liText;
-                                element.appendChild(li);
-                            });
-                            break;
-                        case 'comparison':
-                        case 'tense_table':
-                             element = document.createElement('div');
-                             element.className = 'my-6';
-                             element.innerHTML = `<h3 class="text-xl font-bold text-white mt-4 mb-2">${item.title || ''}</h3>${item.subtitle ? `<p class="text-slate-300 mb-4 text-sm">${item.subtitle}</p>` : ''}<div class="overflow-x-auto"><table class="tenses-table"><thead><tr>${item.data.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${item.data.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-                             break;
-                        case 'conversation':
-                            element = document.createElement('div');
-                            element.className = 'space-y-4';
-                            item.data.forEach(convo => {
-                                const convoCard = document.createElement('div');
-                                const isUser = convo.speaker.toLowerCase() === 'you';
-                                convoCard.className = `p-4 rounded-lg flex gap-4 items-start ${isUser ? 'bg-indigo-900/50' : 'bg-slate-800/50'}`;
-                                convoCard.innerHTML = `
-                                    <div class="flex-shrink-0 font-bold text-white ${isUser ? 'text-pink-400' : 'text-cyan-400'} w-16 text-right">${convo.speaker}:</div>
-                                    <div class="flex-grow">
-                                        <p class="text-white font-semibold">${convo.line}</p>
-                                        <p class="text-sm text-slate-400">${convo.hindi}</p>
-                                    </div>
-                                    <button class="speak-button-convo flex-shrink-0 p-2 rounded-full text-slate-300 hover:bg-white/10 hover:text-white transition-colors" data-speak="${convo.line}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
-                                `;
-                                element.appendChild(convoCard);
-                            });
-                             setTimeout(() => {
-                                contentContainer.querySelectorAll('.speak-button-convo').forEach(btn => {
-                                    btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
-                                });
-                            }, 0);
-                            break;
-                        case 'pronunciation_pair':
-                            element = document.createElement('div');
-                            element.className = 'space-y-4';
-                            item.data.forEach(pair => {
-                                const pairCard = document.createElement('div');
-                                pairCard.className = 'glass-ui p-4 rounded-xl';
-                                pairCard.innerHTML = `
-                                    <div class="grid grid-cols-2 gap-4 divide-x divide-white/20">
-                                        <div class="text-center px-2">
-                                            <h4 class="text-2xl font-bold text-white">${pair.word1}</h4>
-                                            <p class="text-sm text-cyan-300 font-mono">${pair.sound1}</p>
-                                            <p class="text-sm text-slate-300">${pair.hindi1}</p>
-                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word1}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
-                                        </div>
-                                        <div class="text-center px-2">
-                                             <h4 class="text-2xl font-bold text-white">${pair.word2}</h4>
-                                            <p class="text-sm text-pink-300 font-mono">${pair.sound2}</p>
-                                            <p class="text-sm text-slate-300">${pair.hindi2}</p>
-                                            <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-300 bg-white/10 hover:bg-white/20 transition-colors" data-speak="${pair.word2}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
-                                        </div>
-                                    </div>
-                                `;
-                                element.appendChild(pairCard);
-                            });
-                             setTimeout(() => {
-                                contentContainer.querySelectorAll('.speak-button-pronun').forEach(btn => {
-                                btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
-                            });
-                            }, 0);
-                            break;
-                        case 'sentence_forms':
-                            element = document.createElement('div');
-                            item.data.forEach(form => {
-                                const card = document.createElement('div');
-                                card.className = 'sentence-form-card';
-                                card.innerHTML = `<div class="card-header"><span class="form-number">${form.num}</span><h3 class="form-title">${form.title}</h3></div><p class="form-structure">${form.structure}</p><p class="form-example">${form.example}</p>`;
-                                element.appendChild(card);
-                            });
-                            break;
-                         case 'practice_quiz':
-                            element = document.createElement('div');
-                            element.className = 'mt-8';
-                            const quizId = `practice-${title.replace(/\s+/g, '-').toLowerCase()}`;
-                            const startQuizBtn = document.createElement('button');
-                            startQuizBtn.className = 'mode-card grad-nav text-white font-bold p-4 rounded-xl w-full text-center';
-                            startQuizBtn.innerHTML = `<h3 class="text-lg">Practice Your Knowledge</h3><p class="text-sm font-normal text-slate-200">Start a quick quiz on ${title}.</p>`;
-                            startQuizBtn.onclick = () => checkForSavedQuiz(quizId, item.questions, { title, subtitle, content }, startPracticeQuiz);
-                            element.appendChild(startQuizBtn);
-                            break;
-                        case 'jumbled_quiz':
-                            element = document.createElement('div');
-                            element.className = 'mt-8';
-                            const jumbledQuizId = `jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`;
-                            const startJumbledQuizBtn = document.createElement('button');
-                            startJumbledQuizBtn.className = 'mode-card grad-nav text-white font-bold p-4 rounded-xl w-full text-center';
-                            startJumbledQuizBtn.innerHTML = `<h3 class="text-lg">${item.title}</h3><p class="text-sm font-normal text-slate-200">Unscramble the sentences to test your knowledge.</p>`;
-                            startJumbledQuizBtn.onclick = () => checkForSavedQuiz(jumbledQuizId, item.questions, { title, subtitle, content }, startJumbledQuiz);
-                            element.appendChild(startJumbledQuizBtn);
-                            break;
-                    }
-                    if (element) contentContainer.appendChild(element);
+    updateTopNav({ title: title, showBack: true, gradClass: gradClass });
+    const template = document.getElementById('study-hall-template');
+    mainContent.appendChild(template.content.cloneNode(true));
+    mainContent.querySelector('#lesson-title').textContent = title;
+    
+    const subtitleEl = mainContent.querySelector('#lesson-subtitle');
+    subtitleEl.textContent = subtitle;
+    subtitleEl.className = 'text-blue-600 font-semibold mt-2 text-sm'; 
+
+    const contentContainer = mainContent.querySelector('#lesson-content-container');
+    contentContainer.innerHTML = '';
+    
+    content.forEach(item => {
+        let element;
+        switch (item.type) {
+            case 'practice_prompt':
+                element = document.createElement('button');
+                element.className = 'w-full bg-pink-50 text-pink-600 border-2 border-pink-100 hover:bg-pink-100 font-bold py-4 px-4 rounded-2xl text-center transition-transform hover:scale-[1.02] pop-in mb-6 disabled:opacity-60 disabled:cursor-not-allowed shadow-sm';
+                
+                const conversationDataForPractice = content.find(c => c.type === 'conversation')?.data;
+                if (isSpeechRecognitionSupported && conversationDataForPractice) {
+                    element.disabled = false;
+                    element.innerHTML = `<div class="flex items-center justify-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg><span class="text-lg">${item.text}</span></div>`;
+                    element.onclick = () => startConversationPractice(conversationDataForPractice, { title, subtitle, content, gradClass });
+                } else {
+                    element.disabled = true;
+                    element.innerHTML = `<div class="flex items-center justify-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg><span class="text-lg">${isSpeechRecognitionSupported ? item.text : 'Speech Practice Not Supported'}</span></div>`;
+                }
+                break;
+            case 'heading': element = document.createElement('h2'); element.className = 'text-2xl font-black text-slate-800 mt-6 mb-4 border-b-2 border-slate-200 pb-2'; element.innerHTML = item.text; break;
+            case 'subheading': element = document.createElement('h3'); element.className = 'text-xl font-bold text-indigo-600 mt-5 mb-3'; element.innerHTML = item.text; break;
+            case 'paragraph': element = document.createElement('p'); element.className = 'text-slate-700 mb-4 leading-relaxed font-medium'; element.innerHTML = item.text; break;
+            case 'example': element = document.createElement('div'); element.className = 'bg-amber-50 border border-amber-100 p-4 rounded-lg text-slate-800 italic mb-4 shadow-sm'; element.innerHTML = item.text; break;
+            case 'list':
+                element = document.createElement('ul');
+                element.className = 'list-disc list-inside space-y-2 mb-4 text-slate-700 font-medium';
+                item.items.forEach(liText => {
+                    const li = document.createElement('li');
+                    li.innerHTML = liText;
+                    element.appendChild(li);
                 });
-            }
+                break;
+            case 'comparison':
+            case 'tense_table':
+                 element = document.createElement('div');
+                 element.className = 'my-6';
+                 element.innerHTML = `<h3 class="text-xl font-bold text-slate-800 mt-4 mb-2">${item.title || ''}</h3>${item.subtitle ? `<p class="text-slate-500 mb-4 text-sm">${item.subtitle}</p>` : ''}<div class="overflow-x-auto"><table class="tenses-table text-slate-800"><thead><tr>${item.data.headers.map(h => `<th class="bg-slate-100 text-slate-900 font-bold">${h}</th>`).join('')}</tr></thead><tbody>${item.data.rows.map(row => `<tr class="bg-white border-b border-slate-100">${row.map(cell => `<td class="p-3 text-slate-700">${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+                 break;
+            case 'conversation':
+                element = document.createElement('div');
+                element.className = 'space-y-4';
+                item.data.forEach(convo => {
+                    const convoCard = document.createElement('div');
+                    const isUser = convo.speaker.toLowerCase() === 'you';
+                    convoCard.className = `p-5 rounded-2xl flex gap-4 items-start shadow-sm border ${isUser ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-slate-200'}`;
+                    
+                    // FIX: Changed w-16 to w-24 to prevent overlap
+                    convoCard.innerHTML = `
+                        <div class="flex-shrink-0 font-black ${isUser ? 'text-indigo-600' : 'text-pink-600'} w-24 text-right uppercase tracking-wider text-xs mt-1 break-words">${convo.speaker}</div>
+                        <div class="flex-grow">
+                            <p class="text-slate-900 font-bold text-lg leading-tight">${convo.line}</p>
+                            <p class="text-sm text-slate-500 mt-1 font-medium">${convo.hindi}</p>
+                        </div>
+                        <button class="speak-button-convo flex-shrink-0 p-2.5 rounded-full bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition-all shadow-sm" data-speak="${convo.line}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                        </button>
+                    `;
+                    element.appendChild(convoCard);
+                });
+                 setTimeout(() => {
+                    contentContainer.querySelectorAll('.speak-button-convo').forEach(btn => {
+                        btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
+                    });
+                }, 0);
+                break;
+            case 'pronunciation_pair':
+                element = document.createElement('div');
+                element.className = 'space-y-4';
+                item.data.forEach(pair => {
+                    const pairCard = document.createElement('div');
+                    pairCard.className = 'bg-white border border-slate-200 p-4 rounded-xl shadow-sm';
+                    pairCard.innerHTML = `
+                        <div class="grid grid-cols-2 gap-4 divide-x divide-slate-100">
+                            <div class="text-center px-2">
+                                <h4 class="text-2xl font-black text-slate-800">${pair.word1}</h4>
+                                <p class="text-sm text-indigo-500 font-mono font-bold">${pair.sound1}</p>
+                                <p class="text-sm text-slate-400">${pair.hindi1}</p>
+                                <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors" data-speak="${pair.word1}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
+                            </div>
+                            <div class="text-center px-2">
+                                 <h4 class="text-2xl font-black text-slate-800">${pair.word2}</h4>
+                                <p class="text-sm text-pink-500 font-mono font-bold">${pair.sound2}</p>
+                                <p class="text-sm text-slate-400">${pair.hindi2}</p>
+                                <button class="speak-button-pronun mt-2 p-2 rounded-full text-slate-500 bg-slate-50 hover:bg-slate-100 transition-colors" data-speak="${pair.word2}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>
+                            </div>
+                        </div>
+                    `;
+                    element.appendChild(pairCard);
+                });
+                 setTimeout(() => {
+                    contentContainer.querySelectorAll('.speak-button-pronun').forEach(btn => {
+                    btn.addEventListener('click', () => { vibrate(10); speakText(btn.dataset.speak, btn); });
+                });
+                }, 0);
+                break;
+            case 'sentence_forms':
+                element = document.createElement('div');
+                item.data.forEach(form => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white border border-slate-200 p-4 rounded-xl mb-4 shadow-sm';
+                    card.innerHTML = `<div class="flex items-center gap-3 mb-2"><span class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shadow-md">${form.num}</span><h3 class="text-lg font-bold text-slate-800">${form.title}</h3></div><p class="bg-slate-100 p-3 rounded-lg text-slate-700 font-mono text-sm border border-slate-200 mb-2">${form.structure}</p><p class="text-slate-500 italic text-sm pl-2 border-l-4 border-pink-400">${form.example}</p>`;
+                    element.appendChild(card);
+                });
+                break;
+             case 'practice_quiz':
+                element = document.createElement('div');
+                element.className = 'mt-8';
+                const quizId = `practice-${title.replace(/\s+/g, '-').toLowerCase()}`;
+                const startQuizBtn = document.createElement('button');
+                startQuizBtn.className = 'w-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold p-5 rounded-2xl text-center shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02]';
+                startQuizBtn.innerHTML = `<h3 class="text-xl mb-1">Practice Quiz</h3><p class="text-sm font-normal text-indigo-100">Test your knowledge on ${title}.</p>`;
+                startQuizBtn.onclick = () => checkForSavedQuiz(quizId, item.questions, { title, subtitle, content }, startPracticeQuiz);
+                element.appendChild(startQuizBtn);
+                break;
+            case 'jumbled_quiz':
+                element = document.createElement('div');
+                element.className = 'mt-8';
+                const jumbledQuizId = `jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`;
+                const startJumbledQuizBtn = document.createElement('button');
+                startJumbledQuizBtn.className = 'w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold p-5 rounded-2xl text-center shadow-lg hover:shadow-xl transition-transform hover:scale-[1.02]';
+                startJumbledQuizBtn.innerHTML = `<h3 class="text-xl mb-1">${item.title}</h3><p class="text-sm font-normal text-pink-100">Unscramble the sentences.</p>`;
+                startJumbledQuizBtn.onclick = () => checkForSavedQuiz(jumbledQuizId, item.questions, { title, subtitle, content }, startJumbledQuiz);
+                element.appendChild(startJumbledQuizBtn);
+                break;
+        }
+        if (element) contentContainer.appendChild(element);
+    });
+}
             
              function startConversationPractice(conversationData, lessonContext) {
     // 1. Setup UI
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('conversation-practice-template').content.cloneNode(true));
-    mainContent.classList.add('flex', 'items-center', 'justify-center', 'h-full', 'pb-10');
+    
+    // Use flex-col to ensure the log takes available space
+    mainContent.className = "flex flex-col h-[calc(100vh-112px)] pb-4";
 
     let currentLineIndex = 0;
     const logContainer = document.getElementById('conversation-practice-log');
     const feedbackContainer = document.getElementById('conversation-practice-feedback');
     const micButton = document.getElementById('mic-button');
+    
+    // Fix Log Container Styles
+    logContainer.className = "flex-grow overflow-y-auto px-4 pt-4 space-y-4 pb-20 scroll-smooth"; 
+    
+    // Fix Feedback Container
+    feedbackContainer.className = "flex-shrink-0 text-center min-h-[2rem] px-4 mb-2";
 
-    // 2. Initialize Speech Recognition safely
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        feedbackContainer.innerHTML = `<p class="text-red-400">Speech Recognition not supported in this browser.</p>`;
+        feedbackContainer.innerHTML = `<p class="text-red-500 font-bold">Speech Recognition not supported.</p>`;
         micButton.disabled = true;
         return;
     }
@@ -20199,12 +20775,9 @@ function startFlashRecallGame() {
 
     let isUserTurn = false;
 
-    // 3. Validation Logic
     function validateSpeech(transcript, validation) {
         if (!validation) return { success: true, feedback: "Let's continue!" };
         const transcriptLower = transcript.toLowerCase();
-        
-        // Check if primary keywords exist in what the user said
         const primaryFound = validation.primary.every(kw => transcriptLower.includes(kw.toLowerCase()));
         
         if (!primaryFound) {
@@ -20216,73 +20789,57 @@ function startFlashRecallGame() {
         return { success: true, feedback: "Great job!" };
     }
 
-    // 4. Helper to speak system lines
     function speakSystemLine(text, callback) {
         micButton.disabled = true;
-        micButton.classList.remove('mic-listening', 'bg-pink-600');
-        micButton.classList.add('bg-slate-600'); // Visual cue it's disabled
+        micButton.classList.remove('mic-listening', 'bg-pink-600', 'scale-110');
+        micButton.classList.add('bg-slate-300', 'cursor-not-allowed'); 
         
-        // Use the global speakText function
         speakText(text, null, () => {
             if (callback) callback();
         });
     }
 
-    // 5. Prepare UI for User Turn
     function setupUserTurn() {
         const currentLine = conversationData[currentLineIndex];
         isUserTurn = true;
         
-        // Visual cues
-        feedbackContainer.innerHTML = `<p class="text-cyan-300 font-bold animate-pulse">Your turn! Tap mic & say: <br>"<span class="text-white">${currentLine.line}</span>"</p>`;
+        // High contrast instruction box
+        feedbackContainer.innerHTML = `<div class="bg-indigo-50 border border-indigo-200 text-indigo-900 px-4 py-2 rounded-xl font-bold shadow-sm animate-pulse text-sm">Your turn! Say: <br>"<span class="text-black font-black">${currentLine.line}</span>"</div>`;
         micButton.disabled = false;
-        micButton.classList.remove('bg-slate-600', 'mic-listening');
-        micButton.classList.add('bg-pink-600');
+        micButton.classList.remove('bg-slate-300', 'cursor-not-allowed', 'mic-listening');
+        micButton.classList.add('bg-pink-600', 'shadow-lg', 'shadow-pink-200');
     }
 
-    // 6. Mic Button Click Handler
     micButton.onclick = () => {
         if (!isUserTurn) return;
 
         try {
             recognition.start();
-            feedbackContainer.innerHTML = `<p class="text-amber-400 font-bold">Listening...</p>`;
+            feedbackContainer.innerHTML = `<p class="text-amber-600 font-bold text-lg">Listening...</p>`;
             micButton.classList.add('mic-listening');
         } catch (e) {
             console.warn("Recognition start error:", e);
-            // If already started, stop it so user can click again
             recognition.stop();
-            feedbackContainer.innerHTML = `<p class="text-amber-400">Reseting mic... tap again.</p>`;
+            feedbackContainer.innerHTML = `<p class="text-amber-600">Resetting mic...</p>`;
             micButton.classList.remove('mic-listening');
         }
     };
 
-    // 7. Recognition Events
-    recognition.onstart = () => {
-        micButton.classList.add('mic-listening');
-    };
+    recognition.onstart = () => { micButton.classList.add('mic-listening'); };
 
     recognition.onend = () => {
         micButton.classList.remove('mic-listening');
-        // If it stopped but we are still on the user's turn (no success yet), prompt to try again
         if (isUserTurn) {
-             // Only update text if we haven't moved on
              const currentText = feedbackContainer.innerText;
              if(currentText.includes('Listening')) {
-                 feedbackContainer.innerHTML = `<p class="text-red-300">Didn't catch that. Tap to try again.</p>`;
+                 feedbackContainer.innerHTML = `<p class="text-red-500 font-bold">Didn't catch that. Tap again.</p>`;
              }
         }
     };
 
     recognition.onerror = (event) => {
         micButton.classList.remove('mic-listening');
-        if (event.error === 'not-allowed') {
-            feedbackContainer.innerHTML = `<p class="text-red-500">Mic access denied. Check settings.</p>`;
-        } else if (event.error === 'no-speech') {
-            feedbackContainer.innerHTML = `<p class="text-orange-400">No speech detected. Tap again.</p>`;
-        } else {
-            feedbackContainer.innerHTML = `<p class="text-red-400">Error: ${event.error}. Tap again.</p>`;
-        }
+        feedbackContainer.innerHTML = `<p class="text-red-600 font-bold">Error: ${event.error}. Tap again.</p>`;
     };
 
     recognition.onresult = (event) => {
@@ -20291,38 +20848,37 @@ function startFlashRecallGame() {
         const validationResult = validateSpeech(transcript, currentLine.validation);
 
         if (validationResult.success) {
-            // Success Logic
             const userLineElement = document.createElement('div');
-            userLineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm bg-indigo-900/50 border border-indigo-500/30`;
+            userLineElement.className = `p-4 rounded-2xl flex gap-3 items-start text-sm bg-indigo-100 border border-indigo-200 shadow-sm mb-3`;
+            
+            // FIX: Changed w-14 to w-24 here too
             userLineElement.innerHTML = `
-                <div class="flex-shrink-0 font-bold text-pink-400 w-14 text-right">You:</div>
-                <div class="flex-grow"><p class="font-semibold text-white">${transcript}</p></div>
-                <div class="text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+                <div class="flex-shrink-0 font-black text-indigo-600 w-24 text-right break-words">You:</div>
+                <div class="flex-grow">
+                    <p class="font-bold text-slate-900 text-base">${transcript}</p>
+                </div>
+                <div class="text-green-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
             `;
             logContainer.appendChild(userLineElement);
-            feedbackContainer.innerHTML = `<p class="text-green-400 font-bold">${validationResult.feedback}</p>`;
+            feedbackContainer.innerHTML = `<p class="text-green-600 font-black text-lg">${validationResult.feedback}</p>`;
             
-            isUserTurn = false; // Stop allowing clicks
+            isUserTurn = false; 
             micButton.classList.remove('mic-listening');
             logContainer.scrollTop = logContainer.scrollHeight;
             
-            // Advance to next line
             currentLineIndex++;
             setTimeout(handleConversationTurn, 1000);
         } else {
-            // Failure Logic
-            feedbackContainer.innerHTML = `<p class="text-red-400 text-sm font-bold">${validationResult.feedback}</p>`;
+            feedbackContainer.innerHTML = `<p class="text-red-600 text-sm font-bold bg-red-50 px-3 py-1 rounded-lg inline-block border border-red-200">${validationResult.feedback}</p>`;
         }
     };
 
-    // 8. Main Conversation Flow Control
     function handleConversationTurn() {
-        // Check if conversation ended
         if (currentLineIndex >= conversationData.length) {
             logContainer.innerHTML += `
-                <div class="p-4 mt-4 bg-green-900/30 rounded-xl border border-green-500/30 text-center pop-in">
-                    <p class="font-bold text-green-400 text-lg">Conversation Complete! 🎉</p>
-                    <button id="restart-convo-btn" class="mt-3 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg transition-transform hover:scale-105">Practice Again</button>
+                <div class="p-6 mt-6 bg-green-50 rounded-2xl border border-green-200 text-center pop-in shadow-sm">
+                    <p class="font-black text-green-700 text-xl mb-2">Conversation Complete! 🎉</p>
+                    <button id="restart-convo-btn" class="mt-2 bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full text-sm font-bold shadow-lg transition-transform hover:scale-105">Practice Again</button>
                 </div>`;
             feedbackContainer.innerHTML = '';
             micButton.disabled = true;
@@ -20339,35 +20895,32 @@ function startFlashRecallGame() {
         const isUser = currentLine.speaker.toLowerCase() === 'you';
 
         if (!isUser) {
-            // System Speaker Logic
             const lineElement = document.createElement('div');
-            lineElement.className = `p-3 rounded-lg flex gap-3 items-start text-sm bg-slate-800/50 opacity-0 pop-in`;
+            lineElement.className = `p-4 rounded-2xl flex gap-3 items-start text-sm bg-white border border-slate-200 shadow-sm opacity-0 pop-in mb-3`;
             lineElement.style.animationFillMode = 'forwards';
             
+            // FIX: Changed w-14 to w-24 here too
             lineElement.innerHTML = `
-                <div class="flex-shrink-0 font-bold text-cyan-400 w-14 text-right">${currentLine.speaker}:</div>
+                <div class="flex-shrink-0 font-black text-pink-500 w-24 text-right break-words">${currentLine.speaker}:</div>
                 <div class="flex-grow">
-                    <p class="font-semibold text-white">${currentLine.line}</p>
-                    <p class="text-xs text-slate-400 mt-1">${currentLine.hindi}</p>
+                    <p class="font-bold text-slate-900 text-base">${currentLine.line}</p>
+                    <p class="text-sm text-slate-500 mt-1 font-medium">${currentLine.hindi}</p>
                 </div>
             `;
             logContainer.appendChild(lineElement);
             logContainer.scrollTop = logContainer.scrollHeight;
             
-            feedbackContainer.innerHTML = `<p class="text-slate-400 text-xs italic">Listening to ${currentLine.speaker}...</p>`;
+            feedbackContainer.innerHTML = `<p class="text-slate-400 text-sm font-bold italic">Listening to ${currentLine.speaker}...</p>`;
             
-            // Speak, then callback to move to next turn
             speakSystemLine(currentLine.line, () => {
                 currentLineIndex++;
                 handleConversationTurn();
             });
         } else {
-            // User Turn Setup
             setupUserTurn();
         }
     }
 
-    // Start the loop
     handleConversationTurn();
 }
 
@@ -20486,190 +21039,244 @@ function startFlashRecallGame() {
             // --- REPLACEMENT: renderWords Function with Flashcard Toggle ---
             
             function renderWords(title, words, gradientClass, options = {}) {
-                const { isFavorites, isSearch, isSynonymSublist, isRootList, quizData, isReview } = options;
-                activeWordItem = null;
-                currentWordListData = { title, words, gradClass: gradientClass, options };
-                
-                // Determine if Flashcard Mode is supported
-                const isConfusingWords = title === 'Confusing Words';
-                const isOneWordSub = title === 'One Word Substitution';
-                const isAntonyms = title === 'Antonyms';
-                const isProverbs = title === 'Proverbs and Sayings';
-                const isIdioms = title.includes('Idioms') || title.includes('Expressions');
-                const isVocabBuilder = title === 'Basic Vocabulary' || title === 'Daily Actions & Verbs' || title === 'Travel & Adventure' || title === 'Emotions & Feelings';
-                const isAdvancedMisc = title === 'Business Vocab' || title === 'Foreign Loanwords' || title === 'Phobias & Manias';
+    const { isFavorites, isSearch, isSynonymSublist, isRootList, quizData, isReview } = options;
+    activeWordItem = null;
+    currentWordListData = { title, words, gradClass: gradientClass, options };
+    
+    const hasFlashcardData = words.some(w => w && typeof w === 'object' && w.word && (w.meaning || w.hindi));
+    const supportsFlashcards = !isSearch && !isFavorites && !isReview && !isRootList && hasFlashcardData;
 
-                const supportsFlashcards = !isSearch && !isFavorites && !isReview && (isConfusingWords || isOneWordSub || isAntonyms || isProverbs || isIdioms || isVocabBuilder || isAdvancedMisc);
+    // FIX 1: Detect Checklist Mode based on data type (String = Checklist Item)
+    const isChecklistMode = words.length > 0 && typeof words[0] === 'string';
 
-                if (options.viewMode === undefined) options.viewMode = 'list';
+    // FIX 2: Generate a unique storage key based on the Title. 
+    // This ensures "Opinion Poll" checks don't mix with "Daily Discussion".
+    const storageTitle = title.replace(/[^a-zA-Z0-9]/g, '_'); // Sanitize title
+    const mainStorageKey = `lingoquest_done_${storageTitle}`;
 
-                updateTopNav({ title: isFavorites ? "Favorites" : title, showBack: !isFavorites, gradClass: isFavorites ? 'grad-fav' : gradientClass, showActions: isFavorites || isSearch });
-                
-                mainContent.innerHTML = '';
-                mainContent.appendChild(document.getElementById('word-list-template').content.cloneNode(true));
-                const listContainer = mainContent.querySelector('#word-list-container');
-                mainContent.querySelector('#word-list-title').classList.add('hidden');
-                listContainer.innerHTML = '';
+    if (options.viewMode === undefined) options.viewMode = 'list';
 
-                // --- CONTROLS AREA ---
-                const controlsDiv = document.createElement('div');
-                controlsDiv.className = "flex flex-col gap-3 mb-4";
+    document.body.style.overflow = 'auto';
 
-                // Flashcard Toggle
-                if (supportsFlashcards && words.length > 0) {
-                    const toggleBtn = document.createElement('button');
-                    const isCard = options.viewMode === 'card';
-                    // FIX: 'self-center' centers the button horizontally
-                    toggleBtn.className = "self-center px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 " + (isCard ? "bg-pink-600 text-white shadow-lg transform scale-105" : "bg-white/10 text-slate-300 hover:bg-white/20");
-                    toggleBtn.innerHTML = isCard 
-                        ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> List View`
-                        : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Flashcards`;
-                    
-                    toggleBtn.onclick = () => {
-                        vibrate();
-                        options.viewMode = isCard ? 'list' : 'card';
-                        options.cardIndex = 0; 
-                        renderWords(title, words, gradientClass, options);
-                    };
-                    controlsDiv.appendChild(toggleBtn);
-                }
+    updateTopNav({ title: isFavorites ? "Favorites" : title, showBack: !isFavorites, gradClass: isFavorites ? 'grad-fav' : gradientClass, showActions: isFavorites || isSearch });
+    
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('word-list-template').content.cloneNode(true));
+    const listContainer = mainContent.querySelector('#word-list-container');
+    mainContent.querySelector('#word-list-title').classList.add('hidden');
+    listContainer.innerHTML = '';
 
-                // Clear Checkboxes Button (List Mode Only)
-                const isADiscussionSubCategory = title.includes('Discussion');
-                const mainStorageKey = 'lingoquest_done_DiscussionQuestions';
-                if (isADiscussionSubCategory && words.length > 0 && options.viewMode === 'list') {
-                    const clearBtn = document.createElement('button');
-                    clearBtn.className = 'w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in';
-                    clearBtn.innerHTML = 'Clear All Checked Topics';
-                    clearBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        if(confirm("Are you sure you want to uncheck all topics?")) {
-                            localStorage.removeItem(mainStorageKey);
-                            renderWords(title, words, gradientClass, options);
-                        }
-                    };
-                    controlsDiv.appendChild(clearBtn);
-                }
-                
-                // Quiz/Challenge Buttons (List Mode Only)
-                if (options.viewMode === 'list') {
-                    if (quizData) { 
-                        const quizBtn = document.createElement('button'); 
-                        quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
-                        quizBtn.innerHTML = 'Take the Sentence Scramble Quiz'; 
-                        quizBtn.onclick = () => checkForSavedQuiz(`jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`, quizData.questions, { title }, startJumbledQuiz); 
-                        controlsDiv.appendChild(quizBtn); 
-                    }
-                    if (words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList).length >= 4 && !isReview) { 
-                        const quizBtn = document.createElement('button'); 
-                        quizBtn.className = 'w-full grad-nav text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in mb-2'; 
-                        quizBtn.innerHTML = 'Take the Quiz'; 
-                        quizBtn.onclick = () => showQuizOptions(currentWordListData); 
-                        controlsDiv.appendChild(quizBtn); 
+    // --- CONTROLS ---
+    const controlsDiv = document.createElement('div');
+    controlsDiv.className = "flex flex-col gap-3 mb-4 px-1";
 
-                        const challengeBtn = document.createElement('button'); 
-                        challengeBtn.className = 'w-full grad-4 text-white font-bold py-3 px-4 rounded-lg text-center transition-transform hover:scale-105 pop-in'; 
-                        challengeBtn.innerHTML = 'Challenge a Friend'; 
-                        challengeBtn.onclick = () => showQuizOptions(currentWordListData, { isChallenge: true }); 
-                        controlsDiv.appendChild(challengeBtn); 
-                    }
-                }
+    // 1. Toggle Button (Flashcards)
+    if (supportsFlashcards && words.length > 0) {
+        const toggleBtn = document.createElement('button');
+        const isCard = options.viewMode === 'card';
+        toggleBtn.className = "self-center px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 shadow-md " + 
+            (isCard ? "bg-pink-600 text-white transform scale-105" : "toggle-btn-light");
+            
+        toggleBtn.innerHTML = isCard 
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> List View`
+            : `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Flashcards`;
+        
+        toggleBtn.onclick = () => {
+            vibrate();
+            options.viewMode = isCard ? 'list' : 'card';
+            options.cardIndex = 0; 
+            renderWords(title, words, gradientClass, options);
+        };
+        controlsDiv.appendChild(toggleBtn);
+    }
 
-                listContainer.appendChild(controlsDiv);
-
-                if (words.length === 0) {
-                    listContainer.innerHTML += `<p class="text-center text-gray-400 mt-4">${isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.')}</p>`;
-                    return;
-                }
-
-                if (options.viewMode === 'card') {
-                    if (typeof options.cardIndex === 'undefined') options.cardIndex = 0;
-                    renderFlashcardSingle(listContainer, words, title, gradientClass, options);
-                    return;
-                }
-
-                const list = document.createElement('div');
-                list.className = "space-y-4";
-                let doneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
-
-                words.forEach(item => {
-                    if (typeof item === 'string') {
-                        const uniqueId = item;
-                        const isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
-                        const isDone = doneList.includes(uniqueId);
-
-                        const sentenceItem = document.createElement('div');
-                        sentenceItem.className = 'sentence-item p-3 sm:p-4';
-                        sentenceItem.innerHTML = `
-                            <div class="flex justify-between items-start w-full gap-3">
-                                <input type="checkbox" class="done-checkbox flex-shrink-0 w-5 h-5 mt-1 rounded text-pink-600 focus:ring-pink-500" ${isDone ? 'checked' : ''} style="accent-color: var(--accent-pink);">
-                                <p class="text-sm sm:text-base font-semibold flex-grow ml-2">${item}</p>
-                                <button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.replace(/"/g, '&quot;')}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                                </button>
-                                <div class="speak-button flex-shrink-0" data-speak="${item.replace(/"/g, '&quot;')}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
-                                </div>
-                            </div>`;
-                        
-                        const checkbox = sentenceItem.querySelector('.done-checkbox');
-                        checkbox.addEventListener('change', () => {
-                            let currentDoneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
-                            if (checkbox.checked) { if (!currentDoneList.includes(uniqueId)) currentDoneList.push(uniqueId); } 
-                            else { currentDoneList = currentDoneList.filter(q => q !== uniqueId); }
-                            localStorage.setItem(mainStorageKey, JSON.stringify(currentDoneList));
-                            doneList = currentDoneList;
-                        });
-
-                        sentenceItem.addEventListener('click', e => { 
-                            const target = e.target;
-                            if (target.classList.contains('done-checkbox')) return;
-                            if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } 
-                            else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
-                        });
-                        list.appendChild(sentenceItem);
-                    } else if (item.type === 'explanation') {
-                        const explanationItem = document.createElement('div');
-                        explanationItem.className = 'explanation-card p-3 sm:p-4';
-                        explanationItem.innerHTML = `<p class="text-sm sm:text-base font-semibold">${item.title}</p>${item.meaning ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}`;
-                        explanationItem.addEventListener('click', () => showExplanationModal(item.title));
-                        list.appendChild(explanationItem);
-                    } else if (isRootList) {
-                        const rootItem = document.createElement('div');
-                        rootItem.className = 'root-item-card p-3 sm:p-4 bg-white/5 hover:bg-white/10 transition-colors';
-                        rootItem.innerHTML = `<h3 class="text-lg font-bold text-white">${item.word}</h3><p class="text-sm text-slate-400 font-sans">${item.meaning}</p>`;
-                        rootItem.addEventListener('click', () => showExplanationModal(item.word));
-                        list.appendChild(rootItem);
-                    } else if (item.isSentence) {
-                        const uniqueId = item.hindi, isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
-                        const sentenceItem = document.createElement('div');
-                        sentenceItem.className = 'sentence-item p-3 sm:p-4';
-                        sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-sm sm:text-base font-semibold flex-grow">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-slate-300 mt-3"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-700 leading-tight flex-grow">${item.english}</p><div class="speak-button flex-shrink-0" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
-                        sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
-                        list.appendChild(sentenceItem);
-                    } else {
-                        const isFavorited = favorites.some(fav => !fav.isSentence && fav.word === item.word);
-                        const wordItem = document.createElement('div');
-                        wordItem.className = "word-item";
-                        const wordCardInner = document.createElement('div');
-                        wordCardInner.className = 'word-card-inner';
-                        const frontContent = document.createElement('div');
-                        frontContent.className = "word-content front p-3 sm:p-4";
-                        const backContent = document.createElement('div');
-                        backContent.className = "word-content back p-3 sm:p-4";
-                        const isOneWordSub = title.includes('One Word Substitution'), isAntonymList = title === 'Antonyms';
-                        const frontWord = isOneWordSub ? item.meaning : item.word;
-                        const backWord = isAntonymList ? item.antonym : (isOneWordSub ? item.word : (item.synonyms ? `Synonyms: ${item.synonyms.join(', ')}` : (item.example || item.meaning)));
-                        frontContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4"><div class="text-left flex-grow"><p class="text-sm sm:text-base font-semibold">${frontWord}</p>${(item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}${(isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}</div><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>${!isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
-                        backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-white font-semibold">${item.antonym}</p><p class="text-xs text-slate-300">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-white leading-tight text-left flex-grow">${backWord}</p>`}${isAntonymList || isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
-                        wordCardInner.append(frontContent, backContent);
-                        wordItem.appendChild(wordCardInner);
-                        wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
-                        list.appendChild(wordItem);
-                    }
-                });
-                listContainer.appendChild(list);
+    // 2. Clear Checkboxes Button (FIXED: Now appears for ALL string lists)
+    if (isChecklistMode && options.viewMode === 'list') {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-xl text-center transition-transform hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2';
+        clearBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg> Clear All Checked Items`;
+        
+        clearBtn.onclick = (e) => {
+            e.stopPropagation();
+            if(confirm("Uncheck all items in this list?")) {
+                localStorage.removeItem(mainStorageKey);
+                vibrate();
+                renderWords(title, words, gradientClass, options);
             }
+        };
+        controlsDiv.appendChild(clearBtn);
+    }
+
+    // 3. Quiz Buttons
+    if (options.viewMode === 'list') {
+        const validQuizWords = words.filter(w => typeof w === 'object' && w !== null && !w.type && !w.isSentence && !w.isRootList);
+        
+        if (validQuizWords.length >= 4 && !isReview && !isSynonymSublist && !isChecklistMode) { 
+            const gridDiv = document.createElement('div');
+            gridDiv.className = "grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2";
+
+            const quizBtn = document.createElement('button'); 
+            quizBtn.className = 'w-full btn-gradient-quiz py-3 px-4 rounded-xl text-center font-bold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2'; 
+            quizBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> Take Quiz`; 
+            quizBtn.onclick = () => showQuizOptions(currentWordListData); 
+            gridDiv.appendChild(quizBtn); 
+
+            const challengeBtn = document.createElement('button'); 
+            challengeBtn.className = 'w-full btn-gradient-challenge py-3 px-4 rounded-xl text-center font-bold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2'; 
+            challengeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Challenge Friend`; 
+            challengeBtn.onclick = () => showQuizOptions(currentWordListData, { isChallenge: true }); 
+            gridDiv.appendChild(challengeBtn);
+            
+            controlsDiv.appendChild(gridDiv);
+        }
+        
+        if (quizData) { 
+            const jumbledBtn = document.createElement('button'); 
+            jumbledBtn.className = 'w-full btn-gradient-scramble py-3 px-4 rounded-xl text-center font-bold hover:scale-[1.02] transition-transform mt-2'; 
+            jumbledBtn.innerHTML = '🧩 Sentence Scramble'; 
+            jumbledBtn.onclick = () => checkForSavedQuiz(`jumbled-${title.replace(/\s+/g, '-').toLowerCase()}`, quizData.questions, { title }, startJumbledQuiz); 
+            controlsDiv.appendChild(jumbledBtn); 
+        }
+    }
+    
+    listContainer.appendChild(controlsDiv);
+
+    if (words.length === 0) {
+        listContainer.innerHTML += `<p class="text-center text-gray-400 mt-4">${isFavorites ? 'You haven\'t saved any favorites yet.' : (isSearch ? 'No results found.' : 'This category is empty.')}</p>`;
+        return;
+    }
+
+    if (options.viewMode === 'card') {
+        if (typeof options.cardIndex === 'undefined') options.cardIndex = 0;
+        renderFlashcardSingle(listContainer, words, title, gradientClass, options);
+        return;
+    }
+
+    // --- LIST MODE (Pastel Cards) ---
+    const list = document.createElement('div');
+    list.className = "space-y-3 pb-10";
+
+    const pastelColors = [
+        "bg-rose-50 border-rose-100", 
+        "bg-blue-50 border-blue-100", 
+        "bg-green-50 border-green-100", 
+        "bg-amber-50 border-amber-100", 
+        "bg-purple-50 border-purple-100", 
+        "bg-teal-50 border-teal-100", 
+        "bg-indigo-50 border-indigo-100",
+        "bg-fuchsia-50 border-fuchsia-100"
+    ];
+
+    // Load checked state using the unique key
+    let doneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
+
+    words.forEach((item, index) => {
+        const colorClass = pastelColors[index % pastelColors.length];
+
+        if (typeof item === 'string') {
+             const uniqueId = item;
+             const isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
+             const isDone = doneList.includes(uniqueId);
+
+             const sentenceItem = document.createElement('div');
+             sentenceItem.className = `sentence-item pastel-card p-4 rounded-xl ${colorClass}`; 
+             
+             sentenceItem.innerHTML = `
+                 <div class="flex justify-between items-start w-full gap-3">
+                     <!-- CHECKBOX -->
+                     <input type="checkbox" class="done-checkbox flex-shrink-0 w-6 h-6 mt-0.5 rounded-md border-2 border-pink-300 text-pink-600 focus:ring-pink-500 cursor-pointer" ${isDone ? 'checked' : ''}>
+                     
+                     <p class="text-base font-bold text-slate-800 flex-grow ml-2 leading-snug">${item}</p>
+                     <button class="favorite-btn flex-shrink-0 p-2 hover:bg-white/50 rounded-full transition-colors ${isFavorited ? 'favorited' : ''}" data-word="${item.replace(/"/g, '&quot;')}">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                     </button>
+                     <div class="speak-button flex-shrink-0 p-2 hover:bg-white/50 rounded-full transition-colors cursor-pointer" data-speak="${item.replace(/"/g, '&quot;')}">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                     </div>
+                 </div>`;
+             
+             const checkbox = sentenceItem.querySelector('.done-checkbox');
+             checkbox.addEventListener('change', (e) => {
+                 e.stopPropagation();
+                 let currentDoneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
+                 if (checkbox.checked) { 
+                     if (!currentDoneList.includes(uniqueId)) currentDoneList.push(uniqueId); 
+                 } else { 
+                     currentDoneList = currentDoneList.filter(q => q !== uniqueId); 
+                 }
+                 localStorage.setItem(mainStorageKey, JSON.stringify(currentDoneList));
+                 doneList = currentDoneList;
+             });
+
+             sentenceItem.addEventListener('click', e => { 
+                 const target = e.target;
+                 if (target.classList.contains('done-checkbox')) return;
+                 if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } 
+                 else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
+                 else {
+                     // Toggle check on card click
+                     checkbox.checked = !checkbox.checked;
+                     checkbox.dispatchEvent(new Event('change'));
+                 }
+             });
+             list.appendChild(sentenceItem);
+
+        } else if (item.type === 'explanation') {
+             const explanationItem = document.createElement('div');
+             explanationItem.className = `explanation-card pastel-card p-4 rounded-xl ${colorClass}`;
+             explanationItem.innerHTML = `<p class="text-base font-bold text-slate-800">${item.title}</p>${item.meaning ? `<p class="text-sm text-slate-600 mt-1">${item.meaning}</p>` : ''}`;
+             explanationItem.addEventListener('click', () => showExplanationModal(item.title));
+             list.appendChild(explanationItem);
+
+        } else if (isRootList) {
+             const rootItem = document.createElement('div');
+             rootItem.className = `root-item-card pastel-card p-4 rounded-xl mb-2 cursor-pointer ${colorClass}`; 
+             rootItem.innerHTML = `<h3 class="text-lg font-black text-slate-800">${item.word}</h3><p class="text-sm text-slate-600 font-medium mt-1">${item.meaning}</p>`;
+             rootItem.addEventListener('click', () => showExplanationModal(item.word));
+             list.appendChild(rootItem);
+
+        } else if (item.isSentence) {
+             const uniqueId = item.hindi, isFavorited = favorites.some(fav => fav.isSentence && fav.hindi === uniqueId);
+             const sentenceItem = document.createElement('div');
+             sentenceItem.className = `sentence-item pastel-card p-4 rounded-xl ${colorClass}`;
+             
+             sentenceItem.innerHTML = `<div class="flex justify-between items-start w-full gap-4"><p class="text-base font-bold flex-grow text-slate-800">${item.hindi}</p><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.hindi.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button></div><div class="sentence-translation border-t border-black/5 mt-3 pt-2"><div class="flex justify-between items-center w-full gap-4"><p class="text-sm text-slate-600 leading-tight flex-grow font-medium">${item.english}</p><div class="speak-button flex-shrink-0 cursor-pointer p-1" data-speak="${item.english}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-500"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div></div></div>`;
+             
+             sentenceItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else sentenceItem.classList.toggle('active'); });
+             list.appendChild(sentenceItem);
+
+        } else {
+            // Standard Vocabulary Cards
+            const isFavorited = favorites.some(fav => !fav.isSentence && fav.word === item.word);
+            const wordItem = document.createElement('div');
+            wordItem.className = "word-item mb-3";
+            const wordCardInner = document.createElement('div');
+            wordCardInner.className = 'word-card-inner';
+            
+            const frontContent = document.createElement('div');
+            frontContent.className = `word-content front p-4 rounded-xl pastel-card ${colorClass}`;
+            
+            const backContent = document.createElement('div');
+            // Back content WHITE with DARK TEXT for readability
+            backContent.className = "word-content back p-4 rounded-xl bg-white border-2 border-slate-200 text-slate-900"; 
+
+            const isOneWordSub = title.includes('One Word Substitution'), isAntonymList = title === 'Antonyms';
+            const frontWord = isOneWordSub ? item.meaning : item.word;
+            const backWord = isAntonymList ? item.antonym : (isOneWordSub ? item.word : (item.synonyms ? `Synonyms: ${item.synonyms.join(', ')}` : (item.example || item.meaning)));
+            
+            frontContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4"><div class="text-left flex-grow"><p class="text-lg font-black text-slate-900 uppercase tracking-tight">${frontWord}</p>${(item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-sm text-slate-600 font-medium mt-1">${item.meaning}</p>` : ''}${(isSynonymSublist) ? `<p class="text-sm text-slate-600 mt-1">${item.meaning}</p>` : ''}</div><div class="flex items-center gap-1"><button class="favorite-btn p-2 hover:bg-white/50 rounded-full transition-colors ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>${!isOneWordSub ? `<div class="speak-button p-2 hover:bg-white/50 rounded-full transition-colors cursor-pointer" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div></div>`;
+            
+            backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4 h-full"><p class="text-lg font-medium flex-grow text-center">${backWord}</p></div>`;
+            
+            wordCardInner.append(frontContent, backContent);
+            wordItem.appendChild(wordCardInner);
+            wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
+            list.appendChild(wordItem);
+        }
+    });
+
+    listContainer.appendChild(list);
+}
 
             // --- REPLACEMENT: Single Flashcard with Swipe & Mastery Logic ---
 
@@ -20878,114 +21485,124 @@ function startFlashRecallGame() {
             }
 
             // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
-            // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
             function getFlashcardContent(categoryTitle, item) {
-                let frontHTML = "", backHTML = "";
-                
-                // Speak Button Helper
-                const getSpeakBtn = (text) => `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${text.replace(/'/g, "\\'")}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
+    let frontHTML = "", backHTML = "";
+    
+    // --- FIX: Robust Speak Button Helper ---
+    // Checks if text exists before trying to replace characters
+    const getSpeakBtn = (text) => {
+        if (!text || typeof text !== 'string') return '';
+        // Escape quotes safely
+        const safeText = text.replace(/'/g, "\\'");
+        return `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${safeText}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
+    };
 
-                if (categoryTitle === 'Confusing Words') {
-                    const fullHTML = detailedExplanations[item.title];
-                    if (!fullHTML) return null;
-                    
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = fullHTML;
-                    const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
-                    
-                    if (childDivs.length >= 2) {
-                        frontHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[0].innerHTML}</div>`;
-                        backHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[1].innerHTML}</div>`;
-                    } else {
-                        frontHTML = `<h3 class="text-2xl font-bold mb-2">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
-                        backHTML = `<div class="text-left w-full overflow-y-auto">${fullHTML}</div>`;
-                    }
+    if (categoryTitle === 'Confusing Words') {
+        const fullHTML = detailedExplanations[item.title];
+        if (!fullHTML) return null;
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = fullHTML;
+        const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
+        
+        if (childDivs.length >= 2) {
+            frontHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[0].innerHTML}</div>`;
+            backHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[1].innerHTML}</div>`;
+        } else {
+            frontHTML = `<h3 class="text-2xl font-bold mb-2">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
+            backHTML = `<div class="text-left w-full overflow-y-auto">${fullHTML}</div>`;
+        }
 
-                } else if (categoryTitle === 'One Word Substitution') {
-                    // FIX: Wrapped in flex-grow for vertical centering
-                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="text-xl font-medium text-center leading-relaxed">${item.meaning}</p></div>`;
-                    backHTML = `<div class="flex flex-col items-center"><h3 class="text-3xl font-extrabold text-pink-600 mb-2">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
+    } else if (categoryTitle === 'One Word Substitution') {
+        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="text-xl font-medium text-center leading-relaxed">${item.meaning}</p></div>`;
+        backHTML = `<div class="flex flex-col items-center"><h3 class="text-3xl font-extrabold text-pink-600 mb-2">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
 
-                } else if (categoryTitle === 'Antonyms') {
-                    frontHTML = `
-                        <div class="flex flex-col items-center h-full justify-center">
-                            <h3 class="text-3xl font-extrabold mb-2">${item.word}</h3>
-                            <p class="text-lg text-slate-500 mb-4">${item.meaning}</p>
-                            ${getSpeakBtn(item.word)}
-                            <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
-                        </div>
-                    `;
-                    backHTML = `
-                        <div class="flex flex-col items-center h-full justify-center">
-                            <h3 class="text-3xl font-extrabold mb-2 text-pink-600">${item.antonym}</h3>
-                            <p class="text-lg text-slate-500 mb-4">${item.antonym_meaning}</p>
-                            ${getSpeakBtn(item.antonym)}
-                            <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
-                        </div>
-                    `;
+    } else if (categoryTitle === 'Antonyms') {
+        frontHTML = `
+            <div class="flex flex-col items-center h-full justify-center">
+                <h3 class="text-3xl font-extrabold mb-2">${item.word}</h3>
+                <p class="text-lg text-slate-500 mb-4">${item.meaning}</p>
+                ${getSpeakBtn(item.word)}
+                <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
+            </div>
+        `;
+        backHTML = `
+            <div class="flex flex-col items-center h-full justify-center">
+                <h3 class="text-3xl font-extrabold mb-2 text-pink-600">${item.antonym}</h3>
+                <p class="text-lg text-slate-500 mb-4">${item.antonym_meaning}</p>
+                ${getSpeakBtn(item.antonym)}
+                <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
+            </div>
+        `;
 
-                } else if (categoryTitle === 'Proverbs and Sayings') {
-                    // FIX: Wrapped in flex-grow for vertical centering
-                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="font-bold text-2xl italic text-center text-slate-800">"${item.word}"</p></div>`;
-                    backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
+    } else if (categoryTitle === 'Proverbs and Sayings') {
+        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="font-bold text-2xl italic text-center text-slate-800">"${item.word}"</p></div>`;
+        backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
 
-                } else if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases')) {
-                     // FIX: Wrapped in flex-grow for vertical centering
-                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><h3 class="text-3xl font-bold text-center text-slate-800 leading-tight">${item.word}</h3></div>`;
-                    backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
+    } else if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases')) {
+        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><h3 class="text-3xl font-bold text-center text-slate-800 leading-tight">${item.word}</h3></div>`;
+        backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
 
-                } else {
-                    // Default (Vocab Builder, Business, etc.)
-                    
-                    // Check if meaning exists
-                    if (!item.meaning || item.meaning.trim() === "") {
-                        // NO MEANING (e.g. Sentence Mode) -> Simple Centered Layout using flex-grow
-                        frontHTML = `
-                            <div class="flex-grow flex flex-col items-center justify-center p-4">
-                                <h3 class="text-2xl font-bold text-slate-900 text-center italic mb-4">"${item.word}"</h3>
-                                ${getSpeakBtn(item.word)}
-                            </div>
-                        `;
-                    } else {
-                        // HAS MEANING -> Partitioned Layout
-                        frontHTML = `
-                            <div class="flex flex-col h-full w-full justify-center items-center">
-                                <!-- Top: Word -->
-                                <div class="flex-grow flex flex-col justify-end pb-4">
-                                    <h3 class="text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight">${item.word}</h3>
-                                </div>
-                                
-                                <!-- Middle: Speaker -->
-                                <div class="flex-shrink-0 py-2">
-                                    ${getSpeakBtn(item.word)}
-                                </div>
-                                
-                                <!-- Bottom: Meaning -->
-                                <div class="flex-grow flex flex-col justify-start pt-4">
-                                    <p class="text-2xl font-medium text-slate-500 text-center">${item.meaning}</p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    if (item.example) {
-                        backHTML = `
-                            <div class="text-center w-full h-full flex flex-col justify-center">
-                                <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-6">EXAMPLE</p>
-                                <p class="text-xl font-bold italic text-slate-800 leading-relaxed">"${item.example}"</p>
-                                <div class="mt-6">
-                                    ${getSpeakBtn(item.example)}
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        // Fallback if no example
-                        backHTML = `<div class="text-center"><p class="text-xl font-medium text-slate-600">${item.meaning || "Flip back"}</p></div>`;
-                    }
-                }
+    } else {
+        // --- Default (Vocab Builder, Sentences, etc.) ---
+        
+        // Determine correct properties (Handles both Vocab objects AND Sentence objects)
+        // If it's a Sentence object, it might use 'hindi'/'english' instead of 'word'/'meaning'
+        const wordText = item.word || item.hindi || "";
+        const meaningText = item.meaning || item.english || "";
 
-                return { frontHTML, backHTML };
-            }
+        if (!meaningText || meaningText.trim() === "") {
+            // Case: Word/Sentence only (no distinct meaning/translation available)
+            frontHTML = `
+                <div class="flex-grow flex flex-col items-center justify-center p-4">
+                    <h3 class="text-2xl font-bold text-slate-900 text-center italic mb-4">"${wordText}"</h3>
+                    ${getSpeakBtn(wordText)}
+                </div>
+            `;
+        } else {
+            // Case: Standard Flashcard (Word on Front, Meaning on Back)
+            frontHTML = `
+                <div class="flex flex-col h-full w-full justify-center items-center">
+                    <div class="flex-grow flex flex-col justify-end pb-4">
+                        <h3 class="text-3xl sm:text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight">${wordText}</h3>
+                    </div>
+                    <div class="flex-shrink-0 py-2">
+                        ${getSpeakBtn(wordText)}
+                    </div>
+                    <div class="flex-grow flex flex-col justify-start pt-4">
+                        <!-- Optional hint or category label could go here -->
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Back Content
+        if (item.example) {
+            backHTML = `
+                <div class="text-center w-full h-full flex flex-col justify-center">
+                    <p class="text-xl font-medium text-slate-700 mb-6">${meaningText}</p>
+                    <div class="border-t border-slate-200 my-4 w-16 mx-auto"></div>
+                    <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-2">EXAMPLE</p>
+                    <p class="text-lg font-bold italic text-slate-800 leading-relaxed">"${item.example}"</p>
+                    <div class="mt-4">
+                        ${getSpeakBtn(item.example)}
+                    </div>
+                </div>
+            `;
+        } else {
+            backHTML = `
+                <div class="text-center w-full h-full flex flex-col justify-center">
+                    <p class="text-xl font-medium text-slate-900">${meaningText}</p>
+                    <div class="mt-6">
+                         ${getSpeakBtn(meaningText)}
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    return { frontHTML, backHTML };
+}
             
             // --- END: REPLACEMENT FUNCTIONS ---
 
@@ -21035,62 +21652,86 @@ function startFlashRecallGame() {
             }
 
             function renderDictionaryView() {
-                updateTopNav({ title: "Dictionary", showBack: true });
-                const section = document.createElement('section');
-                section.className = 'pop-in p-4';
-                section.innerHTML = `<div class="glass-ui p-4 sm:p-6 rounded-2xl max-w-2xl mx-auto"><h2 class="text-3xl font-bold text-white mb-4 text-center">Dictionary</h2><div class="flex flex-col sm:flex-row gap-3 mb-4"><input type="text" id="dictionary-search-input" placeholder="Enter a word..." class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-full py-2 px-4 outline-none transition-all"><button id="dictionary-search-btn" class="grad-nav text-white font-bold py-2 px-4 rounded-full">Search</button></div><div id="dictionary-result-container" class="dictionary-result mt-4"><div id="dictionary-placeholder"><p class="text-slate-400">Search for any English word to see its definition, pronunciation, and examples.</p></div></div></div>`;
-                mainContent.appendChild(section);
-                const searchInput = document.getElementById('dictionary-search-input');
-                const searchWord = async () => {
-                    const word = searchInput.value.trim();
-                    if (!word) return;
-                    searchInput.value = '';
-                    const resultContainer = document.getElementById('dictionary-result-container');
-                    resultContainer.innerHTML = `<div class="flex justify-center items-center py-8"><svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>`;
-                    try {
-                        const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
-                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                        const response = await fetch(proxyUrl);
-                        if (!response.ok) throw new Error('Word not found');
-                        const data = await response.json();
-                        const resultContainer = document.getElementById('dictionary-result-container');
-                        let audioSrc = data[0].phonetics.find(p => p.audio)?.audio;
-                        let meaningsHTML = data[0].meanings.map(m => `<div><h4 class="inline-block text-lg font-bold italic bg-clip-text text-transparent grad-3 pb-1">${m.partOfSpeech}</h4><div class="mt-2 space-y-3 text-slate-700">${m.definitions.map((d, i) => `<div class="flex"><span class="text-slate-400 mr-3">${i + 1}.</span><div><p>${d.definition}</p>${d.example ? `<p class="text-sm text-slate-500 italic mt-1">e.g. "${d.example}"</p>` : ''}</div></div>`).join('')}</div></div>`).join('');
-                        const resultCard = document.createElement('div');
-                        resultCard.className = 'bg-slate-50 rounded-2xl p-4 sm:p-6 pop-in mt-4';
-                        resultCard.innerHTML = `<div class="flex justify-between items-center border-b border-slate-200 pb-3 mb-4"><div><h3 class="text-3xl font-bold text-slate-800">${data[0].word}</h3><p class="text-slate-500">${data[0].phonetic || ''}</p></div>${audioSrc ? `<button id="dict-audio-btn" class="p-3 rounded-full bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>` : ''}</div><div class="space-y-6">${meaningsHTML}</div>`;
-                        resultContainer.innerHTML = '';
-                        resultContainer.appendChild(resultCard);
-                        if (audioSrc) document.getElementById('dict-audio-btn').addEventListener('click', () => new Audio(audioSrc).play());
-                    } catch (error) {
-                        const resultContainer = document.getElementById('dictionary-result-container');
-                        const internalResults = allWords.filter(item => item.word && item.word.toLowerCase() === word.toLowerCase() && !item.isSentence);
-                        
-                        if (internalResults.length > 0) {
-                            let internalResultsHTML = internalResults.map(item => {
-                                const isFavorited = favorites.some(fav => !fav.isSentence && fav.word === item.word);
-                                return `<div class="bg-slate-50 rounded-2xl p-4 sm:p-6 pop-in mt-4 text-slate-800">
-                                   <div class="flex justify-between items-center">
-                                       <h3 class="text-2xl font-bold">${item.word}</h3>
-                                       <button class="favorite-btn p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                                       </button>
-                                   </div>
-                                   <p class="mt-2 text-slate-600">${item.meaning}</p>
-                                   ${item.example ? `<p class="text-sm text-slate-500 italic mt-1">e.g. "${item.example}"</p>` : ''}
-                                </div>`;
-                            }).join('');
-                            
-                            resultContainer.innerHTML = `<p class="text-amber-400 font-semibold mb-4">The online dictionary is unavailable. Showing results from the app's vocabulary:</p>${internalResultsHTML}`;
-                            resultContainer.querySelectorAll('.favorite-btn').forEach(btn => btn.addEventListener('click', () => toggleFavorite(btn)));
-                        } else {
-                            resultContainer.innerHTML = `<p class="text-red-400 font-semibold">Sorry, the word "${word}" could not be found online or in the app's vocabulary.</p>`;
-                        }
-                    }
-                };
-                document.getElementById('dictionary-search-btn').addEventListener('click', searchWord);
-                searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchWord(); });
-            }
+    updateTopNav({ title: "Dictionary", showBack: true });
+    const section = document.createElement('section');
+    section.className = 'pop-in p-4 w-full max-w-2xl mx-auto';
+    // New Structure: Solid White Background
+    section.innerHTML = `
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
+            <h2 class="text-3xl font-black text-slate-800 mb-6 text-center">Dictionary</h2>
+            <div class="relative mb-6">
+                <input type="text" id="dictionary-search-input" placeholder="Type a word..." class="w-full bg-slate-50 text-slate-800 placeholder-slate-400 border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-2xl py-4 pl-5 pr-12 outline-none transition-all font-bold text-lg">
+                <button id="dictionary-search-btn" class="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+            </div>
+            <div id="dictionary-result-container" class="mt-4 min-h-[100px]">
+                <div id="dictionary-placeholder" class="text-center py-8">
+                    <p class="text-slate-400 font-medium">Search for definitions & examples.</p>
+                </div>
+            </div>
+        </div>`;
+    mainContent.appendChild(section);
+    
+    const searchInput = document.getElementById('dictionary-search-input');
+    const searchWord = async () => {
+        const word = searchInput.value.trim();
+        if (!word) return;
+        searchInput.value = '';
+        const resultContainer = document.getElementById('dictionary-result-container');
+        resultContainer.innerHTML = `<div class="flex justify-center items-center py-8"><svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></div>`;
+        try {
+            const apiUrl = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+            const response = await fetch(proxyUrl);
+            if (!response.ok) throw new Error('Word not found');
+            const data = await response.json();
+            
+            let audioSrc = data[0].phonetics.find(p => p.audio)?.audio;
+            let meaningsHTML = data[0].meanings.map(m => `
+                <div class="mb-4">
+                    <h4 class="text-lg font-bold text-indigo-600 italic border-b border-slate-100 pb-1 mb-2">${m.partOfSpeech}</h4>
+                    <div class="space-y-3">
+                        ${m.definitions.map((d, i) => `
+                            <div class="text-slate-700 text-base leading-relaxed">
+                                <span class="font-bold text-indigo-400 mr-2">${i + 1}.</span>${d.definition}
+                                ${d.example ? `<p class="text-sm text-slate-500 italic mt-1 ml-6">"${d.example}"</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`).join('');
+
+            resultContainer.innerHTML = `
+                <div class="animate-fade-in">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-3xl font-black text-slate-800 capitalize">${data[0].word}</h3>
+                            <p class="text-slate-500 font-mono text-sm">${data[0].phonetic || ''}</p>
+                        </div>
+                        ${audioSrc ? `<button id="dict-audio-btn" class="p-3 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>` : ''}
+                    </div>
+                    ${meaningsHTML}
+                </div>`;
+            
+            if (audioSrc) document.getElementById('dict-audio-btn').addEventListener('click', () => new Audio(audioSrc).play());
+        } catch (error) {
+             const internalResults = allWords.filter(item => item.word && item.word.toLowerCase() === word.toLowerCase() && !item.isSentence);
+             if (internalResults.length > 0) {
+                 let internalResultsHTML = internalResults.map(item => {
+                     return `<div class="bg-slate-50 rounded-2xl p-4 mb-3 text-slate-800 border border-slate-200">
+                        <h3 class="text-xl font-bold">${item.word}</h3>
+                        <p class="mt-1 text-slate-600">${item.meaning}</p>
+                     </div>`;
+                 }).join('');
+                 resultContainer.innerHTML = `<p class="text-amber-600 font-bold mb-2 text-sm">Offline Mode Results:</p>${internalResultsHTML}`;
+             } else {
+                 resultContainer.innerHTML = `<div class="text-center py-8"><p class="text-red-500 font-bold">Word not found.</p></div>`;
+             }
+        }
+    };
+    document.getElementById('dictionary-search-btn').addEventListener('click', searchWord);
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchWord(); });
+}
 
             function showExplanationModal(title) {
                 if (detailedExplanations[title]) {
@@ -21249,40 +21890,54 @@ function startFlashRecallGame() {
             }
             // --- NEW FUNCTION ---
             function showQuizLengthOptions(listData, options, maxPlayers) {
-                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full">
-                    <h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Length</h2>
-                    <div id="quiz-length-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button class="mode-card p-4 rounded-xl text-left" data-length="short"><h3 class="font-bold text-lg text-white">Short Quiz</h3><p class="text-sm text-slate-300">A quick quiz with 10 random words.</p></button>
-                        <button class="mode-card p-4 rounded-xl text-left" data-length="long"><h3 class="font-bold text-lg text-white">Long Quiz</h3><p class="text-sm text-slate-300">Test all words in this category.</p></button>
-                    </div>
-                </div>`;
-                
-                document.getElementById('quiz-length-selection').addEventListener('click', e => {
-                    const button = e.target.closest('.mode-card');
-                    if (button && !button.disabled) {
-                        showQuizTypeOptions(button.dataset.length, listData, options, maxPlayers);
-                    }
-                });
-            }
+    mainContent.innerHTML = `<div class="pop-in bg-white border border-slate-200 p-6 rounded-3xl mx-4 max-w-sm w-full text-center shadow-2xl">
+        <h2 class="text-2xl font-black text-slate-800 mb-6">Select Length</h2>
+        <div id="quiz-length-selection" class="flex flex-col gap-3">
+            <button class="p-5 rounded-2xl text-left bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors" data-length="short">
+                <h3 class="font-bold text-lg text-blue-900">Short Quiz</h3>
+                <p class="text-sm text-blue-600">10 Questions • Quick</p>
+            </button>
+            <button class="p-5 rounded-2xl text-left bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors" data-length="long">
+                <h3 class="font-bold text-lg text-purple-900">Long Quiz</h3>
+                <p class="text-sm text-purple-600">All Words • Thorough</p>
+            </button>
+        </div>
+    </div>`;
+    
+    document.getElementById('quiz-length-selection').addEventListener('click', e => {
+        const button = e.target.closest('button');
+        if (button) showQuizTypeOptions(button.dataset.length, listData, options, maxPlayers);
+    });
+}
 
             // --- MODIFIED FUNCTION ---
             function showQuizTypeOptions(quizLength, listData, options = { isChallenge: false }, maxPlayers) {
-                mainContent.innerHTML = `<div class="pop-in glass-ui p-6 rounded-2xl mx-4 max-w-3xl w-full"><h2 class="text-2xl font-bold text-white mb-6 text-center">Select Quiz Mode</h2><div id="quiz-mode-selection" class="grid grid-cols-1 sm:grid-cols-2 gap-4"><button class="mode-card p-4 rounded-xl text-left" data-mode="word-to-meaning"><h3 class="font-bold text-lg text-white">Choose the Correct Meaning</h3><p class="text-sm text-slate-300">Guess the meaning of the word.</p></button><button class="mode-card p-4 rounded-xl text-left" data-mode="meaning-to-word"><h3 class="font-bold text-lg text-white">Choose the Correct Word</h3><p class="text-sm text-slate-300">Guess the word from the meaning.</p></button></div></div>`;
-                document.getElementById('quiz-mode-selection').addEventListener('click', e => {
-                    const button = e.target.closest('.mode-card');
-                    if (button && !button.disabled) {
-                        const mode = button.dataset.mode;
-                        if (options.isChallenge) {
-                            // This is a new challenge
-                            createQuizChallenge(listData.words, mode, quizLength, listData, maxPlayers);
-                        } else {
-                            // This is a normal, solo quiz
-                            const quizId = `vocab-${listData.title.replace(/\s+/g, '-').toLowerCase()}-${mode}-${quizLength}`;
-                            checkForSavedQuiz(quizId, listData.words, listData, (qWords, qData, qId, savedState) => startQuiz(qWords, mode, quizLength, qId, qData, savedState));
-                        }
-                    }
-                });
+    mainContent.innerHTML = `<div class="pop-in bg-white border border-slate-200 p-6 rounded-3xl mx-4 max-w-sm w-full text-center shadow-2xl">
+        <h2 class="text-2xl font-black text-slate-800 mb-6">Select Mode</h2>
+        <div id="quiz-mode-selection" class="flex flex-col gap-3">
+            <button class="p-5 rounded-2xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition-colors" data-mode="word-to-meaning">
+                <h3 class="font-bold text-lg text-emerald-900">Guess Meaning</h3>
+                <p class="text-sm text-emerald-600">Word is shown, find meaning.</p>
+            </button>
+            <button class="p-5 rounded-2xl text-left bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors" data-mode="meaning-to-word">
+                <h3 class="font-bold text-lg text-amber-900">Guess Word</h3>
+                <p class="text-sm text-amber-600">Meaning is shown, find word.</p>
+            </button>
+        </div>
+    </div>`;
+
+    document.getElementById('quiz-mode-selection').addEventListener('click', e => {
+        const button = e.target.closest('button');
+        if (button) {
+            const mode = button.dataset.mode;
+            if (options.isChallenge) createQuizChallenge(listData.words, mode, quizLength, listData, maxPlayers);
+            else {
+                const quizId = `vocab-${listData.title.replace(/\s+/g, '-').toLowerCase()}-${mode}-${quizLength}`;
+                checkForSavedQuiz(quizId, listData.words, listData, (qWords, qData, qId, savedState) => startQuiz(qWords, mode, quizLength, qId, qData, savedState));
             }
+        }
+    });
+}
             // --- NEW FUNCTION ---
             function showCountdown(onFinishCallback) {
                 let count = 5;
@@ -23385,13 +24040,18 @@ function listenForChallengeResults(challengeId) {
 }
             
             // This block defines how the app starts.
+            // This block defines how the app starts.
             function initApp() {
                 
-                // 1. Show splash screen (it was hidden)
+                // 1. HIDE NAV BARS IMMEDIATELY (Fix for splash overlap)
+                document.getElementById('top-nav').classList.add('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+
+                // 2. Show splash screen (it was hidden)
                 const splashScreen = document.getElementById('splash-screen');
                 splashScreen.classList.remove('hidden');
                 
-                // 2. Start Splash Animation Logic
+                // 3. Start Splash Animation Logic
                 try {
                     const words = ["Learn", "Speak", "Quiz", "Vocab", "Idioms", "Practice", "Fluent", "English"];
                     const colors = ["text-pink-400", "text-cyan-400", "text-green-400", "text-yellow-400", "text-indigo-400", "text-purple-400"];
@@ -23428,12 +24088,10 @@ function listenForChallengeResults(challengeId) {
                     
                 }
                 
-                // 3. Add delay for animation
+                // 4. Add delay for animation
                 setTimeout(() => {
 
                     allWords = [...new Set(flattenVocabulary(vocabularyData))];
-                    
-                    
                     
                     // 5. Initialize App Auth (this will load profile/show setup, then show home)
                     initializeAppAuth(); 
