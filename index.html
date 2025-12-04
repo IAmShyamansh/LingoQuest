@@ -2823,16 +2823,20 @@ body {
         </div>
     </div>
     <div id="join-challenge-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
-            <button id="close-join-challenge-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        <!-- Updated: Solid Slate-900 background for visibility -->
+        <div class="bg-slate-900 border border-slate-700 p-6 rounded-2xl max-w-lg w-full relative pop-in shadow-2xl">
+            <button id="close-join-challenge-modal" class="absolute top-2 right-2 p-2 text-slate-400 hover:text-white transition-colors" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
             <h2 class="text-2xl font-bold text-white mb-4 text-center">Join a Challenge</h2>
             <p class="text-slate-300 text-center mb-6">Enter the 6-digit challenge code your friend sent you.</p>
             <div class="mb-4">
                 <label for="challenge-code-input" class="block text-sm font-bold text-slate-200 mb-2">Challenge Code:</label>
-                <input type="text" id="challenge-code-input" placeholder="e.g., ABC-123" maxlength="7" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all text-center text-lg font-bold uppercase tracking-widest">
+                <!-- Updated Input: Darker background (slate-800) with visible border -->
+                <input type="text" id="challenge-code-input" placeholder="e.g., ABC-123" maxlength="7" class="w-full bg-slate-800 text-white placeholder-slate-500 border-2 border-slate-600 focus:border-pink-500 focus:bg-slate-800 rounded-lg py-3 px-4 outline-none transition-all text-center text-lg font-bold uppercase tracking-widest shadow-inner">
             </div>
             <p id="join-challenge-error" class="text-red-400 text-sm text-center mb-4 min-h-[1.25rem]"></p>
-            <button id="submit-join-challenge" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg">Join Quiz</button>
+            <button id="submit-join-challenge" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg hover:scale-[1.02] transition-transform shadow-lg">Join Quiz</button>
         </div>
     </div>
 
@@ -18583,11 +18587,13 @@ function renderCategoryListView(categories, title, subtitle, gradClass) {
     const container = document.createElement('div');
     container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 flex flex-col gap-3 animate-fade-in";
     
-    // 2. Header (Optional)
-    const header = document.createElement('div');
-    header.className = "mb-2 px-1 text-center sm:text-left";
-    header.innerHTML = `<p class="text-slate-400 text-sm font-bold tracking-wider uppercase">${subtitle || 'Select a topic'}</p>`;
-    container.appendChild(header);
+    // 2. Header (Dark Blue Text)
+    if (subtitle) {
+        const header = document.createElement('div');
+        header.className = "mb-2 px-1 text-center sm:text-left";
+        header.innerHTML = `<p class="text-blue-600 text-sm font-bold tracking-wider uppercase">${subtitle}</p>`;
+        container.appendChild(header);
+    }
 
     // 3. Pastel Theme Colors Cycle
     const pastelThemes = [
@@ -18621,9 +18627,9 @@ function renderCategoryListView(categories, title, subtitle, gradClass) {
             masteredCount = masteredList.length;
             const percent = Math.round((masteredCount / totalWords) * 100);
             
-            // Grey badge for 0%, Colored for progress
-            const badgeBg = percent > 0 ? 'bg-white/40 text-slate-700' : 'bg-black/5 text-slate-400';
-            percentBadge = `<span class="${badgeBg} px-3 py-1 rounded-lg text-xs font-bold backdrop-blur-sm">${percent}%</span>`;
+            // Badge logic
+            const badgeBg = percent > 0 ? 'bg-white/80 text-slate-800 shadow-sm' : 'bg-black/5 text-slate-500';
+            percentBadge = `<span class="${badgeBg} px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm border border-black/5">${percent}%</span>`;
         }
 
         // --- Create Button Item ---
@@ -20554,10 +20560,10 @@ function startFlashRecallGame() {
     const container = document.createElement('div');
     container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 flex flex-col gap-3 animate-fade-in";
 
-    // 3. Add Header
+    // 3. Add Header (Dark Blue Text)
     const header = document.createElement('div');
     header.className = "mb-2 px-1 text-center sm:text-left";
-    header.innerHTML = `<p class="text-slate-400 text-sm font-bold tracking-wider uppercase">${subtitle || 'Select a topic'}</p>`;
+    header.innerHTML = `<p class="text-blue-800 text-sm font-bold tracking-wider uppercase">${subtitle || 'Select a topic'}</p>`;
     container.appendChild(header);
 
     let i = 0;
@@ -20606,11 +20612,15 @@ function startFlashRecallGame() {
     updateTopNav({ title: title, showBack: true, gradClass: gradClass });
     const template = document.getElementById('study-hall-template');
     mainContent.appendChild(template.content.cloneNode(true));
-    mainContent.querySelector('#lesson-title').textContent = title;
+    
+    // FIX: Changed text-white to text-slate-900 (Dark Blue/Black) for visibility
+    const titleEl = mainContent.querySelector('#lesson-title');
+    titleEl.textContent = title;
+    titleEl.className = 'text-3xl font-black text-slate-900 mt-2 mb-2'; 
     
     const subtitleEl = mainContent.querySelector('#lesson-subtitle');
     subtitleEl.textContent = subtitle;
-    subtitleEl.className = 'text-blue-600 font-semibold mt-2 text-sm'; 
+    subtitleEl.className = 'text-blue-600 font-semibold mt-0 text-sm mb-8'; 
 
     const contentContainer = mainContent.querySelector('#lesson-content-container');
     contentContainer.innerHTML = '';
@@ -20659,7 +20669,6 @@ function startFlashRecallGame() {
                     const isUser = convo.speaker.toLowerCase() === 'you';
                     convoCard.className = `p-5 rounded-2xl flex gap-4 items-start shadow-sm border ${isUser ? 'bg-indigo-50 border-indigo-100' : 'bg-white border-slate-200'}`;
                     
-                    // FIX: Changed w-16 to w-24 to prevent overlap
                     convoCard.innerHTML = `
                         <div class="flex-shrink-0 font-black ${isUser ? 'text-indigo-600' : 'text-pink-600'} w-24 text-right uppercase tracking-wider text-xs mt-1 break-words">${convo.speaker}</div>
                         <div class="flex-grow">
@@ -21044,14 +21053,14 @@ function startFlashRecallGame() {
     currentWordListData = { title, words, gradClass: gradientClass, options };
     
     const hasFlashcardData = words.some(w => w && typeof w === 'object' && w.word && (w.meaning || w.hindi));
-    const supportsFlashcards = !isSearch && !isFavorites && !isReview && !isRootList && hasFlashcardData;
+    
+    // FIX: Added !isSynonymSublist here to hide flashcards for Synonyms
+    const supportsFlashcards = !isSearch && !isFavorites && !isReview && !isRootList && !isSynonymSublist && hasFlashcardData;
 
-    // FIX 1: Detect Checklist Mode based on data type (String = Checklist Item)
+    // FIX 1: Detect Checklist Mode based on data type
     const isChecklistMode = words.length > 0 && typeof words[0] === 'string';
 
-    // FIX 2: Generate a unique storage key based on the Title. 
-    // This ensures "Opinion Poll" checks don't mix with "Daily Discussion".
-    const storageTitle = title.replace(/[^a-zA-Z0-9]/g, '_'); // Sanitize title
+    const storageTitle = title.replace(/[^a-zA-Z0-9]/g, '_'); 
     const mainStorageKey = `lingoquest_done_${storageTitle}`;
 
     if (options.viewMode === undefined) options.viewMode = 'list';
@@ -21090,7 +21099,7 @@ function startFlashRecallGame() {
         controlsDiv.appendChild(toggleBtn);
     }
 
-    // 2. Clear Checkboxes Button (FIXED: Now appears for ALL string lists)
+    // 2. Clear Checkboxes Button
     if (isChecklistMode && options.viewMode === 'list') {
         const clearBtn = document.createElement('button');
         clearBtn.className = 'w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-xl text-center transition-transform hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2';
@@ -21167,7 +21176,6 @@ function startFlashRecallGame() {
         "bg-fuchsia-50 border-fuchsia-100"
     ];
 
-    // Load checked state using the unique key
     let doneList = JSON.parse(localStorage.getItem(mainStorageKey)) || [];
 
     words.forEach((item, index) => {
@@ -21214,7 +21222,6 @@ function startFlashRecallGame() {
                  if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } 
                  else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); 
                  else {
-                     // Toggle check on card click
                      checkbox.checked = !checkbox.checked;
                      checkbox.dispatchEvent(new Event('change'));
                  }
@@ -21246,7 +21253,6 @@ function startFlashRecallGame() {
              list.appendChild(sentenceItem);
 
         } else {
-            // Standard Vocabulary Cards
             const isFavorited = favorites.some(fav => !fav.isSentence && fav.word === item.word);
             const wordItem = document.createElement('div');
             wordItem.className = "word-item mb-3";
@@ -21257,7 +21263,6 @@ function startFlashRecallGame() {
             frontContent.className = `word-content front p-4 rounded-xl pastel-card ${colorClass}`;
             
             const backContent = document.createElement('div');
-            // Back content WHITE with DARK TEXT for readability
             backContent.className = "word-content back p-4 rounded-xl bg-white border-2 border-slate-200 text-slate-900"; 
 
             const isOneWordSub = title.includes('One Word Substitution'), isAntonymList = title === 'Antonyms';
@@ -21298,306 +21303,254 @@ function startFlashRecallGame() {
             }
 
             function renderFlashcardSingle(container, words, title, gradientClass, options) {
-                const currentIndex = options.cardIndex || 0;
-                
-                // Check if we are done
-                if (currentIndex >= words.length) {
-                    // Render Completion Screen
-                    const storageKey = `lingoquest_mastery_${title}`;
-                    const masteredCount = (JSON.parse(localStorage.getItem(storageKey)) || []).length;
-                    const percent = Math.round((masteredCount / words.length) * 100);
+    const currentIndex = options.cardIndex || 0;
+    
+    if (currentIndex >= words.length) {
+        const storageKey = `lingoquest_mastery_${title}`;
+        const masteredCount = (JSON.parse(localStorage.getItem(storageKey)) || []).length;
+        const percent = Math.round((masteredCount / words.length) * 100);
 
-                    container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-[calc(100vh-180px)] pop-in text-center px-6">
-                            <div class="text-6xl mb-4">🎉</div>
-                            <h2 class="text-3xl font-bold text-white mb-2">Session Complete!</h2>
-                            <p class="text-slate-300 mb-6">You have reviewed all cards.</p>
-                            
-                            <div class="bg-white/10 p-6 rounded-2xl border border-white/10 mb-8 w-full max-w-xs">
-                                <div class="text-sm text-slate-400 uppercase tracking-widest font-bold mb-1">Mastery Level</div>
-                                <div class="text-4xl font-black ${percent >= 80 ? 'text-green-400' : (percent >= 50 ? 'text-amber-400' : 'text-white')}">${percent}%</div>
-                                <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-indigo-500 to-pink-500" style="width: ${percent}%"></div>
-                                </div>
-                            </div>
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-[calc(100vh-180px)] pop-in text-center px-6">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-3xl font-bold text-white mb-2">Session Complete!</h2>
+                <p class="text-slate-300 mb-6">You have reviewed all cards.</p>
+                <div class="bg-white/10 p-6 rounded-2xl border border-white/10 mb-8 w-full max-w-xs">
+                    <div class="text-sm text-slate-400 uppercase tracking-widest font-bold mb-1">Mastery Level</div>
+                    <div class="text-4xl font-black ${percent >= 80 ? 'text-green-400' : (percent >= 50 ? 'text-amber-400' : 'text-white')}">${percent}%</div>
+                    <div class="w-full bg-slate-700 h-2 rounded-full mt-3 overflow-hidden"><div class="h-full bg-gradient-to-r from-indigo-500 to-pink-500" style="width: ${percent}%"></div></div>
+                </div>
+                <button id="reset-deck-btn" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">Review Again</button>
+            </div>
+        `;
+        document.getElementById('reset-deck-btn').onclick = () => {
+            options.cardIndex = 0;
+            renderWords(title, words, gradientClass, options);
+        };
+        return;
+    }
 
-                            <button id="reset-deck-btn" class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">
-                                Review Again
-                            </button>
-                        </div>
-                    `;
-                    document.getElementById('reset-deck-btn').onclick = () => {
-                        options.cardIndex = 0;
-                        renderWords(title, words, gradientClass, options);
-                    };
-                    return;
-                }
+    const item = words[currentIndex];
+    const content = getFlashcardContent(title, item); 
+    if (!content) return;
 
-                const item = words[currentIndex];
-                const content = getFlashcardContent(title, item); 
-                if (!content) return;
+    container.innerHTML = '';
+    
+    const wrapper = document.createElement('div');
+    wrapper.className = "flashcard-container";
+    wrapper.style.height = "calc(100vh - 180px)";
+    wrapper.style.width = "100%";
 
-                // --- 1. MAIN LAYOUT ---
-                container.innerHTML = '';
-                
-                // Wrapper (The Stage)
-                const wrapper = document.createElement('div');
-                wrapper.className = "flashcard-container";
-                wrapper.style.height = "calc(100vh - 180px)";
-                wrapper.style.width = "100%";
+    const progressDiv = document.createElement('div');
+    progressDiv.className = "absolute top-0 w-full flex justify-center py-4 z-20 pointer-events-none";
+    progressDiv.innerHTML = `<span class="bg-black/30 backdrop-blur-sm text-white/80 text-xs font-bold px-3 py-1 rounded-full border border-white/10">CARD ${currentIndex + 1} / ${words.length}</span>`;
+    wrapper.appendChild(progressDiv);
 
-                // Progress Indicator
-                const progressDiv = document.createElement('div');
-                progressDiv.className = "absolute top-0 w-full flex justify-center py-4 z-20 pointer-events-none";
-                progressDiv.innerHTML = `<span class="bg-black/30 backdrop-blur-sm text-white/80 text-xs font-bold px-3 py-1 rounded-full border border-white/10">CARD ${currentIndex + 1} / ${words.length}</span>`;
-                wrapper.appendChild(progressDiv);
+    const indMastered = document.createElement('div');
+    indMastered.className = "swipe-indicator ind-mastered";
+    indMastered.textContent = "MASTERED";
+    wrapper.appendChild(indMastered);
 
-                // --- 2. INDICATORS (OUTSIDE THE CARD NOW) ---
-                // These will sit on the background layer
-                const indMastered = document.createElement('div');
-                indMastered.className = "swipe-indicator ind-mastered";
-                indMastered.textContent = "MASTERED";
-                wrapper.appendChild(indMastered);
+    const indFocus = document.createElement('div');
+    indFocus.className = "swipe-indicator ind-focus";
+    indFocus.textContent = "NEED FOCUS";
+    wrapper.appendChild(indFocus);
 
-                const indFocus = document.createElement('div');
-                indFocus.className = "swipe-indicator ind-focus";
-                indFocus.textContent = "NEED FOCUS";
-                wrapper.appendChild(indFocus);
+    const card = document.createElement('div');
+    card.className = "swipe-card";
+    
+    card.innerHTML = `
+        <div class="swipe-card-inner">
+            <div class="swipe-face swipe-face-front">
+                ${content.frontHTML}
+                <div class="mt-auto pt-4 text-slate-400 text-xs flex items-center gap-2 opacity-60">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Tap to Flip
+                </div>
+            </div>
+            <div class="swipe-face swipe-face-back">${content.backHTML}</div>
+        </div>
+    `;
+    
+    wrapper.appendChild(card);
+    container.appendChild(wrapper);
 
-                // --- 3. CARD ELEMENT ---
-                const card = document.createElement('div');
-                card.className = "swipe-card";
-                
-                // Card HTML Structure
-                card.innerHTML = `
-                    <div class="swipe-card-inner">
-                        <!-- Front Face -->
-                        <div class="swipe-face swipe-face-front">
-                            ${content.frontHTML}
-                            <div class="mt-auto pt-4 text-slate-400 text-xs flex items-center gap-2 opacity-60">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                Tap to Flip
-                            </div>
-                        </div>
-                        <!-- Back Face -->
-                        <div class="swipe-face swipe-face-back">
-                            ${content.backHTML}
-                        </div>
-                    </div>
-                `;
-                
-                wrapper.appendChild(card);
-                container.appendChild(wrapper);
+    let startX = 0, currentX = 0, isDragging = false;
+    const threshold = 80;
 
-                // --- 4. SWIPE PHYSICS LOGIC ---
-                let startX = 0, currentX = 0, isDragging = false;
-                const threshold = 80; // Reduced slightly for easier swiping
+    const onStart = (e) => {
+        if (e.target.closest('button')) return;
+        isDragging = true;
+        startX = e.touches ? e.touches[0].clientX : e.clientX;
+        card.classList.remove('is-animating');
+    };
 
-                // Interaction Handlers
-                const onStart = (e) => {
-                    if (e.target.closest('button')) return;
-                    isDragging = true;
-                    startX = e.touches ? e.touches[0].clientX : e.clientX;
-                    card.classList.remove('is-animating');
-                };
+    const onMove = (e) => {
+        if (!isDragging) return;
+        if(e.touches) e.preventDefault(); 
+        
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        currentX = x - startX;
+        
+        const rotate = currentX * 0.05;
+        card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
 
-                const onMove = (e) => {
-                    if (!isDragging) return;
-                    if(e.touches) e.preventDefault();
-                    
-                    const x = e.touches ? e.touches[0].clientX : e.clientX;
-                    currentX = x - startX;
-                    
-                    // Rotate and Move Card
-                    const rotate = currentX * 0.05;
-                    card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+        const intensity = Math.min(Math.abs(currentX) / 100, 1);
+        
+        if (currentX > 0) {
+            indMastered.style.opacity = 0.2 + (intensity * 0.8);
+            indFocus.style.opacity = 0.2;
+        } else {
+            indFocus.style.opacity = 0.2 + (intensity * 0.8);
+            indMastered.style.opacity = 0.2;
+        }
+    };
 
-                    // Update Indicators Opacity based on drag
-                    // Base opacity 0.2, max 1.0
-                    const intensity = Math.min(Math.abs(currentX) / 100, 1);
-                    
-                    if (currentX > 0) {
-                        indMastered.style.opacity = 0.2 + (intensity * 0.8);
-                        indFocus.style.opacity = 0.2;
-                    } else {
-                        indFocus.style.opacity = 0.2 + (intensity * 0.8);
-                        indMastered.style.opacity = 0.2;
-                    }
-                };
+    const onEnd = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        card.classList.add('is-animating');
 
-                const onEnd = (e) => {
-                    if (!isDragging) return;
-                    isDragging = false;
-                    card.classList.add('is-animating');
-
-                    // Detect Click vs Swipe
-                    if (Math.abs(currentX) < 5) {
-                        if (!e.target.closest('button')) {
-                            vibrate(10);
-                            card.classList.toggle('is-flipped');
-                        }
-                        card.style.transform = `translateX(0px) rotate(0deg)`;
-                        // Reset indicators
-                        indMastered.style.opacity = 0.2;
-                        indFocus.style.opacity = 0.2;
-                        return;
-                    }
-
-                    // Detect Threshold
-                    if (currentX > threshold) {
-                        finishSwipe('right');
-                    } else if (currentX < -threshold) {
-                        finishSwipe('left');
-                    } else {
-                        // Reset
-                        card.style.transform = `translateX(0px) rotate(0deg)`;
-                        indMastered.style.opacity = 0.2;
-                        indFocus.style.opacity = 0.2;
-                    }
-                    
-                    currentX = 0;
-                };
-
-                function finishSwipe(direction) {
-                    vibrate(30);
-                    const endX = direction === 'right' ? window.innerWidth : -window.innerWidth;
-                    card.style.transform = `translateX(${endX}px) rotate(${direction === 'right' ? 20 : -20}deg)`;
-                    
-                    // Save Data
-                    const uniqueId = item.word || item.hindi || item.title;
-                    saveMasteryProgress(title, uniqueId, direction === 'right');
-
-                    // Next Card
-                    setTimeout(() => {
-                        options.cardIndex++;
-                        renderWords(title, words, gradientClass, options);
-                    }, 300);
-                }
-
-                // Event Listeners
-                card.addEventListener('mousedown', onStart);
-                window.addEventListener('mousemove', onMove);
-                window.addEventListener('mouseup', onEnd);
-                
-                card.addEventListener('touchstart', onStart);
-                window.addEventListener('touchmove', onMove, { passive: false });
-                window.addEventListener('touchend', onEnd);
+        // FIX: Increased threshold to 10 to make tapping easier on mobile
+        if (Math.abs(currentX) < 10) {
+            if (!e.target.closest('button')) {
+                vibrate(10);
+                card.classList.toggle('is-flipped');
             }
+            card.style.transform = `translateX(0px) rotate(0deg)`;
+            indMastered.style.opacity = 0.2;
+            indFocus.style.opacity = 0.2;
+            return;
+        }
+
+        if (currentX > threshold) {
+            finishSwipe('right');
+        } else if (currentX < -threshold) {
+            finishSwipe('left');
+        } else {
+            card.style.transform = `translateX(0px) rotate(0deg)`;
+            indMastered.style.opacity = 0.2;
+            indFocus.style.opacity = 0.2;
+        }
+        currentX = 0;
+    };
+
+    function finishSwipe(direction) {
+        vibrate(30);
+        const endX = direction === 'right' ? window.innerWidth : -window.innerWidth;
+        card.style.transform = `translateX(${endX}px) rotate(${direction === 'right' ? 20 : -20}deg)`;
+        
+        const uniqueId = item.word || item.hindi || item.title;
+        saveMasteryProgress(title, uniqueId, direction === 'right');
+
+        setTimeout(() => {
+            options.cardIndex++;
+            renderWords(title, words, gradientClass, options);
+        }, 300);
+    }
+
+    card.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+    
+    card.addEventListener('touchstart', onStart);
+    window.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onEnd);
+}
 
             // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
             function getFlashcardContent(categoryTitle, item) {
     let frontHTML = "", backHTML = "";
     
-    // --- FIX: Robust Speak Button Helper ---
-    // Checks if text exists before trying to replace characters
-    const getSpeakBtn = (text) => {
-        if (!text || typeof text !== 'string') return '';
-        // Escape quotes safely
-        const safeText = text.replace(/'/g, "\\'");
-        return `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${safeText}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
-    };
+    const getSpeakBtn = (text) => `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${text.replace(/'/g, "\\'")}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
 
-    if (categoryTitle === 'Confusing Words') {
-        const fullHTML = detailedExplanations[item.title];
-        if (!fullHTML) return null;
-        
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = fullHTML;
-        const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
-        
-        if (childDivs.length >= 2) {
-            frontHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[0].innerHTML}</div>`;
-            backHTML = `<div class="text-left w-full overflow-y-auto">${childDivs[1].innerHTML}</div>`;
-        } else {
-            frontHTML = `<h3 class="text-2xl font-bold mb-2">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
-            backHTML = `<div class="text-left w-full overflow-y-auto">${fullHTML}</div>`;
-        }
-
-    } else if (categoryTitle === 'One Word Substitution') {
-        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="text-xl font-medium text-center leading-relaxed">${item.meaning}</p></div>`;
-        backHTML = `<div class="flex flex-col items-center"><h3 class="text-3xl font-extrabold text-pink-600 mb-2">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
-
-    } else if (categoryTitle === 'Antonyms') {
+    // 1. Phrases & Idioms (Phrase Front, Meaning Back, No Example)
+    if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases') || categoryTitle.includes('Proverbs')) {
         frontHTML = `
-            <div class="flex flex-col items-center h-full justify-center">
-                <h3 class="text-3xl font-extrabold mb-2">${item.word}</h3>
-                <p class="text-lg text-slate-500 mb-4">${item.meaning}</p>
+            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center w-full">
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-4 break-words w-full">${item.word}</h3>
+                ${getSpeakBtn(item.word)}
+            </div>
+        `;
+        backHTML = `
+            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center w-full">
+                <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-2">MEANING</p>
+                <p class="text-lg sm:text-xl font-medium text-slate-800 leading-relaxed break-words w-full">${item.meaning}</p>
+            </div>
+        `;
+    } 
+    // 2. One Word Substitution
+    else if (categoryTitle === 'One Word Substitution') {
+        frontHTML = `<div class="flex-grow flex items-center justify-center p-4 w-full"><p class="text-lg sm:text-xl font-medium text-center leading-relaxed break-words w-full">${item.meaning}</p></div>`;
+        backHTML = `<div class="flex flex-col items-center w-full"><h3 class="text-2xl sm:text-3xl font-extrabold text-pink-600 mb-2 break-words text-center w-full">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
+    }
+    // 3. Antonyms
+    else if (categoryTitle === 'Antonyms') {
+        frontHTML = `
+            <div class="flex flex-col items-center h-full justify-center w-full">
+                <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 break-words text-center w-full">${item.word}</h3>
+                <p class="text-base sm:text-lg text-slate-500 mb-4 break-words text-center w-full">${item.meaning}</p>
                 ${getSpeakBtn(item.word)}
                 <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
             </div>
         `;
         backHTML = `
-            <div class="flex flex-col items-center h-full justify-center">
-                <h3 class="text-3xl font-extrabold mb-2 text-pink-600">${item.antonym}</h3>
-                <p class="text-lg text-slate-500 mb-4">${item.antonym_meaning}</p>
+            <div class="flex flex-col items-center h-full justify-center w-full">
+                <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 text-pink-600 break-words text-center w-full">${item.antonym}</h3>
+                <p class="text-base sm:text-lg text-slate-500 mb-4 break-words text-center w-full">${item.antonym_meaning}</p>
                 ${getSpeakBtn(item.antonym)}
                 <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
             </div>
         `;
-
-    } else if (categoryTitle === 'Proverbs and Sayings') {
-        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="font-bold text-2xl italic text-center text-slate-800">"${item.word}"</p></div>`;
-        backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
-
-    } else if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases')) {
-        frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><h3 class="text-3xl font-bold text-center text-slate-800 leading-tight">${item.word}</h3></div>`;
-        backHTML = `<div class="text-center"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
-
-    } else {
-        // --- Default (Vocab Builder, Sentences, etc.) ---
-        
-        // Determine correct properties (Handles both Vocab objects AND Sentence objects)
-        // If it's a Sentence object, it might use 'hindi'/'english' instead of 'word'/'meaning'
-        const wordText = item.word || item.hindi || "";
-        const meaningText = item.meaning || item.english || "";
-
-        if (!meaningText || meaningText.trim() === "") {
-            // Case: Word/Sentence only (no distinct meaning/translation available)
-            frontHTML = `
-                <div class="flex-grow flex flex-col items-center justify-center p-4">
-                    <h3 class="text-2xl font-bold text-slate-900 text-center italic mb-4">"${wordText}"</h3>
-                    ${getSpeakBtn(wordText)}
+    }
+    // 4. General Vocab (Word+Meaning Front, Example Back)
+    else {
+        // Front: Word + Meaning
+        frontHTML = `
+            <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
+                <div class="flex-grow flex flex-col justify-center w-full">
+                    <h3 class="text-3xl sm:text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight mb-2 break-words w-full">${item.word}</h3>
+                    ${item.meaning ? `<p class="text-base sm:text-lg text-slate-500 font-medium break-words w-full">${item.meaning}</p>` : ''}
                 </div>
-            `;
-        } else {
-            // Case: Standard Flashcard (Word on Front, Meaning on Back)
-            frontHTML = `
-                <div class="flex flex-col h-full w-full justify-center items-center">
-                    <div class="flex-grow flex flex-col justify-end pb-4">
-                        <h3 class="text-3xl sm:text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight">${wordText}</h3>
-                    </div>
-                    <div class="flex-shrink-0 py-2">
-                        ${getSpeakBtn(wordText)}
-                    </div>
-                    <div class="flex-grow flex flex-col justify-start pt-4">
-                        <!-- Optional hint or category label could go here -->
-                    </div>
+                <div class="flex-shrink-0 py-4">
+                    ${getSpeakBtn(item.word)}
                 </div>
-            `;
-        }
+            </div>
+        `;
         
-        // Back Content
+        // Back: Example (if available)
         if (item.example) {
             backHTML = `
-                <div class="text-center w-full h-full flex flex-col justify-center">
-                    <p class="text-xl font-medium text-slate-700 mb-6">${meaningText}</p>
-                    <div class="border-t border-slate-200 my-4 w-16 mx-auto"></div>
-                    <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-2">EXAMPLE</p>
-                    <p class="text-lg font-bold italic text-slate-800 leading-relaxed">"${item.example}"</p>
-                    <div class="mt-4">
+                <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
+                    <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-4">EXAMPLE</p>
+                    <p class="text-lg sm:text-xl font-bold italic text-slate-800 leading-relaxed break-words w-full">"${item.example}"</p>
+                    <div class="mt-6">
                         ${getSpeakBtn(item.example)}
                     </div>
                 </div>
             `;
         } else {
-            backHTML = `
-                <div class="text-center w-full h-full flex flex-col justify-center">
-                    <p class="text-xl font-medium text-slate-900">${meaningText}</p>
-                    <div class="mt-6">
-                         ${getSpeakBtn(meaningText)}
-                    </div>
+             backHTML = `
+                <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
+                    <p class="text-slate-400 italic">No example available.</p>
                 </div>
-            `;
+             `;
+        }
+    }
+    
+    // Handle Confusing Words
+    if (categoryTitle === 'Confusing Words') {
+         const fullHTML = detailedExplanations[item.title];
+        if (!fullHTML) return null;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = fullHTML;
+        const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
+        if (childDivs.length >= 2) {
+            frontHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${childDivs[0].innerHTML}</div>`;
+            backHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${childDivs[1].innerHTML}</div>`;
+        } else {
+            frontHTML = `<h3 class="text-xl sm:text-2xl font-bold mb-2 break-words">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
+            backHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${fullHTML}</div>`;
         }
     }
 
