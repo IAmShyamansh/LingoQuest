@@ -21501,102 +21501,129 @@ function startFlashRecallGame() {
 
             // --- UPDATED: Logic to generate Front/Back content based on Category Rules ---
             function getFlashcardContent(categoryTitle, item) {
-    let frontHTML = "", backHTML = "";
-    
-    const getSpeakBtn = (text) => `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${text.replace(/'/g, "\\'")}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
+                let frontHTML = "", backHTML = "";
+                
+                // Speak Button Helper
+                const getSpeakBtn = (text) => `<button class="speak-button p-4 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors shadow-sm" onclick="event.stopPropagation(); speakText('${text.replace(/'/g, "\\'")}', this)"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></button>`;
 
-    // 1. Phrases & Idioms (Phrase Front, Meaning Back, No Example)
-    if (categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases') || categoryTitle.includes('Proverbs')) {
-        frontHTML = `
-            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center w-full">
-                <h3 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-4 break-words w-full">${item.word}</h3>
-                ${getSpeakBtn(item.word)}
-            </div>
-        `;
-        backHTML = `
-            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center w-full">
-                <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-2">MEANING</p>
-                <p class="text-lg sm:text-xl font-medium text-slate-800 leading-relaxed break-words w-full">${item.meaning}</p>
-            </div>
-        `;
-    } 
-    // 2. One Word Substitution
-    else if (categoryTitle === 'One Word Substitution') {
-        frontHTML = `<div class="flex-grow flex items-center justify-center p-4 w-full"><p class="text-lg sm:text-xl font-medium text-center leading-relaxed break-words w-full">${item.meaning}</p></div>`;
-        backHTML = `<div class="flex flex-col items-center w-full"><h3 class="text-2xl sm:text-3xl font-extrabold text-pink-600 mb-2 break-words text-center w-full">${item.word}</h3>${getSpeakBtn(item.word)}</div>`;
-    }
-    // 3. Antonyms
-    else if (categoryTitle === 'Antonyms') {
-        frontHTML = `
-            <div class="flex flex-col items-center h-full justify-center w-full">
-                <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 break-words text-center w-full">${item.word}</h3>
-                <p class="text-base sm:text-lg text-slate-500 mb-4 break-words text-center w-full">${item.meaning}</p>
-                ${getSpeakBtn(item.word)}
-                <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
-            </div>
-        `;
-        backHTML = `
-            <div class="flex flex-col items-center h-full justify-center w-full">
-                <h3 class="text-2xl sm:text-3xl font-extrabold mb-2 text-pink-600 break-words text-center w-full">${item.antonym}</h3>
-                <p class="text-base sm:text-lg text-slate-500 mb-4 break-words text-center w-full">${item.antonym_meaning}</p>
-                ${getSpeakBtn(item.antonym)}
-                <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
-            </div>
-        `;
-    }
-    // 4. General Vocab (Word+Meaning Front, Example Back)
-    else {
-        // Front: Word + Meaning
-        frontHTML = `
-            <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
-                <div class="flex-grow flex flex-col justify-center w-full">
-                    <h3 class="text-3xl sm:text-4xl font-black text-slate-900 text-center leading-tight uppercase tracking-tight mb-2 break-words w-full">${item.word}</h3>
-                    ${item.meaning ? `<p class="text-base sm:text-lg text-slate-500 font-medium break-words w-full">${item.meaning}</p>` : ''}
-                </div>
-                <div class="flex-shrink-0 py-4">
-                    ${getSpeakBtn(item.word)}
-                </div>
-            </div>
-        `;
-        
-        // Back: Example (if available)
-        if (item.example) {
-            backHTML = `
-                <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
-                    <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-4">EXAMPLE</p>
-                    <p class="text-lg sm:text-xl font-bold italic text-slate-800 leading-relaxed break-words w-full">"${item.example}"</p>
-                    <div class="mt-6">
-                        ${getSpeakBtn(item.example)}
-                    </div>
-                </div>
-            `;
-        } else {
-             backHTML = `
-                <div class="flex flex-col h-full w-full justify-center items-center p-4 text-center">
-                    <p class="text-slate-400 italic">No example available.</p>
-                </div>
-             `;
-        }
-    }
-    
-    // Handle Confusing Words
-    if (categoryTitle === 'Confusing Words') {
-         const fullHTML = detailedExplanations[item.title];
-        if (!fullHTML) return null;
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = fullHTML;
-        const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
-        if (childDivs.length >= 2) {
-            frontHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${childDivs[0].innerHTML}</div>`;
-            backHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${childDivs[1].innerHTML}</div>`;
-        } else {
-            frontHTML = `<h3 class="text-xl sm:text-2xl font-bold mb-2 break-words">${item.title}</h3><p class="text-slate-500">Tap for explanation</p>`;
-            backHTML = `<div class="text-left w-full h-full overflow-y-auto break-words">${fullHTML}</div>`;
-        }
-    }
+                // Helper to dynamically size text to fit one line
+                // Updated to be more aggressive for long words to avoid overflow
+                const getWordStyle = (text) => {
+                    if (!text) return 'text-4xl';
+                    const len = text.length;
+                    if (len > 25) return 'text-sm';  // Very long words
+                    if (len > 20) return 'text-base';
+                    if (len > 15) return 'text-lg';
+                    if (len > 12) return 'text-xl';
+                    if (len > 8) return 'text-2xl';
+                    return 'text-4xl'; // Short words
+                };
 
-    return { frontHTML, backHTML };
-}
+                if (categoryTitle === 'Confusing Words') {
+                    const fullHTML = detailedExplanations[item.title];
+                    if (!fullHTML) return null;
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = fullHTML;
+                    const childDivs = tempDiv.querySelectorAll('.space-y-4 > div');
+                    
+                    if (childDivs.length >= 2) {
+                        frontHTML = `<div class="text-left w-full overflow-y-auto p-4">${childDivs[0].innerHTML}</div>`;
+                        backHTML = `<div class="text-left w-full overflow-y-auto p-4">${childDivs[1].innerHTML}</div>`;
+                    } else {
+                        frontHTML = `<h3 class="text-2xl font-bold mb-2 text-center">${item.title}</h3><p class="text-slate-500 text-center">Tap for explanation</p>`;
+                        backHTML = `<div class="text-left w-full overflow-y-auto p-4">${fullHTML}</div>`;
+                    }
+
+                } else if (categoryTitle === 'One Word Substitution') {
+                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="text-xl font-medium text-center leading-relaxed">${item.meaning}</p></div>`;
+                    
+                    const wordSize = getWordStyle(item.word);
+                    backHTML = `
+                        <div class="flex flex-col items-center justify-center h-full text-center p-4">
+                            <h3 class="${wordSize} font-extrabold text-pink-600 mb-4 whitespace-nowrap">${item.word}</h3>
+                            ${getSpeakBtn(item.word)}
+                        </div>`;
+
+                } else if (categoryTitle === 'Antonyms') {
+                    const wordSize = getWordStyle(item.word);
+                    const antSize = getWordStyle(item.antonym);
+                    
+                    // Front: Word -> Speaker -> Meaning
+                    frontHTML = `
+                        <div class="flex flex-col items-center h-full justify-center text-center p-4 w-full">
+                            <h3 class="${wordSize} font-extrabold mb-4 w-full whitespace-nowrap">${item.word}</h3>
+                            <div class="mb-4">${getSpeakBtn(item.word)}</div>
+                            <p class="text-lg text-slate-500 mb-2">${item.meaning}</p>
+                            <span class="mt-auto px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase tracking-wider">Word</span>
+                        </div>
+                    `;
+                    // Back: Antonym -> Speaker -> Meaning
+                    backHTML = `
+                        <div class="flex flex-col items-center h-full justify-center text-center p-4 w-full">
+                            <h3 class="${antSize} font-extrabold mb-4 text-pink-600 w-full whitespace-nowrap">${item.antonym}</h3>
+                            <div class="mb-4">${getSpeakBtn(item.antonym)}</div>
+                            <p class="text-lg text-slate-500 mb-2">${item.antonym_meaning}</p>
+                            <span class="mt-auto px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-xs font-bold uppercase tracking-wider">Antonym</span>
+                        </div>
+                    `;
+
+                } else if (categoryTitle === 'Proverbs and Sayings' || categoryTitle.includes('Idioms') || categoryTitle.includes('Phrases')) {
+                    // Idioms/Proverbs are often sentences, so we allow wrapping (whitespace-normal)
+                    frontHTML = `<div class="flex-grow flex items-center justify-center p-4"><p class="font-bold text-xl sm:text-2xl italic text-center text-slate-800 leading-tight">${item.word}</p></div>`;
+                    backHTML = `<div class="text-center p-4"><p class="text-xs text-slate-400 uppercase tracking-wider mb-3">Meaning</p><p class="text-lg sm:text-xl font-medium leading-relaxed">${item.meaning}</p></div>`;
+
+                } else {
+                    // Default (Vocab Builder, etc.)
+                    const wordSize = getWordStyle(item.word);
+                    
+                    if (!item.meaning || item.meaning.trim() === "") {
+                        // No Meaning Case
+                        frontHTML = `
+                            <div class="flex-grow flex flex-col items-center justify-center p-4 text-center w-full">
+                                <h3 class="${wordSize} font-bold text-slate-900 italic mb-4 whitespace-nowrap">${item.word}</h3>
+                                ${getSpeakBtn(item.word)}
+                            </div>
+                        `;
+                    } else {
+                        // Has Meaning: Word -> Speaker -> Meaning
+                        frontHTML = `
+                            <div class="flex flex-col h-full w-full justify-center items-center text-center p-2">
+                                <!-- Top: Word -->
+                                <div class="flex-grow flex flex-col justify-end pb-4 w-full">
+                                    <h3 class="${wordSize} font-black text-slate-900 leading-tight uppercase tracking-tight whitespace-nowrap w-full px-1">${item.word}</h3>
+                                </div>
+                                
+                                <!-- Middle: Speaker -->
+                                <div class="flex-shrink-0 py-2">
+                                    ${getSpeakBtn(item.word)}
+                                </div>
+                                
+                                <!-- Bottom: Meaning -->
+                                <div class="flex-grow flex flex-col justify-start pt-4 w-full">
+                                    <p class="text-xl sm:text-2xl font-medium text-slate-500">${item.meaning}</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    if (item.example) {
+                        backHTML = `
+                            <div class="text-center w-full h-full flex flex-col justify-center p-4">
+                                <p class="text-xs text-pink-500 font-bold uppercase tracking-widest mb-6">EXAMPLE</p>
+                                <p class="text-lg sm:text-xl font-bold italic text-slate-800 leading-relaxed">"${item.example}"</p>
+                                <div class="mt-6">
+                                    ${getSpeakBtn(item.example)}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        backHTML = `<div class="text-center p-4"><p class="text-xl font-medium text-slate-600">${item.meaning || "Flip back"}</p></div>`;
+                    }
+                }
+
+                return { frontHTML, backHTML };
+            }
             
             // --- END: REPLACEMENT FUNCTIONS ---
 
