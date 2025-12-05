@@ -55,7 +55,7 @@ body {
     background-size: 20px 20px;
     position: relative;
     padding-top: 60px;    /* Space for top nav */
-    padding-bottom: 70px; /* Space for bottom nav */
+    padding-bottom: 60px; /* REDUCED: Space for bottom nav */
 }
 
 /* The Bento Card Class */
@@ -184,8 +184,9 @@ body {
         
         .word-content.back {
             transform: rotateY(180deg);
-            background: rgba(45, 52, 79, 0.8);
-            color: var(--text-light);
+            background: #ffffff !important;   /* Force White Background */
+            color: #1e293b !important;        /* Force Dark Navy Text */
+            border: 2px solid #e2e8f0;        /* Add a subtle border for definition */
         }
 
         @keyframes popIn {
@@ -423,6 +424,41 @@ body {
         .mic-listening {
           animation: pulse-mic 1.5s infinite;
         }
+
+        /* STORY READER STYLES */
+.story-sentence {
+    padding: 4px 6px;
+    margin: 0 -6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline;
+    line-height: 2.2; /* Better spacing for tap targets */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.story-sentence:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+/* Karaoke Highlight (Active Sentence) */
+.story-active {
+    background-color: #fef08a !important; /* Yellow-200 */
+    color: #000;
+    box-shadow: 0 0 0 4px #fef08a; /* Extend highlight slightly */
+}
+
+/* Grammar Highlights */
+.hl-verb { color: #2563eb; font-weight: 700; } /* Blue - Tense */
+.hl-modal { color: #059669; font-weight: 700; } /* Green - Ability */
+.hl-comp { color: #dc2626; font-weight: 700; } /* Red - Compulsion */
+.hl-prob { color: #9333ea; font-weight: 700; } /* Purple - Probability */
+
+/* Popup Animation */
+#translation-popup {
+    bottom: 140px; /* Sit above controls */
+}
         /* --- START: Admin Panel Color and Scroll Fixes --- */
 
 /* Fix: Apply explicit dark background and light text to the individual <option> elements in the select boxes */
@@ -2029,6 +2065,83 @@ body {
     text-shadow: none !important;
 }
 
+/* --- NEW BADGE STYLES --- */
+@keyframes neon-flicker {
+    0%, 100% { 
+        opacity: 1; 
+        box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ec4899; 
+        text-shadow: 0 0 2px #fff;
+        border-color: #fff;
+    }
+    50% { 
+        opacity: 0.7; 
+        box-shadow: 0 0 2px #fff, 0 0 5px #ec4899; 
+        text-shadow: none;
+        border-color: rgba(255,255,255,0.5);
+    }
+}
+
+.badge-new {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 9px;
+    font-weight: 900;
+    color: #fff;
+    padding: 2px 6px;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    background: rgba(236, 72, 153, 0.3); /* Transparent Pink */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: neon-flicker 1.2s infinite alternate; /* Constant Flicker */
+    z-index: 20;
+    pointer-events: none; /* Let clicks pass through to the card */
+}
+
+/* --- STORY MODE IMPROVEMENTS --- */
+
+/* 1. Warm Paper Background */
+.bg-paper {
+    background-color: #fdfbf7; /* Warm Cream */
+    color: #334155; /* Softer Dark Grey */
+}
+
+/* 2. Serif Font for Story Text */
+.font-story {
+    font-family: 'Georgia', 'Cambria', 'Times New Roman', serif;
+    line-height: 2.0;
+    font-size: 1.15rem; /* Slightly larger for readability */
+}
+
+/* 3. Soft Karaoke Highlight */
+.story-sentence {
+    padding: 2px 0;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    /* This makes the highlight wrap beautifully across lines */
+    box-decoration-break: clone; 
+    -webkit-box-decoration-break: clone;
+    border-bottom: 2px solid transparent; /* Invisible underline by default */
+}
+
+/* Active State (Marker Pen Style) */
+.story-active {
+    background-color: rgba(254, 240, 138, 0.6) !important; /* Soft Yellow */
+    border-bottom: 2px solid #facc15; /* Gold Underline */
+    color: #000;
+    font-weight: 500;
+}
+
+/* 4. Dim Inactive Sentences (Focus Mode) */
+.story-dimmed .story-sentence:not(.story-active) {
+    opacity: 0.6;
+    filter: blur(0.3px);
+    transition: opacity 0.5s;
+}
+
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -2154,6 +2267,17 @@ body {
              <div id="user-profile-content" class="text-white"></div>
         </div>
     </div>
+<div id="story-info-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-white p-6 rounded-3xl w-full max-w-sm pop-in relative">
+        <button id="close-story-info" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <h3 class="text-xl font-black text-slate-800 mb-1">Grammar Focus</h3>
+        <p class="text-xs text-slate-500 mb-4 uppercase tracking-wider font-bold">Verbs used in this level</p>
+        <div id="story-grammar-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+            </div>
+    </div>
+</div>
     <div id="passkey-modal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
     <div class="bg-white p-8 rounded-3xl max-w-sm w-full relative pop-in border border-slate-200 shadow-2xl">
          <div class="text-center mb-6">
@@ -2269,7 +2393,7 @@ body {
     <!-- END: PASTE THIS NEW TEMPLATE -->
 
     <template id="word-list-template">
-        <div class="pop-in p-4 max-w-2xl mx-auto">
+        <div class="pop-in p-4 pb-2 max-w-2xl mx-auto">
             <div class="text-center mb-8"><h1 id="word-list-title" class="text-3xl font-bold text-white"></h1></div>
             <div id="word-list-container" class="space-y-4"></div>
         </div>
@@ -2996,6 +3120,65 @@ body {
                     <!-- FIX: Changed class to bg-pink-600 -->
                     <button id="restart-flash-btn" class="py-3 px-4 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold hover:scale-105 transition-transform shadow-lg">Play Again</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- STORY READER TEMPLATE (FIXED) -->
+<template id="story-reader-template">
+    <div id="story-view" class="fixed top-[56px] left-0 right-0 bottom-[56px] z-40 bg-paper flex flex-col overflow-hidden font-sans">
+        
+        <div class="bg-paper/90 backdrop-blur-sm border-b border-amber-100/50 px-4 py-2 text-center shrink-0 z-30 sticky top-0">
+             <p id="chapter-indicator" class="text-xs text-amber-600 font-bold uppercase tracking-widest">Chapter 1</p>
+        </div>
+
+        <div id="story-scroll-container" class="flex-grow overflow-y-auto p-6 pb-40 scroll-smooth">
+            <div id="story-content-area" class="font-story text-slate-700 max-w-2xl mx-auto">
+                </div>
+        </div>
+
+        <div id="translation-popup" class="hidden absolute left-2 right-2 bottom-36 bg-slate-900/95 backdrop-blur text-white p-5 rounded-2xl shadow-2xl z-[60] pop-in border border-white/10">
+            <div class="flex justify-between items-start mb-2">
+                <h4 class="text-[10px] font-bold text-pink-400 uppercase tracking-widest border border-pink-400/30 px-2 py-0.5 rounded">Translation</h4>
+                <button id="close-translation" class="text-slate-400 hover:text-white p-1"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <p id="popup-hindi" class="text-lg font-medium mb-3 leading-relaxed font-serif">...</p>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] text-slate-400 uppercase font-bold">Grammar:</span>
+                <div id="popup-grammar" class="text-xs text-amber-300 font-mono bg-white/10 px-2 py-1 rounded">...</div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-4 pt-3 pb-4 z-50 shadow-[0_-10px_40px_-10px_rgba(0,0,0,0.05)]">
+            
+            <div class="flex justify-between items-center mb-2 px-1">
+                <span id="story-time-left" class="text-[10px] font-bold text-slate-400 font-mono">2 min left</span>
+                <span id="story-percent" class="text-[10px] font-bold text-slate-400 font-mono">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full mb-4 overflow-hidden">
+                <div id="story-progress-bar" class="bg-gradient-to-r from-amber-400 to-pink-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <button id="story-speed-btn" class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-2 rounded-lg hover:bg-slate-200 transition-colors w-12">1.0x</button>
+
+                <div class="flex items-center gap-4">
+                    <button id="prev-sentence-btn" class="p-3 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17l-5-5 5-5"/><path d="M18 17l-5-5 5-5"/></svg>
+                    </button>
+                    
+                    <button id="play-pause-story-btn" class="p-4 rounded-full bg-slate-900 text-white hover:bg-slate-700 shadow-xl hover:shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center justify-center ring-4 ring-slate-100">
+                        <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="icon-pause" class="hidden" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+
+                    <button id="next-chapter-btn" class="p-3 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="m6 17 5-5-5-5"/></svg>
+                    </button>
+                </div>
+
+                <div class="w-12"></div>
             </div>
         </div>
     </div>
@@ -12209,6 +12392,263 @@ const bentoConfig = {
                 ]
             };
 
+// STORY LAB DATA
+// STORY LAB DATA (Updated with Quizzes)
+// STORY LAB DATA (Corrected & Complete)
+const storyLibrary = {
+    "level1": {
+        title: "The Hustle (Level 1)",
+        id: "level1",
+        desc: "Habits, Past Actions & Future Plans",
+        chapters: [
+            {
+                title: "The Morning Routine",
+                sentences: [
+                    { en: "Every morning, the alarm rings at 6:00 AM sharp.", hi: "हर सुबह ठीक 6:00 बजे अलार्म बजता है।", grammar: "Ta hai (Routine)" },
+                    { en: "I used to wake up late, but now I am disciplined.", hi: "मैं देर से उठता था, लेकिन अब मैं अनुशासित हूँ।", grammar: "Ta tha (Used to)" },
+                    { en: "Today is different because I am feeling very nervous.", hi: "आज अलग है क्योंकि मैं बहुत घबराहट महसूस कर रहा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "It is the day of my first big job interview.", hi: "यह मेरे पहले बड़े जॉब इंटरव्यू का दिन है।", grammar: "Hai (State)" },
+                    { en: "Last night, I was thinking about this moment for hours.", hi: "कल रात, मैं घंटों इस पल के बारे में सोच रहा था।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "My mother cooks breakfast in the kitchen downstairs.", hi: "मेरी माँ नीचे रसोई में नाश्ता बनाती हैं।", grammar: "Ti hai (Simple Present)" },
+                    { en: "She always makes aloo parathas on important days.", hi: "वह हमेशा महत्वपूर्ण दिनों पर आलू पराठे बनाती हैं।", grammar: "Ti hai (Habit)" },
+                    { en: "I can hear the sound of the pressure cooker whistling.", hi: "मैं प्रेशर कुकर की सीटी बजने की आवाज़ सुन सकता हूँ।", grammar: "Raha hai (implied)" },
+                    { en: "My father reads the newspaper in the living room.", hi: "मेरे पिताजी लिविंग रूम में अखबार पढ़ते हैं।", grammar: "Te hain (Routine)" },
+                    { en: "I brush my teeth and wash my face quickly.", hi: "मैं अपने दाँत ब्रश करता हूँ और अपना चेहरा जल्दी धोता हूँ।", grammar: "Ta hun (Routine)" },
+                    { en: "I look at myself in the mirror and take a deep breath.", hi: "मैं आईने में खुद को देखता हूँ और गहरी सांस लेता हूँ।", grammar: "Ta hun (Action)" },
+                    { en: "Yesterday, I prepared all my answers very carefully.", hi: "कल, मैंने अपने सभी उत्तर बहुत सावधानी से तैयार किए थे।", grammar: "Aa tha (Past Action)" },
+                    { en: "I even ironed my best white shirt last night.", hi: "मैंने कल रात अपनी सबसे अच्छी सफेद शर्ट भी इस्त्री की थी।", grammar: "Ee thi (Past Action)" },
+                    { en: "Now, I am wearing that shirt and feeling confident.", hi: "अब, मैं वह शर्ट पहने हुए हूँ और आत्मविश्वास महसूस कर रहा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "My phone is ringing; it is my best friend, Rahul.", hi: "मेरा फोन बज रहा है; यह मेरा सबसे अच्छा दोस्त राहुल है।", grammar: "Raha hai (Continuous)" },
+                    { en: "He calls me before every exam or interview.", hi: "वह हर परीक्षा या इंटरव्यू से पहले मुझे कॉल करता है।", grammar: "Ta hai (Routine)" },
+                    { en: "He says, 'You will definitely get this job.'", hi: "वह कहता है, 'तुम्हें यह नौकरी ज़रूर मिलेगी।'", grammar: "Ga (Future)" },
+                    { en: "I go downstairs and touch my parents' feet.", hi: "मैं नीचे जाता हूँ और अपने माता-पिता के पैर छूता हूँ।", grammar: "Ta hun (Routine)" },
+                    { en: "They bless me and say, 'Go and conquer the world.'", hi: "वे मुझे आशीर्वाद देते हैं और कहते हैं, 'जाओ और दुनिया जीतो।'", grammar: "Te hain (Routine)" },
+                    { en: "I am walking fast towards the bus stop now.", hi: "मैं अब बस स्टॉप की ओर तेज़ी से चल रहा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "I hope the bus comes on time today.", hi: "मुझे उम्मीद है कि बस आज समय पर आएगी।", grammar: "Ga/Gi (Future)" },
+                    { en: "By this time tomorrow, I will be working in that office.", hi: "कल इस समय तक, मैं उस ऑफिस में काम कर रहा हूँगा।", grammar: "Raha honga (Future Continuous)" }
+                ],
+                quiz: [
+                    { question: "What did the narrator use to do? (Ta tha)", options: ["Wake up late", "Cook breakfast", "Iron shirts"], correct: "Wake up late" },
+                    { question: "What was he doing last night? (Raha tha)", options: ["Sleeping", "Thinking", "Running"], correct: "Thinking" },
+                    { question: "What will he be doing tomorrow? (Raha hoga)", options: ["Sleeping", "Working", "Waiting"], correct: "Working" },
+                    { question: "Which sentence shows a daily habit (Ta hai)?", options: ["The phone is ringing.", "My mother cooks breakfast.", "I prepared answers."], correct: "My mother cooks breakfast." },
+                    { question: "What did the narrator do yesterday (Aa tha)?", options: ["Ironed his shirt", "Missed the bus", "Ate pizza"], correct: "Ironed his shirt" },
+                    { question: "What does the friend say will happen (Ga)?", options: ["He will fail.", "He will get the job.", "He will be late."], correct: "He will get the job." }
+                ]
+            },
+            {
+                title: "The Journey to the Office",
+                sentences: [
+                    { en: "I walk to the bus stop at the end of the street.", hi: "मैं गली के अंत में बस स्टॉप तक चलता हूँ।", grammar: "Ta hun (Routine/Action)" },
+                    { en: "The city bus usually comes at 8:30 AM sharp.", hi: "सिटी बस आमतौर पर ठीक 8:30 बजे आती है।", grammar: "Ta hai (Routine)" },
+                    { en: "I see many people waiting in the line already.", hi: "मैं कई लोगों को पहले से ही कतार में इंतजार करते हुए देखता हूँ।", grammar: "Ta hun (Simple Present)" },
+                    { en: "Yesterday, I checked the bus schedule online to be sure.", hi: "कल, मैंने सुनिश्चित करने के लिए ऑनलाइन बस शेड्यूल चेक किया था।", grammar: "Aa tha (Past Action)" },
+                    { en: "I did not want to be late for this opportunity.", hi: "मैं इस अवसर के लिए देर नहीं करना चाहता था।", grammar: "Ta tha (Simple Past state)" },
+                    { en: "I used to get confused by the bus routes in this city.", hi: "मैं इस शहर के बस रूटों से भ्रमित हो जाता था।", grammar: "Ta tha (Used to)" },
+                    { en: "When I was new here, I used to ask strangers for directions.", hi: "जब मैं यहाँ नया था, तो मैं अजनबियों से रास्ता पूछा करता था।", grammar: "Ta tha (Used to)" },
+                    { en: "Now, I am standing confidently with my file in hand.", hi: "अब, मैं हाथ में अपनी फाइल लेकर आत्मविश्वास से खड़ा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "The bus is arriving and it looks quite crowded.", hi: "बस आ रही है और यह काफी भीड़भाड़ वाली लग रही है।", grammar: "Raha hai (Continuous)" },
+                    { en: "People are pushing each other to get inside.", hi: "लोग अंदर जाने के लिए एक-दूसरे को धक्का दे रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "I manage to find a small space near the window.", hi: "मैं खिड़की के पास एक छोटी सी जगह खोजने में कामयाब हो जाता हूँ।", grammar: "Ta hun (Action)" },
+                    { en: "The conductor is collecting money for the tickets.", hi: "कंडक्टर टिकट के लिए पैसे इकट्ठा कर रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "I pay him and look out at the moving traffic.", hi: "मैं उसे भुगतान करता हूँ और चलते ट्रैफिक को बाहर देखता हूँ।", grammar: "Ta hun (Action)" },
+                    { en: "Last night, I was worrying about the traffic jam.", hi: "कल रात, मैं ट्रैफिक जाम के बारे में चिंता कर रहा था।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "I was praying for a clear road this morning.", hi: "मैं आज सुबह साफ सड़क के लिए प्रार्थना कर रहा था।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "Luckily, the vehicles are moving smoothly today.", hi: "सौभाग्य से, आज वाहन सुचारू रूप से चल रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "I will reach the office building in twenty minutes.", hi: "मैं बीस मिनट में ऑफिस की इमारत तक पहुँच जाऊँगा।", grammar: "Ga (Future)" },
+                    { en: "The receptionist will check my ID card at the gate.", hi: "रिसेप्शनिस्ट गेट पर मेरा आईडी कार्ड चेक करेगी।", grammar: "Gi (Future)" },
+                    { en: "I wonder what the interviewer will be doing right now.", hi: "मुझे आश्चर्य है कि इंटरव्यूअर अभी क्या कर रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "He will be reading my resume before I enter.", hi: "मेरे प्रवेश करने से पहले वह मेरा बायोडाटा पढ़ रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "I prepared my introduction five times yesterday.", hi: "मैंने कल पांच बार अपना परिचय तैयार किया था।", grammar: "Aa tha (Past Action)" },
+                    { en: "I hope I will speak clearly and fluently.", hi: "मुझे उम्मीद है कि मैं स्पष्ट और धाराप्रवाह बोलूँगा।", grammar: "Ga (Future)" },
+                    { en: "This job will change my career path completely.", hi: "यह नौकरी मेरे करियर की राह पूरी तरह बदल देगी।", grammar: "Gi (Future)" }
+                ],
+                quiz: [
+                    { question: "What did the narrator check yesterday? (Aa tha)", options: ["Bus schedule", "Bank balance", "Weather"], correct: "Bus schedule" },
+                    { question: "What did he use to do when he was new? (Ta tha)", options: ["Cry", "Ask for directions", "Take a taxi"], correct: "Ask for directions" },
+                    { question: "What is the conductor doing? (Raha hai)", options: ["Driving", "Sleeping", "Collecting money"], correct: "Collecting money" },
+                    { question: "What was the narrator doing last night? (Raha tha)", options: ["Sleeping", "Worrying about traffic", "Cooking"], correct: "Worrying about traffic" },
+                    { question: "What will the interviewer be doing? (Raha hoga)", options: ["Eating lunch", "Reading resume", "Leaving"], correct: "Reading resume" },
+                    { question: "When does the bus usually come? (Ta hai)", options: ["8:30 AM", "9:00 AM", "7:00 AM"], correct: "8:30 AM" }
+                ]
+            },
+            {
+                title: "At the Office",
+                sentences: [
+                    { en: "Now, I am sitting in the cool waiting room.", hi: "अब, मैं ठंडे वेटिंग रूम में बैठा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "The receptionist types very fast on her computer.", hi: "रिसेप्शनिस्ट अपने कंप्यूटर पर बहुत तेज़ी से टाइप करती है।", grammar: "Ti hai (Routine)" },
+                    { en: "The air conditioner is making a low humming sound.", hi: "एयर कंडीशनर एक धीमी गुनगुनाहट की आवाज़ कर रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "I used to think corporate offices were scary places.", hi: "मैं सोचता था कि कॉर्पोरेट ऑफिस डरावनी जगहें होती हैं।", grammar: "Ta tha (Used to)" },
+                    { en: "In college, I used to dream about working in this building.", hi: "कॉलेज में, मैं इस इमारत में काम करने के सपने देखता था।", grammar: "Ta tha (Used to)" },
+                    { en: "A few minutes ago, I was trembling with fear outside.", hi: "कुछ मिनट पहले, मैं बाहर डर के मारे कांप रहा था।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "Suddenly, a tall man came out of the glass cabin.", hi: "अचानक, कांच के केबिन से एक लंबा आदमी बाहर आया।", grammar: "Aa (Past Action)" },
+                    { en: "He is looking directly at me with a serious face.", hi: "वह गंभीर चेहरे के साथ सीधे मेरी ओर देख रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "My heart is beating faster than a drum now.", hi: "मेरा दिल अब ढोल से भी तेज़ धड़क रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "I wonder if my parents will be praying for me right now.", hi: "मुझे आश्चर्य है कि क्या मेरे माता-पिता अभी मेरे लिए प्रार्थना कर रहे होंगे।", grammar: "Rahe honge (Future Continuous)" },
+                    { en: "The HR manager calls my name loudly.", hi: "एचआर मैनेजर मेरा नाम जोर से पुकारता है।", grammar: "Ta hai (Routine/Action)" },
+                    { en: "I stand up and smooth my white shirt.", hi: "मैं खड़ा होता हूँ और अपनी सफेद शर्ट ठीक करता हूँ।", grammar: "Ta hun (Action)" },
+                    { en: "I am walking towards the heavy glass door.", hi: "मैं भारी कांच के दरवाजे की ओर चल रहा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "The other candidates are watching me leave the room.", hi: "अन्य उम्मीदवार मुझे कमरे से बाहर जाते हुए देख रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "One candidate was reciting his answers loudly earlier.", hi: "एक उम्मीदवार पहले अपने उत्तर जोर से सुना रहा था।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "I applied for this position three months ago.", hi: "मैंने इस पद के लिए तीन महीने पहले आवेदन किया था।", grammar: "Aa tha (Past Action)" },
+                    { en: "The interviewer will be expecting a confident candidate.", hi: "इंटरव्यूअर एक आत्मविश्वास से भरे उम्मीदवार की उम्मीद कर रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "I will greet him with a polite smile.", hi: "मैं एक विनम्र मुस्कान के साथ उनका अभिवादन करूँगा।", grammar: "Ga (Future)" },
+                    { en: "This interview will decide my future career.", hi: "यह इंटरव्यू मेरे भविष्य के करियर का फैसला करेगा।", grammar: "Ga (Future)" },
+                    { en: "I take a deep breath and open the door.", hi: "मैं गहरी सांस लेता हूँ और दरवाजा खोलता हूँ।", grammar: "Ta hun (Action)" }
+                ],
+                quiz: [
+                    { question: "What is the narrator doing at the start?", options: ["Sleeping", "Sitting", "Running"], correct: "Sitting" },
+                    { question: "What was he doing a few minutes ago?", options: ["Laughing", "Trembling", "Eating"], correct: "Trembling" },
+                    { question: "What did the narrator use to do in college?", options: ["Sleep in class", "Dream about this job", "Skip exams"], correct: "Dream about this job" },
+                    { question: "What will the interviewer be doing?", options: ["Sleeping", "Expecting confidence", "Leaving"], correct: "Expecting confidence" },
+                    { question: "When did he apply for the job?", options: ["Yesterday", "Three months ago", "Last week"], correct: "Three months ago" },
+                    { question: "What does the receptionist do?", options: ["Types fast", "Sings", "Sleeps"], correct: "Types fast" }
+                ]
+            },
+            {
+                title: "The Future",
+                sentences: [
+                    { en: "The interview finished ten minutes ago.", hi: "इंटरव्यू दस मिनट पहले खत्म हुआ।", grammar: "Aa tha (Past Action)" },
+                    { en: "I walked out of the room with a big smile.", hi: "मैं एक बड़ी मुस्कान के साथ कमरे से बाहर निकला।", grammar: "Aa tha (Past Action)" },
+                    { en: "The HR manager shook my hand warmly.", hi: "एचआर मैनेजर ने गर्मजोशी से मेरा हाथ मिलाया।", grammar: "Aa tha (Past Action)" },
+                    { en: "He said, 'You will receive an offer letter soon.'", hi: "उन्होंने कहा, 'तुम्हें जल्द ही ऑफर लेटर मिलेगा।'", grammar: "Ga (Future)" },
+                    { en: "Now, I am standing outside the tall building.", hi: "अब, मैं ऊंची इमारत के बाहर खड़ा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "The sun is shining brightly on my face.", hi: "सूरज मेरे चेहरे पर चमक रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "I am taking my phone out of my pocket.", hi: "मैं अपनी जेब से अपना फोन निकाल रहा हूँ।", grammar: "Raha hun (Continuous)" },
+                    { en: "I will call my mother first.", hi: "मैं सबसे पहले अपनी माँ को कॉल करूँगा।", grammar: "Ga (Future)" },
+                    { en: "She will be waiting near the phone right now.", hi: "वह इस समय फोन के पास इंतज़ार कर रही होगी।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "My father will be pretending to read the newspaper.", hi: "मेरे पिताजी अखबार पढ़ने का नाटक कर रहे होंगे।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "But he will be listening for the ring.", hi: "लेकिन वह घंटी बजने का इंतज़ार कर रहे होंगे।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "I used to be afraid of the future.", hi: "मैं भविष्य से डरा करता था।", grammar: "Ta tha (Used to)" },
+                    { en: "I used to doubt my own abilities.", hi: "मैं अपनी क्षमताओं पर संदेह किया करता था।", grammar: "Ta tha (Used to)" },
+                    { en: "But today, I feel like a winner.", hi: "लेकिन आज, मैं एक विजेता की तरह महसूस करता हूँ।", grammar: "Ta hun (Simple Present)" },
+                    { en: "I will earn my own money soon.", hi: "मैं जल्द ही अपना पैसा कमाऊँगा।", grammar: "Ga (Future)" },
+                    { en: "I will buy a nice gift for my parents.", hi: "मैं अपने माता-पिता के लिए एक अच्छा तोहफा खरीदूँगा।", grammar: "Ga (Future)" },
+                    { en: "By next month, I will be sitting at my own desk.", hi: "अगले महीने तक, मैं अपनी डेस्क पर बैठा हूँगा।", grammar: "Raha hunga (Future Continuous)" },
+                    { en: "I will be working on important projects.", hi: "मैं महत्वपूर्ण प्रोजेक्ट्स पर काम कर रहा हूँगा।", grammar: "Raha hunga (Future Continuous)" },
+                    { en: "Hard work always pays off in the end.", hi: "कड़ी मेहनत का फल अंत में हमेशा मिलता है।", grammar: "Ta hai (Fact)" },
+                    { en: "My new life starts today.", hi: "मेरा नया जीवन आज शुरू होता है।", grammar: "Ta hai (Simple Present)" }
+                ],
+                quiz: [
+                    { question: "Who will the narrator call first?", options: ["His friend", "His mother", "The taxi"], correct: "His mother" },
+                    { question: "What will his father be doing?", options: ["Sleeping", "Cooking", "Pretending to read"], correct: "Pretending to read" },
+                    { question: "What did the narrator use to do?", options: ["Doubt himself", "Fight with others", "Skip school"], correct: "Doubt himself" },
+                    { question: "What will happen by next month?", options: ["He will be working", "He will be traveling", "He will be studying"], correct: "He will be working" },
+                    { question: "What did the manager say he will receive?", options: ["A gift", "An offer letter", "A phone"], correct: "An offer letter" },
+                    { question: "What is the sun doing?", options: ["Setting", "Shining", "Hiding"], correct: "Shining" }
+                ]
+            }
+        ]
+    },
+    "level2": {
+        title: "The Pressure (Level 2)",
+        id: "level2",
+        desc: "Compulsion, Rules & Deadlines",
+        chapters: [
+            {
+                title: "The Deadline Approaches",
+                sentences: [
+                    { en: "It is the final week of our engineering degree.", hi: "यह हमारी इंजीनियरिंग डिग्री का अंतिम सप्ताह है।", grammar: "Hai (State)" },
+                    { en: "We have to submit our final project by Friday.", hi: "हमें शुक्रवार तक अपना अंतिम प्रोजेक्ट जमा करना है।", grammar: "Have to (Na hai)" },
+                    { en: "My team partner, Amit, is panicking right now.", hi: "मेरा टीम पार्टनर, अमित, अभी घबरा रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "He says we have to rewrite the entire code.", hi: "वह कहता है कि हमें पूरा कोड फिर से लिखना है।", grammar: "Have to (Na hai)" },
+                    { en: "I tell him to calm down and focus.", hi: "मैं उसे शांत होने और ध्यान केंद्रित करने के लिए कहता हूँ।", grammar: "Ta hun (Action)" },
+                    { en: "In engineering colleges, you have got to handle pressure.", hi: "इंजीनियरिंग कॉलेजों में, आपको दबाव संभालना पड़ता है।", grammar: "Have got to (Padta hai)" },
+                    { en: "Sometimes, we have got to work without sleep for days.", hi: "कभी-कभी, हमें दिनों तक बिना सोए काम करना पड़ता है।", grammar: "Have got to (Padta hai)" },
+                    { en: "Our project guide is a very strict professor.", hi: "हमारे प्रोजेक्ट गाइड एक बहुत सख्त प्रोफेसर हैं।", grammar: "Hai (State)" },
+                    { en: "He expects perfection in every small detail.", hi: "वह हर छोटी डिटेल में पूर्णता की उम्मीद करते हैं।", grammar: "Ta hai (Habit)" },
+                    { en: "I have to check the simulation results today.", hi: "मुझे आज सिमुलेशन परिणाम चेक करने हैं।", grammar: "Have to (Na hai)" },
+                    { en: "Amit has to finalize the documentation part.", hi: "अमित को दस्तावेज़ीकरण भाग को अंतिम रूप देना है।", grammar: "Has to (Na hai)" },
+                    { en: "We cannot afford any mistakes this time.", hi: "हम इस बार कोई गलती बर्दाश्त नहीं कर सकते।", grammar: "Sakte (Ability)" },
+                    { en: "If the machine fails, we have to start again.", hi: "अगर मशीन फेल होती है, तो हमें फिर से शुरू करना है।", grammar: "Have to (Na hai)" },
+                    { en: "Every student has got to prove their worth now.", hi: "हर छात्र को अब अपनी योग्यता साबित करनी पड़ती है।", grammar: "Has got to (Padta hai)" },
+                    { en: "The external examiner is coming from IIT Bombay.", hi: "बाहरी परीक्षक आईआईटी बॉम्बे से आ रहे हैं।", grammar: "Raha hai (Continuous)" },
+                    { en: "We have to impress him to get good grades.", hi: "अच्छे ग्रेड पाने के लिए हमें उन्हें प्रभावित करना है।", grammar: "Have to (Na hai)" }
+                ],
+                quiz: [
+                    { question: "What do the students have to do by Friday?", options: ["Party", "Submit project", "Go home"], correct: "Submit project" },
+                    { question: "What does 'Have got to' (Padta hai) imply here?", options: ["Choice", "Compulsion/Force", "Ability"], correct: "Compulsion/Force" },
+                    { question: "Who is panicking?", options: ["The Professor", "Amit", "The narrator"], correct: "Amit" }
+                ]
+            },
+            {
+                title: "The Past Mistakes",
+                sentences: [
+                    { en: "Last month, we were very lazy with our work.", hi: "पिछले महीने, हम अपने काम में बहुत आलसी थे।", grammar: "The (Past State)" },
+                    { en: "We thought we had enough time to finish.", hi: "हमने सोचा कि हमारे पास खत्म करने के लिए पर्याप्त समय था।", grammar: "Simple Past" },
+                    { en: "But suddenly, the hardware crashed last week.", hi: "लेकिन अचानक, पिछले हफ्ते हार्डवेयर क्रैश हो गया।", grammar: "Aa (Past Action)" },
+                    { en: "We had to buy new sensors from the market.", hi: "हमें बाजार से नए सेंसर खरीदने थे।", grammar: "Had to (Na tha)" },
+                    { en: "I had to borrow money from my father.", hi: "मुझे अपने पिता से पैसे उधार लेने पड़े।", grammar: "Had to (Na tha/Pada)" },
+                    { en: "It was raining heavily that day.", hi: "उस दिन भारी बारिश हो रही थी।", grammar: "Raha tha (Continuous)" },
+                    { en: "We had got to travel in the rain to find parts.", hi: "हमें पुर्जे खोजने के लिए बारिश में यात्रा करनी पड़ी थी।", grammar: "Had got to (Padta tha)" },
+                    { en: "No shops were open in the local area.", hi: "स्थानीय क्षेत्र में कोई दुकान खुली नहीं थी।", grammar: "Simple Past" },
+                    { en: "We had to go to the main city electronics market.", hi: "हमें मुख्य शहर के इलेक्ट्रॉनिक्स बाजार जाना था।", grammar: "Had to (Na tha)" },
+                    { en: "Amit had to call ten different vendors.", hi: "अमित को दस अलग-अलग विक्रेताओं को कॉल करना था।", grammar: "Had to (Na tha)" },
+                    { en: "We realized that we had got to be more serious.", hi: "हमें एहसास हुआ कि हमें और अधिक गंभीर होना पड़ा था।", grammar: "Had got to (Padta tha)" },
+                    { en: "We wasted time watching movies earlier.", hi: "हमने पहले फिल्में देखने में समय बर्बाद किया।", grammar: "Simple Past" },
+                    { en: "I had to apologize to my professor for the delay.", hi: "मुझे देरी के लिए अपने प्रोफेसर से माफी मांगनी पड़ी।", grammar: "Had to (Na tha)" },
+                    { en: "He told us we had to work double shifts.", hi: "उन्होंने हमसे कहा कि हमें डबल शिफ्ट में काम करना था।", grammar: "Had to (Na tha)" },
+                    { en: "That night, we did not sleep at all.", hi: "उस रात, हम बिल्कुल नहीं सोए।", grammar: "Simple Past" }
+                ],
+                quiz: [
+                    { question: "What happened to the hardware?", options: ["It upgraded", "It crashed", "It was sold"], correct: "It crashed" },
+                    { question: "What does 'Had to' (Na tha) show?", options: ["Future plan", "Past compulsion", "Present habit"], correct: "Past compulsion" },
+                    { question: "Where did they have to go?", options: ["Cinema", "Electronics market", "Park"], correct: "Electronics market" }
+                ]
+            },
+            {
+                title: "The Night Before",
+                sentences: [
+                    { en: "It is 2:00 AM and the lab is quiet.", hi: "रात के 2:00 बज रहे हैं और लैब शांत है।", grammar: "Hai (State)" },
+                    { en: "We are testing the robot for the final time.", hi: "हम अंतिम बार रोबोट का परीक्षण कर रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "Sometimes, you have got to sacrifice your sleep.", hi: "कभी-कभी, आपको अपनी नींद का त्याग करना पड़ता है।", grammar: "Have got to (Padta hai)" },
+                    { en: "There is a small bug in the software code.", hi: "सॉफ्टवेयर कोड में एक छोटा सा बग है।", grammar: "Hai (State)" },
+                    { en: "I have to find this error immediately.", hi: "मुझे इस त्रुटि को तुरंत खोजना है।", grammar: "Have to (Na hai)" },
+                    { en: "Amit is making strong coffee for both of us.", hi: "अमित हम दोनों के लिए कड़क कॉफी बना रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "He says he has to stay awake until morning.", hi: "वह कहता है कि उसे सुबह तक जागना है।", grammar: "Has to (Na hai)" },
+                    { en: "We have got to support each other now.", hi: "हमें अब एक-दूसरे का समर्थन करना ही है।", grammar: "Have got to (Padta hai)" },
+                    { en: "If we stop now, we will fail.", hi: "अगर हम अभी रुकते हैं, तो हम असफल हो जाएंगे।", grammar: "Simple Future" },
+                    { en: "I tell Amit that he has to be brave.", hi: "मैं अमित से कहता हूँ कि उसे बहादुर बनना है।", grammar: "Has to (Na hai)" },
+                    { en: "The compilation process is taking a long time.", hi: "संकलन प्रक्रिया में लंबा समय लग रहा है।", grammar: "Raha hai (Continuous)" },
+                    { en: "We have to wait patiently for the output.", hi: "हमें आउटपुट के लिए धैर्यपूर्वक इंतजार करना है।", grammar: "Have to (Na hai)" },
+                    { en: "Suddenly, the green light blinks on the machine.", hi: "अचानक, मशीन पर हरी बत्ती जलती है।", grammar: "Ta hai (Action)" },
+                    { en: "It works! We do not have to worry anymore.", hi: "यह काम करता है! हमें अब चिंता करने की ज़रूरत नहीं है।", grammar: "Have to (Na hai)" },
+                    { en: "We have to clean the lab before we leave.", hi: "जाने से पहले हमें लैब साफ करनी है।", grammar: "Have to (Na hai)" }
+                ],
+                quiz: [
+                    { question: "Why do they 'have got to' sacrifice sleep?", options: ["To party", "To finish work", "To watch movies"], correct: "To finish work" },
+                    { question: "What does Amit 'have to' do?", options: ["Sleep", "Stay awake", "Dance"], correct: "Stay awake" },
+                    { question: "What happens at the end?", options: ["The machine fails", "The machine works", "The power goes out"], correct: "The machine works" }
+                ]
+            },
+            {
+                title: "The Consequence",
+                sentences: [
+                    { en: "The sun is rising and we are ready.", hi: "सूरज उग रहा है और हम तैयार हैं।", grammar: "Raha hai (Continuous)" },
+                    { en: "Today, we will have to present our project.", hi: "आज, हमें अपना प्रोजेक्ट प्रस्तुत करना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "The examiner will have to ask difficult questions.", hi: "परीक्षक को कठिन सवाल पूछने पड़ेंगे।", grammar: "Will have to (Padega)" },
+                    { en: "We will have to answer with confidence.", hi: "हमें आत्मविश्वास के साथ जवाब देना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "If he asks about the code, I will have to explain.", hi: "यदि वह कोड के बारे में पूछता है, तो मुझे समझाना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "Amit will have to demonstrate the hardware.", hi: "अमित को हार्डवेयर का प्रदर्शन करना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "To become engineers, we will have to pass this test.", hi: "इंजीनियर बनने के लिए, हमें यह परीक्षा पास करनी पड़ेगी।", grammar: "Will have to (Padega)" },
+                    { en: "After this, we will have to look for jobs.", hi: "इसके बाद, हमें नौकरी की तलाश करनी पड़ेगी।", grammar: "Will have to (Padega)" },
+                    { en: "Life is not easy; you will have to struggle.", hi: "जीवन आसान नहीं है; तुम्हें संघर्ष करना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "But today, we just have to survive the presentation.", hi: "लेकिन आज, हमें बस प्रेजेंटेशन से बचना है।", grammar: "Have to (Na hai)" },
+                    { en: "Our parents will have to wait outside the hall.", hi: "हमारे माता-पिता को हॉल के बाहर इंतजार करना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "I hope we do not have to repeat this year.", hi: "मुझे उम्मीद है कि हमें यह साल दोहराना नहीं पड़ेगा।", grammar: "Have to (Na hai)" },
+                    { en: "Success has a price that you will have to pay.", hi: "सफलता की एक कीमत है जो आपको चुकानी पड़ेगी।", grammar: "Will have to (Padega)" },
+                    { en: "We are walking into the exam hall now.", hi: "हम अब परीक्षा हॉल में जा रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "We have to believe in ourselves.", hi: "हमें खुद पर विश्वास करना है।", grammar: "Have to (Na hai)" }
+                ],
+                quiz: [
+                    { question: "What implies future compulsion (Padega)?", options: ["Has to", "Had to", "Will have to"], correct: "Will have to" },
+                    { question: "What will Amit 'will have to' do?", options: ["Sing a song", "Demonstrate hardware", "Write a poem"], correct: "Demonstrate hardware" },
+                    { question: "What will they 'will have to' do after college?", options: ["Look for jobs", "Sleep forever", "Play games"], correct: "Look for jobs" }
+                ] // End of quiz array
+            } // End of last chapter object
+        ] // End of chapters array
+    } // End of "level2" object
+};
 
             const vocabularyData = {
                 "Vocabulary Builder": {
@@ -21230,7 +21670,7 @@ function renderHomeView() {
     }
     if(bottomNav) bottomNav.classList.remove('hidden');
     
-    // 2. ENABLE SCROLL (But layout is designed to fit)
+    // 2. ENABLE SCROLL
     document.body.style.overflow = 'auto'; 
     document.body.style.paddingTop = '56px';
 
@@ -21244,54 +21684,49 @@ function renderHomeView() {
     // 4. Configure Main Container (Compact Padding)
     const containerDiv = mainContent.querySelector('div');
     if(containerDiv) {
-        // Changed to p-2 and tight spacing to ensure fit
-        containerDiv.className = "max-w-2xl lg:max-w-5xl mx-auto w-full px-2 pt-2 pb-20 relative z-10 opacity-100 flex flex-col gap-2";
+        containerDiv.className = "max-w-lg mx-auto w-full px-2 pt-2 pb-4 relative z-10 opacity-100 flex flex-col gap-2";
     }
 
-    // 5. Configure Footer
+    // 5. Configure Footer (Smaller Text)
     const footer = mainContent.querySelector('footer');
     if(footer) {
         footer.className = "text-center text-[9px] text-slate-400 py-1 opacity-60 shrink-0";
         footer.innerHTML = "<p>Product of British Institute Of English Language And P.D.</p>";
     }
 
-    // 6. Configure Grid
+    // 6. Configure Grid Container (Tighter Gap)
     const categoryGridEl = mainContent.querySelector('#category-grid');
-    // Reduced gap to 2 (0.5rem)
-    categoryGridEl.className = "grid grid-cols-2 md:grid-cols-6 gap-2 w-full transition-all duration-300 ease-out"; 
+    categoryGridEl.className = "grid grid-cols-12 gap-2 w-full transition-all duration-300 ease-out"; 
     categoryGridEl.style.gridTemplateRows = ""; 
     categoryGridEl.innerHTML = '';
 
-    // --- COMPACT HERO BOX (Row 1) ---
+    // --- HERO BOX (Daily Goals) - Ultra Compact ---
     const dailyData = getDailyData();
     const userName = (userProfile && userProfile.name) ? userProfile.name : "Learner";
     const goalsCompleted = dailyData.goals.filter(g => g.completed).length;
     const totalGoals = dailyData.goals.length;
 
     const heroBox = document.createElement('div');
-    // FIX: Reduced min-height to 100px and padding to p-3
-    heroBox.className = "col-span-2 md:col-span-6 bg-gradient-to-r from-yellow-100 via-orange-100 to-pink-100 p-3 rounded-2xl shadow-sm border border-white/50 cursor-pointer relative overflow-hidden group pop-in min-h-[100px] flex flex-col justify-center";
+    heroBox.className = "col-span-12 bg-gradient-to-r from-yellow-100 via-orange-100 to-pink-100 p-3 rounded-2xl shadow-sm border border-white/60 cursor-pointer relative overflow-hidden group pop-in min-h-[80px] flex flex-col justify-center";
     heroBox.onclick = () => { vibrate(); showDailyGoalsModal(); };
 
     heroBox.innerHTML = `
-        <div class="absolute top-0 right-0 w-24 h-24 bg-white/30 rounded-full -mr-8 -mt-8 blur-xl group-hover:bg-white/50 transition-all"></div>
+        <div class="absolute top-0 right-0 w-24 h-24 bg-white/40 rounded-full -mr-6 -mt-6 blur-xl group-hover:bg-white/60 transition-all"></div>
         <div class="relative z-10 flex flex-col gap-1">
             <div class="flex justify-between items-center">
-                <h2 class="text-lg text-slate-800 font-['Fredoka'] leading-none">Hi, ${userName}!</h2>
-                <div class="flex items-center gap-1 text-[9px] text-pink-600 font-bold bg-white/40 px-2 py-0.5 rounded-full">
-                    <span>Goals</span><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <h2 class="text-sm text-slate-800 font-['Fredoka'] leading-none tracking-tight">Hi, ${userName}!</h2>
+                <div class="flex items-center gap-1 text-[9px] text-pink-700 font-bold bg-white/50 px-2 py-0.5 rounded-full shadow-sm">
+                    <span>Goals</span><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <div class="bg-white/60 p-1.5 rounded-lg backdrop-blur-sm border border-white/40 flex-grow min-w-0">
-                    <p class="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Word of the Day</p>
+            <div class="flex items-center gap-2 mt-0.5">
+                <div class="bg-white/70 p-1.5 rounded-lg backdrop-blur-md border border-white/50 flex-grow min-w-0 shadow-sm">
+                    <p class="text-[8px] font-bold text-slate-500 uppercase tracking-wider mb-0">Word of the Day</p>
                     <p class="text-xs font-black text-slate-900 leading-tight truncate">${dailyData.word.word}</p>
-                    <p class="text-[9px] text-slate-600 truncate italic">"${dailyData.word.meaning}"</p>
                 </div>
-                <div class="bg-white/60 p-1 rounded-lg backdrop-blur-sm border border-white/40 flex flex-col items-center justify-center shrink-0 w-10 h-10">
-                    <div class="relative w-7 h-7 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90"><circle cx="14" cy="14" r="11" stroke="#e2e8f0" stroke-width="2.5" fill="none" /><circle cx="14" cy="14" r="11" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-dasharray="69.11" stroke-dashoffset="${69.11 - (goalsCompleted/totalGoals)*69.11}" stroke-linecap="round" /></svg>
-                        <span class="absolute text-[8px] font-bold text-slate-800">${goalsCompleted}/${totalGoals}</span>
+                <div class="bg-white/70 p-1 rounded-lg backdrop-blur-md border border-white/50 flex flex-col items-center justify-center shrink-0 w-8 h-8 shadow-sm">
+                    <div class="relative w-6 h-6 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90"><circle cx="12" cy="12" r="10" stroke="#e2e8f0" stroke-width="2.5" fill="none" /><circle cx="12" cy="12" r="10" stroke="#ec4899" stroke-width="2.5" fill="none" stroke-dasharray="62.8" stroke-dashoffset="${62.8 - (goalsCompleted/totalGoals)*62.8}" stroke-linecap="round" /></svg>
                     </div>
                 </div>
             </div>
@@ -21299,183 +21734,187 @@ function renderHomeView() {
     `;
     categoryGridEl.appendChild(heroBox);
 
-    // --- COMPACT BENTO CONFIGURATION ---
-    // FIX: Icons reduced to w-6 h-6 (24px) for mobile
+    // --- BENTO CONFIGURATION (Compact Mode) ---
+    const homeScreenOrder = [
+        "Vocabulary Builder",       // Row 2 Left
+        "Advanced Vocabulary",      // Row 2 Right
+        "Phrases & Idioms",         // Row 3 Left
+        "Story Lab",                // Row 3 Right
+        "Conversational English",   // Row 4 Full Width
+        "Discussion Questions",     // Row 5 Left
+        "Sentence Structure",       // Row 5 Right
+        "Grammar & Rules",          // Row 6 Left (Larger)
+        "Dictionary"                // Row 6 Right (Smaller)
+    ];
+
     const categoryConfig = {
         "Vocabulary Builder": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.2-2.858.59-4.18"></path></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #34d399, #059669); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(52, 211, 153, 0.3);", 
-            layout: "col-span-1 md:col-span-3",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.2-2.858.59-4.18"></path></svg>`,
+            style: "background: linear-gradient(135deg, #10b981, #059669);", 
+            layout: "col-span-6",
             gradClass: "grad-10"
         },
         "Advanced Vocabulary": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.1 4-1 4-1s.38 2.38-1 4z"/></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #a78bfa, #7c3aed); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(167, 139, 250, 0.3);", 
-            layout: "col-span-1 md:col-span-3",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.1 4-1 4-1s.38 2.38-1 4z"/></svg>`,
+            style: "background: linear-gradient(135deg, #8b5cf6, #7c3aed);",
+            layout: "col-span-6",
             gradClass: "grad-1"
         },
         "Phrases & Idioms": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-12 sm:h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #fb923c, #c2410c); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(251, 146, 60, 0.3);",
-            layout: "col-span-2 md:col-span-6",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
+            style: "background: linear-gradient(135deg, #f97316, #ea580c);",
+            layout: "col-span-6",
             gradClass: "grad-4"
         },
+        "Story Lab": {
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+            style: "background: linear-gradient(135deg, #ec4899, #db2777);",
+            layout: "col-span-6",
+            gradClass: "grad-2"
+        },
         "Conversational English": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #38bdf8, #0284c7); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(56, 189, 248, 0.3);", 
-            layout: "col-span-1 md:col-span-4",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
+            style: "background: linear-gradient(135deg, #0ea5e9, #0284c7);",
+            layout: "col-span-12",
             gradClass: "grad-7"
         },
         "Discussion Questions": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #facc15, #ca8a04); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(250, 204, 21, 0.3);", 
-            layout: "col-span-1 md:col-span-2",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+            style: "background: linear-gradient(135deg, #eab308, #ca8a04);",
+            layout: "col-span-6",
             gradClass: "grad-fav"
         },
         "Sentence Structure": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #f43f5e, #e11d48); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(244, 63, 94, 0.3);", 
-            layout: "col-span-1 md:col-span-2",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>`,
+            style: "background: linear-gradient(135deg, #f43f5e, #e11d48);",
+            layout: "col-span-6",
             gradClass: "grad-6"
         },
         "Grammar & Rules": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #f472b6, #db2777); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(244, 114, 182, 0.3);", 
-            layout: "col-span-1 md:col-span-2",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+            style: "background: linear-gradient(135deg, #d946ef, #c026d3);",
+            layout: "col-span-7",
             gradClass: "grad-3"
         },
         "Dictionary": {
-            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
-            style: "background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0), linear-gradient(135deg, #2dd4bf, #0d9488); background-size: 24px 24px, 100% 100%; box-shadow: 0 3px 6px rgba(45, 212, 191, 0.3);", 
-            layout: "col-span-2 md:col-span-2",
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
+            style: "background: linear-gradient(135deg, #14b8a6, #0d9488);",
+            layout: "col-span-5",
             gradClass: "grad-8"
         }
     };
     
     let i = 0;
     homeScreenOrder.forEach(categoryName => {
-        const data = vocabularyData[categoryName];
+        let data = vocabularyData[categoryName];
+        if (categoryName === 'Story Lab') data = storyLibrary;
         if (!data && categoryName !== 'Dictionary' && categoryName !== 'Grammar & Rules') return;
         
-        const config = categoryConfig[categoryName] || { 
-            icon: '', 
-            style: "background: linear-gradient(135deg, #64748b, #475569);", 
-            layout: "col-span-1",
-            gradClass: 'grad-1'
-        };
-        
+        const config = categoryConfig[categoryName];
         if (data) allCategoriesMap.set(categoryName, { data: data, gradClass: config.gradClass });
         
         const card = document.createElement('div');
         
-        // FIX: Reduced min-height to 85px for mobile cards (very compact)
-        card.className = `${config.layout} relative p-3 sm:p-5 rounded-2xl flex flex-col justify-between items-start text-left cursor-pointer pop-in transition-all hover:scale-[1.02] active:scale-95 overflow-hidden group min-h-[85px] sm:min-h-[140px]`;
+        // COMPACT HEIGHTS:
+        // Small Cards: 85px
+        // Wide Cards: 95px
+        let minHeight = "min-h-[85px]"; 
+        if (config.layout === "col-span-12") minHeight = "min-h-[95px]"; 
+
+        card.className = `${config.layout} relative p-3 rounded-2xl flex flex-col justify-between items-start text-left cursor-pointer pop-in transition-all hover:scale-[1.02] active:scale-95 overflow-hidden group shadow-md hover:shadow-lg ${minHeight}`;
         
         card.setAttribute('style', `${config.style} animation-delay: ${i * 60}ms;`);
         
+        // Check if this is Story Lab to add the badge
+        let badgeHTML = '';
+        if (categoryName === 'Story Lab') {
+            badgeHTML = `<div class="badge-new">New</div>`;
+        }
+
         card.innerHTML = `
-            <div class="text-white/90 mb-0.5 transition-transform group-hover:scale-110 group-hover:-translate-y-1 duration-300 drop-shadow-md">
+            ${badgeHTML}
+            <div class="text-white/90 mb-0 transition-transform group-hover:scale-110 group-hover:-translate-y-1 duration-300 drop-shadow-sm">
                 ${config.icon}
             </div>
-            <!-- Smaller Text for Compact Layout -->
-            <p class="text-white font-black text-xs sm:text-xl tracking-tight leading-none z-10 drop-shadow-sm">${categoryName}</p>
-            <div class="absolute -bottom-6 -right-6 w-16 h-16 sm:w-24 sm:h-24 bg-white/10 rounded-full blur-xl group-hover:bg-white/20 transition-colors"></div>
+            <p class="text-white font-black text-sm leading-tight z-10 drop-shadow-sm max-w-[95%]">${categoryName}</p>
+            
+            <div class="absolute -bottom-4 -right-4 w-16 h-16 bg-white/10 rounded-full blur-lg group-hover:bg-white/20 transition-colors"></div>
         `;
         
         card.addEventListener('click', () => {
             vibrate(); 
-            
-            // Zoom Out Animation
             categoryGridEl.style.transform = "scale(0.95)";
             categoryGridEl.style.opacity = "0";
-
-            setTimeout(() => {
-                if (categoryName === 'Dictionary') {
-                    switchView('dictionary', { isSubView: true, from: { view: 'home' } });
-                } else if (data === 'synonyms-view') {
-                    switchView('synonymsView', {isSubView: true, from: {view: 'home'}, gradClass: config.gradClass});
-                } else if (Array.isArray(data)) {
-                    switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: data, gradClass: config.gradClass });
-                } else if (data && data.content && Array.isArray(data.content)) {
-                    switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, gradClass: config.gradClass });
-                } else if (data && data.subtopics) {
-                    switchView('subtopicSelection', { isSubView: true, from: { view: 'home' }, ...data, gradClass: config.gradClass });
-                } else {
-                    switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: data, title: categoryName, subtitle: "Select a sub-category", gradClass: config.gradClass });
-                }
-            }, 200);
+            setTimeout(() => navigateToCategoryBento(categoryName, config.style, ""), 150);
         });
         categoryGridEl.appendChild(card);
         i++;
     });
 }
 
-// --- NEW HELPER FOR BENTO NAVIGATION ---
+// --- FINAL BENTO NAVIGATION HELPER ---
 function navigateToCategoryBento(categoryName, bgClass, textClass) {
-    const categoryData = allCategoriesMap.get(categoryName);
-    if (categoryData) {
-        const data = categoryData.data;
-        // Forward the pastel theme to the sub-view
-        const theme = { bg: bgClass, text: textClass }; 
-
-        if (data === 'synonyms-view') {
-            switchView('synonymsView', {isSubView: true, from: {view: 'home'}, theme});
-        } else if (Array.isArray(data)) {
-            const transformedData = data.map(item => item.hindi ? { ...item, isSentence: true } : item);
-            switchView('wordList', { isSubView: true, from: { view: 'home' }, title: categoryName, words: transformedData, theme });
-        } else if (data.content) {
-            switchView('studyLesson', { isSubView: true, from: { view: 'home' }, ...data, theme });
-        } else {
-            // Default: Sub-Category List
-            switchView('categoryList', { 
-                isSubView: true, 
-                from: { view: 'home' }, 
-                categories: data, 
-                title: categoryName, 
-                theme: theme // Passing the pastel theme
-            });
-        }
+    // 1. Determine Data Source
+    // Check vocabularyData first, but override if it's Story Lab
+    let data = vocabularyData[categoryName];
+    if (categoryName === 'Story Lab') {
+        data = storyLibrary; 
     }
-}
 
-// --- REPLACEMENT FUNCTION (Fixes the "Not Opening" issue) ---
-function navigateToCategoryBento(categoryName, bgClass, textClass) {
-    // 1. Direct lookup in your main data object
-    const data = vocabularyData[categoryName]; 
-    
-    // 2. Define the theme based on the clicked card
+    // 2. Define Theme (based on the card's color)
     const theme = { bg: bgClass, text: textClass }; 
 
     if (data) {
-        // Case A: It's the special Synonyms view
-        if (data === 'synonyms-view') {
+        // Case A: Story Mode (Checks for 'chapters' or explicit name)
+        if (categoryName === 'Story Lab' || data.chapters) { 
+             switchView('categoryList', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                categories: storyLibrary, 
+                title: "Story Lab", 
+                subtitle: "Select a Story", 
+                theme: theme 
+            });
+        }
+        // Case B: Synonyms Special View
+        else if (data === 'synonyms-view') {
             switchView('synonymsView', {
                 isSubView: true, 
                 from: {view: 'home'}, 
-                theme
+                theme: theme
             });
         } 
-        // Case B: It's a simple list of words (e.g. a direct list)
+        // Case C: Simple Word List (Array)
         else if (Array.isArray(data)) {
+            // Map Hindi content to Sentence format if needed
             const transformedData = data.map(item => item.hindi ? { ...item, isSentence: true } : item);
             switchView('wordList', { 
                 isSubView: true, 
                 from: { view: 'home' }, 
                 title: categoryName, 
                 words: transformedData, 
-                theme 
+                theme: theme 
             });
         } 
-        // Case C: It's a Lesson (Study Hall)
+        // Case D: Study Lesson (Content Object)
         else if (data.content) {
             switchView('studyLesson', { 
                 isSubView: true, 
                 from: { view: 'home' }, 
                 ...data, 
-                theme 
+                theme: theme 
             });
         } 
-        // Case D: It's a nested category (The most common case)
+        // Case E: Grammar/Subtopic Selection (Subtopics Object)
+        else if (data.subtopics) {
+             switchView('subtopicSelection', { 
+                isSubView: true, 
+                from: { view: 'home' }, 
+                ...data, 
+                theme: theme 
+            });
+        }
+        // Case F: Standard Sub-category List (Default)
         else {
             switchView('categoryList', { 
                 isSubView: true, 
@@ -21483,7 +21922,7 @@ function navigateToCategoryBento(categoryName, bgClass, textClass) {
                 categories: data, 
                 title: categoryName, 
                 subtitle: "Select a sub-category", 
-                theme 
+                theme: theme 
             });
         }
     } else {
@@ -21498,7 +21937,7 @@ function renderCategoryListView(categories, title, subtitle, gradClass) {
     // 1. Create a clean container for the list (Vertical Layout)
     mainContent.innerHTML = '';
     const container = document.createElement('div');
-    container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-24 flex flex-col gap-3 animate-fade-in";
+    container.className = "max-w-2xl lg:max-w-5xl mx-auto w-full p-4 pb-4 flex flex-col gap-3 animate-fade-in";
     
     // 2. Header (Dark Blue Text)
     if (subtitle) {
@@ -21550,12 +21989,24 @@ function renderCategoryListView(categories, title, subtitle, gradClass) {
         button.className = `w-full p-4 rounded-2xl border flex items-center justify-between transition-transform active:scale-95 shadow-sm hover:shadow-md pop-in ${theme.bg} ${theme.border}`;
         button.style.animationDelay = `${i * 50}ms`;
 
+        // Special Icon logic for Stories
+        let icon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+        if (data.chapters) {
+             // Book Icon for Story
+             icon = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`;
+             // Replace percent badge with Chapter count for stories
+             percentBadge = `<span class="bg-white/80 text-slate-800 px-3 py-1 rounded-full text-xs font-bold shadow-sm">${data.chapters.length} Ch</span>`;
+        }
+
         button.innerHTML = `
             <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center ${theme.iconBg} ${theme.iconText}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    ${icon}
                 </div>
-                <span class="text-lg font-bold ${theme.text} text-left">${categoryName}</span>
+                <div class="text-left">
+                    <span class="text-lg font-bold ${theme.text} block">${data.title || categoryName}</span>
+                    ${data.desc ? `<span class="text-xs ${theme.text} opacity-70">${data.desc}</span>` : ''}
+                </div>
             </div>
             ${percentBadge}
         `;
@@ -21564,8 +22015,12 @@ function renderCategoryListView(categories, title, subtitle, gradClass) {
             vibrate();
             const fromOpts = { view: 'categoryList', categories, title, subtitle, gradClass };
             
-            // Pass the theme color to the next view for consistency
-            const nextGradClass = theme.bg.replace('bg-', 'grad-'); 
+            // --- STORY MODE DETECTION ---
+            if (data.chapters) {
+                startStoryMode(categoryName); // Launch Story Engine
+                return;
+            }
+            // ----------------------------
 
             if (data === 'synonyms-view') {
                 switchView('synonymsView', {isSubView: true, from: fromOpts, gradClass: gradClass});
@@ -24181,7 +24636,7 @@ function startFlashRecallGame() {
                         const frontWord = isOneWordSub ? item.meaning : item.word;
                         const backWord = isAntonymList ? item.antonym : (isOneWordSub ? item.word : (item.synonyms ? `Synonyms: ${item.synonyms.join(', ')}` : (item.example || item.meaning)));
                         frontContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4"><div class="text-left flex-grow"><p class="text-sm sm:text-base font-semibold">${frontWord}</p>${(item.meaning && !isOneWordSub && !isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}${(isSynonymSublist) ? `<p class="text-xs sm:text-sm text-slate-600">${item.meaning}</p>` : ''}</div><button class="favorite-btn flex-shrink-0 p-1 ${isFavorited ? 'favorited' : ''}" data-word="${item.word.replace(/"/g, '&quot;')}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></button>${!isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-gray-400 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
-                        backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-slate-900 font-semibold">${item.antonym}</p><p class="text-xs text-slate-600">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-slate-900 leading-tight text-left flex-grow">${backWord}</p>`}${isAntonymList || isOneWordSub ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : item.word}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
+                        backContent.innerHTML = `<div class="flex justify-between items-center w-full gap-4">${isAntonymList ? `<div class="text-left flex-grow"><p class="text-slate-900 font-semibold">${item.antonym}</p><p class="text-xs text-slate-600">${item.antonym_meaning}</p></div>` : `<p class="text-sm text-slate-900 leading-tight text-left flex-grow">${backWord}</p>`}${(isAntonymList || isOneWordSub || item.example) ? `<div class="speak-button flex-shrink-0" data-speak="${isAntonymList ? item.antonym : (isOneWordSub ? item.word : item.example)}"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-500 transition-all duration-200"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg></div>` : ''}</div>`;
                         wordCardInner.append(frontContent, backContent);
                         wordItem.appendChild(wordCardInner);
                         wordItem.addEventListener('click', e => { const target = e.target; if (target.closest('.speak-button')) { const btn = target.closest('.speak-button'); vibrate(10); speakText(btn.dataset.speak, btn); } else if (target.closest('.favorite-btn')) toggleFavorite(target.closest('.favorite-btn')); else { if (activeWordItem && activeWordItem !== wordItem) activeWordItem.classList.remove('active'); wordItem.classList.toggle('active'); activeWordItem = wordItem.classList.contains('active') ? wordItem : null; }});
@@ -25540,57 +25995,67 @@ function showChallengeResults(challengeId, challengeData) {
     displayQuestion();
 }
             
-            // --- MODIFIED FUNCTION: speakText ---
-            // Added 'buttonElement' as the second argument, made onEndCallback the third
-            // --- MODIFIED FUNCTION: speakText (Global + Color Change) ---
-            // Attached to window so inline onclick handlers can find it
+            // --- MODIFIED FUNCTION: speakText (Smart Accent & Language Support) ---
             window.speakText = function(textToSpeak, buttonElement = null, onEndCallback = null) {
                 speechSynthesis.cancel();
                 
-                // Clean text
+                // 1. Clean the text
                 const cleanText = textToSpeak.replace(/[*_`]/g, '').replace(/\s*\/\s*/g, ', ');
+                
+                // 2. Detect Language (Check for Hindi Devanagari characters)
+                // Range \u0900-\u097F covers Hindi characters
+                const isHindi = /[\u0900-\u097F]/.test(cleanText);
+                
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 
-                // Voice selection
-                if (synthVoices.length > 0) { 
-                    const voice = synthVoices.find(v => v.lang === 'en-US' && /female|woman/i.test(v.name)) || synthVoices.find(v => v.lang === 'en-US'); 
-                    if (voice) utterance.voice = voice; 
-                }
-                utterance.lang = 'en-US';
+                // 3. Smart Voice Selection
+                if (synthVoices.length > 0) {
+                    let voice = null;
 
-                // --- COLOR CHANGE LOGIC ---
+                    if (isHindi) {
+                        // Try to find a Hindi voice (e.g., "hi-IN")
+                        voice = synthVoices.find(v => v.lang.includes('hi-IN') || v.lang.includes('hi'));
+                    } else {
+                        // For English, prioritize Indian Accent ('en-IN')
+                        // If not found, fallback to UK (often closer to Indian English than US), then US
+                        voice = synthVoices.find(v => v.lang === 'en-IN') || 
+                                synthVoices.find(v => v.lang === 'en-GB') || 
+                                synthVoices.find(v => v.lang.startsWith('en'));
+                    }
+
+                    // Apply the voice if found
+                    if (voice) {
+                        utterance.voice = voice;
+                        utterance.lang = voice.lang; // Ensure lang tag matches voice
+                    }
+                }
+
+                // --- COLOR CHANGE LOGIC (Visual Feedback) ---
                 let svg = null;
                 if (buttonElement) {
-                    // Handle cases where buttonElement might be the button itself or a child
                     const btn = buttonElement.closest('button') || buttonElement;
                     svg = btn.querySelector('svg');
-                    
                     if (svg) {
-                        // Add red color class (Tailwind 'text-red-500')
-                        // If you aren't using Tailwind, you can use style.color = 'red'
-                        svg.classList.add('text-red-500', 'scale-110'); 
-                        // For non-Tailwind fallback or overrides:
-                        svg.style.color = '#ef4444'; 
-                        svg.style.fill = '#ef4444'; // Fill for solid icons
+                        // Turn Red/Active
+                        svg.classList.add('text-pink-600', 'scale-110'); 
+                        svg.style.color = '#db2777'; 
+                        svg.style.fill = '#db2777';
                     }
                 }
                 
                 utterance.onend = () => {
                     if (svg) {
-                        // Reset color
-                        svg.classList.remove('text-red-500', 'scale-110');
+                        // Reset Color
+                        svg.classList.remove('text-pink-600', 'scale-110');
                         svg.style.color = ''; 
                         svg.style.fill = ''; 
                     }
-                    if (onEndCallback) {
-                        onEndCallback(); 
-                    }
+                    if (onEndCallback) onEndCallback(); 
                 };
                 
                 utterance.onerror = () => {
-                     // Ensure reset on error too
                     if (svg) {
-                        svg.classList.remove('text-red-500', 'scale-110');
+                        svg.classList.remove('text-pink-600', 'scale-110');
                         svg.style.color = '';
                         svg.style.fill = '';
                     }
@@ -27115,6 +27580,474 @@ function showDailyGoalsModal() {
             }
         });
     });
+}
+
+// --- STORY LAB LOGIC ---
+
+// --- UPDATED STORY LAB LOGIC ---
+
+let currentStory = null;
+let currentChapterIndex = 0;
+let currentSentenceIndex = 0;
+let isStoryPlaying = false;
+
+// 1. Main Function to Start Story
+// --- UPDATED STORY LOGIC VARIABLES ---
+let storyPlaybackRate = 1.0;
+
+function startStoryMode(levelId, startChapter = 0) {
+    const data = storyLibrary[levelId];
+    if (!data) return;
+
+    const topNav = document.getElementById('top-nav');
+    const bottomNav = document.getElementById('bottom-nav');
+    if (topNav) topNav.classList.remove('hidden');
+    if (bottomNav) bottomNav.classList.remove('hidden');
+
+    updateTopNav({ title: data.title, showBack: true, gradClass: "grad-2" });
+
+    // Inject Exit Button
+    const navLeft = document.getElementById('top-nav-left');
+    navLeft.innerHTML = `<button id="story-exit-btn" class="p-2 rounded-full bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-colors flex items-center gap-1 px-3"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span class="text-xs font-bold">Exit</span></button>`;
+    document.getElementById('story-exit-btn').onclick = () => {
+        vibrate();
+        stopStoryAudio();
+        switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: storyLibrary, title: "Story Lab", subtitle: "Select a Story", gradClass: "grad-2", forceRender: true });
+    };
+
+    const navTitle = document.getElementById('top-nav-title');
+    navTitle.className = "flex-grow text-center text-sm font-black text-slate-800 uppercase tracking-wide truncate px-2";
+    navTitle.textContent = data.title;
+
+    const navRight = document.getElementById('top-nav-right');
+    navRight.innerHTML = `<button id="story-manual-info" class="p-2 rounded-full text-indigo-500 bg-indigo-50 hover:bg-indigo-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>`;
+    document.getElementById('story-manual-info').onclick = () => { vibrate(); showStoryGrammarInfo(levelId); };
+
+    // Load Template
+    mainContent.innerHTML = '';
+    mainContent.appendChild(document.getElementById('story-reader-template').content.cloneNode(true));
+
+    currentStory = data;
+    currentChapterIndex = startChapter;
+    currentSentenceIndex = 0;
+    isStoryPlaying = false;
+    storyPlaybackRate = 1.0; // Reset speed
+
+    // Controls
+    document.getElementById('play-pause-story-btn').onclick = () => { vibrate(); toggleStoryAudio(); };
+    
+    // Previous Sentence (Smart Rewind)
+    document.getElementById('prev-sentence-btn').onclick = () => {
+        vibrate();
+        stopStoryAudio();
+        if (currentSentenceIndex > 0) {
+            currentSentenceIndex--;
+        }
+        highlightSentence(currentSentenceIndex);
+        setTimeout(() => {
+            isStoryPlaying = true;
+            updatePlayPauseIcon();
+            playSentence(currentSentenceIndex);
+        }, 100);
+    };
+
+    document.getElementById('next-chapter-btn').onclick = () => { vibrate(); handleNextClick(); };
+    
+    // Speed Toggle Logic
+    const speedBtn = document.getElementById('story-speed-btn');
+    speedBtn.onclick = () => {
+        vibrate();
+        if (storyPlaybackRate === 1.0) storyPlaybackRate = 0.8;
+        else if (storyPlaybackRate === 0.8) storyPlaybackRate = 0.5;
+        else storyPlaybackRate = 1.0;
+        
+        speedBtn.textContent = `${storyPlaybackRate}x`;
+        
+        // Apply new speed immediately if playing
+        if (isStoryPlaying) {
+            stopStoryAudio();
+            isStoryPlaying = true;
+            updatePlayPauseIcon();
+            playSentence(currentSentenceIndex);
+        }
+    };
+
+    document.getElementById('close-translation').onclick = () => document.getElementById('translation-popup').classList.add('hidden');
+
+    renderChapter();
+}
+
+function playSentence(index) {
+    if (!isStoryPlaying) return;
+    const chapter = currentStory.chapters[currentChapterIndex];
+    
+    if (index >= chapter.sentences.length) {
+        stopStoryAudio();
+        // Auto-complete UX
+        const nextBtn = document.getElementById('next-chapter-btn');
+        nextBtn.classList.add('animate-bounce', 'text-green-600');
+        return;
+    }
+
+    currentSentenceIndex = index;
+    highlightSentence(index);
+    updateProgressBar();
+    updateTimeRemaining(); // Update time estimate
+
+    const text = chapter.sentences[index].en;
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices();
+    const indianVoice = voices.find(v => v.lang === 'en-IN') || voices.find(v => v.lang === 'en-GB');
+    if (indianVoice) utterance.voice = indianVoice;
+    
+    // Apply dynamic speed
+    utterance.rate = storyPlaybackRate; 
+
+    utterance.onend = () => {
+        if (isStoryPlaying) {
+            playSentence(index + 1);
+        }
+    };
+
+    speechSynthesis.speak(utterance);
+    
+    // Enable Focus Mode (Dim others)
+    document.getElementById('story-content-area').classList.add('story-dimmed');
+}
+
+function updateTimeRemaining() {
+    const chapter = currentStory.chapters[currentChapterIndex];
+    const remainingSentences = chapter.sentences.slice(currentSentenceIndex);
+    
+    // Count words
+    let wordCount = 0;
+    remainingSentences.forEach(s => wordCount += s.en.split(' ').length);
+    
+    // Estimate: Average 130 wpm / speed factor
+    const wpm = 130 * storyPlaybackRate;
+    const minutesLeft = Math.ceil(wordCount / wpm);
+    
+    const timeEl = document.getElementById('story-time-left');
+    if (timeEl) timeEl.textContent = `${minutesLeft} min left`;
+}
+
+function updateProgressBar() {
+    const total = currentStory.chapters[currentChapterIndex].sentences.length;
+    const pct = Math.round(((currentSentenceIndex + 1) / total) * 100);
+    const bar = document.getElementById('story-progress-bar');
+    const pctText = document.getElementById('story-percent');
+    if(bar) bar.style.width = `${pct}%`;
+    if(pctText) pctText.textContent = `${pct}%`;
+}
+
+function stopStoryAudio() {
+    isStoryPlaying = false;
+    speechSynthesis.cancel();
+    updatePlayPauseIcon();
+    // Remove Focus Mode
+    const contentArea = document.getElementById('story-content-area');
+    if(contentArea) contentArea.classList.remove('story-dimmed');
+}
+
+function showStoryGrammarInfo(levelId) {
+    const modal = document.getElementById('story-info-modal');
+    const list = document.getElementById('story-grammar-list');
+    const closeBtn = document.getElementById('close-story-info');
+    
+    // Define grammar points based on level ID
+    let grammarPoints = [];
+    
+    if (levelId === 'level1') {
+        grammarPoints = [
+            { title: "Ta hai / Te hain", desc: "Simple Present (Routine/Habit)", ex: "I wake up..." },
+            { title: "Raha hai / Rahi hai", desc: "Present Continuous (Now)", ex: "I am walking..." },
+            { title: "Aa / Ee / Ay", desc: "Simple Past (Completed Action)", ex: "I went..." },
+            { title: "Ta tha / Ti thi", desc: "Used to (Past Habit)", ex: "I used to sleep..." },
+            { title: "Raha tha", desc: "Past Continuous", ex: "I was thinking..." },
+            { title: "Ga / Ge / Gi", desc: "Future (Will)", ex: "I will go..." },
+            { title: "Raha hoga", desc: "Future Continuous", ex: "I will be working..." }
+        ];
+    } else if (levelId === 'level2') {
+        grammarPoints = [
+            { title: "Na hai / Na padta hai", desc: "Has/Have to (Compulsion)", ex: "I have to go." },
+            { title: "Na tha / Na pada", desc: "Had to (Past Compulsion)", ex: "I had to eat." },
+            { title: "Padega", desc: "Will have to (Future Compulsion)", ex: "You will have to study." }
+        ];
+    }
+    // Add more levels as needed...
+
+    list.innerHTML = grammarPoints.map(p => `
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <h4 class="font-bold text-indigo-600 text-sm">${p.title}</h4>
+            <p class="text-xs text-slate-700 font-semibold">${p.desc}</p>
+            <p class="text-xs text-slate-400 italic mt-1">"${p.ex}"</p>
+        </div>
+    `).join('');
+
+    modal.classList.remove('hidden');
+    
+    closeBtn.onclick = () => modal.classList.add('hidden');
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+    };
+}
+
+// 2. Render the current chapter text
+function renderChapter() {
+    const chapter = currentStory.chapters[currentChapterIndex];
+    const container = document.getElementById('story-content-area');
+    
+    // 1. Update Header Text
+    const headerEl = document.getElementById('chapter-indicator');
+    if (headerEl) {
+        headerEl.textContent = `Chapter ${currentChapterIndex + 1} of ${currentStory.chapters.length}: ${chapter.title}`;
+    }
+    
+    // 2. Render Sentences
+    container.innerHTML = '';
+    
+    chapter.sentences.forEach((sent, index) => {
+        const span = document.createElement('span');
+        span.className = 'story-sentence';
+        span.dataset.index = index;
+        // Add a trailing space for natural reading flow
+        span.innerHTML = sent.en + " "; 
+        
+        span.onclick = (e) => {
+            e.stopPropagation();
+            pauseStoryForInteraction(index);
+        };
+        
+        container.appendChild(span);
+    });
+
+    // 3. Manage Button States (Fixed)
+    // We only check for 'next-chapter-btn' because 'prev-chapter-btn' was removed in the new UI.
+    const nextBtn = document.getElementById('next-chapter-btn');
+    if (nextBtn) {
+        const isLastChapter = (currentChapterIndex === currentStory.chapters.length - 1);
+        nextBtn.disabled = isLastChapter;
+        // Visual feedback for disabled state
+        nextBtn.style.opacity = isLastChapter ? '0.3' : '1';
+    }
+    
+    // 4. Reset/Init Progress UI
+    updateProgressBar();
+    // Ensure time remaining is calculated immediately
+    if (typeof updateTimeRemaining === 'function') {
+        updateTimeRemaining();
+    }
+}
+
+// 3. Handle "Next" Click (Logic for Quiz Interruption)
+function handleNextClick() {
+    stopStoryAudio();
+    const chapter = currentStory.chapters[currentChapterIndex];
+
+    // Check if this chapter has a quiz
+    if (chapter.quiz && chapter.quiz.length > 0) {
+        runStoryQuiz(chapter.quiz, () => {
+            // This callback runs AFTER quiz is passed
+            advanceChapter();
+        });
+    } else {
+        // No quiz, just go next
+        advanceChapter();
+    }
+}
+
+function advanceChapter() {
+    if (currentChapterIndex < currentStory.chapters.length - 1) {
+        currentChapterIndex++;
+        currentSentenceIndex = 0;
+        renderChapter();
+    } else {
+        // End of Story - Go back to list
+        alert("Story Complete! Great job.");
+        document.getElementById('story-back-btn').click();
+    }
+}
+
+function changeChapter(dir) {
+    // Used for "Prev" button mainly
+    stopStoryAudio();
+    if (currentChapterIndex + dir >= 0 && currentChapterIndex + dir < currentStory.chapters.length) {
+        currentChapterIndex += dir;
+        currentSentenceIndex = 0;
+        renderChapter();
+    }
+}
+
+// 4. Mini Quiz Logic (Overlay)
+function runStoryQuiz(questions, onComplete) {
+    // Create a quiz overlay dynamically
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 z-[350] bg-slate-900 flex flex-col items-center justify-center p-6 pop-in";
+    overlay.id = "story-quiz-overlay";
+    
+    let qIndex = 0;
+    let score = 0;
+    
+    function renderQ() {
+        if (qIndex >= questions.length) {
+            // Quiz Done
+            overlay.innerHTML = `
+                <div class="text-center">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Chapter Complete!</h2>
+                    <p class="text-slate-300 mb-6">You scored ${score}/${questions.length}</p>
+                    <button id="quiz-continue-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">Continue Story</button>
+                </div>`;
+            
+            document.getElementById('quiz-continue-btn').onclick = () => {
+                overlay.remove();
+                onComplete();
+            };
+            if(score === questions.length) showConfetti();
+            return;
+        }
+
+        const q = questions[qIndex];
+        overlay.innerHTML = `
+            <div class="w-full max-w-md">
+                <div class="flex justify-between text-slate-400 text-sm mb-4">
+                    <span>Quiz Time</span>
+                    <span>${qIndex + 1}/${questions.length}</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-6">${q.question}</h3>
+                <div class="space-y-3">
+                    ${q.options.map(opt => `
+                        <button class="quiz-opt-btn w-full p-4 rounded-xl bg-white/10 text-left text-white font-semibold hover:bg-white/20 border border-white/10 transition-all">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        const btns = overlay.querySelectorAll('.quiz-opt-btn');
+        btns.forEach(btn => {
+            btn.onclick = () => {
+                // Disable all
+                btns.forEach(b => b.disabled = true);
+                
+                if (btn.textContent.trim() === q.correct) {
+                    btn.classList.remove('bg-white/10');
+                    btn.classList.add('bg-green-500', 'border-green-400');
+                    score++;
+                    vibrate(50);
+                } else {
+                    btn.classList.remove('bg-white/10');
+                    btn.classList.add('bg-red-500', 'border-red-400');
+                    vibrate(100);
+                    // Highlight correct
+                    btns.forEach(b => {
+                        if (b.textContent.trim() === q.correct) b.classList.add('bg-green-500/50');
+                    });
+                }
+                
+                setTimeout(() => {
+                    qIndex++;
+                    renderQ();
+                }, 1200);
+            };
+        });
+    }
+
+    document.body.appendChild(overlay);
+    renderQ();
+}
+
+// 5. Audio Helpers
+function toggleStoryAudio() {
+    if (isStoryPlaying) {
+        stopStoryAudio();
+    } else {
+        isStoryPlaying = true;
+        updatePlayPauseIcon();
+        playSentence(currentSentenceIndex);
+    }
+}
+
+function updatePlayPauseIcon() {
+    const playIcon = document.getElementById('icon-play');
+    const pauseIcon = document.getElementById('icon-pause');
+    if(isStoryPlaying) {
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+    } else {
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+    }
+}
+
+function stopStoryAudio() {
+    isStoryPlaying = false;
+    speechSynthesis.cancel();
+    updatePlayPauseIcon();
+}
+
+function playSentence(index) {
+    if (!isStoryPlaying) return;
+    const chapter = currentStory.chapters[currentChapterIndex];
+    
+    if (index >= chapter.sentences.length) {
+        stopStoryAudio();
+        // Optional: Auto-advance to quiz? 
+        // For now, just stop and let user click "Next"
+        return;
+    }
+
+    currentSentenceIndex = index;
+    highlightSentence(index);
+    updateProgressBar();
+
+    const text = chapter.sentences[index].en;
+    
+    // Smart Speak Logic
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = speechSynthesis.getVoices();
+    const indianVoice = voices.find(v => v.lang === 'en-IN') || voices.find(v => v.lang === 'en-GB');
+    if (indianVoice) utterance.voice = indianVoice;
+    utterance.rate = 0.9;
+
+    utterance.onend = () => {
+        if (isStoryPlaying) {
+            playSentence(index + 1);
+        }
+    };
+
+    speechSynthesis.speak(utterance);
+}
+
+function highlightSentence(index) {
+    const spans = document.querySelectorAll('.story-sentence');
+    spans.forEach(s => s.classList.remove('story-active'));
+    if (spans[index]) {
+        spans[index].classList.add('story-active');
+        spans[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function pauseStoryForInteraction(index) {
+    stopStoryAudio();
+    currentSentenceIndex = index;
+    highlightSentence(index);
+
+    const data = currentStory.chapters[currentChapterIndex].sentences[index];
+    const popup = document.getElementById('translation-popup');
+    
+    document.getElementById('popup-hindi').textContent = data.hi;
+    document.getElementById('popup-grammar').textContent = data.grammar;
+    
+    popup.classList.remove('hidden');
+}
+
+function updateProgressBar() {
+    const total = currentStory.chapters[currentChapterIndex].sentences.length;
+    const pct = ((currentSentenceIndex + 1) / total) * 100;
+    const bar = document.getElementById('story-progress-bar');
+    if(bar) bar.style.width = `${pct}%`;
 }
             
             // This block defines how the app starts.
