@@ -27998,6 +27998,7 @@ function changeChapter(dir) {
 }
 
 // 4. Mini Quiz Logic (Overlay)
+// 4. Mini Quiz Logic (Overlay) - Updated with Quit Button
 function runStoryQuiz(questions, onComplete) {
     // Create a quiz overlay dynamically
     const overlay = document.createElement('div');
@@ -28009,34 +28010,58 @@ function runStoryQuiz(questions, onComplete) {
     
     function renderQ() {
         if (qIndex >= questions.length) {
-            // Quiz Done
+            // Quiz Done Screen
+            let resultIcon = '🎉';
+            let msg = 'Chapter Complete!';
+            if (score < questions.length / 2) {
+                resultIcon = '💪';
+                msg = 'Good Effort!';
+            }
+
             overlay.innerHTML = `
-                <div class="text-center">
-                    <div class="text-6xl mb-4">🎉</div>
-                    <h2 class="text-2xl font-bold text-white mb-2">Chapter Complete!</h2>
+                <div class="text-center animate-pop-in">
+                    <div class="text-6xl mb-4 animate-bounce">${resultIcon}</div>
+                    <h2 class="text-2xl font-bold text-white mb-2">${msg}</h2>
                     <p class="text-slate-300 mb-6">You scored ${score}/${questions.length}</p>
-                    <button id="quiz-continue-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">Continue Story</button>
+                    <div class="flex gap-3 justify-center">
+                        <button id="quiz-close-btn" class="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-full transition-colors">Close</button>
+                        <button id="quiz-continue-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition-transform hover:scale-105">Continue Story</button>
+                    </div>
                 </div>`;
             
+            // Close = Stay on current chapter
+            document.getElementById('quiz-close-btn').onclick = () => {
+                overlay.remove();
+            };
+
+            // Continue = Go to next chapter
             document.getElementById('quiz-continue-btn').onclick = () => {
                 overlay.remove();
                 onComplete();
             };
-            if(score === questions.length) showConfetti();
+
+            if(score === questions.length && typeof showConfetti === 'function') showConfetti();
             return;
         }
 
         const q = questions[qIndex];
         overlay.innerHTML = `
-            <div class="w-full max-w-md">
-                <div class="flex justify-between text-slate-400 text-sm mb-4">
-                    <span>Quiz Time</span>
-                    <span>${qIndex + 1}/${questions.length}</span>
+            <div class="w-full max-w-md relative">
+                <button id="quit-story-quiz" class="absolute -top-12 right-0 text-slate-400 hover:text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Quit Quiz
+                </button>
+
+                <div class="flex justify-between text-slate-400 text-sm mb-4 font-mono">
+                    <span>Question</span>
+                    <span>${qIndex + 1} / ${questions.length}</span>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-6">${q.question}</h3>
+                
+                <h3 class="text-xl font-bold text-white mb-6 leading-relaxed">${q.question}</h3>
+                
                 <div class="space-y-3">
                     ${q.options.map(opt => `
-                        <button class="quiz-opt-btn w-full p-4 rounded-xl bg-white/10 text-left text-white font-semibold hover:bg-white/20 border border-white/10 transition-all">
+                        <button class="quiz-opt-btn w-full p-4 rounded-xl bg-white/10 text-left text-white font-semibold hover:bg-white/20 border border-white/5 hover:border-white/30 transition-all active:scale-95">
                             ${opt}
                         </button>
                     `).join('')}
@@ -28044,31 +28069,43 @@ function runStoryQuiz(questions, onComplete) {
             </div>
         `;
 
+        // Quit Listener
+        document.getElementById('quit-story-quiz').onclick = () => {
+            if(confirm("Quit the quiz? You won't be able to move to the next chapter without completing it.")) {
+                overlay.remove();
+            }
+        };
+
+        // Option Listeners
         const btns = overlay.querySelectorAll('.quiz-opt-btn');
         btns.forEach(btn => {
             btn.onclick = () => {
-                // Disable all
+                // Disable all to prevent double clicks
                 btns.forEach(b => b.disabled = true);
                 
                 if (btn.textContent.trim() === q.correct) {
-                    btn.classList.remove('bg-white/10');
-                    btn.classList.add('bg-green-500', 'border-green-400');
+                    btn.classList.remove('bg-white/10', 'border-white/5');
+                    btn.classList.add('bg-green-500', 'border-green-400', 'text-white');
                     score++;
                     vibrate(50);
                 } else {
-                    btn.classList.remove('bg-white/10');
-                    btn.classList.add('bg-red-500', 'border-red-400');
+                    btn.classList.remove('bg-white/10', 'border-white/5');
+                    btn.classList.add('bg-red-500', 'border-red-400', 'text-white');
                     vibrate(100);
-                    // Highlight correct
+                    
+                    // Highlight correct answer for learning
                     btns.forEach(b => {
-                        if (b.textContent.trim() === q.correct) b.classList.add('bg-green-500/50');
+                        if (b.textContent.trim() === q.correct) {
+                            b.classList.add('bg-green-500/50', 'border-green-400/50');
+                        }
                     });
                 }
                 
+                // Auto-advance
                 setTimeout(() => {
                     qIndex++;
                     renderQ();
-                }, 1200);
+                }, 1500);
             };
         });
     }
