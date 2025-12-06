@@ -2240,24 +2240,24 @@ body {
     </div>
     
     <div id="profile-setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
-             <h2 class="text-2xl font-bold text-white mb-2 text-center">Welcome to LingoQuest!</h2>
-             <p class="text-slate-300 text-center mb-6">Let's set up your profile.</p>
-             <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label for="firstname-input" class="block text-sm font-bold text-slate-200 mb-2">Name:</label>
-                    <input type="text" id="firstname-input" placeholder="Your First Name" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
-                </div>
-                <div>
-                    <label for="lastname-input" class="block text-sm font-bold text-slate-200 mb-2">Last Name:</label>
-                    <input type="text" id="lastname-input" placeholder="Your Last Name" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all">
-                </div>
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in bg-white">
+         <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">Welcome to LingoQuest!</h2>
+         <p class="text-slate-500 text-center mb-6">Let's set up your profile.</p>
+         <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label for="firstname-input" class="block text-sm font-bold text-slate-600 mb-2">Name:</label>
+                <input type="text" id="firstname-input" placeholder="Your First Name" class="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 rounded-lg py-3 px-4 outline-none transition-all font-medium">
             </div>
-             <div class="mb-6">
-                <label class="block text-sm font-bold text-slate-200 mb-2">Select your batch time:</label>
-                <div id="batch-time-selector" class="grid grid-cols-3 gap-2"></div>
+            <div>
+                <label for="lastname-input" class="block text-sm font-bold text-slate-600 mb-2">Last Name:</label>
+                <input type="text" id="lastname-input" placeholder="Your Last Name" class="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 rounded-lg py-3 px-4 outline-none transition-all font-medium">
             </div>
-             <button id="save-profile-btn" class="w-full grad-nav text-white font-bold py-3 px-4 rounded-lg disabled:opacity-50" disabled>Let's Go!</button>
+        </div>
+         <div class="mb-6">
+            <label class="block text-sm font-bold text-slate-600 mb-2">Select your batch time:</label>
+            <div id="batch-time-selector" class="grid grid-cols-3 gap-2"></div>
+        </div>
+         <button id="save-profile-btn" class="w-full bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-transform active:scale-95" disabled>Let's Go!</button>
         </div>
     </div>
     
@@ -2925,12 +2925,12 @@ body {
     </template>
     
     <div id="resume-quiz-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in">
-             <h2 class="text-xl font-bold text-white mb-2">Quiz in Progress</h2>
-             <p class="text-slate-300 mb-6">A quiz for <span id="resume-quiz-name" class="font-semibold text-pink-400"></span> was found in progress. Would you like to resume?</p>
-             <div class="flex justify-center gap-4">
-                 <button id="resume-quiz-btn" class="w-full grad-nav text-white font-bold py-2 px-4 rounded-lg">Resume</button>
-                 <button id="new-quiz-btn" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-lg">Start New Quiz</button>
+        <div class="glass-ui p-6 rounded-2xl max-w-lg w-full relative pop-in bg-white">
+         <h2 class="text-xl font-black text-slate-800 mb-2">Quiz in Progress</h2>
+         <p class="text-slate-500 mb-6 font-medium">A quiz for <span id="resume-quiz-name" class="font-bold text-pink-600"></span> is saved. Do you want to continue?</p>
+         <div class="flex flex-col sm:flex-row justify-center gap-3">
+             <button id="resume-quiz-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors">Resume</button>
+             <button id="new-quiz-btn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl border border-slate-200 transition-colors">Start New</button>
              </div>
         </div>
     </div>
@@ -21446,27 +21446,36 @@ function switchView(viewName, options = {}) {
             }
 
             function renderBatchTimeSelector(container, selectedTime, callback) {
-                if (!container) return;
-                container.innerHTML = '';
-                batchTimes.forEach(time => {
-                    const button = document.createElement('button');
-                    button.textContent = time;
-                    button.dataset.time = time;
-                    button.className = `batch-time-btn p-2 rounded-lg text-sm transition-colors ${time === selectedTime ? 'bg-pink-600 text-white' : 'bg-white/10 hover:bg-white/20'}`;
-                    container.appendChild(button);
-                });
-                container.addEventListener('click', e => {
-                    if (e.target.classList.contains('batch-time-btn')) {
-                        container.querySelectorAll('.batch-time-btn').forEach(btn => {
-                            btn.classList.remove('bg-pink-600', 'text-white');
-                            btn.classList.add('bg-white/10', 'hover:bg-white/20');
-                        });
-                        e.target.classList.add('bg-pink-600', 'text-white');
-                        e.target.classList.remove('bg-white/10', 'hover:bg-white/20');
-                        if (callback) callback();
-                    }
-                });
-            }
+    if (!container) return;
+    container.innerHTML = '';
+    batchTimes.forEach(time => {
+        const button = document.createElement('button');
+        button.textContent = time;
+        button.dataset.time = time;
+        
+        // FIXED: Use Slate-100 for inactive (grey) and Pink-600 for active. No transparent white.
+        const activeClass = 'bg-pink-600 text-white shadow-md transform scale-105 border-pink-600';
+        const inactiveClass = 'bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200';
+        
+        button.className = `batch-time-btn p-2.5 rounded-lg text-sm font-bold transition-all duration-200 border ${time === selectedTime ? activeClass : inactiveClass}`;
+        
+        container.appendChild(button);
+    });
+    
+    container.addEventListener('click', e => {
+        if (e.target.classList.contains('batch-time-btn')) {
+            // Reset all to inactive
+            container.querySelectorAll('.batch-time-btn').forEach(btn => {
+                btn.className = `batch-time-btn p-2.5 rounded-lg text-sm font-bold transition-all duration-200 border bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200`;
+            });
+            
+            // Set clicked to active
+            e.target.className = `batch-time-btn p-2.5 rounded-lg text-sm font-bold transition-all duration-200 border bg-pink-600 text-white shadow-md transform scale-105 border-pink-600`;
+            
+            if (callback) callback();
+        }
+    });
+}
             
             function getFocusArea() {
                 if (!userProfile || !userProfile.quizHistory || userProfile.quizHistory.length < 5) return null;
@@ -21711,11 +21720,32 @@ function switchView(viewName, options = {}) {
             }
 
             function renderProfileEditView() {
-                userProfileContent.innerHTML = `<h2 class="text-2xl font-bold text-white mb-6 text-center">Edit Profile</h2><div class="grid grid-cols-2 gap-4 mb-4"><div><label for="edit-firstname-input" class="block text-sm font-bold text-slate-200 mb-2">Name:</label><input type="text" id="edit-firstname-input" value="${userProfile.name || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div><div><label for="edit-lastname-input" class="block text-sm font-bold text-slate-200 mb-2">Last Name:</label><input type="text" id="edit-lastname-input" value="${userProfile.lastName || ''}" class="w-full bg-white/10 text-white placeholder-white/50 border-2 border-transparent focus:border-pink-500 focus:bg-white/20 rounded-lg py-2 px-4 outline-none transition-all"></div></div><div class="mb-6"><label class="block text-sm font-bold text-slate-200 mb-2">Your batch time:</label><div id="edit-batch-time-selector" class="grid grid-cols-3 gap-2"></div></div><div class="flex gap-4"><button id="cancel-edit-profile" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-4 rounded-lg">Cancel</button><button id="save-updated-profile" class="w-full grad-nav text-white font-bold py-2 px-4 rounded-lg">Save</button></div>`;
-                renderBatchTimeSelector(document.getElementById('edit-batch-time-selector'), userProfile.batchTime);
-                document.getElementById('cancel-edit-profile').addEventListener('click', displayProfileModal);
-                document.getElementById('save-updated-profile').addEventListener('click', updateProfile);
-            }
+    // FIXED: Updated input classes to bg-slate-50 and text-slate-900
+    userProfileContent.innerHTML = `
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Edit Profile</h2>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label for="edit-firstname-input" class="block text-sm font-bold text-slate-600 mb-2">Name:</label>
+                <input type="text" id="edit-firstname-input" value="${userProfile.name || ''}" class="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 rounded-lg py-2 px-4 outline-none transition-all font-medium">
+            </div>
+            <div>
+                <label for="edit-lastname-input" class="block text-sm font-bold text-slate-600 mb-2">Last Name:</label>
+                <input type="text" id="edit-lastname-input" value="${userProfile.lastName || ''}" class="w-full bg-slate-50 text-slate-900 placeholder-slate-400 border border-slate-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 rounded-lg py-2 px-4 outline-none transition-all font-medium">
+            </div>
+        </div>
+        <div class="mb-6">
+            <label class="block text-sm font-bold text-slate-600 mb-2">Your batch time:</label>
+            <div id="edit-batch-time-selector" class="grid grid-cols-3 gap-2"></div>
+        </div>
+        <div class="flex gap-4">
+            <button id="cancel-edit-profile" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl transition-colors">Cancel</button>
+            <button id="save-updated-profile" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Save</button>
+        </div>`;
+        
+    renderBatchTimeSelector(document.getElementById('edit-batch-time-selector'), userProfile.batchTime);
+    document.getElementById('cancel-edit-profile').addEventListener('click', displayProfileModal);
+    document.getElementById('save-updated-profile').addEventListener('click', updateProfile);
+}
             
             async function updateProfile() {
                 const newFirstName = document.getElementById('edit-firstname-input').value.trim();
