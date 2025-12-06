@@ -2142,6 +2142,57 @@ body {
     transition: opacity 0.5s;
 }
 
+/* --- LINGO SHORTS LAYOUT FIX (Final) --- */
+
+/* 1. Force Body to ignore global padding */
+body.view-shorts {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    padding-bottom: 56px !important; /* Space for bottom nav */
+    height: 100vh; 
+    overflow: hidden; /* Lock scroll to container only */
+    background-color: #0f172a; /* Dark bg to hide any white gaps */
+}
+
+/* 2. Force Main Content to fill screen */
+body.view-shorts #main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* 3. Container Sizing */
+.shorts-container {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    background-color: #0f172a;
+    /* Remove any default margins */
+    margin: 0;
+    padding: 0;
+}
+.shorts-container::-webkit-scrollbar { display: none; }
+
+/* 4. Card Layout */
+.short-card {
+    height: 100%; 
+    width: 100%;
+    scroll-snap-align: start;
+    scroll-stop: always;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Push content to top */
+    /* Reduced top padding to fill the gap, increased side padding */
+    padding: 2rem 1.5rem 6rem 1.5rem; 
+    gap: 1.5rem;
+    background-color: #0f172a; /* Ensure background fills */
+}
+
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -2179,37 +2230,36 @@ body {
 
     <main id="main-content" class="w-full"></main>
     
-    <nav id="bottom-nav">
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-50 pb-safe transition-transform duration-300">
     <div class="max-w-2xl lg:max-w-5xl mx-auto px-4">
-        <div class="flex justify-between items-end h-[56px] pb-2 relative">
+        <div class="flex justify-between items-center h-[56px] pb-1">
             
-            <!-- Left Side -->
-            <button id="nav-home" data-view="home" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <button id="nav-home" data-view="home" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-pink-600 transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 <span class="text-[10px] font-bold">Home</span>
             </button>
-            <button id="nav-favorites" data-view="favorites" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                <span class="text-[10px] font-bold">Favorites</span>
-            </button>
 
-            <!-- Middle (Game Zone) - Standard -->
-            <button id="nav-game-zone" data-view="gameZone" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                <!-- Gamepad Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
+            <button id="nav-game-zone" data-view="gameZone" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-pink-600 transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
                 <span class="text-[10px] font-bold">Game Zone</span>
             </button>
 
-            <!-- Right Side -->
-            <button id="nav-quiz-hub" data-view="quizHub" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                <span class="text-[10px] font-bold">Quiz Hub</span>
-            </button>
-            <button id="nav-profile" data-view="profile" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-all duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span class="text-[10px] font-bold">Profile</span>
+            <button id="nav-shorts" data-view="shorts" class="nav-btn flex-1 flex flex-col items-center gap-1 transition-all duration-200">
+                <div class="w-8 h-8 bg-gradient-to-tr from-rose-500 to-orange-500 rounded-full flex items-center justify-center shadow-md">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/><path d="M10 10l5 2.5-5 2.5V10z"/></svg>
+                </div>
+                <span class="text-[10px] font-bold text-rose-600">Shorts</span>
             </button>
 
+            <button id="nav-quiz-hub" data-view="quizHub" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-pink-600 transition-all duration-200">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span class="text-[10px] font-bold">Quiz Hub</span>
+            </button>
+
+            <button id="nav-profile" data-view="profile" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-400 hover:text-pink-600 transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="text-[10px] font-bold">Profile</span>
+            </button>
         </div>
     </div>
 </nav>
@@ -3223,6 +3273,745 @@ body {
             "The journey of a thousand miles begins with a single step. Start speaking today."
         ];
         // END: PASTE THIS ARRAY
+
+        // LINGO SHORTS DATA (5 Demo Rules - Expandable to 500)
+const grammarShortsData = [
+    {
+    id: 1,
+    title: "Simple Present for Habits",
+    hinglish: "Simple Present tense hum tab use karte hain jab hum daily routine, habits ya regular actions batate hain.",
+    usage: ["Habits", "Daily Routine", "Regular Actions"],
+    examples: ["I wake up early.", "She drinks tea every morning.", "They play football on Sundays."]
+},
+{
+    id: 2,
+    title: "Simple Present for Universal Truths",
+    hinglish: "Simple Present un facts aur universal truths ke liye use hota hai jo hamesha sahi hote hain.",
+    usage: ["Facts", "Universal Truths", "General Statements"],
+    examples: ["The earth revolves around the sun.", "Water boils at 100°C.", "Honesty is the best policy."]
+},
+{
+    id: 3,
+    title: "Present Continuous for Actions Happening Now",
+    hinglish: "Present Continuous tense un actions ke liye use hota hai jo iss waqt ho rahe hote hain.",
+    usage: ["Actions happening now", "Temporary situations"],
+    examples: ["I am studying now.", "She is cooking dinner.", "They are playing outside."]
+},
+{
+    id: 4,
+    title: "Present Continuous for Temporary Situations",
+    hinglish: "Yeh tense un cheezon ke liye hota hai jo temporary period ke liye ho rahi hoti hain.",
+    usage: ["Temporary Jobs", "Temporary Living", "Temporary Behavior"],
+    examples: ["I am living in Delhi this month.", "He is working on a new project.", "She is taking extra classes these days."]
+},
+{
+    id: 5,
+    title: "Simple Past for Completed Actions",
+    hinglish: "Simple Past tense hum use karte hain jab koi action past mein complete ho chuka ho.",
+    usage: ["Completed Actions", "Past Events"],
+    examples: ["I visited Mumbai last year.", "She cooked pasta yesterday.", "They watched a movie."]
+},
+{
+    id: 6,
+    title: "Simple Past with Time Expressions",
+    hinglish: "Simple Past aksar specific time expressions ke saath use hota hai jaise yesterday, last week, etc.",
+    usage: ["Time markers", "Past routines"],
+    examples: ["He called me yesterday.", "We met last Friday.", "I studied French in 2018."]
+},
+{
+    id: 7,
+    title: "Past Continuous for Interrupted Actions",
+    hinglish: "Past Continuous un actions ke liye hota hai jo chal rahe the jab koi aur action hua.",
+    usage: ["Interrupted Actions", "Background Actions"],
+    examples: ["I was sleeping when he called.", "She was cooking when the doorbell rang.", "They were playing when it started raining."]
+},
+{
+    id: 8,
+    title: "Past Continuous for Parallel Actions",
+    hinglish: "Do actions ek saath past mein ho rahe ho, toh dono ko Past Continuous mein likhte hain.",
+    usage: ["Parallel Actions"],
+    examples: ["I was reading while she was cooking.", "They were dancing while we were singing."]
+},
+{
+    id: 9,
+    title: "Present Perfect for Life Experiences",
+    hinglish: "Present Perfect tense un experiences ke liye use hota hai jo life mein kabhi bhi ho chuki hain.",
+    usage: ["Life Experiences", "Achievements"],
+    examples: ["I have visited Goa.", "She has written a book.", "They have seen the Taj Mahal."]
+},
+{
+    id: 10,
+    title: "Present Perfect for Recent Actions",
+    hinglish: "Present Perfect un actions ke liye hota hai jiska result abhi present mein visible ho.",
+    usage: ["Results visible now", "Recently completed actions"],
+    examples: ["I have just finished my homework.", "She has cooked dinner.", "He has cleaned the room."]
+},
+{
+    id: 11,
+    title: "Present Perfect Continuous for Ongoing Actions",
+    hinglish: "Present Perfect Continuous un actions ke liye hota hai jo past mein start hue aur abhi tak continue ho rahe hain.",
+    usage: ["Long actions", "Ongoing tasks"],
+    examples: ["I have been studying for 2 hours.", "She has been working here since 2015.", "They have been playing since morning."]
+},
+{
+    id: 12,
+    title: "Past Perfect for Earlier Past Events",
+    hinglish: "Past Perfect hum tab use karte hain jab do past events ho aur ek pehle ho chuka ho.",
+    usage: ["Earlier Past Action", "Sequence of Past Events"],
+    examples: ["I had eaten before he arrived.", "She had left when I reached.", "They had finished the work before the deadline."]
+},
+{
+    id: 13,
+    title: "Past Perfect Continuous for Long Earlier Actions",
+    hinglish: "Past Perfect Continuous un actions ke liye hota hai jo past mein shuru hue aur kisi aur past event tak chal rahe the.",
+    usage: ["Past duration", "Background long action"],
+    examples: ["I had been working for 5 years before I changed my job.", "She had been cooking for 2 hours before guests arrived."]
+},
+{
+    id: 14,
+    title: "Future Simple for Promises",
+    hinglish: "Future Simple (will) hum tab use karte hain jab hum promise, offer, ya decision uss waqt lete hain.",
+    usage: ["Promises", "Offers", "Instant decisions"],
+    examples: ["I will help you.", "She will call you back.", "Don’t worry, I will handle it."]
+},
+{
+    id: 15,
+    title: "Future Simple for Predictions",
+    hinglish: "Future Simple predictions ke liye bhi use hota hai jab hum guess ya belief batate hain.",
+    usage: ["Predictions", "Assumptions"],
+    examples: ["It will rain today.", "She will become a great singer.", "They will win the match."]
+},
+{
+    id: 16,
+    title: "Present Continuous for Current Actions",
+    hinglish: "Present Continuous Tense hum tab use karte hain jab koi kaam iss waqt ho raha ho.",
+    usage: ["Ongoing actions", "Temporary actions", "Near future plans"],
+    examples: ["I am studying now.", "She is cooking dinner.", "They are playing outside."]
+},
+{
+    id: 17,
+    title: "Present Continuous for Temporary Situations",
+    hinglish: "Aise actions jo kuch time ke liye ho rahe ho, unke liye Present Continuous ka use hota hai.",
+    usage: ["Short-term activities", "Temporary jobs", "Temporary feelings"],
+    examples: ["She is living with her aunt.", "I am working on a project.", "He is feeling better today."]
+},
+{
+    id: 18,
+    title: "Present Continuous for Future Plans",
+    hinglish: "Aane wale time ki planned activities ke liye bhi Present Continuous ka use hota hai.",
+    usage: ["Scheduled plans", "Future meetings", "Upcoming events"],
+    examples: ["I am meeting him tomorrow.", "She is leaving tonight.", "We are traveling next week."]
+},
+{
+    id: 19,
+    title: "Questions in Present Continuous",
+    hinglish: "Present Continuous mein questions banane ke liye 'am/is/are' ko subject se pehle lagaya jata hai.",
+    usage: ["Asking ongoing actions", "Checking current status"],
+    examples: ["Are you coming?", "Is she studying?", "Am I disturbing you?"]
+},
+{
+    id: 20,
+    title: "Negative in Present Continuous",
+    hinglish: "Present Continuous ka negative banane ke liye am/is/are ke baad 'not' lagate hain.",
+    usage: ["Denying ongoing actions", "Explaining why something isn't happening"],
+    examples: ["I am not sleeping.", "She is not listening.", "They are not coming."]
+},
+{
+    id: 21,
+    title: "Present Perfect for Past + Present Connection",
+    hinglish: "Present Perfect use hota hai jab kaam past mein hua ho but uska effect abhi present mein ho.",
+    usage: ["Unfinished time", "Past events with results now", "Life experiences"],
+    examples: ["I have lost my keys.", "She has finished her work.", "They have visited Goa."]
+},
+{
+    id: 22,
+    title: "Present Perfect for Life Experience",
+    hinglish: "Life mein kabhi bhi jo experience hua ho, uske liye Present Perfect tense use hota hai.",
+    usage: ["Experiences", "Achievements", "Trying things for the first time"],
+    examples: ["I have seen snow.", "She has won awards.", "He has tried sushi."]
+},
+{
+    id: 23,
+    title: "Present Perfect for Unfinished Time",
+    hinglish: "Aise actions jo abhi tak complete nahi hue ya jinka time period khatam nahi hua, unke liye Present Perfect use hota hai.",
+    usage: ["This week", "Today", "This month"],
+    examples: ["I have worked a lot today.", "She has called twice this morning.", "We have studied this week."]
+},
+{
+    id: 24,
+    title: "Present Perfect with 'Since' and 'For'",
+    hinglish: "'Since' start time ke liye aur 'For' duration batane ke liye Present Perfect mein use hota hai.",
+    usage: ["Duration", "Start time", "Long-term activities"],
+    examples: ["I have lived here since 2010.", "She has worked for 5 years.", "They have waited for an hour."]
+},
+{
+    id: 25,
+    title: "Present Perfect Continuous for Duration",
+    hinglish: "Present Perfect Continuous use hota hai jab action past mein start hua ho aur abhi bhi chal raha ho.",
+    usage: ["Long actions", "Repeated actions", "Ongoing actions with duration"],
+    examples: ["I have been studying for 3 hours.", "She has been cooking since morning.", "They have been working all day."]
+},
+{
+    id: 26,
+    title: "Past Simple for Finished Actions",
+    hinglish: "Past Simple ka use hota hai jab kaam past mein shuru aur khatam ho gaya ho.",
+    usage: ["Completed actions", "Past habits", "Specific time actions"],
+    examples: ["I visited Delhi last year.", "She worked there in 2018.", "They watched a movie yesterday."]
+},
+{
+    id: 27,
+    title: "Past Simple for Past Routines",
+    hinglish: "Purani aadaton ko batane ke liye Past Simple use hota hai.",
+    usage: ["Old habits", "Childhood routines"],
+    examples: ["I played cricket every day.", "She always woke up early.", "We walked to school."]
+},
+{
+    id: 28,
+    title: "Past Continuous for Interrupted Actions",
+    hinglish: "Past Continuous use hota hai jab ek kaam chal raha ho aur doosra kaam usko interrupt kare.",
+    usage: ["Interrupted actions", "Background actions"],
+    examples: ["I was studying when he called.", "She was cooking when the power went out.", "They were playing when it started raining."]
+},
+{
+    id: 29,
+    title: "Past Continuous for Background Actions",
+    hinglish: "Story ke background actions batane ke liye Past Continuous use hota hai.",
+    usage: ["Storytelling", "Scene setting"],
+    examples: ["The birds were singing.", "The sun was shining.", "People were laughing."]
+},
+{
+    id: 30,
+    title: "Past Perfect for Earlier Past",
+    hinglish: "Past Perfect ka use hota hai jab ek kaam past mein kisi doosre past action se pehle ho chuka ho.",
+    usage: ["Sequence of events", "Cause and effect"],
+    examples: ["I had finished before he arrived.", "She had left when I reached.", "They had eaten before the party."]
+},
+{
+    id: 31,
+    title: "Past Perfect Continuous for Long Earlier Actions",
+    hinglish: "Past Perfect Continuous use hota hai jab koi long action past mein kisi doosre event se pehle chal raha tha.",
+    usage: ["Duration before another action"],
+    examples: ["I had been working for hours.", "She had been waiting for a long time.", "They had been studying all night."]
+},
+{
+    id: 32,
+    title: "Future Simple for Predictions",
+    hinglish: "Future Simple ka use hota hai jab hum predict karte hain ki future mein kya hoga.",
+    usage: ["Predictions", "Promises", "Decisions"],
+    examples: ["It will rain tomorrow.", "I will call you.", "She will win the game."]
+},
+{
+    id: 33,
+    title: "Future Simple for Promises",
+    hinglish: "Jab hum koi promise karte hain future ke liye, tab 'will' ka use hota hai.",
+    usage: ["Commitments", "Instant decisions"],
+    examples: ["I will help you.", "I will not tell anyone.", "We will support you."]
+},
+{
+    id: 34,
+    title: "Future Continuous for Future Ongoing Actions",
+    hinglish: "Future Continuous ka use hota hai jab future mein koi kaam kisi time par ho raha hoga.",
+    usage: ["Future time-fixed actions"],
+    examples: ["I will be traveling tomorrow.", "She will be working at 6 PM.", "They will be studying tonight."]
+},
+{
+    id: 35,
+    title: "Future Perfect for Completed Future Actions",
+    hinglish: "Future Perfect ka use hota hai jab koi kaam future mein kisi specific time tak complete ho chuka hoga.",
+    usage: ["Deadlines", "Future accomplishments"],
+    examples: ["I will have finished by 5.", "She will have reached by then.", "They will have completed the work."]
+},
+{
+    id: 36,
+    title: "Future Perfect Continuous for Long Future Actions",
+    hinglish: "Future Perfect Continuous use hota hai jab future mein koi long action chal raha hoga kisi point tak.",
+    usage: ["Duration in the future"],
+    examples: ["I will have been studying for 3 hours.", "She will have been working for years.", "They will have been traveling all day."]
+},
+{
+    id: 37,
+    title: "Use 'Going To' for Intentions",
+    hinglish: "'Going to' ka use hum tab karte hain jab hum future mein kuch karne ka plan already bana chuke hote hain.",
+    usage: ["Intentions", "Predictions with evidence"],
+    examples: ["I am going to start a course.", "She is going to buy a car.", "Look! It's going to rain."]
+},
+{
+    id: 38,
+    title: "Use 'Going To' for Planned Actions",
+    hinglish: "Future ke planned actions ke liye 'going to' ka use hota hai.",
+    usage: ["Future plans"],
+    examples: ["We are going to visit Jaipur.", "I am going to study tonight.", "They are going to celebrate."]
+},
+{
+    id: 39,
+    title: "Use 'Can' for Ability",
+    hinglish: "'Can' ka use ability ya kisi kaam ko karne ki capacity batane ke liye hota hai.",
+    usage: ["Physical ability", "Mental ability"],
+    examples: ["I can swim.", "She can speak French.", "They can lift heavy weights."]
+},
+{
+    id: 40,
+    title: "Use 'Can' for Permission",
+    hinglish: "'Can' permission dene ya lene ke liye bhi use hota hai.",
+    usage: ["Informal permission"],
+    examples: ["Can I come in?", "You can leave now.", "He can take a break."]
+},
+{
+    id: 41,
+    title: "Use 'Could' for Past Ability",
+    hinglish: "'Could' ka use past ki ability batane ke liye hota hai.",
+    usage: ["Childhood ability", "Past skills"],
+    examples: ["I could swim at 5.", "She could dance well.", "He could run fast."]
+},
+{
+    id: 42,
+    title: "Use 'Could' for Polite Requests",
+    hinglish: "'Could' polite requests ke liye best modal verb hai.",
+    usage: ["Polite asking"],
+    examples: ["Could you help me?", "Could I borrow this?", "Could you wait?"]
+},
+{
+    id: 43,
+    title: "Use 'May' for Formal Permission",
+    hinglish: "'May' ka use formal permission dene ya lene ke liye hota hai.",
+    usage: ["Formal situations"],
+    examples: ["May I come in?", "You may start.", "May I speak now?"]
+},
+{
+    id: 44,
+    title: "Use 'May' for Possibility",
+    hinglish: "'May' ka use possibility batane ke liye bhi hota hai.",
+    usage: ["Uncertain possibilities"],
+    examples: ["It may rain today.", "She may come later.", "He may join us."]
+},
+{
+    id: 45,
+    title: "Use 'Might' for Weak Possibility",
+    hinglish: "'Might' ka use weak ya low possibility batane ke liye hota hai.",
+    usage: ["Less likely possibilities"],
+    examples: ["It might snow.", "She might call.", "They might agree."]
+},
+{
+    id: 46,
+    title: "Use 'Should' for Advice",
+    hinglish: "'Should' ka use hum tab karte hain jab hume kisi ko advice deni ho.",
+    usage: ["Giving suggestions", "Expressing recommendations"],
+    examples: ["You should drink more water.", "She should rest.", "They should work harder."]
+},
+{
+    id: 47,
+    title: "Use 'Should' for Expectations",
+    hinglish: "'Should' ka use expectation ya possibility batane ke liye bhi hota hai.",
+    usage: ["Expected results", "Predictable outcomes"],
+    examples: ["He should be home by now.", "The train should arrive soon.", "You should pass the test."]
+},
+{
+    id: 48,
+    title: "Use 'Must' for Necessity",
+    hinglish: "'Must' ka use strong necessity ya zaroorat batane ke liye hota hai.",
+    usage: ["Rules", "Strong advice", "Obligation"],
+    examples: ["You must wear a seatbelt.", "She must study.", "They must follow the rules."]
+},
+{
+    id: 49,
+    title: "Use 'Must' for Strong Recommendation",
+    hinglish: "'Must' ka use tab karte hain jab advice bahut strong ho.",
+    usage: ["Urgent advice"],
+    examples: ["You must see this movie.", "You must talk to him.", "She must take rest."]
+},
+{
+    id: 50,
+    title: "Use 'Have To' for External Rules",
+    hinglish: "'Have to' ka use hota hai jab rule ya obligation bahar se ho, hamari choice nahi.",
+    usage: ["External obligations", "Laws"],
+    examples: ["I have to go to work.", "She has to wear a uniform.", "They have to pay taxes."]
+},
+{
+    id: 51,
+    title: "Use 'Don't Have To' for Lack of Necessity",
+    hinglish: "'Don't have to' ka use hota hai jab koi cheez zaroori nahi ho.",
+    usage: ["Optional actions"],
+    examples: ["You don’t have to come.", "She doesn’t have to cook.", "They don’t have to stay."]
+},
+{
+    id: 52,
+    title: "Use 'Need To' for Requirement",
+    hinglish: "'Need to' ka use requirement ya zaroorat batane ke liye hota hai.",
+    usage: ["Necessary actions"],
+    examples: ["I need to study.", "She needs to leave now.", "We need to talk."]
+},
+{
+    id: 53,
+    title: "Use 'Need Not' for No Requirement",
+    hinglish: "'Need not' ya 'don’t need to' ka use hota hai jab requirement na ho.",
+    usage: ["Lack of necessity"],
+    examples: ["You need not worry.", "She doesn’t need to hurry.", "They need not come."]
+},
+{
+    id: 54,
+    title: "Use 'Would' for Past Habits",
+    hinglish: "'Would' ka use purani aadaton ko batane ke liye hota hai.",
+    usage: ["Past routines"],
+    examples: ["I would visit my grandma often.", "He would walk to school.", "We would play for hours."]
+},
+{
+    id: 55,
+    title: "Use 'Would' for Polite Requests",
+    hinglish: "'Would' polite request karne ka ek tarika hai.",
+    usage: ["Polite asking"],
+    examples: ["Would you help me?", "Would you like tea?", "Would you open the door?"]
+},
+{
+    id: 56,
+    title: "Use 'Would' for Imaginary Situations",
+    hinglish: "'Would' ka use unreal ya imaginary situations ke liye hota hai.",
+    usage: ["Hypothetical situations"],
+    examples: ["I would travel the world.", "She would buy a car.", "They would move abroad."]
+},
+{
+    id: 57,
+    title: "Use 'Used To' for Old Habits",
+    hinglish: "'Used to' ka use aise kaam ke liye hota hai jo past mein regular the but ab nahi hote.",
+    usage: ["Past routines", "Old situations"],
+    examples: ["I used to play cricket.", "She used to live here.", "He used to smoke."]
+},
+{
+    id: 58,
+    title: "Use 'Used To' for Past States",
+    hinglish: "'Used to' past ke permanent states batane ke liye bhi use hota hai.",
+    usage: ["Old states"],
+    examples: ["I used to be shy.", "She used to be tall for her age.", "He used to be rich."]
+},
+{
+    id: 59,
+    title: "Use Articles 'A' and 'An' for Singular",
+    hinglish: "'A' aur 'An' singular countable nouns ke pehle use hote hain.",
+    usage: ["General statements", "Introducing something"],
+    examples: ["A cat is cute.", "An apple is red.", "A book is on the table."]
+},
+{
+    id: 60,
+    title: "Use 'A' Before Consonant Sounds",
+    hinglish: "'A' ka use consonant sound se shuru hone wale words ke pehle hota hai.",
+    usage: ["Consonant sound"],
+    examples: ["A car", "A university", "A boy"]
+},
+{
+    id: 61,
+    title: "Use 'An' Before Vowel Sounds",
+    hinglish: "'An' ka use vowel sound se shuru hone wale words ke pehle hota hai.",
+    usage: ["Vowel sound"],
+    examples: ["An engineer", "An hour", "An umbrella"]
+},
+{
+    id: 62,
+    title: "Use 'The' for Specific Things",
+    hinglish: "'The' ka use tab karte hain jab noun specific ho ya hum dono usko jaante ho.",
+    usage: ["Specific nouns", "Unique things"],
+    examples: ["The sun is bright.", "The book on the table.", "The teacher is here."]
+},
+{
+    id: 63,
+    title: "Use 'The' for Unique Objects",
+    hinglish: "'The' ka use unique cheezon ke liye hota hai jo duniya mein ek hi ho.",
+    usage: ["Unique nouns"],
+    examples: ["The moon", "The Earth", "The Taj Mahal"]
+},
+{
+    id: 64,
+    title: "Use 'The' with Superlatives",
+    hinglish: "Superlative degree ke saath hamesha 'the' lagta hai.",
+    usage: ["Superlative adjectives"],
+    examples: ["The best player", "The tallest building", "The most beautiful view"]
+},
+{
+    id: 65,
+    title: "Countable vs Uncountable Nouns",
+    hinglish: "Countable cheezein gini ja sakti hain, uncountable nahi.",
+    usage: ["Identifying noun type"],
+    examples: ["One apple (countable)", "Rice (uncountable)", "Milk (uncountable)"]
+},
+{
+    id: 66,
+    title: "Plural Nouns Add 'S' or 'ES'",
+    hinglish: "Plural banane ke liye nouns mein 's' ya 'es' lagate hain.",
+    usage: ["Forming plurals"],
+    examples: ["Books", "Buses", "Boxes"]
+},
+{
+    id: 67,
+    title: "Irregular Plural Nouns",
+    hinglish: "Kuch nouns irregular hote hain, jinme plural alag tarah banta hai.",
+    usage: ["Irregular forms"],
+    examples: ["Child → children", "Man → men", "Mouse → mice"]
+},
+{
+    id: 68,
+    title: "Subject-Verb Agreement Basics",
+    hinglish: "Singular subject ke saath singular verb aur plural subject ke saath plural verb aata hai.",
+    usage: ["Correct grammar structure"],
+    examples: ["He eats.", "They eat.", "She runs."]
+},
+{
+    id: 69,
+    title: "Everyone / Everybody Takes Singular Verb",
+    hinglish: "'Everyone' ya 'Everybody' ke saath hamesha singular verb lagta hai.",
+    usage: ["Indefinite pronouns"],
+    examples: ["Everyone is happy.", "Everybody wants success.", "Everyone likes music."]
+},
+{
+    id: 70,
+    title: "Either / Neither Takes Singular Verb",
+    hinglish: "'Either' aur 'Neither' ke saath singular verb aata hai.",
+    usage: ["Two-item choices"],
+    examples: ["Either option is fine.", "Neither answer is correct.", "Either book works."]
+},
+{
+    id: 71,
+    title: "Collective Nouns Take Singular Verb",
+    hinglish: "Team, class, crowd jaise collective nouns usually singular verb lete hain.",
+    usage: ["Groups acting as one"],
+    examples: ["The team is winning.", "The class is noisy.", "The crowd is cheering."]
+},
+{
+    id: 72,
+    title: "Adjectives Describe Nouns",
+    hinglish: "Adjectives nouns ko describe karte hain.",
+    usage: ["Describing words"],
+    examples: ["A beautiful flower", "A tall man", "A red dress"]
+},
+{
+    id: 73,
+    title: "Adverbs Describe Verbs",
+    hinglish: "Adverbs verbs ko describe karte hain – kaise, kab, kahan.",
+    usage: ["Describing actions"],
+    examples: ["He runs quickly.", "She sings beautifully.", "They arrived late."]
+},
+{
+    id: 74,
+    title: "Adverb Position After Verb",
+    hinglish: "Adverb usually verb ke baad aata hai.",
+    usage: ["Correct placement"],
+    examples: ["She spoke softly.", "He drives fast.", "They worked hard."]
+},
+{
+    id: 75,
+    title: "Comparative Adjectives with 'ER'",
+    hinglish: "Choti adjectives ka comparative form 'er' laga kar banta hai.",
+    usage: ["Comparisons"],
+    examples: ["Tall → taller", "Fast → faster", "Small → smaller"]
+},
+{
+    id: 76,
+    title: "Comparative with 'More'",
+    hinglish: "Lambi adjectives ka comparative form 'more' laga kar banta hai.",
+    usage: ["Long adjectives", "Comparisons"],
+    examples: ["More beautiful", "More interesting", "More difficult"]
+},
+{
+    id: 77,
+    title: "Superlative with 'Most'",
+    hinglish: "Lambi adjectives ka superlative form 'most' laga kar banta hai.",
+    usage: ["Highest degree", "Comparisons"],
+    examples: ["Most beautiful", "Most important", "Most expensive"]
+},
+{
+    id: 78,
+    title: "Use 'Than' with Comparatives",
+    hinglish: "Comparative adjectives ke saath 'than' ka use hota hai.",
+    usage: ["Comparison between two"],
+    examples: ["She is taller than me.", "This is better than that.", "He is faster than before."]
+},
+{
+    id: 79,
+    title: "Never Use 'More' with ER",
+    hinglish: "Ek hi adjective ke saath 'er' aur 'more' dono nahi lagte.",
+    usage: ["Avoid double comparatives"],
+    examples: ["❌ More better", "✔ Better", "✔ Much better"]
+},
+{
+    id: 80,
+    title: "Never Use 'Most' with EST",
+    hinglish: "Ek adjective ke saath 'est' aur 'most' dono nahi lagte.",
+    usage: ["Avoid double superlatives"],
+    examples: ["❌ Most tallest", "✔ Tallest", "✔ The most tall (not used generally)"]
+},
+{
+    id: 81,
+    title: "Use 'Very' with Adjectives",
+    hinglish: "'Very' adjectives ko strongly emphasize karta hai.",
+    usage: ["Strong description"],
+    examples: ["Very good", "Very tall", "Very fast"]
+},
+{
+    id: 82,
+    title: "Use 'Really' for Emphasis",
+    hinglish: "'Really' ka use emphasis dene ke liye hota hai – adjective ya verb dono ke saath.",
+    usage: ["Strong feeling"],
+    examples: ["Really happy", "Really smart", "I really like it."]
+},
+{
+    id: 83,
+    title: "Use 'Too' for Negative Excess",
+    hinglish: "'Too' ka use jab koi cheez limit se zyada ho, negative sense mein.",
+    usage: ["Excess amount"],
+    examples: ["Too hot", "Too expensive", "Too late"]
+},
+{
+    id: 84,
+    title: "Use 'Enough' After Adjectives",
+    hinglish: "'Enough' adjective ke baad aata hai jab hum batate hain ki koi cheez kaafi hai.",
+    usage: ["Sufficiency"],
+    examples: ["Tall enough", "Big enough", "Strong enough"]
+},
+{
+    id: 85,
+    title: "Use 'Enough' Before Nouns",
+    hinglish: "Agar 'enough' noun ke saath use ho, to noun se pehle aata hai.",
+    usage: ["Sufficiency"],
+    examples: ["Enough money", "Enough time", "Enough water"]
+},
+{
+    id: 86,
+    title: "Use 'So' with Adjectives",
+    hinglish: "'So' ka use strong emotion express karne ke liye adjective ke saath hota hai.",
+    usage: ["Strong emphasis"],
+    examples: ["So cute", "So beautiful", "So cold"]
+},
+{
+    id: 87,
+    title: "Use 'Such' with Nouns",
+    hinglish: "'Such' ka use noun phrase ke saath hota hai strong feelings dikhane ke liye.",
+    usage: ["Emphasis with nouns"],
+    examples: ["Such a nice day", "Such a big house", "Such a good boy"]
+},
+{
+    id: 88,
+    title: "Use 'Some' in Positive Sentences",
+    hinglish: "'Some' ka use positive sentences mein hota hai jab quantity exact na ho.",
+    usage: ["Unspecified quantity"],
+    examples: ["Some water", "Some people", "Some money"]
+},
+{
+    id: 89,
+    title: "Use 'Any' in Negative or Questions",
+    hinglish: "'Any' ka use negative sentences ya questions mein hota hai.",
+    usage: ["Questions", "Negatives"],
+    examples: ["Do you have any money?", "I don’t have any sugar.", "Is there any problem?"]
+},
+{
+    id: 90,
+    title: "Use 'Few' for Almost None",
+    hinglish: "'Few' ka use hota hai jab quantity bahut kam ho – negative feeling ke saath.",
+    usage: ["Not enough"],
+    examples: ["Few friends", "Few options", "Few chances"]
+},
+{
+    id: 91,
+    title: "Use 'A Few' for Some",
+    hinglish: "'A few' ka use hota hai jab quantity thodi si ho – positive feeling ke saath.",
+    usage: ["Some amount"],
+    examples: ["A few books", "A few students", "A few ideas"]
+},
+{
+    id: 92,
+    title: "Use 'Little' for Almost No Uncountables",
+    hinglish: "'Little' uncountable nouns ke saath negative sense mein use hota hai.",
+    usage: ["Not enough"],
+    examples: ["Little time", "Little water", "Little sugar"]
+},
+{
+    id: 93,
+    title: "Use 'A Little' for Some Uncountables",
+    hinglish: "'A little' uncountable nouns ke saath positive sense mein use hota hai.",
+    usage: ["Some amount"],
+    examples: ["A little money", "A little help", "A little food"]
+},
+{
+    id: 94,
+    title: "Use 'Many' with Countable Nouns",
+    hinglish: "'Many' ka use countable plural nouns ke saath hota hai.",
+    usage: ["Large quantity"],
+    examples: ["Many books", "Many people", "Many ideas"]
+},
+{
+    id: 95,
+    title: "Use 'Much' with Uncountable Nouns",
+    hinglish: "'Much' ka use uncountable nouns ke saath hota hai.",
+    usage: ["Large quantity"],
+    examples: ["Much water", "Much money", "Much information"]
+},
+{
+    id: 96,
+    title: "Use 'A Lot Of' for Both",
+    hinglish: "'A lot of' countable aur uncountable dono nouns ke saath use hota hai.",
+    usage: ["Large quantity"],
+    examples: ["A lot of people", "A lot of sugar", "A lot of work"]
+},
+{
+    id: 97,
+    title: "Use 'Both' for Two Items",
+    hinglish: "'Both' ka use do cheezon ke liye hota hai jab dono included ho.",
+    usage: ["Two items"],
+    examples: ["Both options are good.", "Both boys are smart.", "Both phones work."]
+},
+{
+    id: 98,
+    title: "Use 'Either' for One of Two",
+    hinglish: "'Either' ka matlab dono me se koi ek.",
+    usage: ["Choice of one"],
+    examples: ["Either pen will work.", "Either road is fine.", "Either answer is correct."]
+},
+{
+    id: 99,
+    title: "Use 'Neither' for Zero of Two",
+    hinglish: "'Neither' ka matlab dono me se koi bhi nahi.",
+    usage: ["Rejecting both"],
+    examples: ["Neither option is good.", "Neither answer is right.", "Neither of them came."]
+},
+{
+    id: 100,
+    title: "Use 'This' for Near Things",
+    hinglish: "'This' ka use pass ki ek cheez ke liye hota hai.",
+    usage: ["Near objects"],
+    examples: ["This book", "This pen", "This place"]
+},
+{
+    id: 101,
+    title: "Use 'That' for Far Things",
+    hinglish: "'That' door ki ek cheez ke liye use hota hai.",
+    usage: ["Far objects"],
+    examples: ["That building", "That girl", "That car"]
+},
+{
+    id: 102,
+    title: "Use 'These' for Near Plurals",
+    hinglish: "'These' ka use pass ki plural cheezon ke liye hota hai.",
+    usage: ["Near plural objects"],
+    examples: ["These books", "These people", "These shoes"]
+},
+{
+    id: 103,
+    title: "Use 'Those' for Far Plurals",
+    hinglish: "'Those' door ki plural cheezon ke liye use hota hai.",
+    usage: ["Far plural objects"],
+    examples: ["Those cars", "Those houses", "Those boys"]
+},
+{
+    id: 104,
+    title: "Use 'Whose' for Possession Questions",
+    hinglish: "'Whose' ka use possession puchne ke liye hota hai.",
+    usage: ["Ownership questions"],
+    examples: ["Whose bag is this?", "Whose phone is ringing?", "Whose idea was it?"]
+},
+{
+    id: 105,
+    title: "Use 'Who' for People",
+    hinglish: "'Who' ka use hum tab karte hain jab hum kisi person ke baare me puchte hain.",
+    usage: ["Person questions"],
+    examples: ["Who is he?", "Who called you?", "Who wrote this book?"]
+}
+];
 
         // --- PASTE THIS NEAR THE TOP OF YOUR SCRIPT VARIABLES ---
 
@@ -21911,64 +22700,64 @@ const storyLibrary = {
             }
 
             function updateTopNav({ title = '', showBack = false, showLogo = false, showActions = false, gradClass = null, theme = null } = {}) {
+    const topNavLeft = document.getElementById('top-nav-left');
+    const topNavTitle = document.getElementById('top-nav-title');
+    const topNavRight = document.getElementById('top-nav-right');
+
     topNavLeft.innerHTML = '';
     topNavTitle.textContent = title;
     topNavRight.innerHTML = '';
 
-    // 1. Setup Actions (Search, About)
+    // 1. Setup Actions (Search, About, AND FAVORITES)
     if (showActions) {
+        // Inject Favorites Button FIRST
+        const favBtn = document.createElement('button');
+        favBtn.className = "p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-pink-500 transition-colors mr-1";
+        favBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`;
+        favBtn.onclick = () => { vibrate(); switchView('favorites'); };
+        topNavRight.appendChild(favBtn);
+
+        // Then Inject Standard Template (Search/About)
         const actionsTemplate = document.getElementById('top-nav-actions-template');
         topNavRight.appendChild(actionsTemplate.content.cloneNode(true));
         
         const icons = topNavRight.querySelectorAll('svg');
-        icons.forEach(icon => icon.classList.add('text-slate-400')); // Made slightly darker for visibility
-
-        topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); aboutModal.classList.remove('hidden'); });
+        // Keep colors specific to elements to avoid overwriting the pink heart hover
+        
+        topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); document.getElementById('about-modal').classList.remove('hidden'); });
         topNavRight.querySelector('#search-btn').addEventListener('click', () => {
             vibrate();
-            searchModalSuggestions.innerHTML = '';
-            searchModalBar.value = '';
-            searchOverlay.classList.remove('hidden');
-            searchModalBar.focus();
+            const suggestions = document.getElementById('search-modal-suggestions');
+            const bar = document.getElementById('search-modal-bar');
+            if(suggestions) suggestions.innerHTML = '';
+            if(bar) { bar.value = ''; bar.focus(); }
+            document.getElementById('search-overlay').classList.remove('hidden');
         });
     }
 
-    // 2. Interactive Title (Scroll to Top Button)
+    // 2. Interactive Title
     topNavTitle.className = 'text-lg font-black text-slate-800 w-full text-center truncate px-4 cursor-pointer active:scale-95 transition-transform duration-200 select-none';
-    
-    topNavTitle.onclick = () => {
-        vibrate(10);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    topNavTitle.onclick = () => { vibrate(10); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
-    // 3. Apply Theme or Gradient Styles
+    // 3. Theme Styling
     if (theme && typeof theme === 'object') {
         topNavTitle.classList.remove('text-lg', 'text-slate-800');
-        // Add background colors/borders from theme + White Text
         topNavTitle.className += ` px-6 py-2 rounded-full text-sm shadow-md border border-white/20 text-white ${theme.bg || ''} ${theme.text || ''}`;
-        // Ensure text is visible on colored backgrounds (override if theme.text is dark)
-        if (theme.bg.includes('bg-white') || theme.bg.includes('bg-slate-50')) {
-             // keep dark text
-        } else {
-             // force white text for colored pills
+        if (!theme.bg.includes('bg-white') && !theme.bg.includes('bg-slate')) {
              topNavTitle.classList.remove('text-slate-800');
              topNavTitle.classList.add('text-white'); 
         }
-    } 
-    else if (gradClass && typeof gradClass === 'string') {
+    } else if (gradClass) {
         topNavTitle.classList.remove('text-lg', 'text-slate-800');
         topNavTitle.classList.add(gradClass, 'px-6', 'py-2', 'rounded-full', 'text-white', 'text-sm', 'shadow-md');
     }
 
-    // 4. Setup Left Side (Back Button or Logo)
+    // 4. Left Side (Back or Logo)
     if (showBack) {
         const backButtonTemplate = document.getElementById('back-button-template');
         topNavLeft.appendChild(backButtonTemplate.content.cloneNode(true));
         const backBtn = topNavLeft.querySelector('#back-btn');
-        
-        // FIX: Force visibility. Remove old classes and add specific high-contrast ones.
         backBtn.className = 'p-2 rounded-full bg-white shadow-sm border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors';
-        
         backBtn.addEventListener('click', () => { vibrate(); goBack(); });
     } else if (showLogo) {
         const logoTemplate = document.getElementById('logo-template');
@@ -21983,43 +22772,102 @@ const storyLibrary = {
             // --- REPLACE YOUR EXISTING switchView FUNCTION WITH THIS ---
 
 function switchView(viewName, options = {}) {
-    // --- GLOBAL RESET: Fix Scrolling Issues ---
-    // Always enable scrolling and reset padding when switching views
-    document.body.style.overflow = 'auto'; 
-    document.body.style.paddingTop = '56px'; 
-    document.body.style.paddingBottom = '56px';
+    // 1. Remove Body Class (Resets layout)
+    document.body.classList.remove('view-shorts');
+    // 2. Reset Padding
+    document.body.style.paddingTop = '56px';
 
-    // Ensure Nav bars are visible by default (Games can hide them later)
+    // 3. Reset Nav Bars (Ensure they are visible and have standard layout)
     const topNav = document.getElementById('top-nav');
     const bottomNav = document.getElementById('bottom-nav');
+    
     if(topNav) {
         topNav.classList.remove('hidden');
-        topNav.className = "flex items-center justify-center px-4"; // Reset layout
+        // Reset to standard flex layout in case it was modified by a game
+        topNav.className = "flex items-center justify-center px-4"; 
     }
-    if(bottomNav) bottomNav.classList.remove('hidden');
+    if(bottomNav) {
+        bottomNav.classList.remove('hidden');
+    }
 
+    // 4. Stop any background audio (Story Mode / Shorts / TTS)
+    if (typeof stopStoryAudio === 'function') {
+        stopStoryAudio();
+    }
+    speechSynthesis.cancel(); // Force stop any TTS
+
+    // --- NAVIGATION LOGIC ---
+
+    // Prevent reloading the same view unless forced
     if (activeView === viewName && !options.forceRender) return;
-    if (options.isSubView) navStack.push({ view: activeView, options: options.from || {} });
+
+    // Handle Back Button Stack
+    if (options.isSubView) {
+        navStack.push({ view: activeView, options: options.from || {} });
+    }
     
     activeView = viewName;
     mainContent.innerHTML = ''; 
     window.scrollTo(0, 0); 
-    updateBottomNavActiveState(viewName);
     
+    // Update Bottom Nav Icons (Highlight correct tab)
+    if (typeof updateBottomNavActiveState === 'function') {
+        updateBottomNavActiveState(viewName);
+    }
+    
+    // --- ROUTER ---
     switch (viewName) {
-        case 'home': renderHomeView(); break; // This function will re-lock scroll specifically for Home
-        case 'favorites': renderFavoritesView(); break;
-        case 'gameZone': renderGameZoneView(); break;
-        case 'learningPath': renderLearningPath(); break;
-        case 'gameDifficultySelect': renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); break;
-        case 'quizHub': renderQuizHubView(); break;
-        case 'profile': displayProfileModal(); break;
-        case 'dictionary': renderDictionaryView(); break;
-        case 'synonymsView': renderSynonymsView(options.gradClass); break;
-        case 'wordList': renderWords(options.title, options.words, options.gradClass, options.extra); break;
-        case 'categoryList': renderCategoryListView(options.categories, options.title, options.subtitle, options.gradClass); break;
-        case 'studyLesson': renderStudyHallLesson(options.title, options.subtitle, options.content, options.gradClass); break;
-        case 'subtopicSelection': renderSubtopicSelection(options.title, options.subtitle, options.subtopics, options.gradClass); break;
+        // Main Tabs
+        case 'home': 
+            renderHomeView(); 
+            break;
+        case 'favorites': 
+            renderFavoritesView(); 
+            break;
+        case 'shorts': 
+            renderLingoShorts(); 
+            break;
+        case 'gameZone': 
+            renderGameZoneView(); 
+            break;
+        case 'quizHub': 
+            renderQuizHubView(); 
+            break;
+        case 'profile': 
+            displayProfileModal(); 
+            break;
+
+        // Sub-Views & Features
+        case 'learningPath': 
+            renderLearningPath(); 
+            break;
+        case 'dictionary': 
+            renderDictionaryView(); 
+            break;
+        case 'gameDifficultySelect': 
+            renderGameDifficultySelectView(options.gameType, options.gameTitle, options.gradClass); 
+            break;
+            
+        // Data Views
+        case 'synonymsView': 
+            renderSynonymsView(options.gradClass); 
+            break;
+        case 'wordList': 
+            renderWords(options.title, options.words, options.gradClass, options.extra); 
+            break;
+        case 'categoryList': 
+            renderCategoryListView(options.categories, options.title, options.subtitle, options.gradClass); 
+            break;
+        case 'studyLesson': 
+            renderStudyHallLesson(options.title, options.subtitle, options.content, options.gradClass); 
+            break;
+        case 'subtopicSelection': 
+            renderSubtopicSelection(options.title, options.subtitle, options.subtopics, options.gradClass); 
+            break;
+
+        default:
+            console.error("Unknown view:", viewName);
+            renderHomeView();
     }
 }
             
@@ -22928,6 +23776,169 @@ function renderQuizHubView() {
             }
         } 
     });
+}
+
+function renderLingoShorts() {
+    // 1. Hide Top Nav
+    const topNav = document.getElementById('top-nav');
+    if(topNav) topNav.classList.add('hidden');
+    
+    // 2. Add Body Class
+    document.body.classList.add('view-shorts'); 
+    
+    mainContent.innerHTML = '';
+    const container = document.createElement('div');
+    container.className = "shorts-container bg-slate-950"; 
+    
+    // --- EVENT DELEGATION (Efficiently handles clicks for infinite cards) ---
+    container.addEventListener('click', (e) => {
+        // A. Speak Button
+        const speakBtn = e.target.closest('.speak-btn-short');
+        if (speakBtn) {
+            e.stopPropagation();
+            vibrate(10);
+            speakText(speakBtn.dataset.text, speakBtn);
+            return;
+        }
+
+        // B. Favorite Button
+        const favBtn = e.target.closest('.short-fav-btn');
+        if (favBtn) {
+            e.stopPropagation();
+            vibrate();
+            const title = favBtn.dataset.title;
+            const desc = favBtn.dataset.desc;
+            
+            favBtn.classList.toggle('active');
+            const isActive = favBtn.classList.contains('active');
+            
+            // Toggle Visuals
+            const svg = favBtn.querySelector('svg');
+            if(isActive) {
+                favBtn.classList.add('text-pink-500');
+                favBtn.classList.remove('text-slate-300');
+                svg.setAttribute('fill', 'currentColor');
+            } else {
+                favBtn.classList.remove('text-pink-500');
+                favBtn.classList.add('text-slate-300');
+                svg.setAttribute('fill', 'none');
+            }
+
+            // Logic
+            const fakeWordObj = { word: title, meaning: desc, category: 'Grammar Shorts', isSentence: false };
+            if (isActive) {
+                if (!favorites.some(f => f.word === title)) favorites.push(fakeWordObj);
+            } else {
+                favorites = favorites.filter(f => f.word !== title);
+            }
+            return;
+        }
+    });
+
+    // --- HELPER: Generate HTML string for a card ---
+    function createCardHTML(rule) {
+        const accentColor = 'text-amber-400';
+        const subColor = 'text-slate-300';
+        const boxBg = 'bg-white/10'; 
+        const isFav = favorites.some(f => f.word === rule.title);
+        
+        return `
+            <div class="short-card w-full h-full bg-slate-900 text-white flex flex-col justify-start p-6 pt-14 gap-4 relative shrink-0">
+                
+                <button class="short-fav-btn ${isFav ? 'active text-pink-500' : 'text-slate-300'} absolute top-5 right-5 p-2 bg-white/10 rounded-full z-20 transition-transform active:scale-90" data-title="${rule.title}" data-desc="${rule.hinglish}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+
+                <div class="mt-4">
+                    <span class="text-[10px] font-black ${accentColor} uppercase tracking-widest border border-current px-2 py-0.5 rounded-md">Rule #${rule.id}</span>
+                    <h2 class="text-2xl font-black mt-2 leading-tight tracking-tight text-white drop-shadow-md">${rule.title}</h2>
+                </div>
+
+                <div class="p-4 rounded-2xl ${boxBg} border border-white/5 shadow-sm flex flex-col gap-2 shrink-0">
+                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 shrink-0">
+                        ✅ Explanation
+                    </h3>
+                    <div class="explanation-fixed-area h-32 overflow-hidden flex items-center">
+                        <p class="explanation-text-content font-sans text-white text-lg leading-snug">${rule.hinglish}</p>
+                    </div>
+                </div>
+
+                <div class="shrink-0">
+                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">🎯 When to use</h3>
+                    <ul class="space-y-1 pl-1">
+                        ${rule.usage.slice(0,3).map(u => `<li class="flex items-start gap-2 ${subColor} text-xs font-semibold truncate"><svg class="w-3 h-3 shrink-0 mt-0.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>${u}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="examples-fixed-area flex flex-col gap-2 flex-grow overflow-y-auto no-scrollbar">
+                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide shrink-0">✨ Examples</h3>
+                    ${rule.examples.slice(0,3).map(ex => `
+                        <div class="flex items-center justify-between p-2.5 rounded-xl ${boxBg} border border-white/5 active:scale-95 transition-transform shrink-0">
+                            <p class="font-bold italic text-white text-xs pr-2 line-clamp-2">"${ex}"</p>
+                            <button class="speak-btn-short p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0" data-text="${ex}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="h-6 shrink-0 flex items-center justify-center opacity-30">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-white animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+                </div>
+            </div>
+        `;
+    }
+
+    // --- HELPER: Append a batch of cards ---
+    function appendBatch(data) {
+        // Use a DocumentFragment for performance if possible, or just append string
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.map(rule => createCardHTML(rule)).join('');
+        
+        // Append elements and trigger resizing
+        while (tempDiv.firstChild) {
+            const card = tempDiv.firstChild;
+            container.appendChild(card);
+            
+            // Resize text for new card
+            setTimeout(() => {
+                 const textEl = card.querySelector('.explanation-text-content');
+                 const containerEl = card.querySelector('.explanation-fixed-area');
+                 if (textEl && containerEl) fitTextToContainer(textEl, containerEl);
+            }, 0);
+        }
+    }
+
+    // --- INITIAL RENDER ---
+    const initialQueue = [...grammarShortsData].sort(() => 0.5 - Math.random());
+    appendBatch(initialQueue);
+    mainContent.appendChild(container);
+
+    // --- INFINITE SCROLL LOGIC ---
+    container.addEventListener('scroll', () => {
+        // When user is within 300px of the bottom...
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 300) {
+            // Generate next batch (Reshuffle to keep it endless and fresh)
+            const nextBatch = [...grammarShortsData].sort(() => 0.5 - Math.random());
+            appendBatch(nextBatch);
+        }
+    });
+}
+
+// Helper to force fit text into a fixed container
+function fitTextToContainer(textElement, containerElement) {
+    let fontSize = 18; // Start with max desired size (px equivalent of 1.125rem)
+    const minSize = 11; // Don't go smaller than this readable size
+
+    // Set initial size
+    textElement.style.fontSize = fontSize + 'px';
+
+    // While text height is bigger than container AND font size > min
+    // Use scrollHeight vs clientHeight to detect overflow
+    while (textElement.scrollHeight > containerElement.clientHeight && fontSize > minSize) {
+        fontSize--;
+        textElement.style.fontSize = fontSize + 'px';
+    }
 }
             
             
@@ -28788,12 +29799,16 @@ function toggleStoryAudio() {
 function updatePlayPauseIcon() {
     const playIcon = document.getElementById('icon-play');
     const pauseIcon = document.getElementById('icon-pause');
-    if(isStoryPlaying) {
-        playIcon.classList.add('hidden');
-        pauseIcon.classList.remove('hidden');
-    } else {
-        playIcon.classList.remove('hidden');
-        pauseIcon.classList.add('hidden');
+    
+    // Safety Check: Only proceed if the icons exist in the DOM
+    if (playIcon && pauseIcon) {
+        if(isStoryPlaying) {
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+        } else {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+        }
     }
 }
 
