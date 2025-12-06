@@ -4430,9 +4430,3400 @@ const grammarShortsData = [
     hinglish: "'Beside' = next to; 'Besides' = in addition to.",
     usage: ["Prepositions"],
     examples: ["Sit beside me.", "Besides English, she speaks Hindi.", "The lamp is beside the bed."]
-}
+},
+{
+    id: 166,
+    title: "Proper Nouns",
+    hinglish: "Proper Nouns kisi khaas insaan, jagah ya organization ka naam hote hain. Inhe hamesha Capital letter se shuru karte hain.",
+    usage: [
+      "Use for names of specific people",
+      "Use for specific places like cities or countries",
+      "Use for names of organizations and brands"
+    ],
+    examples: [
+      "Rahul is my best friend.",
+      "I want to visit Paris and London.",
+      "He works for Google in India."
+    ]
+  },
+  {
+    id: 167,
+    title: "Common Nouns",
+    hinglish: "Ye aam cheezon ke naam hote hain. Inhe tab tak Capital nahi karte jab tak ye sentence ki shuruwat mein na hon.",
+    usage: [
+      "Use for general items and animals",
+      "Use for general concepts or ideas",
+      "Do not capitalize unless at the start of a sentence"
+    ],
+    examples: [
+      "The dog barked loudly.",
+      "She has a great idea for a business.",
+      "Cities are often crowded."
+    ]
+  },
+  {
+    id: 168,
+    title: "Countable Nouns",
+    hinglish: "Wo cheezein jinhe gina ja sakta hai (ek, do, teen). Inka plural (bahuvachan) ban sakta hai.",
+    usage: [
+      "For items that can be counted individually",
+      "Can be used with numbers (one, two, ten)",
+      "Can take both singular and plural forms"
+    ],
+    examples: [
+      "I have one car.",
+      "She bought three apples.",
+      "There are many chairs in the room."
+    ]
+  },
+  {
+    id: 169,
+    title: "Uncountable Nouns",
+    hinglish: "Jin cheezon ko gina nahi ja sakta (jaise paani, jaankari). Inka usually plural form nahi hota.",
+    usage: [
+      "For liquids, powders, or gases (water, sand)",
+      "For abstract concepts (information, advice)",
+      "Always take a singular verb"
+    ],
+    examples: [
+      "Please give me some water.",
+      "Her advice was very helpful.",
+      "The furniture in this room is new."
+    ]
+  },
+  {
+    id: 170,
+    title: "Abstract Nouns",
+    hinglish: "Ye wo ideas ya feelings hain jinhe hum chu nahi sakte, bas feel kar sakte hain. Ye usually uncountable hote hain.",
+    usage: [
+      "To describe emotions and feelings",
+      "To describe qualities or states of being",
+      "Usually treated as singular uncountable nouns"
+    ],
+    examples: [
+      "Happiness is the key to life.",
+      "He fought for freedom.",
+      "Honesty is the best policy."
+    ]
+  },
+  {
+    id: 171,
+    title: "Collective Nouns",
+    hinglish: "Ye ek group ya samooh ka naam hote hain. Ye singular ya plural dono ho sakte hain, depend karta hai group kaise act kar raha hai.",
+    usage: [
+      "To refer to a group of people acting as one unit",
+      "To refer to a group of animals (flock, herd)",
+      "Verb depends on whether the group acts together or separately"
+    ],
+    examples: [
+      "The team is winning the match.",
+      "A flock of birds flew over the lake.",
+      "The jury are arguing among themselves."
+    ]
+  },
+  {
+    id: 172,
+    title: "Compound Nouns",
+    hinglish: "Jab do ya usse zyada shabdon ko milakar ek naya noun banta hai.",
+    usage: [
+      "Formed by combining two or more words",
+      "Can be written as one word, separate words, or hyphenated",
+      "Creates a new meaning from the combined words"
+    ],
+    examples: [
+      "I need to buy toothpaste.",
+      "My son-in-law is a doctor.",
+      "We waited at the bus stop."
+    ]
+  },
+  {
+    id: 173,
+    title: "Possessive Nouns (Singular)",
+    hinglish: "Kisi cheez par adhikaar (ownership) dikhane ke liye singular noun ke aage 's lagate hain.",
+    usage: [
+      "To show ownership by a single person",
+      "To show ownership by a single item/animal",
+      "Add 's to the end of the singular noun"
+    ],
+    examples: [
+      "This is Rahul's car.",
+      "The dog's bone is buried here.",
+      "The book's cover is torn."
+    ]
+  },
+  {
+    id: 174,
+    title: "Plural Possessives (Ending in s)",
+    hinglish: "Agar noun pehle se plural hai aur 's' par khatam hota hai, toh sirf apostrophe (') lagate hain.",
+    usage: [
+      "To show ownership by a group ending in 's'",
+      "Add only the apostrophe (') after the existing 's'",
+      "Do not add an extra 's'"
+    ],
+    examples: [
+      "The dogs' leashes are tangled.",
+      "This is the students' library.",
+      "My parents' house is big."
+    ]
+  },
+  {
+    id: 175,
+    title: "Irregular Plural Possessives",
+    hinglish: "Agar plural noun 's' par khatam nahi hota, toh uske aage 's lagate hain.",
+    usage: [
+      "To show ownership by a group that doesn't end in 's'",
+      "Add 's to the end of the irregular plural noun",
+      "Treat it like a singular noun for possession"
+    ],
+    examples: [
+      "The children's toys are everywhere.",
+      "The men's restroom is on the left.",
+      "She fights for women's rights."
+    ]
+  },
+  // Pluralization Rules
+  {
+    id: 176,
+    title: "Plural Rule: General",
+    hinglish: "Zyadatar singular nouns ko plural banane ke liye bas end mein '-s' jodte hain.",
+    usage: [
+      "The standard rule for most English nouns",
+      "Simply add -s to the end of the word",
+      "Used for common objects"
+    ],
+    examples: [
+      "I have two cats.",
+      "She read three books.",
+      "Put the pens on the table."
+    ]
+  },
+  {
+    id: 177,
+    title: "Plural Rule: -ch, -x, -s, -sh, -z",
+    hinglish: "Agar word ch, x, s, sh, ya z par khatam ho, toh plural banane ke liye '-es' lagate hain.",
+    usage: [
+      "For nouns ending in 'ch' or 'sh'",
+      "For nouns ending in 'x', 's', or 'z'",
+      "Add -es to make pronunciation easier"
+    ],
+    examples: [
+      "He packed two boxes.",
+      "The buses are late.",
+      "She wishes to buy two watches."
+    ]
+  },
+  {
+    id: 178,
+    title: "Plural Rule: Consonant + y",
+    hinglish: "Agar word 'y' par khatam ho aur usse pehle consonant ho, toh 'y' hata kar '-ies' lagate hain.",
+    usage: [
+      "Check if the letter before 'y' is a consonant",
+      "Remove the 'y'",
+      "Add -ies to the end"
+    ],
+    examples: [
+      "The babies are crying.",
+      "We visited three cities.",
+      "I love stories about space."
+    ]
+  },
+  {
+    id: 179,
+    title: "Plural Rule: Vowel + y",
+    hinglish: "Agar word 'y' par khatam ho par usse pehle vowel (a,e,i,o,u) ho, toh bas '-s' lagate hain.",
+    usage: [
+      "Check if the letter before 'y' is a vowel",
+      "Do NOT remove the 'y'",
+      "Simply add -s"
+    ],
+    examples: [
+      "The boys are playing.",
+      "Put the toys away.",
+      "He lost his keys."
+    ]
+  },
+  {
+    id: 180,
+    title: "Plural Rule: -f or -fe",
+    hinglish: "Aksar agar word f ya fe par khatam ho, toh unhe hata kar '-ves' lagate hain.",
+    usage: [
+      "For nouns ending in 'f'",
+      "For nouns ending in 'fe'",
+      "Replace 'f/fe' with -ves"
+    ],
+    examples: [
+      "The wolves howled at the moon.",
+      "She cut the apple with knives.",
+      "The leaves are falling."
+    ]
+  },
+  {
+    id: 181,
+    title: "Exception to -f rule",
+    hinglish: "Kuch words jo f par khatam hote hain, unme sirf '-s' lagta hai. Ye exceptions yaad karne padte hain.",
+    usage: [
+      "For nouns like 'roof' or 'chef'",
+      "For nouns like 'chief' or 'belief'",
+      "Just add -s (do not change to ves)"
+    ],
+    examples: [
+      "The roofs were damaged in the storm.",
+      "The chefs are cooking dinner.",
+      "The tribe had many chiefs."
+    ]
+  },
+  {
+    id: 182,
+    title: "Plural Rule: Consonant + o",
+    hinglish: "Agar word 'o' par khatam ho aur usse pehle consonant ho, toh usually '-es' lagate hain.",
+    usage: [
+      "For nouns ending in 'o' preceded by a consonant",
+      "Add -es to the end",
+      "Common for older English words"
+    ],
+    examples: [
+      "I love baked potatoes.",
+      "Superheroes save the world.",
+      "The tomatoes are red."
+    ]
+  },
+  {
+    id: 183,
+    title: "Exception to -o rule",
+    hinglish: "Music se jude words aur kuch modern words mein 'o' ke baad sirf '-s' lagta hai.",
+    usage: [
+      "For musical terms ending in 'o' (piano, cello)",
+      "For abbreviations (photo from photograph)",
+      "Simply add -s"
+    ],
+    examples: [
+      "He plays two pianos.",
+      "Show me the photos.",
+      "The radios are old."
+    ]
+  },
+  {
+    id: 184,
+    title: "Plural Rule: Vowel + o",
+    hinglish: "Agar word 'o' par khatam ho aur usse pehle vowel ho, toh bas '-s' lagate hain.",
+    usage: [
+      "For nouns ending in 'oo', 'eo', 'io'",
+      "Simply add -s",
+      "No need for -es"
+    ],
+    examples: [
+      "I listened to the radios.",
+      "We watched two videos.",
+      "We visited the zoos."
+    ]
+  },
+  {
+    id: 185,
+    title: "Irregular Plurals",
+    hinglish: "Kuch nouns ka plural totally change ho jata hai. Inhe yaad karna padta hai.",
+    usage: [
+      "For words that change vowels (man -> men)",
+      "For words that change completely (person -> people)",
+      "For words like child -> children"
+    ],
+    examples: [
+      "The men are working.",
+      "The children are playing outside.",
+      "My feet are hurting."
+    ]
+  },
+  {
+    id: 186,
+    title: "No Change Plurals",
+    hinglish: "Kuch nouns singular aur plural dono mein same rehte hain.",
+    usage: [
+      "For certain animals (sheep, deer, fish)",
+      "For words like 'series' or 'species'",
+      "Use context to know if it is one or many"
+    ],
+    examples: [
+      "I saw one sheep and two sheep.",
+      "The deer are running fast.",
+      "This species is rare."
+    ]
+  },
+  {
+    id: 187,
+    title: "Latin/Greek Plurals",
+    hinglish: "Scientific words jo Latin/Greek se aaye hain, unka plural alag hota hai (us -> i, is -> es).",
+    usage: [
+      "Change -us to -i (cactus -> cacti)",
+      "Change -is to -es (analysis -> analyses)",
+      "Change -on to -a (phenomenon -> phenomena)"
+    ],
+    examples: [
+      "The cacti grow in the desert.",
+      "We performed two analyses.",
+      "Natural phenomena are amazing."
+    ]
+  },
+  // Articles
+  {
+    id: 188,
+    title: "Indefinite Article 'A'",
+    hinglish: "'A' ka use unn singular words ke sath karein jo Consonant sound (b, c, d...) se shuru hote hain.",
+    usage: [
+      "Before singular nouns starting with a consonant sound",
+      "Before words starting with 'u' or 'eu' that sound like 'y'",
+      "When introducing something for the first time"
+    ],
+    examples: [
+      "I saw a dog in the park.",
+      "She goes to a university.",
+      "He is a European citizen."
+    ]
+  },
+  {
+    id: 189,
+    title: "Indefinite Article 'An'",
+    hinglish: "'An' ka use unn singular words ke sath karein jo Vowel sound (a, e, i, o, u) se shuru hote hain.",
+    usage: [
+      "Before singular nouns starting with a vowel sound",
+      "Before words starting with a silent 'h'",
+      "When the word sounds like it starts with a, e, i, o, u"
+    ],
+    examples: [
+      "I ate an apple for breakfast.",
+      "He will be here in an hour.",
+      "She is an honest person."
+    ]
+  },
+  {
+    id: 190,
+    title: "Definite Article 'The'",
+    hinglish: "'The' ka use tab karein jab listener ko pata ho ki aap kis specific cheez ki baat kar rahe hain.",
+    usage: [
+      "When referring to a specific item mentioned before",
+      "When both speaker and listener know the object",
+      "For specific locations or things"
+    ],
+    examples: [
+      "I saw a dog. The dog was cute.",
+      "Please close the door.",
+      "Meet me at the station."
+    ]
+  },
+  {
+    id: 191,
+    title: "Unique Nouns",
+    hinglish: "Jo cheezein duniya mein ek hi hain, unke naam ke aage 'The' lagta hai.",
+    usage: [
+      "For celestial bodies (sun, moon, earth)",
+      "For unique global systems (internet, world)",
+      "For the sky, the environment"
+    ],
+    examples: [
+      "The sun rises in the east.",
+      "Look at the moon tonight.",
+      "We must protect the environment."
+    ]
+  },
+  {
+    id: 192,
+    title: "Superlatives",
+    hinglish: "Jab sabse best, tallest, ya fastest ki baat ho (Superlative degree), toh 'The' zaroor lagta hai.",
+    usage: [
+      "Use before adjectives ending in -est",
+      "Use before 'most' + adjective",
+      "To show something is the only one of its kind in quality"
+    ],
+    examples: [
+      "He is the best player on the team.",
+      "This is the most expensive car.",
+      "She is the tallest girl in class."
+    ]
+  },
+  {
+    id: 193,
+    title: "Generic Plurals (No Article)",
+    hinglish: "Jab hum general mein sabhi cheezon ki baat karte hain, toh 'The' nahi lagate.",
+    usage: [
+      "When talking about a category in general",
+      "Do not use 'the' with plural nouns in generalizations",
+      "Use 'the' only if referring to a specific group"
+    ],
+    examples: [
+      "Dogs are loyal animals. (General)",
+      "I like cars. (General)",
+      "The dogs in my street are noisy. (Specific)"
+    ]
+  },
+  {
+    id: 194,
+    title: "Generic Uncountables (No Article)",
+    hinglish: "Uncountable nouns ke sath general baat karte waqt 'The' nahi lagta.",
+    usage: [
+      "When talking about substances generally",
+      "When talking about abstract concepts generally",
+      "Do not use 'the' unless referring to a specific instance"
+    ],
+    examples: [
+      "Milk is good for health.",
+      "Honesty is important.",
+      "The milk in this glass is sour. (Specific)"
+    ]
+  },
+  {
+    id: 195,
+    title: "Geographical Names",
+    hinglish: "Nadiyon (Rivers), Mahasagaron (Oceans) aur Pahad ki shrinkhalaon (Mountain ranges) ke naam ke aage 'The' lagta hai.",
+    usage: [
+      "Use 'the' with rivers (The Nile)",
+      "Use 'the' with oceans/seas (The Pacific)",
+      "Use 'the' with mountain ranges (The Himalayas)"
+    ],
+    examples: [
+      "The Ganges is a holy river.",
+      "They crossed the Atlantic Ocean.",
+      "The Alps are in Europe."
+    ]
+  },
+  {
+    id: 196,
+    title: "No Article for Lakes/Mountains",
+    hinglish: "Single jheel (Lake) ya single pahad (Mountain) ke naam ke aage 'The' nahi lagta.",
+    usage: [
+      "Do NOT use 'the' with individual lakes",
+      "Do NOT use 'the' with individual mountain peaks",
+      "Use 'the' only if it's a group or chain"
+    ],
+    examples: [
+      "We visited Lake Dal.",
+      "Mount Everest is the highest peak.",
+      "He climbed Mount Kilimanjaro."
+    ]
+  },
+  {
+    id: 197,
+    title: "Musical Instruments",
+    hinglish: "Jab hum koi instrument bajane (play) ki baat karte hain, toh 'The' lagate hain.",
+    usage: [
+      "Use 'the' when describing the skill of playing",
+      "Use 'a/an' when referring to owning the object",
+      "Common with verbs like 'play', 'learn'"
+    ],
+    examples: [
+      "He plays the guitar very well.",
+      "She is learning the piano.",
+      "I bought a guitar yesterday."
+    ]
+  },
+  // II. Pronouns
+  {
+    id: 198,
+    title: "Subject Pronouns",
+    hinglish: "Wo words jo sentence mein kaam karne wale (doer) ki jagah aate hain: I, you, he, she, it, we, they.",
+    usage: [
+      "Use as the subject of a verb",
+      "The person or thing performing the action",
+      "Comes before the verb usually"
+    ],
+    examples: [
+      "She runs fast.",
+      "They are happy to see you.",
+      "We went to the market."
+    ]
+  },
+  {
+    id: 199,
+    title: "Object Pronouns",
+    hinglish: "Wo words jo action receive karte hain: me, you, him, her, it, us, them.",
+    usage: [
+      "Use as the object of a verb",
+      "Use after prepositions (to, for, with)",
+      "The person receiving the action"
+    ],
+    examples: [
+      "Please call him.",
+      "This gift is for us.",
+      "I saw them at the park."
+    ]
+  },
+  {
+    id: 200,
+    title: "Reflexive Pronouns",
+    hinglish: "Jab subject aur object same insaan hon. Words ending in -self/-selves.",
+    usage: [
+      "Use when the subject acts upon itself",
+      "For actions reflecting back to the doer",
+      "Subject and object must be the same person"
+    ],
+    examples: [
+      "I hurt myself while cooking.",
+      "They enjoyed themselves at the party.",
+      "He taught himself to play guitar."
+    ]
+  },
+  {
+    id: 201,
+    title: "Intensive Pronouns",
+    hinglish: "Jab hum self/selves wale words ka use sirf zor dene (emphasis) ke liye karte hain.",
+    usage: [
+      "Use to emphasize a noun or pronoun",
+      "Can be removed without changing the sentence's meaning",
+      "Placed directly after the noun or at the end"
+    ],
+    examples: [
+      "I did it myself.",
+      "The president himself called me.",
+      "She herself baked the cake."
+    ]
+  },
+  {
+    id: 202,
+    title: "Possessive Adjectives",
+    hinglish: "Wo words jo ownership dikhate hain aur noun ke pehle aate hain: my, your, his, her, its, our, their.",
+    usage: [
+      "Placed BEFORE a noun to show ownership",
+      "Cannot stand alone without a noun",
+      "Describes who the noun belongs to"
+    ],
+    examples: [
+      "This is my car.",
+      "That is their house.",
+      "Please wash your hands."
+    ]
+  },
+  {
+    id: 203,
+    title: "Possessive Pronouns",
+    hinglish: "Wo words jo ownership dikhate hain par akele aate hain (noun ke bina): mine, yours, his, hers, ours, theirs.",
+    usage: [
+      "Used instead of a noun phrase to show ownership",
+      "Stand alone and do not take a following noun",
+      "Often used at the end of a sentence"
+    ],
+    examples: [
+      "The car is mine.",
+      "Is this book yours?",
+      "That house is ours."
+    ]
+  },
+  {
+    id: 204,
+    title: "No Apostrophe in Possessive Pronouns",
+    hinglish: "Yours, hers, ours, theirs, aur its mein kabhi apostrophe (') nahi lagta.",
+    usage: [
+      "Never use apostrophes with possessive pronouns",
+      "Distinguishes them from contractions",
+      "Common error to avoid in writing"
+    ],
+    examples: [
+      "Yours sincerely (Correct).",
+      "The dog chased its tail.",
+      "This bag is hers, not yours."
+    ]
+  },
+  {
+    id: 205,
+    title: "It's vs Its",
+    hinglish: "It's = It is (Ye hai). Its = Iska (Possession). Ye bahut common mistake hai.",
+    usage: [
+      "Use 'It's' only when you mean 'It is' or 'It has'",
+      "Use 'Its' to show ownership (like his/her)",
+      "Test: Can you replace it with 'It is'?"
+    ],
+    examples: [
+      "It's (It is) a sunny day.",
+      "The dog wagged its (iska) tail.",
+      "It's (It has) been a long time."
+    ]
+  },
+  {
+    id: 206,
+    title: "Relative Pronouns",
+    hinglish: "Words jo clauses ko jodte hain aur noun ko describe karte hain: who, whom, whose, which, that.",
+    usage: [
+      "To connect a clause to a noun",
+      "To provide more information about the noun mentioned",
+      "Acts as a bridge between two parts of a sentence"
+    ],
+    examples: [
+      "The man who called is my uncle.",
+      "The book that I read was good.",
+      "This is the house which was sold."
+    ]
+  },
+  {
+    id: 207,
+    title: "Who vs Whom",
+    hinglish: "'Who' subject ke liye (kaun) aur 'Whom' object ke liye (kisko) use hota hai.",
+    usage: [
+      "Use 'Who' when asking about the subject (he/she)",
+      "Use 'Whom' when asking about the object (him/her)",
+      "Test: Replace with He (Who) or Him (Whom)"
+    ],
+    examples: [
+      "Who is calling?",
+      "Whom did you invite?",
+      "To whom are you speaking?"
+    ]
+  },
+  {
+    id: 208,
+    title: "That vs Which",
+    hinglish: "'That' zaroori information ke liye use hota hai (restrictive). 'Which' extra information ke liye use hota hai (usually comma ke saath).",
+    usage: [
+      "Use 'that' for essential information defining the noun (no commas)",
+      "Use 'which' for non-essential, extra information (with commas)",
+      "'Which' clauses can be removed without losing main meaning"
+    ],
+    examples: [
+      "The car that crashed is red.",
+      "My car, which is red, is very fast.",
+      "The house that has a red door is mine."
+    ]
+  },
+  {
+    id: 209,
+    title: "Demonstrative Pronouns",
+    hinglish: "Ishaara karne wale words. This/That (singular) aur These/Those (plural).",
+    usage: [
+      "Use This (singular) / These (plural) for things nearby",
+      "Use That (singular) / Those (plural) for things far away",
+      "Can act as pronouns or adjectives"
+    ],
+    examples: [
+      "This is my bag.",
+      "Those are your shoes over there.",
+      "I like these apples."
+    ]
+  },
+  {
+    id: 210,
+    title: "Indefinite Pronouns (Singular)",
+    hinglish: "Everyone, someone, nobody, each jaise words usually singular maane jaate hain aur singular verb lete hain.",
+    usage: [
+      "Words ending in -one, -body, -thing are singular",
+      "'Each' and 'Every' also take singular verbs",
+      "Requires singular pronouns (he/she/it) technically"
+    ],
+    examples: [
+      "Everyone is here.",
+      "Each student has a book.",
+      "Nobody knows the answer."
+    ]
+  },
+  {
+    id: 211,
+    title: "Indefinite Pronouns (Plural)",
+    hinglish: "Both, few, many, several hamesha plural maane jaate hain.",
+    usage: [
+      "Always treat 'both', 'few', 'many', 'several' as plural",
+      "They require plural verbs",
+      "Refer to more than one item"
+    ],
+    examples: [
+      "Both are good options.",
+      "Many were invited to the party.",
+      "Few have passed the exam."
+    ]
+  },
+  {
+    id: 212,
+    title: "Antecedent Agreement",
+    hinglish: "Pronoun ka number aur gender uss noun (antecedent) se match karna chahiye jiske liye wo use hua hai.",
+    usage: [
+      "Ensure pronoun matches the noun it replaces",
+      "Singular noun = Singular pronoun",
+      "Plural noun = Plural pronoun"
+    ],
+    examples: [
+      "The girl finished her lunch.",
+      "The boys finished their lunch.",
+      "The dog ate its food."
+    ]
+  },
+  {
+    id: 213,
+    title: "Ambiguous Reference",
+    hinglish: "Ye clear hona chahiye ki pronoun kiske liye use hua hai. Agar confusion ho, toh noun dubara likhein.",
+    usage: [
+      "Avoid using pronouns when it's unclear who is being referred to",
+      "Rewrite the sentence if 'he' or 'she' could mean two different people",
+      "Clarify the subject"
+    ],
+    examples: [
+      "Ambiguous: Bob told Jim he was late.",
+      "Clear: Bob told Jim that Jim was late.",
+      "Clear: Bob admitted to Jim that he (Bob) was late."
+    ]
+  },
+  // III. Subject-Verb Agreement
+  {
+    id: 214,
+    title: "Subject-Verb Agreement Basic",
+    hinglish: "Singular subject ke saath singular verb (is/has/runs) aur Plural subject ke saath plural verb (are/have/run) lagta hai.",
+    usage: [
+      "Singular subjects take singular verbs (often ending in 's')",
+      "Plural subjects take plural verbs (no 's')",
+      "Must agree in number"
+    ],
+    examples: [
+      "The boy runs fast.",
+      "The boys run fast.",
+      "My friend is here."
+    ]
+  },
+  {
+    id: 215,
+    title: "Third Person Singular",
+    hinglish: "Present tense mein He, She, It ke saath verb mein 's' ya 'es' judta hai.",
+    usage: [
+      "In Simple Present Tense, add -s or -es for He/She/It",
+      "Do NOT add -s for I/You/We/They",
+      "Applies to all regular verbs"
+    ],
+    examples: [
+      "He walks to school.",
+      "It works perfectly.",
+      "She watches TV."
+    ]
+  },
+  {
+    id: 216,
+    title: "Compound Subjects with 'And'",
+    hinglish: "Jab do subjects 'and' se jude hon, toh wo plural ban jate hain aur plural verb lete hain.",
+    usage: [
+      "When two distinct subjects are joined by 'and'",
+      "Treat them as plural and use a plural verb",
+      "Even if individual subjects are singular"
+    ],
+    examples: [
+      "Jack and Jill are running.",
+      "The car and bus are fast.",
+      "My brother and I are going."
+    ]
+  },
+  {
+    id: 217,
+    title: "Compound Subjects as One Unit",
+    hinglish: "Agar do cheezein milkar ek single idea banati hain (jaise khana), toh wo singular maani jati hain.",
+    usage: [
+      "When two joined nouns refer to a single dish",
+      "When two joined nouns refer to a single concept",
+      "Treat as singular"
+    ],
+    examples: [
+      "Bread and butter is my breakfast.",
+      "Rajma Chawal is tasty.",
+      "Slow and steady wins the race."
+    ]
+  },
+  {
+    id: 218,
+    title: "Or / Nor Rule",
+    hinglish: "Jab subjects 'or' ya 'nor' se jude hon, toh verb apne sabse paas wale subject ke hisaab se lagta hai.",
+    usage: [
+      "When using 'either/or'",
+      "When using 'neither/nor'",
+      "Match the verb to the subject closest to it"
+    ],
+    examples: [
+      "Neither the players nor the coach is here.",
+      "Either the coach or the players are here.",
+      "Neither she nor I am going."
+    ]
+  },
+  {
+    id: 219,
+    title: "Indefinite Pronouns (Agreement)",
+    hinglish: "Formal English mein 'everyone' aur 'each' jaise words ke saath hamesha singular verb use hota hai.",
+    usage: [
+      "Use singular verbs with 'everyone', 'everybody', 'each'",
+      "Use singular verbs with 'someone', 'nobody'",
+      "Even if they refer to a group of people"
+    ],
+    examples: [
+      "Everyone is ready.",
+      "Each of the apples is red.",
+      "Somebody has stolen my pen."
+    ]
+  },
+  {
+    id: 220,
+    title: "Collective Nouns Agreement",
+    hinglish: "Agar group ek unit ki tarah kaam kare toh singular, agar members alag-alag act karein toh plural.",
+    usage: [
+      "Singular verb if the group acts as one body",
+      "Plural verb if individual members are acting separately",
+      "Context determines the usage"
+    ],
+    examples: [
+      "The team is winning the game. (One unit)",
+      "The team are arguing about the strategy. (Individuals)",
+      "The family is travelling together."
+    ]
+  },
+  {
+    id: 221,
+    title: "Phrases between Subject and Verb",
+    hinglish: "Subject aur verb ke beech wale words (jaise 'of...', 'with...') ko ignore karein, main subject par focus karein.",
+    usage: [
+      "Do not be distracted by prepositional phrases (of the boys, with the cars)",
+      "Find the main noun before the preposition",
+      "Match verb to the main noun"
+    ],
+    examples: [
+      "The box of apples is heavy. (Box is heavy)",
+      "The man with the dogs is walking.",
+      "A bouquet of flowers was given to her."
+    ]
+  },
+  {
+    id: 222,
+    title: "Here and There",
+    hinglish: "'Here' aur 'There' subject nahi hote. Asli subject verb ke baad hota hai.",
+    usage: [
+      "In sentences starting with 'Here' or 'There'",
+      "Look after the verb to find the true subject",
+      "Match verb to that subject"
+    ],
+    examples: [
+      "There are three dogs.",
+      "Here is your key.",
+      "There is a cat under the table."
+    ]
+  },
+  {
+    id: 223,
+    title: "Gerunds as Subjects",
+    hinglish: "Jab '-ing' wale words (Gerunds) subject banate hain, toh wo singular hote hain.",
+    usage: [
+      "When an activity (ending in -ing) is the subject",
+      "Always treat it as singular",
+      "Even if the object of the gerund is plural"
+    ],
+    examples: [
+      "Swimming is fun.",
+      "Reading books helps you learn.",
+      "Eating vegetables is healthy."
+    ]
+  },
+  {
+    id: 224,
+    title: "Distances, Periods, Sums",
+    hinglish: "Time, paisa, aur doori (distance) ki quantity ko usually singular maana jata hai.",
+    usage: [
+      "Amounts of money are treated as one unit",
+      "Periods of time are treated as one unit",
+      "Distances are treated as one unit"
+    ],
+    examples: [
+      "Ten dollars is a lot of money.",
+      "Two hours is a long time to wait.",
+      "Five miles is a long walk."
+    ]
+  },
+  {
+    id: 225,
+    title: "Titles of Works",
+    hinglish: "Books ya movies ke naam hamesha singular hote hain, chahe naam plural sound kare.",
+    usage: [
+      "Book, movie, or song titles are singular entities",
+      "Use singular verbs even if the title ends in 's'",
+      "Refers to one work of art"
+    ],
+    examples: [
+      "'Star Wars' is a great movie.",
+      "'Gulliver's Travels' is an interesting book.",
+      "'The Avengers' was a hit."
+    ]
+  },
+  // IV. Verbs & Tenses
+  {
+    id: 226,
+    title: "Present Simple",
+    hinglish: "Aadatein (habits), sachayi (facts), aur routine batane ke liye use hota hai.",
+    usage: [
+      "To describe daily habits or routines",
+      "To state general facts or universal truths",
+      "For scheduled events in the future (timetables)"
+    ],
+    examples: [
+      "I eat lunch at 1 PM.",
+      "The earth orbits the sun.",
+      "The train leaves at 6 PM."
+    ]
+  },
+  {
+    id: 227,
+    title: "Present Continuous",
+    hinglish: "Jo kaam abhi iss waqt chal raha hai. (is/am/are + ing).",
+    usage: [
+      "For actions happening right now",
+      "For temporary situations",
+      "For future plans that are definitely arranged"
+    ],
+    examples: [
+      "I am writing a letter now.",
+      "She is sleeping in the room.",
+      "We are meeting him tomorrow."
+    ]
+  },
+  {
+    id: 228,
+    title: "Present Perfect",
+    hinglish: "Kaam past mein hua par uska connection abhi bhi hai. (has/have + V3).",
+    usage: [
+      "Action happened at an unspecified time in the past",
+      "Action started in past and continues to present",
+      "Experience or change over time"
+    ],
+    examples: [
+      "I have eaten breakfast.",
+      "She has lived here for ten years.",
+      "I have seen that movie."
+    ]
+  },
+  {
+    id: 229,
+    title: "Present Perfect Continuous",
+    hinglish: "Kaam past mein shuru hua aur abhi tak chal raha hai. (has/have been + ing).",
+    usage: [
+      "To emphasize the duration of an activity",
+      "Action started in past and is still continuing",
+      "Action recently stopped but has present results"
+    ],
+    examples: [
+      "I have been waiting for 2 hours.",
+      "It has been raining all day.",
+      "She has been working here since 2010."
+    ]
+  },
+  {
+    id: 230,
+    title: "Past Simple",
+    hinglish: "Past mein kaam poora khatam ho gaya. (V2 form).",
+    usage: [
+      "For actions completed at a specific time in the past",
+      "For past habits or states",
+      "For a sequence of events in the past"
+    ],
+    examples: [
+      "I ate pizza yesterday.",
+      "He went to the park last Sunday.",
+      "She woke up and washed her face."
+    ]
+  },
+  {
+    id: 231,
+    title: "Past Continuous",
+    hinglish: "Past mein kisi specific waqt par kaam chal raha tha. (was/were + ing).",
+    usage: [
+      "Action in progress at a specific moment in the past",
+      "Interrupted action (usually with 'when')",
+      "Two actions happening at the same time in the past"
+    ],
+    examples: [
+      "I was sleeping at 10 PM.",
+      "I was cooking when he called.",
+      "While I was reading, he was playing."
+    ]
+  },
+  {
+    id: 232,
+    title: "Past Perfect",
+    hinglish: "Past mein do kaam hue, jo kaam pehle hua uske liye Past Perfect use hota hai. (had + V3).",
+    usage: [
+      "To show which of two past actions happened first",
+      "The 'past of the past'",
+      "Reported speech"
+    ],
+    examples: [
+      "I had eaten before I left.",
+      "When I arrived, the train had left.",
+      "She said that she had finished the work."
+    ]
+  },
+  {
+    id: 233,
+    title: "Past Perfect Continuous",
+    hinglish: "Past mein kisi point tak koi kaam chal raha tha. (had been + ing).",
+    usage: [
+      "Duration of an activity up to a point in the past",
+      "Cause of a past state",
+      "Emphasizes the process"
+    ],
+    examples: [
+      "I had been working for 3 hours when he arrived.",
+      "The road was wet because it had been raining.",
+      "She had been waiting since morning."
+    ]
+  },
+  {
+    id: 234,
+    title: "Future Simple",
+    hinglish: "Bhavishya ki prediction ya achanak liya gaya decision. (will + verb).",
+    usage: [
+      "For predictions about the future",
+      "For spontaneous decisions made at the moment of speaking",
+      "For promises, offers, or threats"
+    ],
+    examples: [
+      "I will call you later.",
+      "It will rain tomorrow.",
+      "I will help you with your bag."
+    ]
+  },
+  {
+    id: 235,
+    title: "Future Continuous",
+    hinglish: "Future mein kisi waqt kaam chal raha hoga. (will be + ing).",
+    usage: [
+      "Action that will be in progress at a specific future time",
+      "Projecting yourself into the future",
+      "Polite inquiries about plans"
+    ],
+    examples: [
+      "I will be sleeping at 10 PM.",
+      "This time next week, I will be flying to Paris.",
+      "Will you be using the car tomorrow?"
+    ]
+  },
+  {
+    id: 236,
+    title: "Future Perfect",
+    hinglish: "Future mein kisi waqt tak kaam khatam ho chuka hoga. (will have + V3).",
+    usage: [
+      "Action that will be completed before a specific future time",
+      "Looking back from a future point",
+      "Often used with 'by'"
+    ],
+    examples: [
+      "I will have finished by 5 PM.",
+      "By next year, they will have built the bridge.",
+      "She will have left before you arrive."
+    ]
+  },
+  {
+    id: 237,
+    title: "Future Perfect Continuous",
+    hinglish: "Future mein kisi waqt tak kaam kitne time se chal raha hoga. (will have been + ing).",
+    usage: [
+      "To show duration of an action up to a future point",
+      "Emphasis on how long something will have been happening",
+      "Often includes 'for' and 'by'"
+    ],
+    examples: [
+      "By next year, I will have been working here for 5 years.",
+      "In December, we will have been living here for a decade.",
+      "At 5 PM, she will have been studying for 6 hours."
+    ]
+  },
+  {
+    id: 238,
+    title: "Transitive Verbs",
+    hinglish: "Wo verbs jinhe object ki zaroorat hoti hai (kya kiya?).",
+    usage: [
+      "Verbs that MUST have a direct object to make sense",
+      "Action passes from subject to object",
+      "Subject + Verb + Object"
+    ],
+    examples: [
+      "She kicked the ball.",
+      "He loves pizza.",
+      "I bought a new phone."
+    ]
+  },
+  {
+    id: 239,
+    title: "Intransitive Verbs",
+    hinglish: "Wo verbs jinhe object ki zaroorat nahi hoti.",
+    usage: [
+      "Verbs that make sense without an object",
+      "Action does not pass to an object",
+      "Subject + Verb"
+    ],
+    examples: [
+      "He sleeps.",
+      "The sun rises.",
+      "The baby cried."
+    ]
+  },
+  {
+    id: 240,
+    title: "Linking Verbs",
+    hinglish: "Ye action nahi dikhate, bas subject ko describe karte hain (is, seem, become).",
+    usage: [
+      "Connects the subject to more information (adjective or noun)",
+      "Describes a state of being, not an action",
+      "Equals sign (=) test"
+    ],
+    examples: [
+      "She seems happy.",
+      "He is a doctor.",
+      "The soup tastes good."
+    ]
+  },
+  {
+    id: 241,
+    title: "Auxiliary Verbs",
+    hinglish: "Helping verbs jo main verb ki madad karte hain (is, are, have, do).",
+    usage: [
+      "Used with main verbs to form tenses (is playing)",
+      "Used to form questions (Do you...?)",
+      "Used to form negatives (have not)"
+    ],
+    examples: [
+      "Do you like it?",
+      "I have finished my work.",
+      "She is not coming."
+    ]
+  },
+  {
+    id: 242,
+    title: "Modal Verbs",
+    hinglish: "Kshamta, sambhavna ya zaroorat batane wale words (can, could, must).",
+    usage: [
+      "Express ability (can), advice (should), or obligation (must)",
+      "Express possibility (might, could)",
+      "Express permission (may)"
+    ],
+    examples: [
+      "I can swim.",
+      "You must go now.",
+      "It might rain today."
+    ]
+  },
+  {
+    id: 243,
+    title: "Modals No Change",
+    hinglish: "Modals kabhi change nahi hote (No -s, -ed, -ing). He can, not He cans.",
+    usage: [
+      "Modal verbs never change form",
+      "Do not add -s, -ed, or -ing to modals",
+      "Same form for all subjects"
+    ],
+    examples: [
+      "He can run (Correct).",
+      "He cans run (Incorrect).",
+      "She must study (Correct)."
+    ]
+  },
+  {
+    id: 244,
+    title: "Modals + Base Verb",
+    hinglish: "Modals ke baad hamesha verb ki first form aati hai, bina 'to' ke.",
+    usage: [
+      "Always follow a modal with the base form of the verb",
+      "Never use 'to' after a modal (except 'ought to')",
+      "Never use past tense immediately after modal"
+    ],
+    examples: [
+      "I must go (not 'to go').",
+      "He should eat now.",
+      "We could see the stars."
+    ]
+  },
+  {
+    id: 245,
+    title: "Regular Past",
+    hinglish: "Zyadatar verbs ka past banane ke liye '-ed' lagta hai.",
+    usage: [
+      "Standard way to form simple past tense",
+      "Add -ed or -d to the base verb",
+      "Applies to thousands of verbs"
+    ],
+    examples: [
+      "I walked home.",
+      "She played tennis.",
+      "They lived in Delhi."
+    ]
+  },
+  {
+    id: 246,
+    title: "Irregular Verbs",
+    hinglish: "Inke past forms alag hote hain aur yaad karne padte hain.",
+    usage: [
+      "Verbs that do not follow the -ed rule",
+      "Must be memorized individually",
+      "Forms often change completely"
+    ],
+    examples: [
+      "go -> went",
+      "buy -> bought",
+      "eat -> ate"
+    ]
+  },
+  {
+    id: 247,
+    title: "Infinitive",
+    hinglish: "Verb ka base form jo usually 'to' ke saath aata hai.",
+    usage: [
+      "To express purpose (I went to buy milk)",
+      "Used after certain verbs (want, need, hope)",
+      "Used after adjectives (good to see)"
+    ],
+    examples: [
+      "I want to sleep.",
+      "It is good to see you.",
+      "She went to the market to buy food."
+    ]
+  },
+  {
+    id: 248,
+    title: "Gerund",
+    hinglish: "Verb + ing jo Noun ka kaam karta hai.",
+    usage: [
+      "Using a verb as a noun (subject or object)",
+      "Used after prepositions",
+      "Used after certain verbs (enjoy, like, hate)"
+    ],
+    examples: [
+      "Swimming is good exercise.",
+      "I like reading.",
+      "He is good at painting."
+    ]
+  },
+  {
+    id: 249,
+    title: "Participle",
+    hinglish: "Verb ke forms jo adjective ki tarah use hote hain ya tense banate hain.",
+    usage: [
+      "Present Participle (-ing) for continuous tenses or adjectives",
+      "Past Participle (-ed/en) for perfect tenses or passive voice",
+      "Used as adjectives to describe nouns"
+    ],
+    examples: [
+      "The broken glass cut me.",
+      "Running water is safe.",
+      "I have seen that movie."
+    ]
+  },
+  {
+    id: 250,
+    title: "Stative Verbs",
+    hinglish: "Wo verbs jo action nahi, state (dasha) batate hain. Inhe continuous tense mein use nahi karte.",
+    usage: [
+      "Verbs describing thoughts, feelings, senses, or possession",
+      "Avoid using them in -ing forms (I am knowing -> Incorrect)",
+      "Use simple tenses instead"
+    ],
+    examples: [
+      "I know him (Correct).",
+      "I am knowing him (Incorrect).",
+      "She loves pizza."
+    ]
+  },
+  {
+    id: 251,
+    title: "Subjunctive Mood (If I were)",
+    hinglish: "Imaginary situations ke liye 'was' ki jagah 'were' use karte hain.",
+    usage: [
+      "For hypothetical or imaginary situations",
+      "Use 'were' instead of 'was' even for singular subjects",
+      "Often used in 'If' clauses"
+    ],
+    examples: [
+      "If I were you, I would go.",
+      "I wish I were taller.",
+      "If he were rich, he would buy a plane."
+    ]
+  },
+  {
+    id: 252,
+    title: "Passive Voice",
+    hinglish: "Jab subject action karta nahi, balki receive karta hai. (Be + V3).",
+    usage: [
+      "When the object of the action is more important than the doer",
+      "When the doer is unknown",
+      "Common in scientific or formal writing"
+    ],
+    examples: [
+      "The cake was eaten by him.",
+      "The work is done.",
+      "The bridge was built in 1990."
+    ]
+  },
+  {
+    id: 253,
+    title: "Active Voice Preference",
+    hinglish: "Active voice (Subject ne action kiya) zyada clear aur direct hota hai.",
+    usage: [
+      "Use for clearer, stronger, and more direct sentences",
+      "Identifies who is doing the action immediately",
+      "Preferred in most writing"
+    ],
+    examples: [
+      "He ate the cake (Active).",
+      "The dog chased the cat.",
+      "I wrote the letter."
+    ]
+  },
+  // V. Adjectives & Adverbs
+  {
+    id: 254,
+    title: "Adjectives Function",
+    hinglish: "Ye Noun ya Pronoun ki visheshta batate hain.",
+    usage: [
+      "To describe or modify a noun",
+      "To give more details about a person, place, or thing",
+      "To specify which one"
+    ],
+    examples: [
+      "She has a red car.",
+      "He is a tall boy.",
+      "I want that book."
+    ]
+  },
+  {
+    id: 255,
+    title: "Adjective Placement",
+    hinglish: "Adjectives usually noun se pehle aate hain ya linking verb ke baad.",
+    usage: [
+      "Attributive: Before the noun (Red car)",
+      "Predicative: After a linking verb (Car is red)",
+      "Always stays singular"
+    ],
+    examples: [
+      "The big house is on the hill.",
+      "The house is big.",
+      "She looks happy."
+    ]
+  },
+  {
+    id: 256,
+    title: "Order of Adjectives",
+    hinglish: "Agar ek se zyada adjectives hon, toh unka ek specific order hota hai (Quantity -> Opinion -> Size...).",
+    usage: [
+      "Follow the order: Quantity, Opinion, Size, Age, Shape, Color, Origin, Material",
+      "Use commas if adjectives are coordinate",
+      "Memorize: Q-O-S-A-S-C-O-M"
+    ],
+    examples: [
+      "Two lovely little red shoes.",
+      "A big old wooden box.",
+      "A beautiful Italian sports car."
+    ]
+  },
+  {
+    id: 257,
+    title: "Comparatives",
+    hinglish: "Do cheezon mein tulna karne ke liye '-er' ya 'more' lagate hain.",
+    usage: [
+      "To compare two people or things",
+      "Use '-er' for short words",
+      "Use 'more' for long words"
+    ],
+    examples: [
+      "He is faster than me.",
+      "She is more beautiful than her sister.",
+      "This book is more interesting than that one."
+    ]
+  },
+  {
+    id: 258,
+    title: "Superlatives",
+    hinglish: "Do se zyada cheezon mein sabse best/worst batane ke liye '-est' ya 'most' lagate hain.",
+    usage: [
+      "To compare three or more items",
+      "Indicates the highest degree of a quality",
+      "Always use 'the' before superlatives"
+    ],
+    examples: [
+      "He is the fastest runner.",
+      "This is the most beautiful painting.",
+      "She is the smartest student in class."
+    ]
+  },
+  {
+    id: 259,
+    title: "Irregular Adjectives",
+    hinglish: "Good aur Bad ke forms irregular hote hain (Good -> Better -> Best).",
+    usage: [
+      "Adjectives that don't follow normal -er/-est rules",
+      "Must be memorized (Good/Better/Best)",
+      "Must be memorized (Bad/Worse/Worst)"
+    ],
+    examples: [
+      "This pizza is good, but that one is better.",
+      "He is the best player.",
+      "That was the worst movie I ever saw."
+    ]
+  },
+  {
+    id: 260,
+    title: "Absolute Adjectives",
+    hinglish: "Kuch words (jaise Unique, Dead) ka comparison nahi ho sakta kyunki wo apne aap mein complete hain.",
+    usage: [
+      "For qualities that cannot be measured in degrees",
+      "Avoid saying 'very' or 'more' with these words",
+      "They are already extreme"
+    ],
+    examples: [
+      "The design is unique. (not 'very unique')",
+      "The battery is dead.",
+      "Her work is perfect."
+    ]
+  },
+  {
+    id: 261,
+    title: "Coordinate Adjectives",
+    hinglish: "Agar adjectives ka order badla ja sake, toh unke beech comma lagate hain.",
+    usage: [
+      "Use commas between adjectives that describe the noun equally",
+      "Test: Can you put 'and' between them?",
+      "Test: Can you swap their order?"
+    ],
+    examples: [
+      "It was a bright, sunny day.",
+      "He is a smart, funny guy.",
+      "She wore a long, elegant dress."
+    ]
+  },
+  {
+    id: 262,
+    title: "Cumulative Adjectives",
+    hinglish: "Agar adjectives ka order fix ho aur badla na ja sake, toh comma nahi lagta.",
+    usage: [
+      "Do NOT use commas when adjectives build upon each other",
+      "Test: Can you swap them? If no, no comma.",
+      "Usually involves size, color, or age"
+    ],
+    examples: [
+      "She has bright blue eyes.",
+      "He bought a new leather jacket.",
+      "Three small kittens played."
+    ]
+  },
+  {
+    id: 263,
+    title: "Adverbs Function",
+    hinglish: "Ye Verbs, Adjectives ya doosre Adverbs ko modify karte hain (kab, kahan, kaise).",
+    usage: [
+      "To describe HOW an action is done",
+      "To modify adjectives (very hot)",
+      "To modify other adverbs (quite fast)"
+    ],
+    examples: [
+      "He runs fast.",
+      "The tea is very hot.",
+      "She speaks quite softly."
+    ]
+  },
+  {
+    id: 264,
+    title: "Adverb Formation",
+    hinglish: "Zyadatar Adverbs banane ke liye Adjective mein '-ly' jodte hain.",
+    usage: [
+      "Add -ly to most adjectives to make them adverbs",
+      "Watch for spelling changes (y -> i)",
+      "Used to describe actions"
+    ],
+    examples: [
+      "He walked quickly.",
+      "She smiled softly.",
+      "They lived happily."
+    ]
+  },
+  {
+    id: 265,
+    title: "Irregular Adverbs",
+    hinglish: "Kuch adverbs '-ly' nahi lete. Fast ka adverb Fast hi hota hai, Fastly nahi.",
+    usage: [
+      "Adverbs that look the same as their adjective forms",
+      "Well is the adverb form of Good",
+      "Do not add -ly to these"
+    ],
+    examples: [
+      "He runs fast. (Not fastly)",
+      "She did well on the test. (Not good)",
+      "He works hard."
+    ]
+  },
+  {
+    id: 266,
+    title: "Adverb Placement (Verbs)",
+    hinglish: "Adverbs usually verb ke baad aate hain (runs fast) ya main verb se pehle (quickly ran).",
+    usage: [
+      "Place after the verb if there is no object",
+      "Place after the object if there is one",
+      "Can place before the verb for emphasis"
+    ],
+    examples: [
+      "He speaks slowly.",
+      "She quickly opened the door.",
+      "She opened the door quickly."
+    ]
+  },
+  {
+    id: 267,
+    title: "Frequency Adverbs",
+    hinglish: "Frequency batane wale words (always, never) main verb se pehle aate hain, par 'to be' (is/am/are) ke baad.",
+    usage: [
+      "Place BEFORE main verbs (I always eat)",
+      "Place AFTER 'to be' verbs (I am always)",
+      "Describes how often something happens"
+    ],
+    examples: [
+      "I always eat breakfast.",
+      "She is always late.",
+      "He never lies."
+    ]
+  },
+  {
+    id: 268,
+    title: "Double Negatives",
+    hinglish: "English mein do negative words ek saath use nahi karte. 'I don't know nothing' galat hai.",
+    usage: [
+      "Avoid using two negative words in the same clause",
+      "Negatives cancel each other out, changing the meaning",
+      "Use 'anything' instead of 'nothing' with 'don't'"
+    ],
+    examples: [
+      "I don't know anything. (Correct)",
+      "I don't know nothing. (Incorrect)",
+      "I have nothing to say. (Correct)"
+    ]
+  },
+  {
+    id: 269,
+    title: "Adverb vs Adjective",
+    hinglish: "Linking verbs (feel, look, seem) ke saath Adjective use karein, Adverb nahi.",
+    usage: [
+      "Use adjectives with verbs of sense (look, smell, feel, taste)",
+      "Describes the subject, not the action of sensing",
+      "Use adverbs for action verbs"
+    ],
+    examples: [
+      "I feel bad about the news. (Adjective)",
+      "You look good today. (Adjective)",
+      "He looked at me angrily. (Adverb - action)"
+    ]
+  },
+  // VI. Prepositions
+  {
+    id: 270,
+    title: "Time: At",
+    hinglish: "Kisi exact waqt (ghadi ka time) ke liye 'At' use karein.",
+    usage: [
+      "For specific clock times",
+      "For specific moments (noon, midnight)",
+      "For holiday periods (at Christmas)"
+    ],
+    examples: [
+      "See you at 5:00 PM.",
+      "We eat lunch at noon.",
+      "I will see you at Diwali."
+    ]
+  },
+  {
+    id: 271,
+    title: "Time: On",
+    hinglish: "Din (Days) aur Taarikh (Dates) ke liye 'On' use karein.",
+    usage: [
+      "For days of the week",
+      "For specific dates (month + day)",
+      "For specific days (on my birthday)"
+    ],
+    examples: [
+      "I will come on Monday.",
+      "My birthday is on July 4th.",
+      "We party on New Year's Eve."
+    ]
+  },
+  {
+    id: 272,
+    title: "Time: In",
+    hinglish: "Mahine (Months), Saal (Years), aur lambe samay ke liye 'In' use karein.",
+    usage: [
+      "For months, years, and centuries",
+      "For seasons and long periods of time",
+      "For parts of the day (in the morning)"
+    ],
+    examples: [
+      "I was born in July.",
+      "He moved here in 1990.",
+      "It gets cold in winter."
+    ]
+  },
+  {
+    id: 273,
+    title: "Place: At",
+    hinglish: "Kisi specific point ya location ke liye 'At' use karein.",
+    usage: [
+      "For a specific point in space",
+      "For public places or events",
+      "For addresses with numbers"
+    ],
+    examples: [
+      "Someone is at the door.",
+      "I am at the bus stop.",
+      "He lives at 12 Main Street."
+    ]
+  },
+  {
+    id: 274,
+    title: "Place: On",
+    hinglish: "Kisi satah (surface) ke upar ke liye 'On' use karein.",
+    usage: [
+      "For surfaces (horizontal or vertical)",
+      "For floors of a building",
+      "For public transport (on the bus)"
+    ],
+    examples: [
+      "The book is on the table.",
+      "The picture is on the wall.",
+      "I am on the bus."
+    ]
+  },
+  {
+    id: 275,
+    title: "Place: In",
+    hinglish: "Kisi band jagah (enclosed space) ya shehar/desh ke liye 'In' use karein.",
+    usage: [
+      "For enclosed spaces or containers",
+      "For geographical regions (cities, countries)",
+      "For cars/taxis"
+    ],
+    examples: [
+      "The toys are in the box.",
+      "I live in Delhi.",
+      "She is in the car."
+    ]
+  },
+  {
+    id: 276,
+    title: "Movement: To",
+    hinglish: "Kisi disha (direction) mein jaane ke liye 'To' use karein.",
+    usage: [
+      "Indicates movement towards a destination",
+      "Used with verbs like go, walk, drive",
+      "Shows direction"
+    ],
+    examples: [
+      "I go to school every day.",
+      "She walked to the park.",
+      "They flew to London."
+    ]
+  },
+  {
+    id: 277,
+    title: "Movement: Into",
+    hinglish: "Jab koi cheez bahar se andar ki taraf move kare.",
+    usage: [
+      "Indicates movement from outside to inside",
+      "Combines motion + enclosure",
+      "Used with verbs like jump, run, put"
+    ],
+    examples: [
+      "He jumped into the pool.",
+      "She walked into the room.",
+      "Put the money into your pocket."
+    ]
+  },
+  {
+    id: 278,
+    title: "Prepositions + Noun/Gerund",
+    hinglish: "Prepositions ke baad hamesha Noun ya Gerund (verb+ing) aata hai, poora sentence nahi.",
+    usage: [
+      "Prepositions must be followed by an object (Noun or Pronoun)",
+      "If using a verb, it MUST be in -ing form",
+      "Never follow with a simple verb"
+    ],
+    examples: [
+      "He is good at swimming.",
+      "Thanks for coming.",
+      "I am afraid of dogs."
+    ]
+  },
+  {
+    id: 279,
+    title: "Dependent Prepositions",
+    hinglish: "Kuch words ke saath fix prepositions lagte hain (interested in, afraid of).",
+    usage: [
+      "Certain adjectives and verbs require specific prepositions",
+      "Must be memorized as pairs",
+      "Changing the preposition changes the meaning or is incorrect"
+    ],
+    examples: [
+      "She is interested in music.",
+      "I am afraid of spiders.",
+      "He is married to her."
+    ]
+  },
+  {
+    id: 280,
+    title: "Ending with Prepositions",
+    hinglish: "Modern English mein sentence ko preposition pe khatam karna theek maana jata hai.",
+    usage: [
+      "Acceptable in spoken and informal English",
+      "Avoid in very formal writing if possible",
+      "Natural for questions"
+    ],
+    examples: [
+      "Who are you talking to?",
+      "What are you looking for?",
+      "This is the book I was telling you about."
+    ]
+  },
+  {
+    id: 281,
+    title: "Between vs Among",
+    hinglish: "'Between' do logon/cheezon ke liye, aur 'Among' do se zyada ke liye use hota hai.",
+    usage: [
+      "Use 'Between' for two distinct items",
+      "Use 'Among' for a group or mass of three or more",
+      "Between implies a specific relationship"
+    ],
+    examples: [
+      "The secret is between you and me.",
+      "She sat between Ram and Shyam.",
+      "Distribute the sweets among the students."
+    ]
+  },
+  {
+    id: 282,
+    title: "Since vs For",
+    hinglish: "'Since' shuruwat ka waqt batata hai (Since 2PM), 'For' kul samay batata hai (For 2 hours).",
+    usage: [
+      "Use 'Since' with a specific starting point in time",
+      "Use 'For' with a duration or period of time",
+      "Used with Perfect tenses"
+    ],
+    examples: [
+      "I have lived here since 2010.",
+      "I have waited for two hours.",
+      "She has been working since Monday."
+    ]
+  },
+  // VII. Conjunctions
+  {
+    id: 283,
+    title: "Coordinating Conjunctions (FANBOYS)",
+    hinglish: "Ye words barabar ke parts ko jodte hain: For, And, Nor, But, Or, Yet, So.",
+    usage: [
+      "To join words, phrases, or clauses of equal importance",
+      "Remember the acronym FANBOYS",
+      "Connects noun to noun, verb to verb, etc."
+    ],
+    examples: [
+      "I like tea and coffee.",
+      "He is poor but happy.",
+      "You can have cake or ice cream."
+    ]
+  },
+  {
+    id: 284,
+    title: "Comma with FANBOYS",
+    hinglish: "Jab FANBOYS do poore sentences (clauses) ko jodein, toh unse pehle comma lagayein.",
+    usage: [
+      "Use a comma before the conjunction when joining two complete sentences",
+      "Do not use a comma if connecting just two words",
+      "Connects two Independent Clauses"
+    ],
+    examples: [
+      "I wanted to go, but it rained.",
+      "She cooked dinner, and he washed the dishes.",
+      "I was tired, so I went to bed."
+    ]
+  },
+  {
+    id: 285,
+    title: "Subordinating Conjunctions",
+    hinglish: "Ye dependent clause ko main clause se jodte hain (because, if, although).",
+    usage: [
+      "To connect a dependent idea to a main idea",
+      "Shows cause, condition, or contrast",
+      "Makes one sentence dependent on the other"
+    ],
+    examples: [
+      "I stayed home because it rained.",
+      "If you study, you will pass.",
+      "Although he is old, he is strong."
+    ]
+  },
+  {
+    id: 286,
+    title: "Subordinating (Middle)",
+    hinglish: "Agar connector beech mein aaye (jaise because), toh comma mat lagayein.",
+    usage: [
+      "No comma needed if the dependent clause comes second",
+      "Main Clause + Conjunction + Dependent Clause",
+      "The flow is natural"
+    ],
+    examples: [
+      "She passed because she studied.",
+      "I will call you when I arrive.",
+      "He went out although it was raining."
+    ]
+  },
+  {
+    id: 287,
+    title: "Subordinating (Start)",
+    hinglish: "Agar sentence connector se shuru ho (jaise Because), toh beech mein comma lagayein.",
+    usage: [
+      "Comma is required if the sentence starts with the conjunction",
+      "Conjunction + Dependent Clause + Comma + Main Clause",
+      "Helps separate the ideas"
+    ],
+    examples: [
+      "Because she studied, she passed.",
+      "When I arrive, I will call you.",
+      "Although it was raining, he went out."
+    ]
+  },
+  {
+    id: 288,
+    title: "Correlative Conjunctions",
+    hinglish: "Ye pairs mein kaam karte hain: Either/or, Neither/nor, Not only/but also.",
+    usage: [
+      "Conjunctions that always work in pairs",
+      "Use them to connect balanced sentence parts",
+      "Both parts must be grammatically equal"
+    ],
+    examples: [
+      "You can either stay or go.",
+      "Neither Ram nor Shyam is here.",
+      "He is not only smart but also funny."
+    ]
+  },
+  {
+    id: 289,
+    title: "Parallelism with Correlatives",
+    hinglish: "Pair ke dono hisson ke baad same grammatical structure honi chahiye.",
+    usage: [
+      "Ensure grammatical balance after each part of the pair",
+      "If one part has a noun, the other must have a noun",
+      "If one part has a verb, the other must have a verb"
+    ],
+    examples: [
+      "She is not only intelligent but also kind. (Adj + Adj)",
+      "He neither drinks nor smokes. (Verb + Verb)",
+      "I want either the pizza or the burger. (Noun + Noun)"
+    ]
+  },
+  // VIII. Sentence Structure
+  {
+    id: 290,
+    title: "Sentence Fragments",
+    hinglish: "Adhura sentence jisme subject ya verb gayab ho. Ye galat hai.",
+    usage: [
+      "Avoid incomplete sentences",
+      "Ensure every sentence has a subject and a verb",
+      "Fragments leave the reader wondering 'What?'"
+    ],
+    examples: [
+      "Incorrect: Because I was tired.",
+      "Correct: I slept because I was tired.",
+      "Incorrect: Walking to the store."
+    ]
+  },
+  {
+    id: 291,
+    title: "Run-on Sentences",
+    hinglish: "Do poore sentences ko bina punctuation ke jodna galat hai.",
+    usage: [
+      "Avoid joining two independent clauses without punctuation",
+      "Separate them or use a conjunction",
+      "Makes reading difficult"
+    ],
+    examples: [
+      "Incorrect: I ran fast I won.",
+      "Correct: I ran fast, and I won.",
+      "Correct: I ran fast. I won."
+    ]
+  },
+  {
+    id: 292,
+    title: "Comma Splices",
+    hinglish: "Do poore sentences ko sirf comma se jodna galat hai. Period ya semicolon use karein.",
+    usage: [
+      "Do not connect independent clauses with ONLY a comma",
+      "Use a period, semicolon, or conjunction instead",
+      "Common error in writing"
+    ],
+    examples: [
+      "Incorrect: It is hot, I am sweating.",
+      "Correct: It is hot; I am sweating.",
+      "Correct: It is hot, so I am sweating."
+    ]
+  },
+  {
+    id: 293,
+    title: "Direct Object",
+    hinglish: "Wo cheez jis par action ka asar seedha padta hai.",
+    usage: [
+      "The noun receiving the action of the verb",
+      "Answers 'What?' or 'Whom?' after the verb",
+      "Follows transitive verbs"
+    ],
+    examples: [
+      "He hit the ball. (What did he hit? The ball)",
+      "I love music. (What do I love? Music)",
+      "She called him. (Whom did she call? Him)"
+    ]
+  },
+  {
+    id: 294,
+    title: "Indirect Object",
+    hinglish: "Wo insaan jiske liye action kiya gaya ho.",
+    usage: [
+      "The recipient of the direct object",
+      "Answers 'To whom?' or 'For whom?'",
+      "Comes before the direct object usually"
+    ],
+    examples: [
+      "He gave me a gift. (To whom? Me)",
+      "She bought him a car.",
+      "I told her the truth."
+    ]
+  },
+  {
+    id: 295,
+    title: "Subject Complement",
+    hinglish: "Linking verb ke baad wala word jo subject ko describe kare.",
+    usage: [
+      "Follows a linking verb (is, was, seems)",
+      "Describes or renames the subject",
+      "Can be a noun or adjective"
+    ],
+    examples: [
+      "He is a teacher. (Renames He)",
+      "The soup is hot. (Describes Soup)",
+      "She seems happy."
+    ]
+  },
+  {
+    id: 296,
+    title: "Simple Sentence",
+    hinglish: "Sirf ek independent clause (poora vichar).",
+    usage: [
+      "Contains one subject and one verb (or compound subject/verb)",
+      "Expresses a single complete thought",
+      "Short and direct"
+    ],
+    examples: [
+      "The dog barked.",
+      "I like pizza.",
+      "John and Mary play tennis."
+    ]
+  },
+  {
+    id: 297,
+    title: "Compound Sentence",
+    hinglish: "Do independent clauses jo 'and', 'but' ya semicolon se jude hon.",
+    usage: [
+      "Connects two complete thoughts of equal importance",
+      "Joined by FANBOYS or a semicolon",
+      "Avoids short, choppy sentences"
+    ],
+    examples: [
+      "I cooked, and he cleaned.",
+      "It rained, but we played.",
+      "He is smart; he solves problems easily."
+    ]
+  },
+  {
+    id: 298,
+    title: "Complex Sentence",
+    hinglish: "Ek independent clause aur ek dependent clause (jo akela nahi khada ho sakta).",
+    usage: [
+      "Combines a main idea with a supporting idea",
+      "Uses subordinating conjunctions (because, when, if)",
+      "Shows relationship between ideas"
+    ],
+    examples: [
+      "When I arrived, he left.",
+      "I will go if you come.",
+      "Since he was late, he missed the bus."
+    ]
+  },
+  {
+    id: 299,
+    title: "Compound-Complex Sentence",
+    hinglish: "Do independent clauses aur kam se kam ek dependent clause.",
+    usage: [
+      "A mix of compound and complex structures",
+      "Used for detailed or layered explanations",
+      "Longer sentences"
+    ],
+    examples: [
+      "I cooked because I was hungry, and he cleaned.",
+      "When the bell rang, the students left, and the teacher sighed.",
+      "If it rains, we will stay inside, but we will still have fun."
+    ]
+  },
+  {
+    id: 300,
+    title: "Parallel Structure",
+    hinglish: "List mein sabhi items ka format same hona chahiye (ing, ing, ing).",
+    usage: [
+      "Use consistent grammatical forms in lists",
+      "If you start with a verb, keep using verbs",
+      "Makes sentences easier to read"
+    ],
+    examples: [
+      "I like hiking, swimming, and running. (All -ing)",
+      "She woke up, ate breakfast, and left. (All past tense)",
+      "The movie was funny, exciting, and short. (All adjectives)"
+    ]
+  },
+  {
+    id: 301,
+    title: "Misplaced Modifiers",
+    hinglish: "Modifier (visheshta batane wala word) sahi jagah hona chahiye taaki meaning clear rahe.",
+    usage: [
+      "Place descriptions next to the word they describe",
+      "Prevent confusion about what is being described",
+      "Keep related words together"
+    ],
+    examples: [
+      "Wrong: She served sandwiches to the kids on paper plates.",
+      "Right: She served sandwiches on paper plates to the kids.",
+      "Wrong: He nearly drove the car for 6 hours. (Did he imply he didn't drive?)",
+    ]
+  },
+  {
+    id: 302,
+    title: "Dangling Modifiers",
+    hinglish: "Sentence ki shuruwat mein jo phrase ho, uska subject clear hona chahiye.",
+    usage: [
+      "Ensure the introductory phrase logically modifies the subject",
+      "The subject must perform the action in the intro phrase",
+      "Avoid ambiguity"
+    ],
+    examples: [
+      "Wrong: Walking down the street, the trees looked beautiful. (Trees can't walk)",
+      "Right: Walking down the street, I saw beautiful trees.",
+      "Wrong: Having finished the book, the TV was turned on."
+    ]
+  },
+  {
+    id: 303,
+    title: "Inversion",
+    hinglish: "Sawaal puchne ya zor dene ke liye Verb ko Subject se pehle lagana.",
+    usage: [
+      "Place the verb before the subject",
+      "Standard for questions",
+      "Optional for poetic emphasis"
+    ],
+    examples: [
+      "Never have I seen such a thing.",
+      "Rarely do we go there.",
+      "Are you coming?"
+    ]
+  },
+  // IX. Punctuation
+  {
+    id: 304,
+    title: "Commas in Lists",
+    hinglish: "Teen ya zyada cheezon ki list mein comma lagayein.",
+    usage: [
+      "Use commas to separate items in a series of three or more",
+      "Not needed for just two items",
+      "Separates nouns, verbs, or adjectives"
+    ],
+    examples: [
+      "I bought apples, bananas, and grapes.",
+      "He ran, jumped, and swam.",
+      "The flag is red, white, and blue."
+    ]
+  },
+  {
+    id: 305,
+    title: "Oxford Comma",
+    hinglish: "List mein 'and' se pehle wala comma. Ye optional hai par confusion bachata hai.",
+    usage: [
+      "The comma before the final 'and' in a list",
+      "Highly recommended to avoid ambiguity",
+      "Clarifies the last item"
+    ],
+    examples: [
+      "I love my parents, Kohli, and Dhoni.",
+      "I bought milk, eggs, and bread.",
+      "We invited the strippers, JFK, and Stalin. (Without comma, JFK and Stalin seem like strippers)"
+    ]
+  },
+  {
+    id: 306,
+    title: "Introductory Phrases",
+    hinglish: "Lambe introductory phrase ke baad comma lagayein.",
+    usage: [
+      "Use a comma after a long opening phrase",
+      "Signals where the main sentence begins",
+      "Pause for breath"
+    ],
+    examples: [
+      "After the movie, we went home.",
+      "In the middle of the night, I heard a noise.",
+      "To be honest, I don't like it."
+    ]
+  },
+  {
+    id: 307,
+    title: "Non-Essential Clauses",
+    hinglish: "Agar extra information de rahe hain jo zaroori nahi hai, toh comma lagayein.",
+    usage: [
+      "Use commas to set off information that can be removed",
+      "Acts like parentheses",
+      "Usually starts with 'which' or 'who'"
+    ],
+    examples: [
+      "My mom, who is a nurse, is kind.",
+      "Delhi, which is the capital, is crowded.",
+      "The car, painted red, is mine."
+    ]
+  },
+  {
+    id: 308,
+    title: "Essential Clauses",
+    hinglish: "Agar information zaroori hai (kaunsa wala?), toh comma mat lagayein.",
+    usage: [
+      "Do NOT use commas if the information defines the noun",
+      "Needed to identify exactly who/what is being discussed",
+      "Usually starts with 'that'"
+    ],
+    examples: [
+      "The woman who is a nurse is kind.",
+      "The car that I bought is fast.",
+      "Students who study hard will pass."
+    ]
+  },
+  {
+    id: 309,
+    title: "Direct Address",
+    hinglish: "Jab kisi ko naam lekar bulayein, toh comma use karein.",
+    usage: [
+      "Use commas when speaking directly to someone",
+      "Separates the name from the rest of the sentence",
+      "Can be at start, middle, or end"
+    ],
+    examples: [
+      "John, come here.",
+      "I am sorry, Rahul.",
+      "Listen, everyone, to what I say."
+    ]
+  },
+  {
+    id: 310,
+    title: "Date Punctuation",
+    hinglish: "Day aur Year ke beech comma lagta hai.",
+    usage: [
+      "Use a comma to separate the day from the year",
+      "Also use a comma after the year if the sentence continues",
+      "Format: Month Day, Year"
+    ],
+    examples: [
+      "May 1, 2023",
+      "I was born on July 20, 1995.",
+      "On January 1, 2024, we celebrated."
+    ]
+  },
+  {
+    id: 311,
+    title: "Location Punctuation",
+    hinglish: "City aur State/Country ke beech comma lagta hai.",
+    usage: [
+      "Use a comma to separate city from state or country",
+      "Standard address format",
+      "Use comma after the state if sentence continues"
+    ],
+    examples: [
+      "Paris, France",
+      "I live in Indore, Madhya Pradesh.",
+      "He visited London, UK, last year."
+    ]
+  },
+  {
+    id: 312,
+    title: "Quote Introduction",
+    hinglish: "Quote shuru karne se pehle comma lagayein.",
+    usage: [
+      "Use a comma after a speech tag (said, asked)",
+      "Introduces the direct dialogue",
+      "Separates speaker from speech"
+    ],
+    examples: [
+      "He said, 'Hello'.",
+      "She asked, 'Where are you going?'",
+      "They shouted, 'Stop!'"
+    ]
+  },
+  {
+    id: 313,
+    title: "Semicolon (Join Clauses)",
+    hinglish: "Do related sentences ko bina 'and/but' ke jodne ke liye semicolon (;) use karein.",
+    usage: [
+      "Connects two independent clauses without a conjunction",
+      "Shows a close relationship between the ideas",
+      "Replaces a period"
+    ],
+    examples: [
+      "I have a big test tomorrow; I can't go out.",
+      "It is cold outside; put on a coat.",
+      "He loves cooking; she loves eating."
+    ]
+  },
+  {
+    id: 314,
+    title: "Semicolon (Conjunctive Adverbs)",
+    hinglish: "Jab 'However' ya 'Therefore' se do sentence judein, toh unse pehle semicolon lagta hai.",
+    usage: [
+      "Use before words like 'however', 'therefore' when connecting sentences",
+      "Follow with a comma",
+      "Stronger than a comma, weaker than a period"
+    ],
+    examples: [
+      "It rained; however, we played.",
+      "I am tired; therefore, I am going to bed.",
+      "He studied hard; consequently, he passed."
+    ]
+  },
+  {
+    id: 315,
+    title: "Semicolon (Complex Lists)",
+    hinglish: "Agar list ke items mein pehle se comma hai, toh unhe alag karne ke liye semicolon use karein.",
+    usage: [
+      "Use as a 'super comma' in lists containing internal commas",
+      "Prevents confusion about where one item ends and the next begins",
+      "Clarifies grouping"
+    ],
+    examples: [
+      "We visited Paris, France; London, UK; and Rome, Italy.",
+      "I invited my mom, a nurse; my dad, a teacher; and my sister.",
+      "The dates are May 1, 2020; June 5, 2021; and July 10, 2022."
+    ]
+  },
+  {
+    id: 316,
+    title: "Colon (Lists)",
+    hinglish: "Kisi list ko introduce karne ke liye Colon (:) use karein, lekin poore sentence ke baad.",
+    usage: [
+      "Use to introduce a list after a complete sentence",
+      "Do not use after 'including' or 'such as'",
+      "Signals 'here comes the list'"
+    ],
+    examples: [
+      "I need three things: eggs, milk, and bread.",
+      "Please bring the following: a pen, a paper, and a ruler.",
+      "He has many hobbies: reading, hiking, and swimming."
+    ]
+  },
+  {
+    id: 317,
+    title: "Colon (Explanation)",
+    hinglish: "Kisi baat ki explanation ya definition dene ke liye colon use karein.",
+    usage: [
+      "Use to introduce a clause that explains the first",
+      "Acts like an equals sign (=) between ideas",
+      "Emphasizes the second part"
+    ],
+    examples: [
+      "He has one goal: to win the race.",
+      "The rule is simple: be kind.",
+      "I have a problem: I lost my keys."
+    ]
+  },
+  {
+    id: 318,
+    title: "Colon (Time/Ratio)",
+    hinglish: "Waqt (Time) aur anupaat (Ratio) dikhane ke liye colon use hota hai.",
+    usage: [
+      "Separates hours from minutes",
+      "Expresses ratios in math",
+      "Formal way to write time"
+    ],
+    examples: [
+      "The meeting is at 12:30 PM.",
+      "The ratio of boys to girls is 2:1.",
+      "It happened at 5:00 AM."
+    ]
+  },
+  {
+    id: 319,
+    title: "Apostrophe (Contractions)",
+    hinglish: "Jab do words ko jodte hain aur kuch letters hata dete hain, toh wahan apostrophe (') lagta hai.",
+    usage: [
+      "Shows where letters have been omitted",
+      "Forms words like can't, don't, it's",
+      "Makes speech informal"
+    ],
+    examples: [
+      "cannot -> can't",
+      "do not -> don't",
+      "it is -> it's"
+    ]
+  },
+  {
+    id: 320,
+    title: "Apostrophe (Singular Possession)",
+    hinglish: "Ek insaan ya cheez ka adhikaar dikhane ke liye 's lagayein.",
+    usage: [
+      "Add 's to singular nouns to show ownership",
+      "Even if the name ends in s (optional)",
+      "Shows belonging"
+    ],
+    examples: [
+      "The boy's bag is heavy.",
+      "James's car is new.",
+      "The cat's toy is under the sofa."
+    ]
+  },
+  {
+    id: 321,
+    title: "Apostrophe (Plural ending in s)",
+    hinglish: "Agar plural word 's' par khatam ho raha hai, toh sirf apostrophe (') lagayein, dobara 's' nahi.",
+    usage: [
+      "For plural nouns ending in s",
+      "Place apostrophe AFTER the s",
+      "Do not add another s"
+    ],
+    examples: [
+      "The boys' school is nearby.",
+      "The teachers' room is closed.",
+      "My parents' car is blue."
+    ]
+  },
+  {
+    id: 322,
+    title: "Apostrophe (Irregular Plural)",
+    hinglish: "Agar plural word 's' par khatam nahi hota, toh 's lagayein.",
+    usage: [
+      "For plural nouns NOT ending in s",
+      "Add 's just like a singular noun",
+      "Treat word as a base"
+    ],
+    examples: [
+      "The children's park is fun.",
+      "He supports women's rights.",
+      "The men's team won."
+    ]
+  },
+  {
+    id: 323,
+    title: "No Apostrophe for Simple Plurals",
+    hinglish: "Sirf plural banane ke liye apostrophe mat lagayein. Ye bahut common galti hai.",
+    usage: [
+      "Never use an apostrophe to make a word plural",
+      "Only use for possession or contractions",
+      "Common mistake with years or names"
+    ],
+    examples: [
+      "Correct: I have two apples.",
+      "Incorrect: I have two apple's.",
+      "Correct: The 1990s were fun."
+    ]
+  },
+  {
+    id: 324,
+    title: "Shared Possession",
+    hinglish: "Agar do log ek hi cheez ke owner hain, toh sirf last wale naam ke saath 's lagayein.",
+    usage: [
+      "When two people own the same item together",
+      "Add 's only to the second name",
+      "Treat the pair as one unit"
+    ],
+    examples: [
+      "Rahul and Anjali's wedding.",
+      "Tom and Jerry's house.",
+      "Mom and Dad's car."
+    ]
+  },
+  {
+    id: 325,
+    title: "Separate Possession",
+    hinglish: "Agar do logon ki alag-alag cheezein hain, toh dono ke naam ke saath 's lagayein.",
+    usage: [
+      "When two people own separate items",
+      "Add 's to BOTH names",
+      "Implies two distinct things"
+    ],
+    examples: [
+      "Rahul's and Anjali's cars (Two cars).",
+      "Ben's and Jerry's ice creams (Two separate cones).",
+      "The cat's and the dog's beds."
+    ]
+  },
+  {
+    id: 326,
+    title: "Quotation Marks (Direct Speech)",
+    hinglish: "Kisi ke bole gaye exact words ko dikhane ke liye quotes use karein.",
+    usage: [
+      "To enclose the exact words spoken by someone",
+      "Open and close the quote carefully",
+      "Signals dialogue"
+    ],
+    examples: [
+      "She said, \"I am happy.\"",
+      "\"Stop!\" he shouted.",
+      "He asked, \"What time is it?\""
+    ]
+  },
+  {
+    id: 327,
+    title: "Punctuation inside Quotes",
+    hinglish: "Comma aur Period usually quotation marks ke andar aate hain.",
+    usage: [
+      "Place periods and commas INSIDE closing quotes",
+      "Standard American English rule",
+      "Colons and semicolons go outside"
+    ],
+    examples: [
+      "\"Hello,\" he said.",
+      "\"I am going home.\"",
+      "She said, \"It is raining,\" but she went out."
+    ]
+  },
+  {
+    id: 328,
+    title: "Titles in Quotes",
+    hinglish: "Choti rachnaon (poems, songs, articles) ke titles ko quotes mein likhein.",
+    usage: [
+      "Use quotes for short works like songs, poems, or episodes",
+      "Use italics for long works like books or movies",
+      "Distinguishes between part and whole"
+    ],
+    examples: [
+      "The song \"Imagine\" is famous.",
+      "I read the poem \"The Road Not Taken\".",
+      "The article \"How to Cook\" was helpful."
+    ]
+  },
+  {
+    id: 329,
+    title: "Scare Quotes",
+    hinglish: "Jab aap kisi word ko irony ya sarcasm ke liye use kar rahe hon.",
+    usage: [
+      "To show that a word is being used ironically",
+      "Implies 'so-called'",
+      "Indicates doubt about the word"
+    ],
+    examples: [
+      "He is a \"genius\" at failing.",
+      "Your \"friend\" told me everything.",
+      "This is my \"clean\" room."
+    ]
+  },
+  {
+    id: 330,
+    title: "Single Quotes",
+    hinglish: "Agar quote ke andar ek aur quote aa jaye, toh single quotes (' ') use karein.",
+    usage: [
+      "Use for a quote within a quote",
+      "Main quote uses double, inner quote uses single",
+      "Nested dialogue"
+    ],
+    examples: [
+      "He said, \"Bob told me 'No way' yesterday.\"",
+      "She asked, \"Did you hear him say 'Hello'?\"",
+      "The teacher said, \"Read the poem 'Trees' for homework.\""
+    ]
+  },
+  {
+    id: 331,
+    title: "Hyphen (-)",
+    hinglish: "Compound words ya numbers ko jodne ke liye choti line (-) use karein.",
+    usage: [
+      "Join words into a single concept (compound adjectives)",
+      "Use in numbers twenty-one to ninety-nine",
+      "Connects prefixes sometimes"
+    ],
+    examples: [
+      "She is my mother-in-law.",
+      "He is twenty-one years old.",
+      "It was a high-speed chase."
+    ]
+  },
+  {
+    id: 332,
+    title: "Em Dash (—)",
+    hinglish: "Ye hyphen se lambi line hoti hai. Iska use break ya emphasis dene ke liye hota hai.",
+    usage: [
+      "Use to indicate a sudden break in thought",
+      "Use to emphasize the phrase at the end",
+      "Replaces commas, parentheses, or colons"
+    ],
+    examples: [
+      "She gave him her answer — No.",
+      "My friends — Rahul and Amit — are here.",
+      "I need one thing — money."
+    ]
+  },
+  {
+    id: 333,
+    title: "En Dash (–)",
+    hinglish: "Ye range batane ke liye use hota hai (numbers ya dates ke beech).",
+    usage: [
+      "Use to represent 'through' or 'to' in ranges",
+      "Connects dates and numbers",
+      "Longer than hyphen, shorter than em dash"
+    ],
+    examples: [
+      "Read pages 10–20.",
+      "The war lasted from 1990–1995.",
+      "The Delhi–Mumbai flight is full."
+    ]
+  },
+  {
+    id: 334,
+    title: "Parentheses ( )",
+    hinglish: "Extra information dene ke liye brackets use karein jo sentence ke liye zaroori nahi hai.",
+    usage: [
+      "Enclose non-essential or side information",
+      "Sentence must remain complete if removed",
+      "Adds detail or clarification"
+    ],
+    examples: [
+      "I visited Delhi (my hometown) last week.",
+      "He gave me fifty dollars ($50).",
+      "The car (a red Ferrari) was fast."
+    ]
+  },
+  {
+    id: 335,
+    title: "Brackets [ ]",
+    hinglish: "Quote ke andar agar aap kuch badlav karte hain, toh [ ] use karein.",
+    usage: [
+      "Use to add clarification within a quote",
+      "Shows that the words are yours, not the original speaker's",
+      "Corrects grammar in quotes"
+    ],
+    examples: [
+      "He said, \"I [will] go there.\"",
+      "The witness stated, \"He [the defendant] was there.\"",
+      "She said, \"It [the car] is mine.\""
+    ]
+  },
+  {
+    id: 336,
+    title: "Ellipsis (...)",
+    hinglish: "Agar sentence mein se kuch words gayab karne hon ya pause dikhana ho.",
+    usage: [
+      "Indicates omitted words from a quote",
+      "Indicates a trailing off or pause in thought",
+      "Creates suspense"
+    ],
+    examples: [
+      "I was thinking... maybe not.",
+      "He said, \"I have a dream...\"",
+      "To be continued..."
+    ]
+  },
+  // X. Capitalization
+  {
+    id: 337,
+    title: "Sentence Start",
+    hinglish: "Har sentence ka pehla letter hamesha Capital hota hai.",
+    usage: [
+      "Always capitalize the first word of a sentence",
+      "Standard rule for all sentences",
+      "Signals a new thought"
+    ],
+    examples: [
+      "The sky is blue.",
+      "Walking is good exercise.",
+      "Where are you going?"
+    ]
+  },
+  {
+    id: 338,
+    title: "Pronoun 'I'",
+    hinglish: "'I' (Main) hamesha capital hota hai, chahe wo sentence ke beech mein kyun na ho.",
+    usage: [
+      "Always capitalize the pronoun 'I'",
+      "Even if it appears in the middle of a sentence",
+      "It represents a proper noun (yourself)"
+    ],
+    examples: [
+      "Am I late?",
+      "You and I are friends.",
+      "She knows that I am here."
+    ]
+  },
+  {
+    id: 339,
+    title: "Days and Months",
+    hinglish: "Days (Monday) aur Months (January) hamesha capital hote hain.",
+    usage: [
+      "Capitalize days of the week",
+      "Capitalize months of the year",
+      "Do not capitalize generic 'day' or 'month'"
+    ],
+    examples: [
+      "See you on Friday.",
+      "My birthday is in May.",
+      "We meet every Monday."
+    ]
+  },
+  {
+    id: 340,
+    title: "Seasons (No Caps)",
+    hinglish: "Mausam ke naam (summer, winter) usually capital nahi hote.",
+    usage: [
+      "Do NOT capitalize seasons (spring, summer, fall, winter)",
+      "Unless part of a proper noun title",
+      "Considered generic terms"
+    ],
+    examples: [
+      "I love summer.",
+      "Winter is coming.",
+      "We plant flowers in spring."
+    ]
+  },
+  {
+    id: 341,
+    title: "Titles of Works (Caps)",
+    hinglish: "Books/Movies ke titles mein sabhi main words capital hote hain.",
+    usage: [
+      "Capitalize the first word and all major words",
+      "Do not capitalize small words (a, an, the, of) unless first",
+      "Applies to headlines too"
+    ],
+    examples: [
+      "Harry Potter and the Goblet of Fire",
+      "The Catcher in the Rye",
+      "Star Wars: A New Hope"
+    ]
+  },
+  {
+    id: 342,
+    title: "Titles of People",
+    hinglish: "Jab title naam ke saath ho (President Lincoln) toh capital karein, jab akela ho (the president) toh nahi.",
+    usage: [
+      "Capitalize titles when used before a name",
+      "Lowercase titles when used generally",
+      "Specific vs General"
+    ],
+    examples: [
+      "Doctor Sharma treated me.",
+      "I saw the doctor yesterday.",
+      "President Modi gave a speech."
+    ]
+  },
+  {
+    id: 343,
+    title: "Directions vs Regions",
+    hinglish: "Dishayein (north, south) small rehti hain, par agar wo kisi region ka naam hon (the South) toh capital hoti hain.",
+    usage: [
+      "Lowercase for compass directions",
+      "Capitalize for specific geographic regions",
+      "Regions are Proper Nouns"
+    ],
+    examples: [
+      "Turn north at the junction.",
+      "He lives in the South (USA).",
+      "The wind blew from the west."
+    ]
+  },
+  {
+    id: 344,
+    title: "Languages/Nationalities",
+    hinglish: "Bhashayein aur rashtriyata hamesha capital hoti hain.",
+    usage: [
+      "Always capitalize languages",
+      "Always capitalize nationalities and races",
+      "Derived from proper nouns"
+    ],
+    examples: [
+      "I speak English.",
+      "He is Indian.",
+      "We ate Spanish food."
+    ]
+  },
+  {
+    id: 345,
+    title: "Family Relations",
+    hinglish: "'Mom/Dad' tab capital karein jab aap unhe naam ki tarah bula rahe hon. Agar 'my' laga hai, toh small rakhein.",
+    usage: [
+      "Capitalize when used as a proper name",
+      "Lowercase when preceded by a possessive (my, his)",
+      "Test: Replace with a name (Sally)"
+    ],
+    examples: [
+      "Hi Mom, how are you?",
+      "This is my mom.",
+      "I asked Dad for money."
+    ]
+  },
+  {
+    id: 346,
+    title: "Deities",
+    hinglish: "Bhagwan ke naam aur unke liye use hone wale words capital hote hain.",
+    usage: [
+      "Capitalize names of gods and religious figures",
+      "Capitalize holy books",
+      "Shows respect"
+    ],
+    examples: [
+      "He prayed to God.",
+      "Lord Shiva is worshipped.",
+      "She reads the Bible."
+    ]
+  },
+  {
+    id: 347,
+    title: "Brand Names",
+    hinglish: "Companies aur brands ke naam hamesha capital hote hain.",
+    usage: [
+      "Always capitalize trademarked names",
+      "Respect the brand's specific capitalization",
+      "They are Proper Nouns"
+    ],
+    examples: [
+      "I drink Pepsi.",
+      "He wears Nike shoes.",
+      "I drive a Tata car."
+    ]
+  },
+  // XI. Common Confusions
+  {
+    id: 348,
+    title: "Their vs There vs They're",
+    hinglish: "Their (Unka), There (Wahan), They're (Wo hain).",
+    usage: [
+      "Their: Possessive form (belongs to them)",
+      "There: Place or location",
+      "They're: Contraction of 'They are'"
+    ],
+    examples: [
+      "It is their house.",
+      "Go over there.",
+      "They're playing football."
+    ]
+  },
+  {
+    id: 349,
+    title: "Your vs You're",
+    hinglish: "Your (Tumhara), You're (Tum ho).",
+    usage: [
+      "Your: Possessive form (belongs to you)",
+      "You're: Contraction of 'You are'",
+      "Common typing error"
+    ],
+    examples: [
+      "Is this your car?",
+      "You're a good friend.",
+      "Your dog is cute."
+    ]
+  },
+  {
+    id: 350,
+    title: "To vs Too vs Two",
+    hinglish: "To (Direction/Verb), Too (Bhi/Zyada), Two (Do - number).",
+    usage: [
+      "To: Preposition or infinitive marker",
+      "Too: Also or excessive amount",
+      "Two: The number 2"
+    ],
+    examples: [
+      "Go to bed.",
+      "I want to go too.",
+      "I have two cats."
+    ]
+  },
+  {
+    id: 351,
+    title: "Then vs Than",
+    hinglish: "Then (Tab/Fir - Time), Than (Se - Comparison).",
+    usage: [
+      "Then: Relates to time or sequence",
+      "Than: Used for comparisons",
+      "Time vs Comparison"
+    ],
+    examples: [
+      "I ate, then I slept.",
+      "She is taller than me.",
+      "I would rather walk than run."
+    ]
+  },
+  {
+    id: 352,
+    title: "Affect vs Effect",
+    hinglish: "Affect (Verb - asar karna), Effect (Noun - parinaam/asar).",
+    usage: [
+      "Affect: Verb meaning to influence",
+      "Effect: Noun meaning result",
+      "Remember: A for Action (Verb)"
+    ],
+    examples: [
+      "The rain affected the match.",
+      "The effect of the medicine was good.",
+      "How does this affect you?"
+    ]
+  },
+  {
+    id: 353,
+    title: "Loose vs Lose",
+    hinglish: "Loose (Dheela), Lose (Khona/Haarna).",
+    usage: [
+      "Loose: Adjective (not tight)",
+      "Lose: Verb (to misplace or fail)",
+      "Pronunciation is different (Loose=s, Lose=z)"
+    ],
+    examples: [
+      "My pants are loose.",
+      "Don't lose your keys.",
+      "We might lose the game."
+    ]
+  },
+  {
+    id: 354,
+    title: "Principal vs Principle",
+    hinglish: "Principal (Head/Main), Principle (Siddhant/Rule).",
+    usage: [
+      "Principal: School head or main person (Pal = Friend)",
+      "Principle: A fundamental truth or rule",
+      "Principal can be an adjective (main)"
+    ],
+    examples: [
+      "The school Principal is strict.",
+      "He follows his principles.",
+      "My principal reason is money."
+    ]
+  },
+  {
+    id: 355,
+    title: "Stationary vs Stationery",
+    hinglish: "Stationary (Ruka hua - 'ary' like park), Stationery (Pen/Paper - 'ery' like letter).",
+    usage: [
+      "Stationary: Not moving",
+      "Stationery: Writing materials",
+      "Remember: E for Envelope"
+    ],
+    examples: [
+      "The car was stationary.",
+      "I need to buy stationery.",
+      "The stationary bike is in the gym."
+    ]
+  },
+  {
+    id: 356,
+    title: "Compliment vs Complement",
+    hinglish: "Compliment (Taareef), Complement (Jo kisi cheez ko poora kare).",
+    usage: [
+      "Compliment: To give praise",
+      "Complement: To complete or go well with",
+      "Remember: I give compliments"
+    ],
+    examples: [
+      "He gave me a nice compliment.",
+      "The shoes complement the dress.",
+      "They complement each other perfectly."
+    ]
+  },
+  {
+    id: 357,
+    title: "Lay vs Lie",
+    hinglish: "Lay (Kuch rakhna - object chahiye), Lie (Letna - object nahi chahiye).",
+    usage: [
+      "Lay: To put something down (requires object)",
+      "Lie: To rest or recline (no object)",
+      "Past tenses are confusing (Lay -> Laid, Lie -> Lay)"
+    ],
+    examples: [
+      "Lay the book on the table.",
+      "I need to lie down.",
+      "Please lay the baby in the crib."
+    ]
+  },
+  {
+    id: 358,
+    title: "Fewer vs Less",
+    hinglish: "Fewer gine jane wali cheezon ke liye (Countable), Less matra ke liye (Uncountable).",
+    usage: [
+      "Fewer: Used with countable nouns",
+      "Less: Used with uncountable nouns",
+      "Commonly misused in supermarkets"
+    ],
+    examples: [
+      "I have fewer apples than you.",
+      "I have less water than you.",
+      "There are fewer people today."
+    ]
+  },
+  {
+    id: 359,
+    title: "Amount vs Number",
+    hinglish: "Amount uncountables ke liye, Number countables ke liye.",
+    usage: [
+      "Amount: Used for mass quantities",
+      "Number: Used for countable items",
+      "Similar to Less vs Fewer"
+    ],
+    examples: [
+      "A large amount of sand.",
+      "A large number of people.",
+      "The amount of work is huge."
+    ]
+  },
+  {
+    id: 360,
+    title: "Breath vs Breathe",
+    hinglish: "Breath (Saans - Noun), Breathe (Saans lena - Verb).",
+    usage: [
+      "Breath: Noun (the air inhaled)",
+      "Breathe: Verb (the action)",
+      "Rhymes with: Breath-Death, Breathe-Seethe"
+    ],
+    examples: [
+      "Take a deep breath.",
+      "I cannot breathe.",
+      "His breath smells like mint."
+    ]
+  },
+  {
+    id: 361,
+    title: "Advice vs Advise",
+    hinglish: "Advice (Salaah - Noun), Advise (Salaah dena - Verb). 'C' wala noun, 'S' wala verb.",
+    usage: [
+      "Advice: Noun (opinion given)",
+      "Advise: Verb (to give an opinion)",
+      "Pronunciation: Advice (Ice), Advise (Eyes)"
+    ],
+    examples: [
+      "He gave me good advice.",
+      "Please advise me on what to do.",
+      "I need your advice."
+    ]
+  },
+  {
+    id: 362,
+    title: "Farther vs Further",
+    hinglish: "Farther physical doori ke liye, Further aage ki baat ya additional cheez ke liye.",
+    usage: [
+      "Farther: Physical distance",
+      "Further: Metaphorical distance or 'more'",
+      "Think: Far = Distance"
+    ],
+    examples: [
+      "He ran farther than me.",
+      "We will discuss this further.",
+      "I have no further questions."
+    ]
+  },
+  {
+    id: 363,
+    title: "i.e. vs e.g.",
+    hinglish: "i.e. (Matlab/Yaani - In other words), e.g. (Jaise ki - For example).",
+    usage: [
+      "i.e.: Restating the idea (that is)",
+      "e.g.: Giving examples",
+      "Latin: id est vs exempli gratia"
+    ],
+    examples: [
+      "I like citrus fruits, e.g., lemons and oranges.",
+      "The best team, i.e., India, won.",
+      "Use social media, e.g., Facebook or Twitter."
+    ]
+  },
+  {
+    id: 364,
+    title: "Accept vs Except",
+    hinglish: "Accept (Sweekar karna), Except (Iske alawa).",
+    usage: [
+      "Accept: To receive willingly",
+      "Except: Excluding",
+      "Common mix-up"
+    ],
+    examples: [
+      "Please accept my gift.",
+      "Everyone went except me.",
+      "I accept your apology."
+    ]
+  },
+  {
+    id: 365,
+    title: "Capital vs Capitol",
+    hinglish: "Capital (Rajdhani/Paisa/Uppercase), Capitol (Sarkari imarat usually US mein).",
+    usage: [
+      "Capital: City, wealth, or uppercase letter",
+      "Capitol: A specific legislative building",
+      "Capitol usually refers to US buildings"
+    ],
+    examples: [
+      "Delhi is the capital of India.",
+      "The Capitol building is in Washington.",
+      "Use a capital letter."
+    ]
+  },
+  // XII. Conditional Sentences (If Clauses)
+  {
+    id: 366,
+    title: "Zero Conditional",
+    hinglish: "Sachayi ya scientific facts batane ke liye. (If + Present, Present)",
+    usage: [
+      "General truths and facts",
+      "Scientific laws",
+      "Habits that always happen under certain conditions"
+    ],
+    examples: [
+      "If you heat ice, it melts.",
+      "If I eat peanuts, I get sick.",
+      "When the sun sets, it gets dark."
+    ]
+  },
+  {
+    id: 367,
+    title: "First Conditional",
+    hinglish: "Future mein hone wali sambhavna. (If + Present, Will + Verb)",
+    usage: [
+      "Real possibilities in the future",
+      "Warnings or threats",
+      "Promises or offers"
+    ],
+    examples: [
+      "If it rains, I will stay home.",
+      "If you study hard, you will pass.",
+      "I will buy a car if I save enough money."
+    ]
+  },
+  {
+    id: 368,
+    title: "Second Conditional",
+    hinglish: "Imaginary situation abhi ke liye. (If + Past, Would + Verb)",
+    usage: [
+      "Hypothetical or unreal situations in the present",
+      "Dreams or wishes",
+      "Giving advice (If I were you)"
+    ],
+    examples: [
+      "If I won the lottery, I would travel the world.",
+      "If I were you, I would accept the job.",
+      "She would come if she had time."
+    ]
+  },
+  {
+    id: 369,
+    title: "Third Conditional",
+    hinglish: "Past ka pachtava (Regret). (If + Past Perfect, Would Have + V3)",
+    usage: [
+      "Regrets about the past",
+      "Impossible past situations (cannot be changed)",
+      "Imagining a different past outcome"
+    ],
+    examples: [
+      "If I had studied, I would have passed.",
+      "I would have called if I had known you were sick.",
+      "They would have won if they had played better."
+    ]
+  },
+  {
+    id: 370,
+    title: "Mixed Conditional",
+    hinglish: "Past ka asar abhi present par. (If + Past Perfect, Would + Verb)",
+    usage: [
+      "Past cause with a present result",
+      "Ongoing consequences of a past action",
+      "Imaginary past leading to imaginary present"
+    ],
+    examples: [
+      "If I had eaten breakfast, I would not be hungry now.",
+      "If she had taken the job, she would be living in London today.",
+      "I would be happy if I had won the match yesterday."
+    ]
+  },
+  // XIII. Reported Speech (Indirect Speech)
+  {
+    id: 371,
+    title: "Reported Speech: Tense Shift",
+    hinglish: "Direct se Indirect banate waqt usually tense ek step peeche jata hai.",
+    usage: [
+      "Present Simple -> Past Simple",
+      "Past Simple -> Past Perfect",
+      "Will -> Would"
+    ],
+    examples: [
+      "He said, 'I am busy' -> He said he was busy.",
+      "She said, 'I ate' -> She said she had eaten.",
+      "They said, 'We will go' -> They said they would go."
+    ]
+  },
+  {
+    id: 372,
+    title: "Reported Speech: Pronoun Shift",
+    hinglish: "Pronouns ko speaker ke hisaab se badalna padta hai.",
+    usage: [
+      "Change 'I' to 'he/she'",
+      "Change 'my' to 'his/her'",
+      "Match the perspective of the reporter"
+    ],
+    examples: [
+      "He said, 'I like my car' -> He said he liked his car.",
+      "She told me, 'You are late' -> She told me I was late.",
+      "They said, 'It is ours' -> They said it was theirs."
+    ]
+  },
+  {
+    id: 373,
+    title: "Reported Speech: Time/Place",
+    hinglish: "Time aur Place words bhi badal jate hain (Here -> There, Now -> Then).",
+    usage: [
+      "Distancing from the original moment",
+      "Today -> That day",
+      "Tomorrow -> The next day"
+    ],
+    examples: [
+      "He said, 'I am here' -> He said he was there.",
+      "She said, 'I am leaving now' -> She said she was leaving then.",
+      "He said, 'I will come tomorrow' -> He said he would come the next day."
+    ]
+  },
+  {
+    id: 374,
+    title: "Reported Speech: Questions",
+    hinglish: "Sawal ko statement bana dete hain. 'If' ya 'Whether' use karte hain agar Yes/No question ho.",
+    usage: [
+      "Remove the question mark",
+      "Change word order (Verb-Subject -> Subject-Verb)",
+      "Use 'if' for Yes/No questions"
+    ],
+    examples: [
+      "He asked, 'Are you happy?' -> He asked if I was happy.",
+      "She asked, 'Where is he?' -> She asked where he was.",
+      "They asked, 'Can we go?' -> They asked whether they could go."
+    ]
+  },
+  {
+    id: 375,
+    title: "Reported Speech: Imperatives",
+    hinglish: "Order ya Request ko 'to + verb' mein badal dete hain.",
+    usage: [
+      "Reporting commands (told to)",
+      "Reporting requests (asked to)",
+      "Reporting advice (advised to)"
+    ],
+    examples: [
+      "He said, 'Sit down' -> He told me to sit down.",
+      "She said, 'Don't go' -> She warned me not to go.",
+      "The doctor said, 'Eat healthy' -> The doctor advised me to eat healthy."
+    ]
+  },
+  // XIV. Numbers
+  {
+    id: 376,
+    title: "Numbers 0-9",
+    hinglish: "Zero se Nine tak ke numbers ko words mein likhein.",
+    usage: [
+      "Standard rule for formal writing",
+      "Used for small quantities in text",
+      "Avoids visual clutter"
+    ],
+    examples: [
+      "I have two brothers.",
+      "She bought nine apples.",
+      "There are five cars in the lot."
+    ]
+  },
+  {
+    id: 377,
+    title: "Numbers 10+",
+    hinglish: "10 ya usse bade numbers ko digits mein likhein.",
+    usage: [
+      "For larger quantities",
+      "Easier to read than spelled-out words",
+      "Standard for most non-fiction"
+    ],
+    examples: [
+      "I have 15 books.",
+      "There were 100 people at the event.",
+      "The distance is 25 miles."
+    ]
+  },
+  {
+    id: 378,
+    title: "Number at Sentence Start",
+    hinglish: "Sentence ki shuruwat kabhi number (digit) se na karein, spell karein.",
+    usage: [
+      "Never start a sentence with a numeral (e.g., '20')",
+      "Spell it out or rephrase the sentence",
+      "Capitalization rule applies"
+    ],
+    examples: [
+      "Twenty people came to the party. (Not '20 people...')",
+      "One hundred days passed.",
+      "Fifty dollars is enough for lunch."
+    ]
+  },
+  {
+    id: 379,
+    title: "Dates and Money",
+    hinglish: "Dates aur Paise usually numbers mein likhe jate hain.",
+    usage: [
+      "Currency figures",
+      "Calendar dates and years",
+      "Exact measurements"
+    ],
+    examples: [
+      "It cost $5.",
+      "The date is May 1, 2023.",
+      "He paid 500 rupees."
+    ]
+  },
+  {
+    id: 380,
+    title: "Consistency in Numbers",
+    hinglish: "Ek sentence mein numbers ka style same rakhein (ya toh sab words, ya sab digits).",
+    usage: [
+      "If comparing numbers, treat them alike",
+      "Overrides the 0-9 rule if mixed with larger numbers",
+      "Maintains visual balance"
+    ],
+    examples: [
+      "I have 5 apples and 12 bananas. (Both digits)",
+      "He is 10 years old, and she is 12.",
+      "We bought two pens and ten pencils."
+    ]
+  },
+  // XV. Stylistic Rules
+  {
+    id: 381,
+    title: "Clarity",
+    hinglish: "Grammar ka main maqsad baat ko saaf tareeke se kehna hai.",
+    usage: [
+      "Avoid ambiguity",
+      "Ensure the reader understands the first time",
+      "Direct meaning is better than fancy words"
+    ],
+    examples: [
+      "Clear: The dog bit the man.",
+      "Unclear: The man was bitten by it.",
+      "Ambiguous: She saw the man with the telescope."
+    ]
+  },
+  {
+    id: 382,
+    title: "Brevity",
+    hinglish: "Bekar ke words hata dein. Baat ko short aur simple rakhein.",
+    usage: [
+      "Omit needless words",
+      "Concise writing is stronger",
+      "Avoid fluff phrases (due to the fact that)"
+    ],
+    examples: [
+      "Wordy: Due to the fact that I was tired...",
+      "Concise: Because I was tired...",
+      "Wordy: In the event that it rains...",
+      "Concise: If it rains..."
+    ]
+  },
+  {
+    id: 383,
+    title: "Active Voice (Style)",
+    hinglish: "Active voice usually passive se behtar aur strong hota hai.",
+    usage: [
+      "Makes sentences stronger",
+      "clearly identifies the 'doer'",
+      "Use passive only when the 'doer' is unknown or unimportant"
+    ],
+    examples: [
+      "Strong: I broke the vase.",
+      "Weak: The vase was broken by me.",
+      "Direct: She leads the team."
+    ]
+  },
+  {
+    id: 384,
+    title: "Variety",
+    hinglish: "Sentence ki lambayi aur structure badalte rahein taaki padhne wala bore na ho.",
+    usage: [
+      "Mix short and long sentences",
+      "Mix simple and complex structures",
+      "Creates rhythm in writing"
+    ],
+    examples: [
+      "Short sentence. Followed by a longer, more complex sentence to add depth.",
+      "Use questions? Use statements.",
+      "He ran fast; however, he was late."
+    ]
+  },
+  {
+    id: 385,
+    title: "Formal vs Informal",
+    hinglish: "Context ke hisaab se rule follow karein (Text vs Essay).",
+    usage: [
+      "Adapt to your audience",
+      "No contractions in academic writing",
+      "Slang is okay in texts"
+    ],
+    examples: [
+      "Formal: I effectively completed the task.",
+      "Informal: I did it.",
+      "Text: u r l8 (Informal)."
+    ]
+  },
+  {
+    id: 386,
+    title: "Gender Neutrality",
+    hinglish: "Agar gender nahi pata, toh 'he' ki jagah 'they' use karein.",
+    usage: [
+      "Inclusive writing",
+      "Modern standard for unknown subjects",
+      "Avoids assuming 'he' for professionals"
+    ],
+    examples: [
+      "If a student calls, tell them to wait.",
+      "Each person must bring their own lunch.",
+      "The firefighter did their job well."
+    ]
+  },
+  {
+    id: 387,
+    title: "Avoid Cliches",
+    hinglish: "Ghise-pite muhavare use na karein, apni bhasha use karein.",
+    usage: [
+      "Be original",
+      "Cliches make writing boring",
+      "Say what you mean directly"
+    ],
+    examples: [
+      "Avoid: It's raining cats and dogs.",
+      "Better: It's raining heavily.",
+      "Avoid: Avoid like the plague."
+    ]
+  },
+  {
+    id: 388,
+    title: "Avoid Jargon",
+    hinglish: "Technical words tabhi use karein jab samne wala expert ho.",
+    usage: [
+      "Use Plain English",
+      "Write for a general audience",
+      "Explain terms if necessary"
+    ],
+    examples: [
+      "Jargon: Utilize the leverage.",
+      "Plain: Use the advantage.",
+      "Simple: The computer crashed."
+    ]
+  },
+  {
+    id: 389,
+    title: "Proofreading",
+    hinglish: "Likhne ke baad hamesha galtiyan check karein.",
+    usage: [
+      "Final step of writing",
+      "Catching typos and grammar errors",
+      "Reading aloud helps"
+    ],
+    examples: [
+      "Check spelling.",
+      "Check punctuation.",
+      "Read backwards to focus on words."
+    ]
+  },
+  {
+    id: 390,
+    title: "Breaking Rules",
+    hinglish: "Acche writers kabhi-kabhi rules todte hain (style ke liye), par pehle rules aane chahiye.",
+    usage: [
+      "For poetic effect",
+      "For advertising or emphasis",
+      "Only break rules if you know them"
+    ],
+    examples: [
+      "Sentence fragment for effect: Never.",
+      "Starting with And or But.",
+      "One word sentences. Stop."
+    ]
+  }
 ];
-
         // --- PASTE THIS NEAR THE TOP OF YOUR SCRIPT VARIABLES ---
 
 const simpleSynonyms = [
