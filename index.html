@@ -12750,11 +12750,624 @@ const storyLibrary = {
                     { question: "What will have happened by the time they reach Leh?", options: ["Rain will stop", "Sun will have risen", "Bus will break"], correct: "Sun will have risen" },
                     { question: "What does 'Chuka hoga' indicate?", options: ["Past completed", "Future completed", "Present habit"], correct: "Future completed" },
                     { question: "What will the narrator have done by tomorrow evening?", options: ["Left Ladakh", "Visited Pangong Lake", "Slept all day"], correct: "Visited Pangong Lake" }
-                ] // End of quiz array
-            } // End of last chapter object
-        ] // End of chapters array
-    } // End of "level3" object
-};
+                ]
+            }
+        ]
+    },
+    "level4": {
+        title: "The Ambition (Level 4)",
+        id: "level4",
+        desc: "Power, Ability & Advice",
+        chapters: [
+            {
+                title: "The Big Idea",
+                sentences: [
+                    { en: "The idea came to me while I was stuck in traffic.", hi: "ट्रैफिक में फंसे रहने के दौरान मुझे यह विचार आया।", grammar: "Aa (Past Action)" },
+                    { en: "I realized that technology can solve this problem.", hi: "मुझे एहसास हुआ कि तकनीक इस समस्या को हल कर सकती है।", grammar: "Can (Sakti hai)" },
+                    { en: "For years, people in my city could not find reliable transport.", hi: "वर्षों से, मेरे शहर के लोग विश्वसनीय परिवहन नहीं खोज सके।", grammar: "Could not (Saka/Sake)" },
+                    { en: "I knew I should do something about it.", hi: "मुझे पता था कि मुझे इसके बारे में कुछ करना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "My friend Rahul said, 'You can build an app for this.'", hi: "मेरे दोस्त राहुल ने कहा, 'तुम इसके लिए एक ऐप बना सकते हो।'", grammar: "Can (Sakte ho)" },
+                    { en: "I asked myself if I really could do it.", hi: "मैंने खुद से पूछा कि क्या मैं वास्तव में यह कर सका (कर सकता था)।", grammar: "Could (Saka)" },
+                    { en: "We started working in a small garage.", hi: "हमने एक छोटे से गैरेज में काम करना शुरू किया।", grammar: "Simple Past" },
+                    { en: "At first, we could not afford good computers.", hi: "शुरुआत में, हम अच्छे कंप्यूटर का खर्च नहीं उठा सके।", grammar: "Could not (Sake)" },
+                    { en: "But we believed that hard work can change everything.", hi: "लेकिन हमारा मानना था कि कड़ी मेहनत सब कुछ बदल सकती है।", grammar: "Can (Sakti hai)" },
+                    { en: "We knew we should not give up easily.", hi: "हम जानते थे कि हमें आसानी से हार नहीं माननी चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "With this app, drivers can find passengers quickly.", hi: "इस ऐप के साथ, ड्राइवर यात्रियों को जल्दी ढूंढ सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "Passengers can track their rides in real-time.", hi: "यात्री अपनी सवारी को रीयल-टाइम में ट्रैक कर सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "This innovation can save millions of hours.", hi: "यह नवाचार लाखों घंटे बचा सकता है।", grammar: "Can (Sakta hai)" },
+                    { en: "However, we faced many technical bugs initially.", hi: "हालाँकि, हमने शुरू में कई तकनीकी बग का सामना किया।", grammar: "Simple Past" },
+                    { en: "We could not fix the server issues for weeks.", hi: "हम हफ्तों तक सर्वर की समस्याओं को ठीक नहीं कर सके।", grammar: "Could not (Sake)" },
+                    { en: "People told us we should quit and take jobs.", hi: "लोगों ने हमसे कहा कि हमें छोड़ देना चाहिए और नौकरी करनी चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "But I knew that one day, we will be able to succeed.", hi: "लेकिन मुझे पता था कि एक दिन, हम सफल हो सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "I told my team, 'We can make history.'", hi: "मैंने अपनी टीम से कहा, 'हम इतिहास बना सकते हैं।'", grammar: "Can (Sakte hain)" },
+                    { en: "We should focus on the solution, not the problem.", hi: "हमें समाधान पर ध्यान देना चाहिए, समस्या पर नहीं।", grammar: "Should (Chahiye)" },
+                    { en: "Finally, the prototype was ready to launch.", hi: "अंत में, प्रोटोटाइप लॉन्च के लिए तैयार था।", grammar: "Simple Past" },
+                    { en: "We felt that we could finally breathe.", hi: "हमने महसूस किया कि हम आखिरकार सांस ले सके।", grammar: "Could (Sake)" },
+                    { en: "Now, we can show the world our vision.", hi: "अब, हम दुनिया को अपना दृष्टिकोण दिखा सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "But first, we should find an investor.", hi: "लेकिन पहले, हमें एक निवेशक ढूंढना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "Without money, we cannot scale up.", hi: "पैसे के बिना, हम बड़े पैमाने पर नहीं बढ़ सकते।", grammar: "Cannot (Nahi sakte)" }
+                ],
+                quiz: [
+                    { question: "What did the narrator realize in traffic?", options: ["He hates cars", "Technology can solve the problem", "He should buy a bike"], correct: "Technology can solve the problem" },
+                    { question: "What could they NOT do at first?", options: ["Afford computers", "Find drivers", "Write code"], correct: "Afford computers" },
+                    { question: "What advice did people give them?", options: ["They should quit", "They should travel", "They can win"], correct: "They should quit" },
+                    { question: "What allows drivers to find passengers?", options: ["The radio", "The app", "A map"], correct: "The app" },
+                    { question: "What does 'Should' (Chahiye) indicate?", options: ["Ability", "Advice/Duty", "Future"], correct: "Advice/Duty" },
+                    { question: "What did Rahul say?", options: ["You can build an app", "You should sleep", "You cannot do it"], correct: "You can build an app" },
+                    { question: "What problem did they face for weeks?", options: ["Server issues", "No electricity", "No food"], correct: "Server issues" },
+                    { question: "Translate: 'Hum itihaas bana sakte hain'", options: ["We can make history", "We could make history", "We should make history"], correct: "We can make history" },
+                    { question: "What must they find now?", options: ["A new office", "An investor", "A car"], correct: "An investor" },
+                    { question: "What does 'Will be able to' mean?", options: ["Future capacity", "Past ability", "Present habit"], correct: "Future capacity" }
+                ]
+            },
+            {
+                title: "Preparing the Pitch",
+                sentences: [
+                    { en: "The meeting with the investors is tomorrow.", hi: "निवेशकों के साथ बैठक कल है।", grammar: "Hai (State)" },
+                    { en: "We should prepare our presentation carefully.", hi: "हमें अपनी प्रस्तुति सावधानी से तैयार करनी चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "I asked Rahul, 'Can you handle the financial slides?'", hi: "मैंने राहुल से पूछा, 'क्या तुम वित्तीय स्लाइड्स संभाल सकते हो?'", grammar: "Can (Sakte ho)" },
+                    { en: "He said he could do it easily.", hi: "उसने कहा कि वह इसे आसानी से कर सकता था (सका)।", grammar: "Could (Saka)" },
+                    { en: "We practiced our speech in front of a mirror.", hi: "हमने दर्पण के सामने अपने भाषण का अभ्यास किया।", grammar: "Simple Past" },
+                    { en: "You should look confident when you speak.", hi: "जब आप बोलते हैं तो आपको आत्मविश्वास से भरा दिखना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "I was worried that I could not answer tough questions.", hi: "मैं चिंतित था कि मैं कठिन सवालों का जवाब नहीं दे सका।", grammar: "Could not (Saka)" },
+                    { en: "Rahul told me, 'You can handle anything.'", hi: "राहुल ने मुझसे कहा, 'तुम कुछ भी संभाल सकते हो।'", grammar: "Can (Sakte ho)" },
+                    { en: "We should wear formal clothes to look professional.", hi: "हमें पेशेवर दिखने के लिए औपचारिक कपड़े पहनने चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "If we get the funding, we will be able to hire more staff.", hi: "यदि हमें धन मिलता है, तो हम अधिक कर्मचारी रख सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "We will be able to rent a big office.", hi: "हम एक बड़ा कार्यालय किराए पर ले सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "But if we fail, we cannot pay our bills.", hi: "लेकिन अगर हम असफल होते हैं, तो हम अपने बिलों का भुगतान नहीं कर सकते।", grammar: "Cannot (Sakte)" },
+                    { en: "The stakes are very high for us.", hi: "दांव हमारे लिए बहुत ऊंचे हैं।", grammar: "Hai (State)" },
+                    { en: "I told the team, 'We should rest now.'", hi: "मैंने टीम से कहा, 'हमें अब आराम करना चाहिए।'", grammar: "Should (Chahiye)" },
+                    { en: "We cannot perform well if we are tired.", hi: "यदि हम थके हुए हैं तो हम अच्छा प्रदर्शन नहीं कर सकते।", grammar: "Cannot (Sakte)" },
+                    { en: "I tried to sleep, but I could not close my eyes.", hi: "मैंने सोने की कोशिश की, लेकिन मैं अपनी आँखें बंद नहीं कर सका।", grammar: "Could not (Saka)" },
+                    { en: "My mind was racing with all the things we can achieve.", hi: "मेरा दिमाग उन सभी चीजों के साथ दौड़ रहा था जो हम हासिल कर सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "I imagined how our app can help millions.", hi: "मैंने कल्पना की कि हमारा ऐप लाखों लोगों की मदद कैसे कर सकता है।", grammar: "Can (Sakta hai)" },
+                    { en: "We should trust our hard work.", hi: "हमें अपनी कड़ी मेहनत पर भरोसा करना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "Tomorrow, everything will change.", hi: "कल सब कुछ बदल जाएगा।", grammar: "Ga (Future)" }
+                ],
+                quiz: [
+                    { question: "What did Rahul say he could do?", options: ["Drive the car", "Handle financial slides", "Cook dinner"], correct: "Handle financial slides" },
+                    { question: "Why should they wear formal clothes?", options: ["To look professional", "Because it is cold", "To show off"], correct: "To look professional" },
+                    { question: "What will they 'be able to' do with funding?", options: ["Buy a house", "Hire more staff", "Go on vacation"], correct: "Hire more staff" },
+                    { question: "What could the narrator NOT do at night?", options: ["Eat", "Sleep/Close eyes", "Talk"], correct: "Sleep/Close eyes" },
+                    { question: "What advice did the narrator give the team?", options: ["We should party", "We should rest", "We should quit"], correct: "We should rest" },
+                    { question: "What does 'Can' (Sakta hai) show in 'We can make history'?", options: ["Permission", "Advice", "Ability/Possibility"], correct: "Ability/Possibility" },
+                    { question: "Who helped the narrator practice?", options: ["The mirror", "His father", "Rahul"], correct: "Rahul" },
+                    { question: "What happens if they are tired?", options: ["They cannot perform well", "They will sleep", "Nothing"], correct: "They cannot perform well" },
+                    { question: "Translate: 'Tum kuch bhi sambhal sakte ho'", options: ["You can handle anything", "You should handle anything", "You could handle anything"], correct: "You can handle anything" },
+                    { question: "What is the narrator worried about?", options: ["Tough questions", "The weather", "The traffic"], correct: "Tough questions" }
+                ]
+            },
+            {
+                title: "The Shark Tank",
+                sentences: [
+                    { en: "We entered the conference room nervously.", hi: "हम घबराहट के साथ सम्मेलन कक्ष में दाखिल हुए।", grammar: "Simple Past" },
+                    { en: "The investors looked strict, but I knew I could convince them.", hi: "निवेशक सख्त लग रहे थे, लेकिन मुझे पता था कि मैं उन्हें मना सकता था (सका)।", grammar: "Could (Saka)" },
+                    { en: "I started my speech: 'This app can revolutionize transport.'", hi: "मैंने अपना भाषण शुरू किया: 'यह ऐप परिवहन में क्रांति ला सकता है।'", grammar: "Can (Sakta hai)" },
+                    { en: "One investor asked, 'Can you guarantee profit?'", hi: "एक निवेशक ने पूछा, 'क्या आप लाभ की गारंटी दे सकते हैं?'", grammar: "Can (Sakte ho)" },
+                    { en: "I replied, 'We can show you our growth data.'", hi: "मैंने उत्तर दिया, 'हम आपको अपना विकास डेटा दिखा सकते हैं।'", grammar: "Can (Sakte hain)" },
+                    { en: "Another shark asked why we could not grow earlier.", hi: "एक और शार्क ने पूछा कि हम पहले क्यों नहीं बढ़ सके।", grammar: "Could not (Sake)" },
+                    { en: "I explained that we should have focused on marketing.", hi: "मैंने समझाया कि हमें मार्केटिंग पर ध्यान देना चाहिए था।", grammar: "Should have (Chahiye tha)" },
+                    { en: "But now, with your help, we will be able to reach every city.", hi: "लेकिन अब, आपकी मदद से, हम हर शहर तक पहुँच सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "You should look at our customer feedback.", hi: "आपको हमारे ग्राहकों की प्रतिक्रिया देखनी चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "They say they cannot live without this app.", hi: "वे कहते हैं कि वे इस ऐप के बिना नहीं रह सकते।", grammar: "Cannot (Sakte)" },
+                    { en: "The main investor stood up and walked to the window.", hi: "मुख्य निवेशक खड़ा हो गया और खिड़की की ओर चला गया।", grammar: "Simple Past" },
+                    { en: "He said, 'I think this idea can work.'", hi: "उसने कहा, 'मुझे लगता है कि यह विचार काम कर सकता है।'", grammar: "Can (Sakta hai)" },
+                    { en: "But he added, 'You should improve the design.'", hi: "लेकिन उन्होंने जोड़ा, 'आपको डिज़ाइन में सुधार करना चाहिए।'", grammar: "Should (Chahiye)" },
+                    { en: "I promised him, 'We will be able to update it next week.'", hi: "मैंने उनसे वादा किया, 'हम इसे अगले हफ्ते अपडेट कर सकेंगे।'", grammar: "Will be able to (Sakenge)" },
+                    { en: "He asked, 'Can you handle competition?'", hi: "उन्होंने पूछा, 'क्या आप प्रतियोगिता को संभाल सकते हैं?'", grammar: "Can (Sakte ho)" },
+                    { en: "I said, 'We can beat anyone with our speed.'", hi: "मैंने कहा, 'हम अपनी गति से किसी को भी हरा सकते हैं।'", grammar: "Can (Sakte hain)" },
+                    { en: "The room went silent for a minute.", hi: "एक मिनट के लिए कमरे में सन्नाटा छा गया।", grammar: "Simple Past" },
+                    { en: "I could hear my own breathing.", hi: "मैं अपनी खुद की सांसें सुन सकता था (सका)।", grammar: "Could (Saka)" },
+                    { en: "Then he smiled and said, 'I can offer you the deal.'", hi: "फिर वह मुस्कुराया और कहा, 'मैं तुम्हें सौदा दे सकता हूँ।'", grammar: "Can (Sakta hun)" },
+                    { en: "We tried not to scream, but we could hardly control our joy.", hi: "हमने चीखने की कोशिश नहीं की, लेकिन हम शायद ही अपनी खुशी को नियंत्रित कर सके।", grammar: "Could (Sake)" }
+                ],
+                quiz: [
+                    { question: "What did the narrator say the app 'can' do?", options: ["Fly", "Revolutionize transport", "Cook food"], correct: "Revolutionize transport" },
+                    { question: "What question did the investor ask about profit?", options: ["Can you guarantee it?", "Do you like it?", "Is it real?"], correct: "Can you guarantee it?" },
+                    { question: "What did they admit they 'should have' done earlier?", options: ["Saved money", "Focused on marketing", "Hired people"], correct: "Focused on marketing" },
+                    { question: "What will they 'be able to' do next week?", options: ["Update the design", "Close the company", "Sleep"], correct: "Update the design" },
+                    { question: "What did the investor say about the idea?", options: ["It is bad", "It can work", "It is expensive"], correct: "It can work" },
+                    { question: "How did they feel at the end?", options: ["Sad", "Angry", "Joyful"], correct: "Joyful" },
+                    { question: "What does 'Could' (Saka) indicate in 'I knew I could convince them'?", options: ["Future Ability", "Past Ability", "Advice"], correct: "Past Ability" },
+                    { question: "What advice did the investor give? (Should)", options: ["Improve design", "Quit", "Sell shares"], correct: "Improve design" },
+                    { question: "Can they live without the app?", options: ["Yes", "No (Cannot)", "Maybe"], correct: "No (Cannot)" },
+                    { question: "What did the narrator hear in the silence?", options: ["A bird", "His breathing", "Music"], correct: "His breathing" }
+                ]
+            },
+            {
+                title: "The New Beginning",
+                sentences: [
+                    { en: "Walking out of that room, we felt like we could fly.", hi: "उस कमरे से बाहर निकलते हुए, हमें लगा कि हम उड़ सकते हैं (सके)।", grammar: "Could (Sake)" },
+                    { en: "We realized that we will be able to build our dream office.", hi: "हमें एहसास हुआ कि हम अपना सपनों का कार्यालय बना सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "Rahul said, 'We should celebrate tonight.'", hi: "राहुल ने कहा, 'हमें आज रात जश्न मनाना चाहिए।'", grammar: "Should (Chahiye)" },
+                    { en: "I told him, 'We can go to the best restaurant.'", hi: "मैंने उससे कहा, 'हम सबसे अच्छे रेस्टोरेंट में जा सकते हैं।'", grammar: "Can (Sakte hain)" },
+                    { en: "A year ago, we could not even afford a pizza.", hi: "एक साल पहले, हम पिज्जा का भी खर्च नहीं उठा सकते थे (सके)।", grammar: "Could not (Sake)" },
+                    { en: "Now, we can order whatever we want.", hi: "अब, हम जो चाहें ऑर्डर कर सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "Money can solve many problems, but not all.", hi: "पैसा कई समस्याओं को हल कर सकता है, लेकिन सभी नहीं।", grammar: "Can (Sakta hai)" },
+                    { en: "We should not forget our humble beginnings.", hi: "हमें अपनी विनम्र शुरुआत को नहीं भूलना चाहिए।", grammar: "Should not (Nahi Chahiye)" },
+                    { en: "We should treat our employees with respect.", hi: "हमें अपने कर्मचारियों के साथ सम्मान से पेश आना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "With this funding, we will be able to launch in five cities.", hi: "इस फंडिंग के साथ, हम पांच शहरों में लॉन्च कर सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "Our parents will be able to see our success.", hi: "हमारे माता-पिता हमारी सफलता देख सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "I called my mom; she could hear the happiness in my voice.", hi: "मैंने अपनी माँ को फोन किया; वह मेरी आवाज़ में खुशी सुन सकती थी (सकी)।", grammar: "Could (Saki)" },
+                    { en: "She said, 'You should always be honest in business.'", hi: "उसने कहा, 'तुम्हें व्यापार में हमेशा ईमानदार रहना चाहिए।'", grammar: "Should (Chahiye)" },
+                    { en: "I promised her I would.", hi: "मैंने उससे वादा किया कि मैं करूँगा।", grammar: "Simple Past" },
+                    { en: "The future looks bright, and we can see endless possibilities.", hi: "भविष्य उज्ज्वल दिखता है, और हम अनंत संभावनाएँ देख सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "We know we will be able to overcome any challenge.", hi: "हम जानते हैं कि हम किसी भी चुनौती को पार कर सकेंगे।", grammar: "Will be able to (Sakenge)" },
+                    { en: "This is just the beginning of what we can do.", hi: "यह केवल शुरुआत है कि हम क्या कर सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "You should never stop believing in yourself.", hi: "आपको खुद पर विश्वास करना कभी बंद नहीं करना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "If we can do it, anyone can.", hi: "अगर हम यह कर सकते हैं, तो कोई भी कर सकता है।", grammar: "Can (Sakta hai)" }
+                ],
+                quiz: [
+                    { question: "How did they feel leaving the room?", options: ["Sad", "Like they could fly", "Tired"], correct: "Like they could fly" },
+                    { question: "What could they NOT afford a year ago?", options: ["A car", "A pizza", "A computer"], correct: "A pizza" },
+                    { question: "What advice did the mom give? (Should)", options: ["Save money", "Be honest", "Work less"], correct: "Be honest" },
+                    { question: "What will they 'be able to' do with the funding?", options: ["Launch in 5 cities", "Buy a plane", "Retire"], correct: "Launch in 5 cities" },
+                    { question: "What should they not forget?", options: ["Their passwords", "Their humble beginnings", "Their lunch"], correct: "Their humble beginnings" },
+                    { question: "Translate: 'Humein jashn manana chahiye'", options: ["We can celebrate", "We should celebrate", "We could celebrate"], correct: "We should celebrate" },
+                    { question: "What does 'Sakega' mean?", options: ["Can", "Should", "Will be able to"], correct: "Will be able to" },
+                    { question: "Who could hear the happiness in his voice?", options: ["Rahul", "His Mom", "The Investor"], correct: "His Mom" },
+                    { question: "What can money solve?", options: ["All problems", "Many problems", "No problems"], correct: "Many problems" },
+                    { question: "What is the final message?", options: ["Give up", "Anyone can do it", "It is luck"], correct: "Anyone can do it" }
+                ]
+            }
+        ]
+    },
+    "level5": {
+        title: "The Past & Duration (Level 5)",
+        id: "level5",
+        desc: "Regret, Duration & Long Actions",
+        chapters: [
+            {
+                title: "The Invitation",
+                sentences: [
+                    { en: "I received an email from my old school yesterday.", hi: "मुझे कल अपने पुराने स्कूल से एक ईमेल मिला।", grammar: "Simple Past" },
+                    { en: "They are organizing a reunion after ten years.", hi: "वे दस साल बाद रीयूनियन आयोजित कर रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "I stared at the screen and felt a wave of nostalgia.", hi: "मैंने स्क्रीन को घूरकर देखा और पुरानी यादों की लहर महसूस की।", grammar: "Simple Past" },
+                    { en: "I could have replied immediately, but I hesitated.", hi: "मैं तुरंत जवाब दे सकता था (सका), लेकिन मैं हिचकिचाया।", grammar: "Could have (Sakta tha)" },
+                    { en: "I have been living in London for seven years now.", hi: "मैं अब सात साल से लंदन में रह रहा हूं।", grammar: "Have been (Raha hun + samay)" },
+                    { en: "I had been planning to visit India last winter.", hi: "मैं पिछली सर्दियों में भारत आने की योजना बना रहा था (समय से)।", grammar: "Had been (Raha tha + samay)" },
+                    { en: "But work kept me busy and I canceled the trip.", hi: "लेकिन काम ने मुझे व्यस्त रखा और मैंने यात्रा रद्द कर दी।", grammar: "Simple Past" },
+                    { en: "I should have visited my parents more often.", hi: "मुझे अपने माता-पिता से अधिक बार मिलने जाना चाहिए था।", grammar: "Should have (Chahiye tha)" },
+                    { en: "My best friend, Rohan, has been calling me every month.", hi: "मेरा सबसे अच्छा दोस्त, रोहन, मुझे हर महीने कॉल कर रहा है (समय से)।", grammar: "Has been (Raha hai + samay)" },
+                    { en: "He asked, 'Why have you been ignoring us?'", hi: "उसने पूछा, 'तुम हमें नज़रअंदाज़ क्यों कर रहे हो (समय से)?'", grammar: "Have been (Rahe ho + samay)" },
+                    { en: "I realized I should have kept in touch with them.", hi: "मुझे एहसास हुआ कि मुझे उनके संपर्क में रहना चाहिए था।", grammar: "Should have (Chahiye tha)" },
+                    { en: "Ten years is a very long time to be away.", hi: "दस साल दूर रहने के लिए बहुत लंबा समय है।", grammar: "Hai (State)" },
+                    { en: "I could have attended the last reunion in 2018.", hi: "मैं 2018 में पिछले रीयूनियन में शामिल हो सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "But I made an excuse about my job.", hi: "लेकिन मैंने अपनी नौकरी के बारे में बहाना बनाया।", grammar: "Simple Past" },
+                    { en: "I regret that decision now.", hi: "मुझे अब उस फैसले पर पछतावा है।", grammar: "Ta hun (Simple Present)" },
+                    { en: "I should not have prioritized money over friends.", hi: "मुझे दोस्तों पर पैसे को प्राथमिकता नहीं देनी चाहिए थी।", grammar: "Should not have (Nahi chahiye tha)" },
+                    { en: "Life has been moving too fast lately.", hi: "हाल ही में जीवन बहुत तेजी से आगे बढ़ रहा है (समय से)।", grammar: "Has been (Raha hai + samay)" },
+                    { en: "I finally clicked 'Accept' on the invitation.", hi: "मैंने आखिरकार निमंत्रण पर 'स्वीकार करें' क्लिक किया।", grammar: "Simple Past" },
+                    { en: "This trip could have been delayed again, but not this time.", hi: "यह यात्रा फिर से विलंबित हो सकती थी, लेकिन इस बार नहीं।", grammar: "Could have (Sakti thi)" },
+                    { en: "I am going back home.", hi: "मैं घर वापस जा रहा हूँ।", grammar: "Raha hun (Continuous)" }
+                ],
+                quiz: [
+                    { question: "How long has the narrator been living in London?", options: ["5 years", "7 years", "10 years"], correct: "7 years" },
+                    { question: "What does 'Should have' indicate?", options: ["Future Plan", "Past Regret/Advice", "Present Habit"], correct: "Past Regret/Advice" },
+                    { question: "What could he have done in 2018?", options: ["Attended reunion", "Bought a car", "Slept"], correct: "Attended reunion" },
+                    { question: "Who has been calling him every month?", options: ["His boss", "Rohan", "His sister"], correct: "Rohan" },
+                    { question: "Translate: 'Main wahan ja sakta tha'", options: ["I can go there", "I could have gone there", "I should go there"], correct: "I could have gone there" },
+                    { question: "What grammar is 'Has been calling'?", options: ["Present Continuous", "Present Perfect Continuous", "Past Perfect"], correct: "Present Perfect Continuous" },
+                    { question: "What does he regret?", options: ["Moving to London", "Prioritizing money over friends", "Eating lunch"], correct: "Prioritizing money over friends" },
+                    { question: "What had he been planning last winter?", options: ["To visit India", "To buy a house", "To quit job"], correct: "To visit India" },
+                    { question: "Did he reply immediately?", options: ["Yes", "No, he hesitated", "He deleted it"], correct: "No, he hesitated" },
+                    { question: "What is the grammar for 'Raha tha + samay'?", options: ["Had been + ing", "Has been + ing", "Will have been + ing"], correct: "Had been + ing" }
+                ]
+            },
+            {
+                title: "The Journey Back",
+                sentences: [
+                    { en: "I boarded the flight to Mumbai last night.", hi: "मैं कल रात मुंबई के लिए फ्लाइट में चढ़ा।", grammar: "Simple Past" },
+                    { en: "I had been waiting for this moment for weeks.", hi: "मैं हफ्तों से इस पल का इंतज़ार कर रहा था।", grammar: "Had been (Raha tha + samay)" },
+                    { en: "Sitting in the plane, I thought about Anjali.", hi: "विमान में बैठे हुए, मैंने अंजलि के बारे में सोचा।", grammar: "Simple Past" },
+                    { en: "We had been dating for two years in college.", hi: "हम कॉलेज में दो साल से डेटिंग कर रहे थे।", grammar: "Had been (Rahe the + samay)" },
+                    { en: "I could have married her if I stayed.", hi: "अगर मैं रुकता तो मैं उससे शादी कर सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "But I chose my career abroad instead.", hi: "लेकिन इसके बजाय मैंने विदेश में अपना करियर चुना।", grammar: "Simple Past" },
+                    { en: "She should have waited for me, I thought selfishly.", hi: "उसे मेरा इंतज़ार करना चाहिए था, मैंने स्वार्थ से सोचा।", grammar: "Should have (Chahiye tha)" },
+                    { en: "But deep down, I knew I was wrong.", hi: "लेकिन गहराई में, मुझे पता था कि मैं गलत था।", grammar: "Tha (Past State)" },
+                    { en: "I should have communicated my plans better.", hi: "मुझे अपनी योजनाओं को बेहतर ढंग से बताना चाहिए था।", grammar: "Should have (Chahiye tha)" },
+                    { en: "By the time I land, she will have been working for hours.", hi: "जब तक मैं उतरूंगा, वह घंटों से काम कर रही होगी।", grammar: "Will have been (Rahi hogi + samay)" },
+                    { en: "She works as a doctor in the city hospital.", hi: "वह सिटी अस्पताल में डॉक्टर के रूप में काम करती है।", grammar: "Ti hai (Routine)" },
+                    { en: "I had been ignoring her messages since the breakup.", hi: "मैं ब्रेकअप के बाद से उसके संदेशों को अनदेखा कर रहा था।", grammar: "Had been (Raha tha + samay)" },
+                    { en: "That was immature; I could have been kinder.", hi: "वह अपरिपक्व था; मैं और अधिक दयालु हो सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "The flight attendant asked if I wanted water.", hi: "फ्लाइट अटेंडेंट ने पूछा कि क्या मुझे पानी चाहिए।", grammar: "Simple Past" },
+                    { en: "I realized I had been staring at the window for an hour.", hi: "मुझे एहसास हुआ कि मैं एक घंटे से खिड़की को घूर रहा था।", grammar: "Had been (Raha tha + samay)" },
+                    { en: "My mind has been replaying old memories continuously.", hi: "मेरा दिमाग पुरानी यादों को लगातार दोहरा रहा है (समय से)।", grammar: "Has been (Raha hai + samay)" },
+                    { en: "I wonder if she has been thinking about me too.", hi: "मुझे आश्चर्य है कि क्या वह भी मेरे बारे में सोच रही है (समय से)।", grammar: "Has been (Rahi hai + samay)" },
+                    { en: "I could have fixed things before leaving.", hi: "मैं जाने से पहले चीजों को ठीक कर सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "Regret is a heavy feeling to carry.", hi: "पछतावा ले जाने के लिए एक भारी भावना है।", grammar: "Hai (State)" },
+                    { en: "Soon, I will face my past.", hi: "जल्द ही, मैं अपने अतीत का सामना करूँगा।", grammar: "Ga (Future)" }
+                ],
+                quiz: [
+                    { question: "Who was the narrator thinking about?", options: ["Rohan", "Anjali", "His boss"], correct: "Anjali" },
+                    { question: "How long had they been dating?", options: ["2 years", "5 years", "10 years"], correct: "2 years" },
+                    { question: "What does 'Could have' express here?", options: ["Past Ability/Possibility", "Future Plan", "Present Action"], correct: "Past Ability/Possibility" },
+                    { question: "What had he been doing for an hour on the plane?", options: ["Sleeping", "Staring at window", "Eating"], correct: "Staring at window" },
+                    { question: "What does he think he 'should have' done?", options: ["Communicated better", "Left earlier", "Forgotten her"], correct: "Communicated better" },
+                    { question: "What tense is 'Had been waiting'?", options: ["Past Continuous", "Past Perfect Continuous", "Present Perfect"], correct: "Past Perfect Continuous" },
+                    { question: "What does Anjali do?", options: ["Engineer", "Doctor", "Teacher"], correct: "Doctor" },
+                    { question: "Translate: 'Mai usse shadi kar sakta tha'", options: ["I can marry her", "I could have married her", "I will marry her"], correct: "I could have married her" },
+                    { question: "What has his mind been doing?", options: ["Replaying memories", "Calculating taxes", "Dreaming"], correct: "Replaying memories" },
+                    { question: "What does 'Will have been working' mean?", options: ["Future action with duration", "Past action", "Present habit"], correct: "Future action with duration" }
+                ]
+            },
+            {
+                title: "The Reunion Party",
+                sentences: [
+                    { en: "I entered the school hall with a nervous heart.", hi: "मैं घबराते हुए स्कूल हॉल में दाखिल हुआ।", grammar: "Simple Past" },
+                    { en: "My friends have been waiting for me since 7 PM.", hi: "मेरे दोस्त शाम 7 बजे से मेरा इंतज़ार कर रहे हैं।", grammar: "Have been (Rahe hain + samay)" },
+                    { en: "Rohan hugged me tightly and laughed.", hi: "रोहन ने मुझे कसकर गले लगाया और हंसा।", grammar: "Simple Past" },
+                    { en: "He said, 'You could have dressed better!'", hi: "उसने कहा, 'तुम बेहतर कपड़े पहन सकते थे!'", grammar: "Could have (Sakte the)" },
+                    { en: "We sat down and started talking about the old days.", hi: "हम बैठ गए और पुराने दिनों के बारे में बात करने लगे।", grammar: "Simple Past" },
+                    { en: "Everyone has been doing so well in life.", hi: "हर कोई जीवन में इतना अच्छा कर रहा है (समय से)।", grammar: "Has been (Raha hai + samay)" },
+                    { en: "Then, I saw Anjali walking through the door.", hi: "फिर, मैंने अंजलि को दरवाजे से आते हुए देखा।", grammar: "Simple Past" },
+                    { en: "She has been working as a surgeon for years.", hi: "वह वर्षों से सर्जन के रूप में काम कर रही है।", grammar: "Has been (Rahi hai + samay)" },
+                    { en: "She looked happy, not angry.", hi: "वह खुश लग रही थी, गुस्से में नहीं।", grammar: "Simple Past" },
+                    { en: "I walked up to her and said, 'Hi'.", hi: "मैं उसके पास गया और कहा, 'नमस्ते'।", grammar: "Simple Past" },
+                    { en: "She smiled and said, 'I have been expecting you.'", hi: "वह मुस्कुराई और बोली, 'मैं तुम्हारी उम्मीद कर रही थी (समय से)।'", grammar: "Have been (Rahi thi)" },
+                    { en: "I told her, 'I should have called you earlier.'", hi: "मैंने उससे कहा, 'मुझे तुम्हें पहले कॉल करना चाहिए था।'", grammar: "Should have (Chahiye tha)" },
+                    { en: "She replied, 'You could have, but it's okay now.'", hi: "उसने जवाब दिया, 'तुम कर सकते थे, लेकिन अब सब ठीक है।'", grammar: "Could have (Sakte the)" },
+                    { en: "We realized we had been wasting time being angry.", hi: "हमें एहसास हुआ कि हम नाराज होकर समय बर्बाद कर रहे थे (समय से)।", grammar: "Had been (Rahe the + samay)" },
+                    { en: "We talked for hours about everything.", hi: "हमने सब कुछ के बारे में घंटों बात की।", grammar: "Simple Past" },
+                    { en: "By midnight, we had been talking for four hours.", hi: "आधी रात तक, हम चार घंटे से बात कर रहे थे।", grammar: "Had been (Rahe the + samay)" },
+                    { en: "I felt a heavy weight lift off my chest.", hi: "मुझे अपनी छाती से भारी बोझ उतरता हुआ महसूस हुआ।", grammar: "Simple Past" },
+                    { en: "I should not have waited ten years for this.", hi: "मुझे इसके लिए दस साल इंतजार नहीं करना चाहिए था।", grammar: "Should not have (Nahi chahiye tha)" },
+                    { en: "Friendship is precious; we should have valued it.", hi: "दोस्ती कीमती है; हमें इसकी कद्र करनी चाहिए थी।", grammar: "Should have (Chahiye tha)" },
+                    { en: "The night was perfect in every way.", hi: "रात हर तरह से एकदम सही थी।", grammar: "Simple Past" }
+                ],
+                quiz: [
+                    { question: "Who said 'You could have dressed better'?", options: ["Anjali", "Rohan", "Teacher"], correct: "Rohan" },
+                    { question: "How long had the friends been waiting?", options: ["Since 7 PM", "For 2 days", "Since morning"], correct: "Since 7 PM" },
+                    { question: "What has Anjali been doing?", options: ["Working as a surgeon", "Traveling", "Sleeping"], correct: "Working as a surgeon" },
+                    { question: "What did Anjali say?", options: ["Go away", "I have been expecting you", "Who are you"], correct: "I have been expecting you" },
+                    { question: "What did the narrator realize?", options: ["He was hungry", "They had been wasting time", "He should leave"], correct: "They had been wasting time" },
+                    { question: "Translate: 'Humein iski kadr karni chahiye thi'", options: ["We should value it", "We should have valued it", "We could value it"], correct: "We should have valued it" },
+                    { question: "How long had they been talking by midnight?", options: ["4 hours", "1 hour", "10 minutes"], correct: "4 hours" },
+                    { question: "What does 'Should have' express in the story?", options: ["Future Plan", "Regret", "Ability"], correct: "Regret" },
+                    { question: "What grammar is used in 'We had been dating'?", options: ["Past Continuous", "Past Perfect Continuous", "Simple Past"], correct: "Past Perfect Continuous" },
+                    { question: "How did he feel at the end?", options: ["Relieved (Weight lifted)", "Angry", "Sad"], correct: "Relieved (Weight lifted)" }
+                ]
+            },
+            {
+                title: "Looking Forward",
+                sentences: [
+                    { en: "The party is over, but we are still sitting here.", hi: "पार्टी खत्म हो गई है, लेकिन हम अभी भी यहीं बैठे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "By next year, we will have been friends for 15 years.", hi: "अगले साल तक, हम 15 साल से दोस्त रहे होंगे (दोस्ती को 15 साल हो रहे होंगे)।", grammar: "Will have been (Raha hoga + samay)" },
+                    { en: "It sounds crazy to say it aloud.", hi: "इसे जोर से कहना पागलपन लगता है।", grammar: "Ta hai (Simple Present)" },
+                    { en: "Rohan says, 'We should have met sooner.'", hi: "रोहन कहता है, 'हमें और जल्दी मिलना चाहिए था।'", grammar: "Should have (Chahiye tha)" },
+                    { en: "I promise them I will visit more often.", hi: "मैं उनसे वादा करता हूँ कि मैं अधिक बार आऊंगा।", grammar: "Ga (Future)" },
+                    { en: "I could have moved back to India, maybe.", hi: "मैं शायद भारत वापस आ सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "I have been thinking about it seriously lately.", hi: "मैं हाल ही में इसके बारे में गंभीरता से सोच रहा हूं।", grammar: "Have been (Raha hun + samay)" },
+                    { en: "Anjali smiles and says, 'You should come back.'", hi: "अंजलि मुस्कुराती है और कहती है, 'तुम्हें वापस आना चाहिए।'", grammar: "Should (Chahiye)" },
+                    { en: "By 2030, we will have been knowing each other for decades.", hi: "2030 तक, हम दशकों से एक-दूसरे को जान रहे होंगे (जान चुके होंगे)।", grammar: "Will have been (Raha hoga + samay)" },
+                    { en: "Time flies when you are having fun.", hi: "जब आप मज़े कर रहे होते हैं तो समय उड़ जाता है।", grammar: "Ta hai (Fact)" },
+                    { en: "I have been missing this connection in London.", hi: "मैं लंदन में इस जुड़ाव को याद कर रहा था (समय से)।", grammar: "Have been (Raha tha + samay)" },
+                    { en: "I realized that success means nothing without people.", hi: "मुझे एहसास हुआ कि लोगों के बिना सफलता का कोई मतलब नहीं है।", grammar: "Simple Past" },
+                    { en: "I could have earned millions, but felt lonely.", hi: "मैं लाखों कमा सकता था, लेकिन अकेलापन महसूस करता।", grammar: "Could have (Sakta tha)" },
+                    { en: "We hug each other goodbye for now.", hi: "हम अभी के लिए एक-दूसरे को अलविदा कहते हैं।", grammar: "Te hain (Routine)" },
+                    { en: "This reunion has been the best decision of my life.", hi: "यह रीयूनियन मेरे जीवन का सबसे अच्छा निर्णय रहा है (समय से अब तक)।", grammar: "Has been (Raha hai)" },
+                    { en: "I should have done this years ago.", hi: "मुझे यह सालों पहले करना चाहिए था।", grammar: "Should have (Chahiye tha)" },
+                    { en: "But as they say, better late than never.", hi: "लेकिन जैसा कि वे कहते हैं, कभी नहीं से देर भली।", grammar: "Proverb" },
+                    { en: "By the time I reach London, I will have been traveling for 24 hours.", hi: "जब तक मैं लंदन पहुंचूंगा, मैं 24 घंटे से यात्रा कर रहा हूँगा।", grammar: "Will have been (Raha honga + samay)" },
+                    { en: "But my heart will be full.", hi: "लेकिन मेरा दिल भरा होगा।", grammar: "Hoga (Future State)" },
+                    { en: "Old bonds can never be broken.", hi: "पुराने बंधन कभी नहीं तोड़े जा सकते (सकते)।", grammar: "Can (Sakte)" }
+                ],
+                quiz: [
+                    { question: "How long will they have been friends next year?", options: ["10 years", "15 years", "20 years"], correct: "15 years" },
+                    { question: "What has the narrator been thinking about?", options: ["Moving back to India", "Buying a new car", "Eating dinner"], correct: "Moving back to India" },
+                    { question: "What does Anjali say?", options: ["Go away", "You should come back", "I hate you"], correct: "You should come back" },
+                    { question: "What grammar is 'Will have been knowing'?", options: ["Future Continuous", "Future Perfect Continuous", "Simple Future"], correct: "Future Perfect Continuous" },
+                    { question: "What does he realize about success?", options: ["It is everything", "It means nothing without people", "It is easy"], correct: "It means nothing without people" },
+                    { question: "What could he have done?", options: ["Earned millions but been lonely", "Stayed in London", "Forgotten them"], correct: "Earned millions but been lonely" },
+                    { question: "What does 'Should have done' express?", options: ["Satisfaction", "Regret", "Future plan"], correct: "Regret" },
+                    { question: "How long will he have been traveling?", options: ["2 hours", "12 hours", "24 hours"], correct: "24 hours" },
+                    { question: "Translate: 'Shayad main wapas aa sakta tha'", options: ["I could have moved back", "I should move back", "I can move back"], correct: "I could have moved back" },
+                    { question: "What is the final message?", options: ["Old bonds can never be broken", "Money is everything", "Don't look back"], correct: "Old bonds can never be broken" }
+                ]
+            }
+        ]
+    },
+    "level6": {
+        title: "The Grand Finale (Level 6)",
+        id: "level6",
+        desc: "Mastery of All 30 Helping Verbs",
+        chapters: [
+            {
+                title: "The Exile",
+                sentences: [
+                    { en: "Prince Aryan wakes up on the hard floor of a cave.", hi: "राजकुमार आर्यन गुफा के कठोर फर्श पर जागता है।", grammar: "Ta hai (Routine)" },
+                    { en: "He used to sleep on a bed made of silk and gold.", hi: "वह रेशम और सोने से बने बिस्तर पर सोया करता था।", grammar: "Ta tha (Used to)" },
+                    { en: "Just yesterday, he was the crown prince of Patliputra.", hi: "कल ही, वह पाटलिपुत्र का युवराज था।", grammar: "Tha (Past State)" },
+                    { en: "But his uncle, the wicked Minister, had betrayed him.", hi: "लेकिन उसके चाचा, दुष्ट मंत्री ने उसे धोखा दिया था।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "The Minister had been planning this coup for years.", hi: "मंत्री वर्षों से इस तख्तापलट की योजना बना रहा था (समय से)।", grammar: "Had been (Raha tha + time)" },
+                    { en: "Aryan had to escape the palace at midnight.", hi: "आर्यन को आधी रात को महल से भागना पड़ा।", grammar: "Had to (Na tha)" },
+                    { en: "He was about to be arrested by the royal guards.", hi: "वह शाही रक्षकों द्वारा गिरफ्तार होने वाला था।", grammar: "Wala tha (Was about to)" },
+                    { en: "He could hear their footsteps echoing in the hallway.", hi: "वह दालान में उनके कदमों की आहट सुन सकता था (सका)।", grammar: "Could (Saka)" },
+                    { en: "He ran into the dark forest without looking back.", hi: "वह पीछे मुड़कर देखे बिना अंधेरे जंगल में भाग गया।", grammar: "Simple Past" },
+                    { en: "Now, he has to survive in the wild alone.", hi: "अब, उसे अकेले जंगल में जीवित रहना है।", grammar: "Has to (Na hai)" },
+                    { en: "He does not know how to hunt or build a fire.", hi: "वह नहीं जानता कि शिकार कैसे करना है या आग कैसे जलानी है।", grammar: "Ta hai (Simple Present)" },
+                    { en: "He should have learned these skills from the soldiers.", hi: "उसे सैनिकों से ये कौशल सीखने चाहिए थे।", grammar: "Should have (Chahiye tha)" },
+                    { en: "But he was busy studying philosophy and art.", hi: "लेकिन वह दर्शन और कला का अध्ययन करने में व्यस्त था।", grammar: "Simple Past" },
+                    { en: "His father, the King, might be in prison right now.", hi: "उसके पिता, राजा, शायद अभी जेल में होंगे।", grammar: "Might be (Shayad)" },
+                    { en: "Or worse, they might have killed him already.", hi: "या इससे भी बदतर, उन्होंने शायद उसे पहले ही मार दिया होगा।", grammar: "Might have (Shayad chuka hoga)" },
+                    { en: "Aryan feels a tear rolling down his cheek.", hi: "आर्यन अपने गाल पर एक आंसू लुढ़कता हुआ महसूस करता है।", grammar: "Ta hai (Action)" },
+                    { en: "He wipes it away angrily.", hi: "वह इसे गुस्से से पोंछ देता है।", grammar: "Ta hai (Action)" },
+                    { en: "He says to himself, 'I will not cry.'", hi: "वह खुद से कहता है, 'मैं नहीं रोऊंगा।'", grammar: "Ga (Future)" },
+                    { en: "I have got to be strong for my kingdom.", hi: "मुझे अपने राज्य के लिए मजबूत बनना ही है।", grammar: "Have got to (Padta hai)" },
+                    { en: "I will have to reclaim my throne one day.", hi: "मुझे एक दिन अपना सिंहासन वापस पाना होगा।", grammar: "Will have to (Padega)" }
+                ],
+                quiz: [
+                    { question: "Where does Aryan wake up?", options: ["In a palace", "In a cave", "In a boat"], correct: "In a cave" },
+                    { question: "What did he 'use to' do?", options: ["Sleep on silk", "Hunt lions", "Cook food"], correct: "Sleep on silk" },
+                    { question: "What grammar is 'Had been planning'?", options: ["Past Continuous", "Past Perfect Continuous", "Simple Past"], correct: "Past Perfect Continuous" },
+                    { question: "What 'had to' happen last night?", options: ["He had to party", "He had to escape", "He had to sleep"], correct: "He had to escape" },
+                    { question: "What 'should he have' learned?", options: ["Painting", "Survival skills", "Dancing"], correct: "Survival skills" },
+                    { question: "What does 'Might have killed' indicate?", options: ["Certainty", "Past Probability", "Future Plan"], correct: "Past Probability" }
+                ]
+            },
+            {
+                title: "The Hidden Village",
+                sentences: [
+                    { en: "Aryan has been walking for three days without food.", hi: "आर्यन तीन दिनों से बिना भोजन के चल रहा है।", grammar: "Has been (Raha hai + time)" },
+                    { en: "He feels weak, but he keeps moving forward.", hi: "वह कमजोर महसूस करता है, लेकिन वह आगे बढ़ता रहता है।", grammar: "Ta hai (Simple Present)" },
+                    { en: "Suddenly, he sees smoke rising from behind the trees.", hi: "अचानक, वह पेड़ों के पीछे से धुआं उठता हुआ देखता है।", grammar: "Ta hai (Action)" },
+                    { en: "It might be a trap set by his uncle's spies.", hi: "यह उसके चाचा के जासूसों द्वारा बिछाया गया जाल हो सकता है (शायद)।", grammar: "Might be (Shayad)" },
+                    { en: "But he has to take the risk.", hi: "लेकिन उसे जोखिम उठाना ही है।", grammar: "Has to (Na hai)" },
+                    { en: "He approaches a small hut and knocks on the door.", hi: "वह एक छोटी झोपड़ी के पास जाता है और दरवाजा खटखटाता है।", grammar: "Ta hai (Action)" },
+                    { en: "An old woman opens it; she looks kind.", hi: "एक बूढ़ी औरत इसे खोलती है; वह दयालु लग रही है।", grammar: "Simple Past" },
+                    { en: "She asks, 'Who are you? You look like a prince.'", hi: "वह पूछती है, 'तुम कौन हो? तुम राजकुमार जैसे लगते हो।'", grammar: "Te ho (Simple Present)" },
+                    { en: "Aryan realized he should have changed his clothes.", hi: "आर्यन को एहसास हुआ कि उसे अपने कपड़े बदल लेने चाहिए थे।", grammar: "Should have (Chahiye tha)" },
+                    { en: "He could have been recognized by anyone.", hi: "उसे किसी के द्वारा भी पहचाना जा सकता था।", grammar: "Could have (Sakta tha)" },
+                    { en: "He lied, 'I am just a traveler who got lost.'", hi: "उसने झूठ बोला, 'मैं सिर्फ एक यात्री हूं जो खो गया।'", grammar: "Simple Past" },
+                    { en: "The woman smiled knowingly but gave him food.", hi: "महिला जानबूझकर मुस्कुराई लेकिन उसे खाना दिया।", grammar: "Simple Past" },
+                    { en: "She said, 'You can stay here tonight.'", hi: "उसने कहा, 'तुम आज रात यहाँ रह सकते हो।'", grammar: "Can (Sakte ho)" },
+                    { en: "While eating, Aryan overheard men talking outside.", hi: "खाते समय, आर्यन ने बाहर आदमियों को बात करते हुए सुना।", grammar: "Simple Past" },
+                    { en: "They were saying, 'The King will be executed tomorrow.'", hi: "वे कह रहे थे, 'राजा को कल फांसी दी जाएगी।'", grammar: "Ga (Passive Future)" },
+                    { en: "Aryan dropped his spoon in shock.", hi: "आर्यन ने सदमे में अपना चम्मच गिरा दिया।", grammar: "Simple Past" },
+                    { en: "He knew he had got to act fast.", hi: "वह जानता था कि उसे तेजी से काम करना पड़ा था (करना ही था)।", grammar: "Had got to (Padta tha)" },
+                    { en: "He cannot stay hidden while his father dies.", hi: "वह अपने पिता के मरने के दौरान छिपा नहीं रह सकता।", grammar: "Cannot (Sakta)" },
+                    { en: "He will have to return to the capital immediately.", hi: "उसे तुरंत राजधानी लौटना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "But he is alone; what can one man do?", hi: "लेकिन वह अकेला है; एक आदमी क्या कर सकता है?", grammar: "Can (Sakta hai)" }
+                ],
+                quiz: [
+                    { question: "How long has Aryan been walking?", options: ["1 day", "3 days", "1 week"], correct: "3 days" },
+                    { question: "What did he think the smoke 'might be'?", options: ["A fire", "A trap", "A dragon"], correct: "A trap" },
+                    { question: "What 'should he have' done about his clothes?", options: ["Washed them", "Changed them", "Sold them"], correct: "Changed them" },
+                    { question: "What did the men say will happen to the King?", options: ["He will be freed", "He will be executed", "He will travel"], correct: "He will be executed" },
+                    { question: "What does 'Will have to' (Padega) show?", options: ["Past Habit", "Future Compulsion", "Present Ability"], correct: "Future Compulsion" }
+                ]
+            },
+            {
+                title: "Gathering the Army",
+                sentences: [
+                    { en: "Aryan remembered an old general who lived nearby.", hi: "आर्यन को एक पुराने जनरल की याद आई जो पास में रहता था।", grammar: "Simple Past" },
+                    { en: "General Vikram had been retired for five years.", hi: "जनरल विक्रम पांच साल से रिटायर थे (हो चुके थे)।", grammar: "Had been (Chuka tha)" },
+                    { en: "Aryan ran to his house in the middle of the night.", hi: "आर्यन आधी रात को उसके घर भागा।", grammar: "Simple Past" },
+                    { en: "He was about to knock when the door opened.", hi: "वह दरवाजा खटखटाने ही वाला था कि दरवाजा खुल गया।", grammar: "Was about to (Wala tha)" },
+                    { en: "Vikram was standing there with a sword.", hi: "विक्रम वहां तलवार लेकर खड़ा था।", grammar: "Raha tha (Continuous)" },
+                    { en: "He said, 'I have been expecting you, Prince.'", hi: "उसने कहा, 'मैं आपकी प्रतीक्षा कर रहा हूँ, राजकुमार (समय से)।'", grammar: "Have been (Raha hun + time)" },
+                    { en: "Aryan asked, 'Will you help me save my father?'", hi: "आर्यन ने पूछा, 'क्या आप मेरे पिता को बचाने में मेरी मदद करेंगे?'", grammar: "Ga (Future)" },
+                    { en: "Vikram replied, 'We might be outnumbered.'", hi: "विक्रम ने उत्तर दिया, 'हम शायद संख्या में कम हो सकते हैं।'", grammar: "Might be (Shayad)" },
+                    { en: "He added, 'But we can defeat them with strategy.'", hi: "उन्होंने जोड़ा, 'लेकिन हम उन्हें रणनीति से हरा सकते हैं।'", grammar: "Can (Sakte hain)" },
+                    { en: "They spent the night planning the attack.", hi: "उन्होंने पूरी रात हमले की योजना बनाने में बिताई।", grammar: "Simple Past" },
+                    { en: "By morning, they had gathered fifty loyal soldiers.", hi: "सुबह तक, उन्होंने पचास वफादार सैनिकों को इकट्ठा कर लिया था।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "These soldiers used to serve under Aryan's father.", hi: "ये सैनिक आर्यन के पिता के अधीन सेवा किया करते थे।", grammar: "Used to (Ta tha)" },
+                    { en: "They said, 'We will be able to breach the gate.'", hi: "उन्होंने कहा, 'हम गेट को तोड़ने में सक्षम होंगे (सकेंगे)।'", grammar: "Will be able to (Sakenge)" },
+                    { en: "Aryan told them, 'We must not hurt civilians.'", hi: "आर्यन ने उनसे कहा, 'हमें नागरिकों को चोट नहीं पहुंचानी चाहिए (मस्ट)।'", grammar: "Must (Chahiye - Strong)" },
+                    { en: "The sun is rising; the execution is at noon.", hi: "सूरज उग रहा है; फांसी दोपहर में है।", grammar: "Raha hai (Continuous)" },
+                    { en: "We are about to march towards destiny.", hi: "हम नियति की ओर कूच करने वाले हैं।", grammar: "Are about to (Wale hain)" },
+                    { en: "I wonder if my uncle will be watching.", hi: "मुझे आश्चर्य है कि क्या मेरा चाचा देख रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "He might have underestimated me.", hi: "शायद उसने मुझे कम आंका होगा (आंक चुका होगा)।", grammar: "Might have (Shayad chuka hoga)" },
+                    { en: "Today, I will prove who the true King is.", hi: "आज, मैं साबित कर दूंगा कि असली राजा कौन है।", grammar: "Ga (Future)" },
+                    { en: "The battle for Patliputra has begun.", hi: "पाटलिपुत्र के लिए लड़ाई शुरू हो चुकी है।", grammar: "Has + 3rd (Chuka hai)" }
+                ],
+                quiz: [
+                    { question: "Who is General Vikram?", options: ["A spy", "A retired soldier", "A cook"], correct: "A retired soldier" },
+                    { question: "What grammar is 'Have been expecting'?", options: ["Present Perfect Continuous", "Past Perfect", "Simple Future"], correct: "Present Perfect Continuous" },
+                    { question: "What did the soldiers 'use to' do?", options: ["Serve the King", "Farm the land", "Run away"], correct: "Serve the King" },
+                    { question: "What will they 'be able to' do?", options: ["Fly", "Breach the gate", "Swim"], correct: "Breach the gate" },
+                    { question: "What might the uncle 'have done'?", options: ["Left", "Underestimated Aryan", "Cried"], correct: "Underestimated Aryan" }
+                ]
+            },
+            {
+                title: "The Throne Reclaimed",
+                sentences: [
+                    { en: "The soldiers stormed the palace gates at 11 AM.", hi: "सैनिकों ने सुबह 11 बजे महल के फाटकों पर धावा बोल दिया।", grammar: "Simple Past" },
+                    { en: "The guards could not stop their fury.", hi: "गार्ड उनके गुस्से को नहीं रोक सके।", grammar: "Could not (Sake)" },
+                    { en: "Aryan fought like a tiger in the courtyard.", hi: "आर्यन आंगन में बाघ की तरह लड़ा।", grammar: "Simple Past" },
+                    { en: "He saw his uncle trying to escape through the back.", hi: "उसने अपने चाचा को पीछे से भागने की कोशिश करते देखा।", grammar: "Simple Past" },
+                    { en: "Aryan shouted, 'You cannot run from justice!'", hi: "आर्यन चिल्लाया, 'तुम न्याय से नहीं भाग सकते!'", grammar: "Cannot (Sakte)" },
+                    { en: "He chased him to the tower.", hi: "उसने टॉवर तक उसका पीछा किया।", grammar: "Simple Past" },
+                    { en: "His uncle pleaded, 'I should have killed you earlier.'", hi: "उसके चाचा ने विनती की, 'मुझे तुम्हें पहले मार देना चाहिए था।'", grammar: "Should have (Chahiye tha)" },
+                    { en: "Aryan replied, 'You could have been a good advisor.'", hi: "आर्यन ने जवाब दिया, 'आप एक अच्छे सलाहकार हो सकते थे।'", grammar: "Could have (Sakte the)" },
+                    { en: "But greed destroyed you.", hi: "लेकिन लालच ने तुम्हें नष्ट कर दिया।", grammar: "Simple Past" },
+                    { en: "The guards arrested the traitor immediately.", hi: "गार्ड ने गद्दार को तुरंत गिरफ्तार कर लिया।", grammar: "Simple Past" },
+                    { en: "By noon, Aryan had rescued his father.", hi: "दोपहर तक, आर्यन ने अपने पिता को बचा लिया था।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "The King hugged him and wept tears of joy.", hi: "राजा ने उसे गले लगाया और खुशी के आंसू रोए।", grammar: "Simple Past" },
+                    { en: "He said, 'I knew you would come.'", hi: "उसने कहा, 'मुझे पता था कि तुम आओगे।'", grammar: "Would (Ga)" },
+                    { en: "The people are cheering outside the palace now.", hi: "लोग अब महल के बाहर जयकार कर रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "They have been waiting for this moment for years.", hi: "वे वर्षों से इस पल का इंतज़ार कर रहे हैं।", grammar: "Have been (Rahe hain + time)" },
+                    { en: "By next week, Aryan will have been crowned King.", hi: "अगले हफ्ते तक, आर्यन को राजा का ताज पहनाया जा चुका होगा।", grammar: "Will have + 3rd (Chuka hoga)" },
+                    { en: "He will be ruling with justice and kindness.", hi: "वह न्याय और दया के साथ शासन कर रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "He has learned that power must be used wisely.", hi: "उसने सीखा है (सीख चुका है) कि शक्ति का उपयोग बुद्धिमानी से किया जाना चाहिए।", grammar: "Has + 3rd / Must" },
+                    { en: "The hardships have made him a true leader.", hi: "कठिनाइयों ने उसे एक सच्चा नेता बना दिया है।", grammar: "Have + 3rd (Chuka hai)" },
+                    { en: "Long live the King!", hi: "राजा अमर रहे!", grammar: "Imperative" }
+                ],
+                quiz: [
+                    { question: "What did the uncle say he 'should have' done?", options: ["Apologized", "Killed Aryan", "Run faster"], correct: "Killed Aryan" },
+                    { question: "What 'could have' the uncle been?", options: ["A King", "A good advisor", "A soldier"], correct: "A good advisor" },
+                    { question: "What had happened by noon?", options: ["Aryan rescued his father", "Aryan slept", "It rained"], correct: "Aryan rescued his father" },
+                    { question: "What will have happened by next week?", options: ["War will start", "Aryan will have been crowned", "Uncle will return"], correct: "Aryan will have been crowned" },
+                    { question: "What lesson has he learned?", options: ["Power must be used wisely", "Run away", "Trust no one"], correct: "Power must be used wisely" }
+                ]
+            }
+        ]
+    },
+    "level6": {
+        title: "The Prince of Jaipur (Level 6)",
+        id: "level6",
+        desc: "The Grand Finale: All 30 Verbs",
+        chapters: [
+            {
+                title: "Chapter 1: The Exile",
+                sentences: [
+                    { en: "The sun sets over the pink walls of Jaipur, casting long shadows.", hi: "सूरज जयपुर की गुलाबी दीवारों पर अस्त होता है, लंबी परछाइयां डालता है।", grammar: "Ta hai (Simple Present)" },
+                    { en: "Prince Vikram usually watches the sunset from his balcony.", hi: "राजकुमार विक्रम आमतौर पर अपनी बालकनी से सूर्यास्त देखता है।", grammar: "Ta hai (Routine)" },
+                    { en: "He used to play in these courtyards as a child.", hi: "वह बचपन में इन आंगनों में खेला करता था।", grammar: "Ta tha (Used to)" },
+                    { en: "But today, the palace is silent and full of tension.", hi: "लेकिन आज, महल शांत और तनाव से भरा है।", grammar: "Hai (State)" },
+                    { en: "His uncle, Sher Singh, has been planning a conspiracy for months.", hi: "उसका चाचा, शेर सिंह, महीनों से साजिश की योजना बना रहा है।", grammar: "Has been (Raha hai + time)" },
+                    { en: "Vikram was reading a scroll when his loyal guard entered.", hi: "विक्रम एक स्क्रॉल पढ़ रहा था जब उसका वफादार गार्ड अंदर आया।", grammar: "Raha tha (Past Continuous)" },
+                    { en: "The guard said, 'You must leave, my Prince.'", hi: "गार्ड ने कहा, 'आपको जाना ही चाहिए (मस्ट), मेरे राजकुमार।'", grammar: "Must (Compulsion)" },
+                    { en: "He told him that Sher Singh had bribed the army.", hi: "उसने उसे बताया कि शेर सिंह ने सेना को रिश्वत दी थी (दे चुका था)।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "Vikram could not believe his own family would betray him.", hi: "विक्रम विश्वास नहीं कर सका कि उसका अपना परिवार उसे धोखा देगा।", grammar: "Could (Saka)" },
+                    { en: "He had to make a quick decision to save his life.", hi: "उसे अपनी जान बचाने के लिए त्वरित निर्णय लेना पड़ा।", grammar: "Had to (Na tha)" },
+                    { en: "He gathered his jewels and hid them in a bag.", hi: "उसने अपने गहने इकट्ठे किए और उन्हें एक बैग में छिपा दिया।", grammar: "Simple Past" },
+                    { en: "He was about to leave when he heard heavy footsteps.", hi: "वह जाने ही वाला था कि उसने भारी कदमों की आहट सुनी।", grammar: "Was about to (Wala tha)" },
+                    { en: "The enemy soldiers were searching for him everywhere.", hi: "दुश्मन के सैनिक उसे हर जगह खोज रहे थे।", grammar: "Rahe the (Past Continuous)" },
+                    { en: "He realized he might be captured if he used the main gate.", hi: "उसे एहसास हुआ कि अगर उसने मुख्य द्वार का इस्तेमाल किया तो शायद उसे पकड़ लिया जाए।", grammar: "Might be (Shayad)" },
+                    { en: "He had got to find a secret passage.", hi: "उसे एक गुप्त रास्ता ढूंढना ही था (ढूंढना पड़ा था)।", grammar: "Had got to (Padta tha)" },
+                    { en: "There used to be a tunnel under the old library.", hi: "पुरानी लाइब्रेरी के नीचे एक सुरंग हुआ करती थी।", grammar: "Used to (Hua karti thi)" },
+                    { en: "He ran towards the library, his heart pounding.", hi: "वह लाइब्रेरी की ओर दौड़ा, उसका दिल धड़क रहा था।", grammar: "Simple Past" },
+                    { en: "He pushed the heavy bookshelf aside.", hi: "उसने भारी बुकशेल्फ़ को एक तरफ धकेल दिया।", grammar: "Simple Past" },
+                    { en: "Dust filled the air as the hidden door opened.", hi: "छिपा हुआ दरवाजा खुलते ही हवा में धूल भर गई।", grammar: "Simple Past" },
+                    { en: "He entered the dark tunnel just in time.", hi: "वह समय रहते अंधेरी सुरंग में दाखिल हो गया।", grammar: "Simple Past" },
+                    { en: "He could hear the soldiers shouting his name.", hi: "वह सैनिकों को अपना नाम पुकारते हुए सुन सकता था (सका)।", grammar: "Could (Saka)" },
+                    { en: "He crawled through the darkness for hours.", hi: "वह घंटों तक अंधेरे में रेंगता रहा।", grammar: "Simple Past" },
+                    { en: "He thought, 'I should have listened to my father.'", hi: "उसने सोचा, 'मुझे अपने पिता की बात सुननी चाहिए थी।'", grammar: "Should have (Chahiye tha)" },
+                    { en: "His father had warned him about Sher Singh's ambition.", hi: "उसके पिता ने उसे शेर सिंह की महत्वाकांक्षा के बारे में चेतावनी दी थी।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "Finally, he emerged outside the city walls.", hi: "अंत में, वह शहर की दीवारों के बाहर निकला।", grammar: "Simple Past" },
+                    { en: "The cool night air hit his face.", hi: "रात की ठंडी हवा उसके चेहरे से टकराई।", grammar: "Simple Past" },
+                    { en: "He has to survive in the desert now.", hi: "उसे अब रेगिस्तान में जीवित रहना है।", grammar: "Has to (Na hai)" },
+                    { en: "He does not know where to go.", hi: "वह नहीं जानता कि कहाँ जाना है।", grammar: "Ta hai (Simple Present)" },
+                    { en: "He saw a horse tied near a tree.", hi: "उसने एक पेड़ के पास बंधा हुआ घोड़ा देखा।", grammar: "Simple Past" },
+                    { en: "It might belong to a trader.", hi: "यह शायद किसी व्यापारी का हो सकता है।", grammar: "Might (Shayad)" },
+                    { en: "But he has got to take it to survive.", hi: "लेकिन जीवित रहने के लिए उसे इसे लेना ही है (पड़ता है)।", grammar: "Has got to (Padta hai)" },
+                    { en: "He mounted the horse and rode into the night.", hi: "वह घोड़े पर सवार हुआ और रात में चला गया।", grammar: "Simple Past" },
+                    { en: "By morning, he will have reached the next village.", hi: "सुबह तक, वह अगले गाँव पहुँच चुका होगा।", grammar: "Will have + 3rd (Chuka hoga)" },
+                    { en: "He felt hungry and thirsty.", hi: "उसे भूख और प्यास लगी थी।", grammar: "Simple Past" },
+                    { en: "He had not eaten anything since the morning.", hi: "उसने सुबह से कुछ नहीं खाया था।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "He saw a small hut in the distance.", hi: "उसने दूर एक छोटी सी झोपड़ी देखी।", grammar: "Simple Past" },
+                    { en: "An old man was sitting outside.", hi: "एक बूढ़ा आदमी बाहर बैठा था।", grammar: "Raha tha (Continuous)" },
+                    { en: "Vikram approached him and asked for water.", hi: "विक्रम उसके पास गया और पानी माँगा।", grammar: "Simple Past" },
+                    { en: "The old man looked at him closely.", hi: "बूढ़े आदमी ने उसे करीब से देखा।", grammar: "Simple Past" },
+                    { en: "He asked, 'Are you the Prince of Jaipur?'", hi: "उसने पूछा, 'क्या तुम जयपुर के राजकुमार हो?'", grammar: "Simple Present" },
+                    { en: "Vikram hesitated; he might be a spy.", hi: "विक्रम हिचकिचाया; वह शायद जासूस हो सकता है।", grammar: "Might be (Shayad)" },
+                    { en: "But he decided to tell the truth.", hi: "लेकिन उसने सच बताने का फैसला किया।", grammar: "Simple Past" },
+                    { en: "He said, 'Yes, I am Vikram.'", hi: "उसने कहा, 'हाँ, मैं विक्रम हूँ।'", grammar: "Simple Present" },
+                    { en: "The old man smiled and bowed.", hi: "बूढ़ा आदमी मुस्कुराया और झुक गया।", grammar: "Simple Past" },
+                    { en: "He said, 'I served your grandfather.'", hi: "उसने कहा, 'मैंने आपके दादाजी की सेवा की थी।'", grammar: "Simple Past" },
+                    { en: "I have been waiting for a true leader.", hi: "मैं एक सच्चे नेता का इंतज़ार कर रहा हूँ (समय से)।", grammar: "Have been (Raha hun + time)" },
+                    { en: "Vikram felt relieved.", hi: "विक्रम ने राहत महसूस की।", grammar: "Simple Past" },
+                    { en: "The old man gave him food and shelter.", hi: "बूढ़े आदमी ने उसे भोजन और आश्रय दिया।", grammar: "Simple Past" },
+                    { en: "He told Vikram, 'You have to build an army.'", hi: "उसने विक्रम से कहा, 'तुम्हें एक सेना बनानी है।'", grammar: "Have to (Na hai)" },
+                    { en: "You will have to fight for your right.", hi: "तुम्हें अपने अधिकार के लिए लड़ना पड़ेगा।", grammar: "Will have to (Padega)" },
+                    { en: "Vikram knew it would not be easy.", hi: "विक्रम जानता था कि यह आसान नहीं होगा।", grammar: "Would (Ga)" },
+                    { en: "He spent the next year training in the desert.", hi: "उसने अगला साल रेगिस्तान में प्रशिक्षण में बिताया।", grammar: "Simple Past" },
+                    { en: "He learned how to fight with a spear.", hi: "उसने भाले से लड़ना सीखा।", grammar: "Simple Past" },
+                    { en: "He gathered brave men from the villages.", hi: "उसने गांवों से बहादुर आदमियों को इकट्ठा किया।", grammar: "Simple Past" },
+                    { en: "They respected him because he was humble.", hi: "वे उसका सम्मान करते थे क्योंकि वह विनम्र था।", grammar: "Simple Past" },
+                    { en: "He helped them plow their fields.", hi: "उसने उनके खेत जोतने में उनकी मदद की।", grammar: "Simple Past" },
+                    { en: "He shared their food and stories.", hi: "उसने उनका भोजन और कहानियाँ साझा कीं।", grammar: "Simple Past" },
+                    { en: "He became one of them.", hi: "वह उनमें से एक बन गया।", grammar: "Simple Past" },
+                    { en: "One day, a messenger came from the city.", hi: "एक दिन, शहर से एक दूत आया।", grammar: "Simple Past" },
+                    { en: "He said, 'Sher Singh has increased taxes.'", hi: "उसने कहा, 'शेर सिंह ने कर बढ़ा दिए हैं (बढ़ा चुका है)।'", grammar: "Has + 3rd (Chuka hai)" },
+                    { en: "The people are suffering.", hi: "लोग पीड़ित हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "They are waiting for your return.", hi: "वे आपकी वापसी का इंतज़ार कर रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "Vikram stood up and drew his sword.", hi: "विक्रम खड़ा हो गया और अपनी तलवार खींच ली।", grammar: "Simple Past" },
+                    { en: "He said, 'The time has come.'", hi: "उसने कहा, 'समय आ गया है (आ चुका है)।'", grammar: "Has + 3rd (Chuka hai)" },
+                    { en: "We should start our march tomorrow.", hi: "हमें कल अपना मार्च शुरू करना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "We will not stop until we win.", hi: "हम तब तक नहीं रुकेंगे जब तक हम जीत नहीं जाते।", grammar: "Ga (Future)" },
+                    { en: "I could have stayed hidden, but I chose to fight.", hi: "मैं छिपा रह सकता था, लेकिन मैंने लड़ना चुना।", grammar: "Could have (Sakta tha)" },
+                    { en: "By next month, I will be sitting on the throne.", hi: "अगले महीने तक, मैं सिंहासन पर बैठा रहुँगा।", grammar: "Raha honga (Future Continuous)" },
+                    { en: "Or I will have died trying.", hi: "या मैं कोशिश करते हुए मर चुका होऊंगा।", grammar: "Will have + 3rd (Chuka hoga)" },
+                    { en: "The soldiers cheered for their Prince.", hi: "सैनिकों ने अपने राजकुमार के लिए जयकार की।", grammar: "Simple Past" },
+                    { en: "They were ready to die for him.", hi: "वे उसके लिए मरने को तैयार थे।", grammar: "Simple Past" },
+                    { en: "Vikram looked at the stars.", hi: "विक्रम ने तारों को देखा।", grammar: "Simple Past" },
+                    { en: "He prayed to the gods for strength.", hi: "उसने शक्ति के लिए देवताओं से प्रार्थना की।", grammar: "Simple Past" },
+                    { en: "He knew the battle would be fierce.", hi: "वह जानता था कि लड़ाई भीषण होगी।", grammar: "Would (Hogi)" },
+                    { en: "But he was ready.", hi: "लेकिन वह तैयार था।", grammar: "Tha (State)" }
+                ],
+                quiz: [
+                    { question: "Where does Vikram usually watch the sunset?", options: ["From the roof", "From his balcony", "From the garden"], correct: "From his balcony" },
+                    { question: "What 'had' Sher Singh done?", options: ["Left the city", "Bribed the army", "Built a temple"], correct: "Bribed the army" },
+                    { question: "What did Vikram 'have to' do?", options: ["Fight immediately", "Make a quick decision", "Sleep"], correct: "Make a quick decision" },
+                    { question: "Where did he find the secret passage?", options: ["Under the bed", "Under the library", "Behind a painting"], correct: "Under the library" },
+                    { question: "What 'should he have' done?", options: ["Listened to his father", "Killed the guard", "Run faster"], correct: "Listened to his father" },
+                    { question: "Who was the old man?", options: ["A wizard", "A former servant", "A thief"], correct: "A former servant" },
+                    { question: "What did Vikram 'have to' build?", options: ["A house", "An army", "A boat"], correct: "An army" },
+                    { question: "What has Sher Singh done recently?", options: ["Decreased taxes", "Increased taxes", "Left Jaipur"], correct: "Increased taxes" },
+                    { question: "What 'could' Vikram 'have done' instead of fighting?", options: ["Stayed hidden", "Joined Sher Singh", "Cried"], correct: "Stayed hidden" },
+                    { question: "What will happen by next month according to Vikram?", options: ["He will be King", "He will be rich", "He will be gone"], correct: "He will be King" }
+                ]
+            },
+            {
+                title: "Chapter 2: The Return",
+                sentences: [
+                    { en: "The army of Jaipur was waiting at the gates.", hi: "जयपुर की सेना फाटकों पर इंतज़ार कर रही थी।", grammar: "Rahi thi (Past Continuous)" },
+                    { en: "Vikram's small force looked weak compared to them.", hi: "विक्रम की छोटी सेना उनकी तुलना में कमजोर लग रही थी।", grammar: "Simple Past" },
+                    { en: "But they had courage in their hearts.", hi: "लेकिन उनके दिलों में साहस था।", grammar: "Tha (Possession)" },
+                    { en: "Vikram rode to the front on his horse.", hi: "विक्रम अपने घोड़े पर सामने की ओर गया।", grammar: "Simple Past" },
+                    { en: "He shouted, 'Soldiers of Jaipur, listen to me!'", hi: "वह चिल्लाया, 'जयपुर के सैनिकों, मेरी बात सुनो!'", grammar: "Imperative" },
+                    { en: "You used to serve my father with honor.", hi: "तुम सम्मान के साथ मेरे पिता की सेवा करते थे।", grammar: "Used to (Ta tha)" },
+                    { en: "Do you not recognize your true Prince?", hi: "क्या तुम अपने सच्चे राजकुमार को नहीं पहचानते?", grammar: "Ta hai (Simple Present)" },
+                    { en: "The soldiers looked at each other in confusion.", hi: "सैनिकों ने भ्रम में एक-दूसरे को देखा।", grammar: "Simple Past" },
+                    { en: "They might have forgotten his face.", hi: "शायद वे उसका चेहरा भूल गए होंगे (भूल चुके होंगे)।", grammar: "Might have (Shayad chuka hoga)" },
+                    { en: "But they could not forget his voice.", hi: "लेकिन वे उसकी आवाज़ नहीं भूल सकते थे (सके)।", grammar: "Could (Saka)" },
+                    { en: "Sher Singh appeared on the wall.", hi: "शेर सिंह दीवार पर दिखाई दिया।", grammar: "Simple Past" },
+                    { en: "He screamed, 'Attack him! He is a traitor!'", hi: "वह चिल्लाया, 'उस पर हमला करो! वह गद्दार है!'", grammar: "Imperative" },
+                    { en: "But the soldiers did not move.", hi: "लेकिन सैनिक नहीं हिले।", grammar: "Simple Past" },
+                    { en: "They had been suffering under Sher Singh's rule.", hi: "वे शेर सिंह के शासन में पीड़ित थे (समय से)।", grammar: "Had been (Rahe the + time)" },
+                    { en: "They knew they should support Vikram.", hi: "वे जानते थे कि उन्हें विक्रम का समर्थन करना चाहिए।", grammar: "Should (Chahiye)" },
+                    { en: "Suddenly, the captain of the guard threw down his sword.", hi: "अचानक, गार्ड के कप्तान ने अपनी तलवार नीचे फेंक दी।", grammar: "Simple Past" },
+                    { en: "He knelt and said, 'Long live Prince Vikram!'", hi: "उसने घुटने टेके और कहा, 'राजकुमार विक्रम अमर रहें!'", grammar: "Simple Past" },
+                    { en: "Sher Singh realized he had lost control.", hi: "शेर सिंह को एहसास हुआ कि उसने नियंत्रण खो दिया था (चुका था)।", grammar: "Had + 3rd (Chuka tha)" },
+                    { en: "He tried to run back into the palace.", hi: "उसने वापस महल में भागने की कोशिश की।", grammar: "Simple Past" },
+                    { en: "But Vikram was faster.", hi: "लेकिन विक्रम तेज था।", grammar: "Tha (Comparison)" },
+                    { en: "He chased his uncle to the throne room.", hi: "उसने सिंहासन कक्ष तक अपने चाचा का पीछा किया।", grammar: "Simple Past" },
+                    { en: "Sher Singh begged, 'I can explain everything.'", hi: "शेर सिंह ने विनती की, 'मैं सब कुछ समझा सकता हूँ।'", grammar: "Can (Sakta hun)" },
+                    { en: "Vikram said, 'You should have thought of that earlier.'", hi: "विक्रम ने कहा, 'तुम्हें इसके बारे में पहले सोचना चाहिए था।'", grammar: "Should have (Chahiye tha)" },
+                    { en: "You could have been a loyal brother.", hi: "तुम एक वफादार भाई हो सकते थे।", grammar: "Could have (Sakte the)" },
+                    { en: "But you chose greed over family.", hi: "लेकिन तुमने परिवार के ऊपर लालच को चुना।", grammar: "Simple Past" },
+                    { en: "The guards arrested Sher Singh.", hi: "गार्ड ने शेर सिंह को गिरफ्तार कर लिया।", grammar: "Simple Past" },
+                    { en: "Vikram walked towards the empty throne.", hi: "विक्रम खाली सिंहासन की ओर चला।", grammar: "Simple Past" },
+                    { en: "He remembered how he used to play near it.", hi: "उसे याद आया कि वह इसके पास कैसे खेला करता था।", grammar: "Used to (Ta tha)" },
+                    { en: "He sat down, and the weight of the crown felt heavy.", hi: "वह बैठ गया, और ताज का भार भारी लगा।", grammar: "Simple Past" },
+                    { en: "He knows he will have to work hard.", hi: "वह जानता है कि उसे कड़ी मेहनत करनी पड़ेगी।", grammar: "Will have to (Padega)" },
+                    { en: "He must restore peace to Jaipur.", hi: "उसे जयपुर में शांति बहाल करनी ही चाहिए (मस्ट)।", grammar: "Must (Chahiye)" },
+                    { en: "The people are celebrating outside.", hi: "लोग बाहर जश्न मना रहे हैं।", grammar: "Rahe hain (Continuous)" },
+                    { en: "They have been waiting for this day for years.", hi: "वे वर्षों से इस दिन का इंतज़ार कर रहे हैं।", grammar: "Have been (Rahe hain + time)" },
+                    { en: "By next year, Jaipur will have become prosperous again.", hi: "अगले साल तक, जयपुर फिर से समृद्ध हो चुका होगा।", grammar: "Will have + 3rd (Chuka hoga)" },
+                    { en: "Vikram will be ruling with justice.", hi: "विक्रम न्याय के साथ शासन कर रहा होगा।", grammar: "Raha hoga (Future Continuous)" },
+                    { en: "He has learned that a King serves his people.", hi: "उसने सीखा है कि एक राजा अपनी प्रजा की सेवा करता है।", grammar: "Has + 3rd (Chuka hai)" },
+                    { en: "He might have faced many hardships.", hi: "उसने शायद कई कठिनाइयों का सामना किया होगा (किया है)।", grammar: "Might have (Shayad kiya hai)" },
+                    { en: "But they made him a better man.", hi: "लेकिन उन्होंने उसे एक बेहतर इंसान बना दिया।", grammar: "Simple Past" },
+                    { en: "He looked out the window at the setting sun.", hi: "उसने खिड़की से बाहर डूबते सूरज को देखा।", grammar: "Simple Past" },
+                    { en: "He whispered, 'I have returned, Father.'", hi: "वह फुसफुसाया, 'मैं लौट आया हूँ (आ चुका हूँ), पिताजी।'", grammar: "Have + 3rd (Chuka hun)" },
+                    { en: "The story of the Prince of Jaipur will be told forever.", hi: "जयपुर के राजकुमार की कहानी हमेशा सुनाई जाएगी।", grammar: "Passive Future" },
+                    { en: "And he lived happily ever after.", hi: "और वह हमेशा खुशी से रहा।", grammar: "Simple Past" },
+                    { en: "But he never forgot the lessons of the desert.", hi: "लेकिन वह रेगिस्तान के सबक कभी नहीं भूला।", grammar: "Simple Past" },
+                    { en: "A true King is humble and brave.", hi: "एक सच्चा राजा विनम्र और बहादुर होता है।", grammar: "Ta hai (Fact)" },
+                    { en: "If you have courage, you can achieve anything.", hi: "यदि आपके पास साहस है, तो आप कुछ भी हासिल कर सकते हैं।", grammar: "Can (Sakte hain)" },
+                    { en: "Even if the whole world is against you.", hi: "भले ही पूरी दुनिया तुम्हारे खिलाफ हो।", grammar: "Conditional" },
+                    { en: "Believe in yourself.", hi: "खुद पर विश्वास रखो।", grammar: "Imperative" },
+                    { en: "The end.", hi: "समाप्त।", grammar: "Noun" }
+                ],
+                quiz: [
+                    { question: "Who was waiting at the gates?", options: ["Farmers", "The Army of Jaipur", "Merchants"], correct: "The Army of Jaipur" },
+                    { question: "What did Vikram tell the soldiers?", options: ["Go home", "Listen to me", "Attack"], correct: "Listen to me" },
+                    { question: "What might the soldiers have done?", options: ["Forgotten his face", "Left the city", "Slept"], correct: "Forgotten his face" },
+                    { question: "Who threw down his sword?", options: ["Sher Singh", "The Captain", "Vikram"], correct: "The Captain" },
+                    { question: "What 'should' Sher Singh 'have done'?", options: ["Thought earlier", "Fought harder", "Ran faster"], correct: "Thought earlier" },
+                    { question: "What 'could' Sher Singh 'have been'?", options: ["A King", "A loyal brother", "A soldier"], correct: "A loyal brother" },
+                    { question: "What 'will' Vikram 'have to' do?", options: ["Sleep", "Work hard", "Travel"], correct: "Work hard" },
+                    { question: "What 'must' he do?", options: ["Restore peace", "Build a palace", "Buy horses"], correct: "Restore peace" },
+                    { question: "What will have happened by next year?", options: ["Jaipur will have become prosperous", "Vikram will leave", "War will start"], correct: "Jaipur will have become prosperous" },
+                    { question: "What has he learned?", options: ["A King rules", "A King serves", "A King fights"], correct: "A King serves" }
+                ]
+            }
+        ]
+    }
+}; // CLOSES THE STORY LIBRARY
 
             const vocabularyData = {
                 "Vocabulary Builder": {
@@ -27917,20 +28530,37 @@ function showStoryGrammarInfo(levelId) {
         ];
     } else if (levelId === 'level2') {
         grammarPoints = [
-            { title: "Na hai / Na padta hai", desc: "Has/Have to (Compulsion)", ex: "I have to go." },
-            { title: "Na tha / Na pada", desc: "Had to (Past Compulsion)", ex: "I had to eat." },
-            { title: "Padega", desc: "Will have to (Future Compulsion)", ex: "You will have to study." }
+            { title: "Na hai (Has/Have to)", desc: "Present Compulsion", ex: "I have to go." },
+            { title: "Padta hai (Has/Have got to)", desc: "Strong Compulsion", ex: "You have got to work." },
+            { title: "Na tha (Had to)", desc: "Past Compulsion", ex: "I had to eat." },
+            { title: "Padta tha (Had got to)", desc: "Strong Past Compulsion", ex: "We had got to leave." },
+            { title: "Padega (Will have to)", desc: "Future Compulsion", ex: "You will have to study." }
+        ];
+    } else if (levelId === 'level3') {
+        grammarPoints = [
+            { title: "Wala hai (About to)", desc: "Immediate Future Intent", ex: "The bus is about to leave." },
+            { title: "Wala tha (Was about to)", desc: "Past Intent", ex: "I was about to call." },
+            { title: "Chuka hai (Has/Have + 3rd)", desc: "Present Perfect (Completion)", ex: "He has arrived." },
+            { title: "Chuka tha (Had + 3rd)", desc: "Past Perfect (Completed before another)", ex: "The train had left." },
+            { title: "Chuka hoga (Will have + 3rd)", desc: "Future Perfect", ex: "By noon, he will have reached." }
+        ];
+    } else if (levelId === 'level4') {
+        grammarPoints = [
+            { title: "Sakta hai (Can)", desc: "Ability / Possibility", ex: "I can swim." },
+            { title: "Saka (Could)", desc: "Past Ability", ex: "I could not run fast." },
+            { title: "Chahiye (Should)", desc: "Advice / Duty", ex: "You should study." },
+            { title: "Sakega (Will be able to)", desc: "Future Capacity", ex: "We will be able to win." }
         ];
     }
-    // Add more levels as needed...
 
-    list.innerHTML = grammarPoints.map(p => `
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+    // Inject Content
+    list.innerHTML = grammarPoints.length > 0 ? grammarPoints.map(p => `
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 hover:bg-slate-100 transition-colors">
             <h4 class="font-bold text-indigo-600 text-sm">${p.title}</h4>
             <p class="text-xs text-slate-700 font-semibold">${p.desc}</p>
             <p class="text-xs text-slate-400 italic mt-1">"${p.ex}"</p>
         </div>
-    `).join('');
+    `).join('') : `<p class="text-center text-slate-400 text-sm py-4">No grammar points defined for this level yet.</p>`;
 
     modal.classList.remove('hidden');
     
