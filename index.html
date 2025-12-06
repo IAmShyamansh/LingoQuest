@@ -7822,6 +7822,788 @@ const grammarShortsData = [
       "Starting with And or But.",
       "One word sentences. Stop."
     ]
+  },
+{
+    id: 391,
+    title: "Much vs Many",
+    hinglish: "'Much' ka use uncountables (jise gin nahi sakte) ke liye hota hai, aur 'Many' ka use countables (jise gin sakte hain) ke liye hota hai.",
+    usage: ["Much: Water, Time, Money, Sugar", "Many: Cars, Books, People, Days"],
+    examples: ["I don't have much time.", "She has many friends.", "How much money do you need?"]
+  },
+  {
+    id: 392,
+    title: "A lot of vs Lots of",
+    hinglish: "Dono ka matlab 'bahut saara' hai aur dono countable/uncountable ke sath use ho sakte hain. 'Lots of' thoda zyada informal hai.",
+    usage: ["Interchangeable in most cases", "Used for large quantities"],
+    examples: ["There is a lot of water.", "There are lots of cars.", "He has a lot of money."]
+  },
+  {
+    id: 393,
+    title: "Little vs A Little",
+    hinglish: "'Little' ka matlab hai 'na ke barabar' (negative). 'A little' ka matlab hai 'thoda sa' (positive). Ye uncountables ke liye use hote hain.",
+    usage: ["Little: Almost nothing (Negative)", "A Little: Some small amount (Positive)"],
+    examples: ["I have little hope (Almost no hope).", "I have a little money (Some money).", "He showed little interest."]
+  },
+  {
+    id: 394,
+    title: "Few vs A Few",
+    hinglish: "'Few' ka matlab 'na ke barabar' (kam). 'A few' ka matlab 'kuch' (positive). Ye countables ke liye use hote hain.",
+    usage: ["Few: Almost none (Negative)", "A Few: Some (Positive)"],
+    examples: ["Few people came (Hardly anyone).", "A few friends visited me (Some friends).", "I have few enemies."]
+  },
+  {
+    id: 395,
+    title: "Some vs Any",
+    hinglish: "'Some' positive sentences mein use hota hai. 'Any' negative sentences aur questions mein use hota hai.",
+    usage: ["Some: Affirmative sentences", "Any: Negative/Interrogative sentences"],
+    examples: ["I have some money.", "I don't have any money.", "Do you have any brothers?"]
+  },
+  {
+    id: 396,
+    title: "Each vs Every",
+    hinglish: "'Each' tab use karein jab individual (ek-ek) par focus ho. 'Every' tab jab group par focus ho.",
+    usage: ["Each: Focus on individual items", "Every: Focus on the group/generalization"],
+    examples: ["Each student received a prize.", "Every student passed the exam.", "I exercise every day."]
+  },
+  
+  // --- Pronouns & Determiners ---
+  {
+    id: 397,
+    title: "I vs Me",
+    hinglish: "'I' subject hai (jo kaam karta hai). 'Me' object hai (jis par kaam hota hai).",
+    usage: ["I: Doer of action", "Me: Receiver of action"],
+    examples: ["I called him.", "He called me.", "Rahul and I went out (Not Rahul and Me)."]
+  },
+  {
+    id: 398,
+    title: "My vs Mine",
+    hinglish: "'My' ke baad noun aana zaroori hai (My car). 'Mine' akela aata hai (This is mine).",
+    usage: ["My + Noun", "Mine (No Noun)"],
+    examples: ["This is my book.", "This book is mine.", "Your house is bigger than mine."]
+  },
+  {
+    id: 399,
+    title: "Who vs Whom",
+    hinglish: "'Who' subject ke liye (kaun). 'Whom' object ke liye (kisko). Trick: Agar answer 'He' hai toh Who, agar 'Him' hai toh Whom.",
+    usage: ["Who: Subject", "Whom: Object"],
+    examples: ["Who broke this?", "Whom did you invite?", "The girl who called is here."]
+  },
+  {
+    id: 400,
+    title: "This/That vs These/Those",
+    hinglish: "This/That singular ke liye. These/Those plural ke liye. This/These paas ke liye, That/Those door ke liye.",
+    usage: ["Singular: This, That", "Plural: These, Those"],
+    examples: ["This is my pen.", "These are my pens.", "That house is far."]
+  },
+  {
+    id: 401,
+    title: "Another vs Other",
+    hinglish: "'Another' singular noun ke sath aata hai (ek aur). 'Other' plural noun ke sath aata hai (dusre).",
+    usage: ["Another + Singular", "Other + Plural"],
+    examples: ["Give me another pen.", "I have other plans.", "Show me other shoes."]
+  },
+  {
+    id: 402,
+    title: "One vs Ones",
+    hinglish: "Noun ko repeat karne se bachne ke liye use karte hain. 'One' singular ke liye, 'Ones' plural ke liye.",
+    usage: ["One: Replaces singular noun", "Ones: Replaces plural noun"],
+    examples: ["Which bag is yours? The red one.", "I like these shoes, but the old ones were better."]
+  },
+
+  // --- Verbs (Kriya) ---
+  {
+    id: 403,
+    title: "Say vs Tell",
+    hinglish: "'Tell' ke baad hamesha ek insaan (object) aata hai (Tell me). 'Say' ke baad insaan zaroori nahi (Say something).",
+    usage: ["Tell + Person", "Say + (to person) optional"],
+    examples: ["Tell me the truth.", "He said he was busy.", "Say hello to him."]
+  },
+  {
+    id: 404,
+    title: "Speak vs Talk",
+    hinglish: "'Speak' thoda formal hai aur languages ke liye use hota hai. 'Talk' informal conversation ke liye hai.",
+    usage: ["Speak: Formal, Languages", "Talk: Informal, Chatting"],
+    examples: ["Can I speak to the manager?", "I speak English.", "Let's talk about cricket."]
+  },
+  {
+    id: 405,
+    title: "Hear vs Listen",
+    hinglish: "'Hear' natural hai (awaaz kaan mein aana). 'Listen' dhyan se sunna hai (koshish karke).",
+    usage: ["Hear: Involuntary capability", "Listen: Intentional action"],
+    examples: ["I heard a noise.", "Please listen to me.", "Are you listening to music?"]
+  },
+  {
+    id: 406,
+    title: "See vs Look vs Watch",
+    hinglish: "'See' aankhein khuli hone par dikhna. 'Look' dhyan se dekhna (static). 'Watch' dhyan se dekhna (moving cheezein).",
+    usage: ["See: Natural ability", "Look: Focus on static", "Watch: Focus on moving/changing"],
+    examples: ["I see a bird.", "Look at this picture.", "I am watching a movie."]
+  },
+  {
+    id: 407,
+    title: "Make vs Do",
+    hinglish: "'Make' kuch create karne ke liye (Make cake, Make mistake). 'Do' action perform karne ke liye (Do homework, Do business).",
+    usage: ["Make: Creating/Constructing", "Do: Performing/Activity"],
+    examples: ["She made a cake.", "I did my homework.", "Don't make a noise."]
+  },
+  {
+    id: 408,
+    title: "Borrow vs Lend",
+    hinglish: "'Borrow' udhaar lena. 'Lend' udhaar dena.",
+    usage: ["Borrow: Take temporarily", "Lend: Give temporarily"],
+    examples: ["Can I borrow your pen?", "Please lend me some money.", "He refused to lend his car."]
+  },
+  {
+    id: 409,
+    title: "Bring vs Take",
+    hinglish: "'Bring' pass laana (speaker ki taraf). 'Take' door le jaana (speaker se door).",
+    usage: ["Bring: Movement towards", "Take: Movement away"],
+    examples: ["Bring me that book.", "Take this trash outside.", "Don't forget to take your umbrella."]
+  },
+  {
+    id: 410,
+    title: "Rob vs Steal",
+    hinglish: "Insaan ya jagah ko 'Rob' karte hain. Cheez ko 'Steal' karte hain.",
+    usage: ["Rob + Person/Place", "Steal + Object"],
+    examples: ["They robbed the bank.", "He stole my wallet.", "Someone stole the car."]
+  },
+  {
+    id: 411,
+    title: "Win vs Beat",
+    hinglish: "Match ya prize ko 'Win' karte hain. Opponent ko 'Beat' karte hain.",
+    usage: ["Win + Game/Prize", "Beat + Person/Team"],
+    examples: ["We won the match.", "We beat Australia.", "He won the lottery."]
+  },
+  {
+    id: 412,
+    title: "Remember vs Remind",
+    hinglish: "'Remember' khud yaad rakhna. 'Remind' kisi aur ko yaad dilana.",
+    usage: ["Remember: Recall memory", "Remind: Help someone remember"],
+    examples: ["I remember your face.", "Please remind me to call him.", "This song reminds me of home."]
+  },
+  {
+    id: 413,
+    title: "Rise vs Raise",
+    hinglish: "'Rise' khud uthna (Suraj ugna). 'Raise' kisi cheez ko uthana (Haath uthana).",
+    usage: ["Rise: Intransitive (No object)", "Raise: Transitive (Needs object)"],
+    examples: ["The sun rises.", "Raise your hand.", "Prices are rising."]
+  },
+  {
+    id: 414,
+    title: "Lay vs Lie",
+    hinglish: "'Lay' kuch rakhna (Lay the eggs). 'Lie' letna ya jhooth bolna.",
+    usage: ["Lay: Put object down", "Lie: Recline / Falsehood"],
+    examples: ["Lay the baby on the bed.", "I need to lie down.", "Don't lie to me."]
+  },
+  {
+    id: 415,
+    title: "Learn vs Teach",
+    hinglish: "'Learn' seekhna. 'Teach' sikhana.",
+    usage: ["Learn: Acquire knowledge", "Teach: Impart knowledge"],
+    examples: ["I want to learn French.", "She teaches English.", "Will you teach me?"]
+  },
+
+  // --- Adjectives & Adverbs (Visheshan) ---
+  {
+    id: 416,
+    title: "Older vs Elder",
+    hinglish: "'Elder' sirf khoon ke rishte (family) mein badon ke liye use hota hai. 'Older' kisi ke liye bhi (insaan ya cheez).",
+    usage: ["Elder: Family members (senior)", "Older: General age comparison"],
+    examples: ["He is my elder brother.", "This building is older than that one.", "She is older than me."]
+  },
+  {
+    id: 417,
+    title: "Farther vs Further",
+    hinglish: "'Farther' physical doori ke liye. 'Further' aage ki baat ya extra ke liye.",
+    usage: ["Farther: Physical distance", "Further: Metaphorical/Additional"],
+    examples: ["My house is farther than yours.", "I need further details.", "Let's discuss this further."]
+  },
+  {
+    id: 418,
+    title: "Hard vs Hardly",
+    hinglish: "'Hard' mehnat ya sakht (Adjective/Adverb). 'Hardly' mushkil se ya na ke barabar (Adverb).",
+    usage: ["Hard: Difficult/Solid/Energetic", "Hardly: Scarcely/Barely"],
+    examples: ["He works hard.", "I hardly know him (I don't know him well).", "The rock is hard."]
+  },
+  {
+    id: 419,
+    title: "Late vs Lately",
+    hinglish: "'Late' der se. 'Lately' ka matlab 'haali mein' (recently).",
+    usage: ["Late: Not on time", "Lately: Recently"],
+    examples: ["He arrived late.", "Have you seen him lately?", "I haven't slept well lately."]
+  },
+  {
+    id: 420,
+    title: "Near vs Nearly",
+    hinglish: "'Near' paas (location). 'Nearly' lagbhag (almost).",
+    usage: ["Near: Close by", "Nearly: Almost"],
+    examples: ["My house is near the station.", "It is nearly 5 o'clock.", "I nearly forgot."]
+  },
+  {
+    id: 421,
+    title: "High vs Highly",
+    hinglish: "'High' uncha (physical). 'Highly' bahut zyada (degree/opinion).",
+    usage: ["High: Elevation", "Highly: Very/Extremely"],
+    examples: ["The bird flew high.", "He is a highly respected man.", "It is highly likely."]
+  },
+  {
+    id: 422,
+    title: "Interested vs Interesting",
+    hinglish: "ED ending feeling batata hai (I am interested). ING ending cheez ki quality batata hai (Movie is interesting).",
+    usage: ["-ed: How you feel", "-ing: How the thing is"],
+    examples: ["I am bored.", "The movie was boring.", "She is excited about the news."]
+  },
+  {
+    id: 423,
+    title: "Alone vs Lonely",
+    hinglish: "'Alone' akele hona (physical state). 'Lonely' akela mehsoos karna (sad feeling).",
+    usage: ["Alone: By oneself", "Lonely: Feeling sad about isolation"],
+    examples: ["I live alone.", "I feel lonely without my friends.", "Leave me alone."]
+  },
+
+  // --- Prepositions & Connectors ---
+  {
+    id: 424,
+    title: "On time vs In time",
+    hinglish: "'On time' bilkul sahi waqt par (scheduled). 'In time' waqt rehte (deadline se pehle).",
+    usage: ["On time: Punctual", "In time: Before it's too late"],
+    examples: ["The train left on time.", "We reached the station in time to catch the train.", "Be on time for the meeting."]
+  },
+  {
+    id: 425,
+    title: "At the end vs In the end",
+    hinglish: "'At the end' kisi cheez ke khatam hone par (At the end of the movie). 'In the end' aakhirkaar (Finally).",
+    usage: ["At the end of: Physical point", "In the end: Conclusion/Result"],
+    examples: ["At the end of the book, he dies.", "In the end, everything was fine.", "Sign at the end of the page."]
+  },
+  {
+    id: 426,
+    title: "Beside vs Besides",
+    hinglish: "'Beside' bagal mein (next to). 'Besides' ke alava (in addition to).",
+    usage: ["Beside: Location", "Besides: Addition"],
+    examples: ["Sit beside me.", "Besides English, I speak Hindi.", "Who was there besides you?"]
+  },
+  {
+    id: 427,
+    title: "Ago vs Before",
+    hinglish: "'Ago' past tense mein use hota hai (2 years ago). 'Before' past perfect mein ya general sense mein.",
+    usage: ["Ago: Back from now (Simple Past)", "Before: Back from then (Past Perfect)"],
+    examples: ["I met him 2 years ago.", "I had met him before.", "Have you been here before?"]
+  },
+  {
+    id: 428,
+    title: "During vs While",
+    hinglish: "'During' ke baad noun aata hai. 'While' ke baad subject + verb aata hai.",
+    usage: ["During + Noun", "While + Sentence"],
+    examples: ["I slept during the movie.", "I slept while I was watching the movie.", "Don't talk during the class."]
+  },
+  {
+    id: 429,
+    title: "Despite vs Although",
+    hinglish: "'Despite' ke baad noun phrase aati hai. 'Although' ke baad poora sentence aata hai.",
+    usage: ["Despite + Noun", "Although + Clause"],
+    examples: ["Despite the rain, we played.", "Although it rained, we played.", "In spite of the rain, we played."]
+  },
+  {
+    id: 430,
+    title: "By vs Until",
+    hinglish: "'By' deadline batata hai (is waqt tak kaam ho jana chahiye). 'Until' duration batata hai (is waqt tak kaam chalega).",
+    usage: ["By: Not later than", "Until: Up to that time"],
+    examples: ["Finish this by 5 PM.", "I will wait until 5 PM.", "He slept until noon."]
+  },
+  
+  // --- Nouns & General Words ---
+  {
+    id: 431,
+    title: "House vs Home",
+    hinglish: "'House' building (eent-patthar) hai. 'Home' jahan aap rehte hain aur comfortable feel karte hain (emotional).",
+    usage: ["House: Physical structure", "Home: Where you live/belong"],
+    examples: ["They are building a new house.", "I am going home.", "Home sweet home."]
+  },
+  {
+    id: 432,
+    title: "Job vs Work",
+    hinglish: "'Job' countable hai (I have a job). 'Work' uncountable hai (I have work).",
+    usage: ["Job: Specific role/Profession", "Work: Activity/Effort"],
+    examples: ["I need a new job.", "I have a lot of work to do.", "Good job!"]
+  },
+  {
+    id: 433,
+    title: "Fun vs Funny",
+    hinglish: "'Fun' maza (enjoyment). 'Funny' hasi aane wala (comedy).",
+    usage: ["Fun: Enjoyable", "Funny: Humorous"],
+    examples: ["The party was fun.", "He told a funny joke.", "Rollercoasters are fun."]
+  },
+  {
+    id: 434,
+    title: "Travel vs Trip vs Journey",
+    hinglish: "'Travel' verb hai ya general noun. 'Trip' choti yaatra (vacation). 'Journey' lamba safar (ek jagah se dusri jagah).",
+    usage: ["Travel: General act", "Trip: Short visit & return", "Journey: Long distance one-way"],
+    examples: ["I love travel.", "How was your trip to Goa?", "Life is a journey."]
+  },
+  {
+    id: 435,
+    title: "Habit vs Custom",
+    hinglish: "'Habit' ek insaan ki aadat. 'Custom' samaj ya desh ki parampara.",
+    usage: ["Habit: Individual", "Custom: Society/Culture"],
+    examples: ["Biting nails is a bad habit.", "It is a custom to greet elders.", "Old customs are dying."]
+  },
+  {
+    id: 436,
+    title: "Shade vs Shadow",
+    hinglish: "'Shade' dhoop se bachaav (chaanv - area). 'Shadow' kisi cheez ki parchayi (shape).",
+    usage: ["Shade: Area protected from sun", "Shadow: Dark shape cast by object"],
+    examples: ["Let's sit in the shade.", "I saw my shadow on the wall.", "The tree gives shade."]
+  },
+  {
+    id: 437,
+    title: "Ground vs Floor",
+    hinglish: "'Ground' ghar ke bahar (zameen). 'Floor' ghar ke andar (farsh).",
+    usage: ["Ground: Earth surface outside", "Floor: Indoor surface"],
+    examples: ["He sat on the ground in the park.", "Don't drop food on the floor.", "The plane touched the ground."]
+  },
+  {
+    id: 438,
+    title: "Receipt vs Recipe",
+    hinglish: "'Receipt' raseed (bill). 'Recipe' khana banane ki vidhi.",
+    usage: ["Receipt: Proof of purchase", "Recipe: Cooking instructions"],
+    examples: ["Keep the receipt.", "What is the recipe for this cake?", "I lost the receipt."]
+  },
+  {
+    id: 439,
+    title: "Dessert vs Desert",
+    hinglish: "'Dessert' meetha (khane ke baad). 'Desert' registaan.",
+    usage: ["Dessert (Double S): Sweet dish", "Desert (Single S): Sand/Dry land"],
+    examples: ["I want ice cream for dessert.", "The Sahara is a desert.", "Don't desert (leave) me."]
+  },
+  {
+    id: 440,
+    title: "Lose vs Loose",
+    hinglish: "'Lose' (Z sound) khona ya haarna. 'Loose' (S sound) dheela.",
+    usage: ["Lose: Verb (fail/misplace)", "Loose: Adjective (not tight)"],
+    examples: ["Don't lose hope.", "My pants are loose.", "Did you lose the match?"]
+  },
+
+  // --- Advanced Structures ---
+  {
+    id: 441,
+    title: "Used to vs Be Used to",
+    hinglish: "'Used to' purani aadat (jo ab nahi hai). 'Be used to' aadat hona (comfortable hona).",
+    usage: ["Used to + Verb: Past habit", "Be used to + V-ing: Accustomed to"],
+    examples: ["I used to smoke (I don't now).", "I am used to waking up early (It's normal for me).", "He is getting used to the noise."]
+  },
+  {
+    id: 442,
+    title: "Had better",
+    hinglish: "'Had better' ka matlab 'should' se strong hota hai (warning). Iske baad 'to' nahi lagta.",
+    usage: ["Had better + Base Verb"],
+    examples: ["You had better go now.", "You had better not be late.", "We had better study."]
+  },
+  {
+    id: 443,
+    title: "Would rather",
+    hinglish: "'Would rather' ka matlab hai pasand karna (preference).",
+    usage: ["Would rather + Base Verb"],
+    examples: ["I would rather stay home.", "I would rather die than lie.", "Would you rather tea or coffee?"]
+  },
+  {
+    id: 444,
+    title: "So vs Such",
+    hinglish: "'So' adjective ke sath (So beautiful). 'Such' noun phrase ke sath (Such a beautiful girl).",
+    usage: ["So + Adjective", "Such + (a/an) + Adjective + Noun"],
+    examples: ["She is so smart.", "She is such a smart girl.", "It was such a hot day."]
+  },
+  {
+    id: 445,
+    title: "Too vs Enough",
+    hinglish: "'Too' zaroorat se zyada (Negative). 'Enough' kaafi (Positive).",
+    usage: ["Too + Adj (Negative sense)", "Adj + Enough (Positive sense)"],
+    examples: ["It is too hot to play.", "He is old enough to drive.", "I don't have enough money."]
+  },
+  {
+    id: 446,
+    title: "Very vs Too",
+    hinglish: "'Very' fact batata hai (bahut). 'Too' problem batata hai (zaroorat se zyada).",
+    usage: ["Very: High degree", "Too: Excessively (Problematic)"],
+    examples: ["It is very hot (Just a fact).", "It is too hot (I can't go out).", "He is very tall."]
+  },
+  {
+    id: 447,
+    title: "Unless vs If not",
+    hinglish: "'Unless' ka matlab hi hai 'If not'. Isliye Unless ke baad 'not' nahi lagate.",
+    usage: ["Unless + Affirmative verb"],
+    examples: ["Unless you study, you will fail.", "If you don't study, you will fail.", "I won't go unless you come."]
+  },
+  {
+    id: 448,
+    title: "Like vs As",
+    hinglish: "'Like' comparison ke liye (noun ke sath). 'As' function/role batane ke liye.",
+    usage: ["Like + Noun (Similarity)", "As + Sentence/Role"],
+    examples: ["He looks like his father.", "He works as a doctor.", "Do as I say."]
+  },
+  {
+    id: 449,
+    title: "In case vs If",
+    hinglish: "'In case' savdhani ke liye (agar zaroorat padi toh). 'If' condition ke liye.",
+    usage: ["In case: Preparation", "If: Condition"],
+    examples: ["Take an umbrella in case it rains.", "Call me if you need help.", "I made extra food in case they come."]
+  },
+  {
+    id: 450,
+    title: "Maybe vs May be",
+    hinglish: "'Maybe' (ek shabd) matlab shayad (Adverb). 'May be' (do shabd) matlab ho sakta hai (Verb).",
+    usage: ["Maybe: Perhaps", "May be: Possibility verb"],
+    examples: ["Maybe he is late.", "He may be late.", "It may be true."]
+  },
+  {
+    id: 451,
+    title: "Every day vs Everyday",
+    hinglish: "'Every day' matlab rozana (Adverb). 'Everyday' matlab aam/mamuli (Adjective).",
+    usage: ["Every day: Frequency", "Everyday: Ordinary"],
+    examples: ["I run every day.", "These are my everyday clothes.", "Cooking is an everyday task."]
+  },
+  {
+    id: 452,
+    title: "Some time vs Sometimes",
+    hinglish: "'Some time' matlab thoda waqt. 'Sometimes' matlab kabhi-kabhi.",
+    usage: ["Some time: Duration", "Sometimes: Frequency"],
+    examples: ["I need some time to think.", "Sometimes I feel sad.", "Give me some time."]
+  },
+  {
+    id: 453,
+    title: "Apart from vs A part of",
+    hinglish: "'Apart from' matlab alava. 'A part of' matlab hissa.",
+    usage: ["Apart from: Except/Besides", "A part of: Belonging to"],
+    examples: ["Apart from this, I am fine.", "I am a part of this team.", "It fell apart."]
+  },
+  {
+    id: 454,
+    title: "Then vs Than",
+    hinglish: "'Then' matlab tab/fir. 'Than' comparison ke liye.",
+    usage: ["Then: Time sequence", "Than: Comparison"],
+    examples: ["I ate, then I slept.", "She is taller than me.", "Better late than never."]
+  },
+  {
+    id: 455,
+    title: "Quiet vs Quite",
+    hinglish: "'Quiet' shant. 'Quite' kaafi had tak (very/completely).",
+    usage: ["Quiet: Silent", "Quite: Completely/Fairly"],
+    examples: ["Be quiet.", "I am quite busy.", "It is quite cold."]
+  },
+  {
+    id: 456,
+    title: "Advice vs Advise",
+    hinglish: "'Advice' (Noun) salaah. 'Advise' (Verb) salaah dena.",
+    usage: ["Advice: Noun (uncountable)", "Advise: Verb"],
+    examples: ["Give me some advice.", "I advise you to stop.", "His advice was good."]
+  },
+  {
+    id: 457,
+    title: "Practice vs Practise",
+    hinglish: "UK English mein 'Practice' noun hai aur 'Practise' verb hai. US mein dono 'Practice' hote hain.",
+    usage: ["Practice: Noun (The activity)", "Practise: Verb (To do)"],
+    examples: ["Practice makes perfect.", "I need to practise (UK).", "I need to practice (US)."]
+  },
+  {
+    id: 458,
+    title: "Affect vs Effect",
+    hinglish: "'Affect' (Verb) asar karna. 'Effect' (Noun) asar/parinaam.",
+    usage: ["Affect: To influence", "Effect: Result"],
+    examples: ["The rain affected the game.", "The effect was bad.", "It had no effect."]
+  },
+  {
+    id: 459,
+    title: "Complement vs Compliment",
+    hinglish: "'Complement' poora karna/jachtaa hai. 'Compliment' taareef.",
+    usage: ["Complement: Complete/Match", "Compliment: Praise"],
+    examples: ["The wine complements the food.", "Thanks for the compliment.", "She complimented my dress."]
+  },
+  {
+    id: 460,
+    title: "Stationary vs Stationery",
+    hinglish: "'Stationary' ruka hua. 'Stationery' pen/kagaz.",
+    usage: ["Stationary: Not moving", "Stationery: Writing supplies"],
+    examples: ["The car is stationary.", "I bought stationery.", "Stationery shop."]
+  },
+  {
+    id: 461,
+    title: "Principal vs Principle",
+    hinglish: "'Principal' head/main. 'Principle' siddhant/rule.",
+    usage: ["Principal: Headmaster/Main", "Principle: Fundamental truth"],
+    examples: ["The school Principal.", "It is against my principles.", "The principal reason."]
+  },
+  {
+    id: 462,
+    title: "Weather vs Whether",
+    hinglish: "'Weather' mausam. 'Whether' ki...kya (option).",
+    usage: ["Weather: Climate", "Whether: Choice (If)"],
+    examples: ["The weather is nice.", "I don't know whether to go or stay.", "Whether you like it or not."]
+  },
+  {
+    id: 463,
+    title: "Borrow vs Lend",
+    hinglish: "'Borrow' lena. 'Lend' dena.",
+    usage: ["Borrow: Take", "Lend: Give"],
+    examples: ["Can I borrow $10?", "Will you lend me $10?", "Never a borrower or lender be."]
+  },
+  {
+    id: 464,
+    title: "Check vs Cheque",
+    hinglish: "'Check' jaanch karna. 'Cheque' bank wala.",
+    usage: ["Check: Verify/Inspect", "Cheque: Bank payment (UK/India)"],
+    examples: ["Check your answers.", "Write a cheque.", "Check (US) for bank payment."]
+  },
+  {
+    id: 465,
+    title: "Story vs Storey",
+    hinglish: "'Story' kahani. 'Storey' building ki manzil.",
+    usage: ["Story: Tale", "Storey: Floor level (UK)"],
+    examples: ["Tell me a story.", "It is a two-storey building.", "Multi-storey car park."]
+  },
+  {
+    id: 466,
+    title: "Angel vs Angle",
+    hinglish: "'Angel' farishta. 'Angle' kon (maths/corner). Spelling dhyan se dekhein (EL vs LE).",
+    usage: ["Angel: Divine being", "Angle: Geometry/Corner"],
+    examples: ["She is an angel.", "Measure the angle.", "Look at it from a different angle."]
+  },
+  {
+    id: 467,
+    title: "Dairy vs Diary",
+    hinglish: "'Dairy' doodh se judi cheezein. 'Diary' jisme hum likhte hain.",
+    usage: ["Dairy: Milk products", "Diary: Personal notebook"],
+    examples: ["I bought milk from the dairy.", "I write in my diary daily.", "She is allergic to dairy."]
+  },
+  {
+    id: 468,
+    title: "Emigrate vs Immigrate",
+    hinglish: "'Emigrate' apna desh chodkar jana (Exit). 'Immigrate' kisi naye desh mein aana (In).",
+    usage: ["Emigrate: Leave a country", "Immigrate: Enter a country"],
+    examples: ["He emigrated from India.", "He immigrated to Canada.", "My grandparents were immigrants."]
+  },
+  {
+    id: 469,
+    title: "Famous vs Popular",
+    hinglish: "'Famous' jise sab jaante hon (mashhoor). 'Popular' jise log pasand karte hon.",
+    usage: ["Famous: Well-known", "Popular: Liked by many"],
+    examples: ["Hitler is famous (but not popular).", "He is a popular teacher.", "This song is very popular."]
+  },
+  {
+    id: 470,
+    title: "Invent vs Discover",
+    hinglish: "'Invent' nayi cheez banana (jo pehle nahi thi). 'Discover' use dhoondna jo pehle se thi.",
+    usage: ["Invent: Create new", "Discover: Find existing"],
+    examples: ["Edison invented the bulb.", "Columbus discovered America.", "Scientists discovered a new planet."]
+  },
+  {
+    id: 471,
+    title: "Rent vs Hire",
+    hinglish: "'Rent' lambe samay ke liye (Ghar/TV). 'Hire' thode samay ke liye (Taxi/Labor).",
+    usage: ["Rent: Long term/Property", "Hire: Short term/Services"],
+    examples: ["We rent an apartment.", "We hired a taxi.", "He hired a lawyer."]
+  },
+  {
+    id: 472,
+    title: "Shop vs Store",
+    hinglish: "'Shop' usually choti dukaan (UK/India). 'Store' badi dukaan ya godown (US).",
+    usage: ["Shop: Retail (Small)", "Store: Retail (Large)/Storage"],
+    examples: ["I went to the sweet shop.", "Departmental store.", "Store room."]
+  },
+  {
+    id: 473,
+    title: "Wood vs Woods",
+    hinglish: "'Wood' lakdi (material). 'Woods' jungle (chota forest).",
+    usage: ["Wood: Material", "Woods: Forest area"],
+    examples: ["This table is made of wood.", "We went for a walk in the woods.", "Lost in the woods."]
+  },
+  {
+    id: 474,
+    title: "Center vs Middle",
+    hinglish: "'Center' bilkul beech ka point. 'Middle' beech ka hissa ya samay.",
+    usage: ["Center: Exact point", "Middle: Indefinite area/duration"],
+    examples: ["Hit the center of the target.", "In the middle of the night.", "Middle of the room."]
+  },
+  {
+    id: 475,
+    title: "End vs Finish",
+    hinglish: "'End' khatam hona (rukna). 'Finish' poora karna (complete karna).",
+    usage: ["End: Stop", "Finish: Complete"],
+    examples: ["The movie ended.", "I finished my homework.", "The road ends here."]
+  },
+  {
+    id: 476,
+    title: "Error vs Mistake",
+    hinglish: "'Error' formal ya technical galti. 'Mistake' aam galti (human).",
+    usage: ["Error: System/Formal", "Mistake: Casual/Action"],
+    examples: ["Computer error.", "It was a mistake to call him.", "Spelling error."]
+  },
+  {
+    id: 477,
+    title: "Fast vs Quick",
+    hinglish: "'Fast' tezi (gati/speed). 'Quick' kam samay mein (duration).",
+    usage: ["Fast: Speed of movement", "Quick: Done in short time"],
+    examples: ["He runs fast.", "Give me a quick answer.", "Fast train."]
+  },
+  {
+    id: 478,
+    title: "Grateful vs Thankful",
+    hinglish: "'Grateful' kisi ke ehsaan ke liye. 'Thankful' khush hona ki bura nahi hua.",
+    usage: ["Grateful: To a person", "Thankful: For a situation"],
+    examples: ["I am grateful to you for helping.", "I am thankful that it didn't rain.", "Be grateful for what you have."]
+  },
+  {
+    id: 479,
+    title: "Hope vs Expect",
+    hinglish: "'Hope' umeed karna (chahte hain ki ho). 'Expect' yakeen hona (pata hai ki hoga).",
+    usage: ["Hope: Wish/Desire", "Expect: Belief/Probability"],
+    examples: ["I hope it rains (I want it).", "I expect it to rain (It looks cloudy).", "Don't expect too much."]
+  },
+  {
+    id: 480,
+    title: "Ill vs Sick",
+    hinglish: "'Ill' thoda formal aur serious bimari. 'Sick' aam bimari ya ulti jaisa lagna.",
+    usage: ["Ill: Unwell (Formal)", "Sick: Nausea/Common (US)"],
+    examples: ["He is terminally ill.", "I feel sick (vomiting).", "Sick leave."]
+  },
+  {
+    id: 481,
+    title: "Injured vs Wounded",
+    hinglish: "'Injured' accident mein chot lagna. 'Wounded' ladayi ya hatiyar se chot lagna.",
+    usage: ["Injured: Accident", "Wounded: Weapon/War"],
+    examples: ["Injured in a car crash.", "Wounded by a bullet.", "The soldier was wounded."]
+  },
+  {
+    id: 482,
+    title: "Kind vs Type",
+    hinglish: "'Kind' swabhaav ya category. 'Type' specific category.",
+    usage: ["Kind: General sort/Nature", "Type: Specific classification"],
+    examples: ["What kind of person is he?", "What type of blood do you have?", "It's a kind of fruit."]
+  },
+  {
+    id: 483,
+    title: "Marriage vs Wedding",
+    hinglish: "'Marriage' rishta (shaadi-shuda zindagi). 'Wedding' samaroh (shaadi ka function).",
+    usage: ["Marriage: Relationship", "Wedding: Ceremony"],
+    examples: ["They have a happy marriage.", "I invited him to my wedding.", "Wedding anniversary."]
+  },
+  {
+    id: 484,
+    title: "Mind vs Brain",
+    hinglish: "'Brain' dimaag (organ/body part). 'Mind' sochne ki shamta (thoughts).",
+    usage: ["Brain: Physical organ", "Mind: Abstract thinking"],
+    examples: ["The brain controls the body.", "It's all in your mind.", "Make up your mind."]
+  },
+  {
+    id: 485,
+    title: "Opportunity vs Chance",
+    hinglish: "'Opportunity' accha mauka (tarakki ke liye). 'Chance' kismat ya sambhavna.",
+    usage: ["Opportunity: Favorable time", "Chance: Luck/Possibility"],
+    examples: ["Job opportunity.", "By chance.", "There is a chance of rain."]
+  },
+  {
+    id: 486,
+    title: "Pain vs Ache",
+    hinglish: "'Pain' tez dard (general). 'Ache' dheema aur lagataar dard.",
+    usage: ["Pain: Sharp/General", "Ache: Dull/Continuous"],
+    examples: ["I have a pain in my chest.", "Headache, Stomachache.", "My legs ache."]
+  },
+  {
+    id: 487,
+    title: "Roof vs Ceiling",
+    hinglish: "'Roof' chat ka upar wala hissa (bahar). 'Ceiling' kamre ke andar wali chat.",
+    usage: ["Roof: Top covering (Outside)", "Ceiling: Top surface (Inside)"],
+    examples: ["Sit on the roof.", "Fan hangs from the ceiling.", "The roof is leaking."]
+  },
+  {
+    id: 488,
+    title: "View vs Scenery",
+    hinglish: "'View' jo ek jagah se dikhta hai (khidki se). 'Scenery' kudrati nazara (landscape).",
+    usage: ["View: From a point", "Scenery: Natural features"],
+    examples: ["Room with a sea view.", "Beautiful mountain scenery.", "Nice view."]
+  },
+  {
+    id: 489,
+    title: "Wage vs Salary",
+    hinglish: "'Wage' mazdoori (daily/hourly). 'Salary' tankhwa (monthly/yearly).",
+    usage: ["Wage: Manual labor/Short term", "Salary: Professional/Long term"],
+    examples: ["Daily wages.", "Annual salary.", "Minimum wage."]
+  },
+  {
+    id: 490,
+    title: "Soul vs Spirit",
+    hinglish: "'Soul' aatma (jo shareer chodti hai). 'Spirit' josh ya mood.",
+    usage: ["Soul: Spiritual essence", "Spirit: Energy/Ghost"],
+    examples: ["Rest in peace, soul.", "Team spirit.", "Evil spirit."]
+  },
+  {
+    id: 491,
+    title: "Human vs Humane",
+    hinglish: "'Human' insaan. 'Humane' insaniyat wala (dayalu).",
+    usage: ["Human: Species", "Humane: Compassionate"],
+    examples: ["Human body.", "Humane treatment of animals.", "To err is human."]
+  },
+  {
+    id: 492,
+    title: "Bath vs Bathe",
+    hinglish: "'Bath' (Noun) nahana. 'Bathe' (Verb) nahana (US/Formal). UK mein 'Bathe' swimming ke liye bhi use hota hai.",
+    usage: ["Bath: Noun", "Bathe: Verb"],
+    examples: ["Take a bath.", "I bathe every day.", "Baby bath."]
+  },
+  {
+    id: 493,
+    title: "Cloth vs Clothes",
+    hinglish: "'Cloth' kapda (material/tukda). 'Clothes' pehnne wale kapde (garments).",
+    usage: ["Cloth: Fabric", "Clothes: Dress/Outfit"],
+    examples: ["Wipe it with a cloth.", "Wear new clothes.", "Cotton cloth."]
+  },
+  {
+    id: 494,
+    title: "Cost vs Price",
+    hinglish: "'Cost' banane/khareedne ka kharcha. 'Price' bechne ka daam.",
+    usage: ["Cost: Expense to produce/buy", "Price: Selling amount"],
+    examples: ["The cost of production.", "What is the price of this shirt?", "Cost price vs Selling price."]
+  },
+  {
+    id: 495,
+    title: "Custom vs Costume",
+    hinglish: "'Custom' riwaj/parampara. 'Costume' vesh-bhusha (fancy dress).",
+    usage: ["Custom: Tradition", "Costume: Outfit for acting/party"],
+    examples: ["Indian customs.", "Halloween costume.", "Customs officer (Airport)."]
+  },
+  {
+    id: 496,
+    title: "Drown vs Sink",
+    hinglish: "'Drown' saans na aane se marna (zinda cheez). 'Sink' doob jana (bejaan cheez).",
+    usage: ["Drown: Living beings", "Sink: Objects"],
+    examples: ["The boy drowned.", "The ship sank.", "Don't let him drown."]
+  },
+  {
+    id: 497,
+    title: "Game vs Sport",
+    hinglish: "'Game' manoranjan aur rules wala (Chess/Cards). 'Sport' sharirik mehnat wala (Cricket/Football).",
+    usage: ["Game: Mental/Fun", "Sport: Physical/Athletic"],
+    examples: ["Chess is a game.", "Cricket is a sport.", "Video game."]
+  },
+  {
+    id: 498,
+    title: "Gold vs Golden",
+    hinglish: "'Gold' sona (metal). 'Golden' sone jaisa rang ya mauka.",
+    usage: ["Gold: The metal/Material", "Golden: Color/Adjective"],
+    examples: ["Gold ring.", "Golden hair.", "Golden opportunity."]
+  },
+  {
+    id: 499,
+    title: "Habit vs Hobby",
+    hinglish: "'Habit' aadat (roz ki). 'Hobby' shauk (free time mein).",
+    usage: ["Habit: Routine/Behavior", "Hobby: Pastime"],
+    examples: ["Smoking is a bad habit.", "Gardening is my hobby.", "Habit of waking up early."]
+  },
+  {
+    id: 500,
+    title: "Life vs Live",
+    hinglish: "'Life' (Noun) zindagi. 'Live' (Verb) jeena ya (Adjective) seedha prasarit.",
+    usage: ["Life: Existence", "Live: To exist / Broadcast"],
+    examples: ["Life is beautiful.", "Where do you live?", "Live cricket match."]
   }
 ];
         // --- PASTE THIS NEAR THE TOP OF YOUR SCRIPT VARIABLES ---
