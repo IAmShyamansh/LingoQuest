@@ -34650,7 +34650,7 @@ function renderLingoShorts() {
     
     // --- EVENT DELEGATION ---
     container.addEventListener('click', (e) => {
-        // Speak Button (Grammar & Better Phrases)
+        // Speak Button
         const speakBtn = e.target.closest('.speak-btn-short');
         if (speakBtn) {
             e.stopPropagation();
@@ -34696,18 +34696,17 @@ function renderLingoShorts() {
         // --- TYPE 1: FUN FACT CARD (RED) ---
         if (item.type === 'funfact') {
             return `
-            <div class="short-card w-full h-full fun-fact-card-bg text-yellow-300 flex flex-col justify-center items-center p-8 gap-6 relative shrink-0 text-center">
+            <div class="short-card w-full h-full fun-fact-card-bg text-yellow-300 flex flex-col justify-center items-center p-6 gap-5 relative shrink-0 text-center">
                 
-                <div class="relative z-10">
-                    <h2 class="text-6xl font-black uppercase tracking-tighter text-white fun-fact-glow animate-pulse">Fun<br>Fact!</h2>
+                <div class="relative z-10 mt-[-20px]"> <h2 class="text-6xl font-black uppercase tracking-tighter text-white fun-fact-glow animate-pulse">Fun<br>Fact!</h2>
                 </div>
                 
                 <div class="p-6 border-4 border-yellow-400/40 rounded-3xl bg-black/20 backdrop-blur-sm shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 max-w-sm w-full">
                     
                     ${item.topic ? `
-                    <div class="mb-4 pb-3 border-b-2 border-white/20">
-                        <span class="block text-xs font-bold text-white uppercase tracking-widest opacity-80 mb-1">Topic</span>
-                        <h3 class="text-3xl font-black text-yellow-300 uppercase tracking-wide drop-shadow-sm">${item.topic}</h3>
+                    <div class="mb-3 pb-2 border-b-2 border-white/20">
+                        <span class="block text-[10px] font-bold text-white uppercase tracking-widest opacity-80 mb-0.5">Topic</span>
+                        <h3 class="text-xl font-black text-yellow-300 uppercase tracking-wide drop-shadow-sm leading-tight">${item.topic}</h3>
                     </div>` : ''}
                     
                     <p class="text-xl sm:text-2xl font-bold leading-relaxed text-white drop-shadow-md font-sans">
@@ -34715,10 +34714,10 @@ function renderLingoShorts() {
                     </p>
                 </div>
 
-                <div class="text-7xl animate-bounce mt-2 filter drop-shadow-lg">💡</div>
+                <div class="text-6xl animate-bounce mt-2 filter drop-shadow-lg">💡</div>
                 
                 <div class="absolute bottom-6 text-center w-full opacity-60">
-                     <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full">
+                     <span class="text-[10px] font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full">
                         Did you know? #${item.id}
                     </span>
                 </div>
@@ -34737,24 +34736,28 @@ function renderLingoShorts() {
                 <button class="short-fav-btn ${isFav ? 'active text-pink-500' : 'text-slate-200'} absolute top-5 right-5 p-2 bg-black/20 rounded-full z-20" data-title="${item.better}" data-desc="Better way to say: ${item.common}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                 </button>
-                <div class="w-full max-w-sm flex flex-col gap-6">
-                    <div class="flex flex-col items-center opacity-80">
-                        <span class="text-xs font-bold uppercase tracking-widest mb-2 bg-black/20 px-3 py-1 rounded-full text-slate-200">Instead of Saying...</span>
-                        <div class="text-2xl font-bold text-slate-300 line-through decoration-red-400 decoration-4 decoration-wavy">"${item.common}"</div>
-                        <div class="mt-4 text-red-300 text-4xl">❌</div>
+                <div class="w-full max-w-sm flex flex-col gap-5 items-center mt-[-20px]"> <div class="flex flex-col items-center opacity-80">
+                        <span class="text-[10px] font-bold uppercase tracking-widest mb-1 bg-black/20 px-3 py-1 rounded-full text-slate-200">Instead of Saying...</span>
+                        <div class="text-2xl font-bold text-slate-300 line-through decoration-red-400 decoration-2 leading-tight">"${item.common}"</div>
+                        <div class="mt-1 text-red-300 text-2xl">❌</div>
                     </div>
-                    <div class="text-white/50 animate-bounce">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                    
+                    <div class="text-white/50 animate-bounce my-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
                     </div>
-                    <div class="better-phrase-box p-6 rounded-3xl relative overflow-hidden group">
+
+                    <div class="better-phrase-box p-6 rounded-3xl relative overflow-hidden group w-full">
                         <div class="absolute top-0 left-0 w-full h-1 bg-green-400"></div>
-                        <span class="text-xs font-black uppercase tracking-widest text-green-300 mb-2 block">Say This Instead!</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-green-300 mb-2 block">Say This Instead!</span>
                         <h2 class="text-3xl sm:text-4xl font-black text-white leading-tight drop-shadow-md">"${item.better}"</h2>
                         <button class="speak-btn-short mt-4 p-3 rounded-full bg-white text-indigo-600 hover:scale-110 transition-transform shadow-lg" data-text="${item.better}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
                         </button>
                     </div>
                 </div>
+
+                <div class="text-6xl animate-pulse mt-2 filter drop-shadow-lg">✨</div>
+
                 <div class="absolute bottom-1 left-0 right-0 text-center animate-bounce opacity-50 text-white">
                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
                 </div>
@@ -34769,26 +34772,29 @@ function renderLingoShorts() {
         const isFav = favorites.some(f => f.word === rule.title);
         
         return `
-            <div class="short-card w-full h-full bg-slate-900 text-white flex flex-col justify-start p-6 pt-14 gap-4 relative shrink-0">
+            <div class="short-card w-full h-full bg-slate-900 text-white flex flex-col justify-start p-6 pt-12 gap-3 relative shrink-0">
                 <button class="short-fav-btn ${isFav ? 'active text-pink-500' : 'text-slate-300'} absolute top-5 right-5 p-2 bg-white/10 rounded-full z-20 transition-transform active:scale-90" data-title="${rule.title}" data-desc="${rule.hinglish}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                 </button>
-                <div class="mt-4">
+                <div class="mt-2">
                     <span class="text-[10px] font-black ${accentColor} uppercase tracking-widest border border-current px-2 py-0.5 rounded-md">Rule #${rule.id}</span>
-                    <h2 class="text-2xl font-black mt-2 leading-tight tracking-tight text-white drop-shadow-md">${rule.title}</h2>
+                    <h2 class="text-2xl font-black mt-2 leading-tight tracking-tight text-white drop-shadow-md pr-10">${rule.title}</h2>
                 </div>
-                <div class="p-4 rounded-2xl ${boxBg} border border-white/5 shadow-sm flex flex-col gap-2 shrink-0">
+                
+                <div class="p-4 rounded-2xl ${boxBg} border border-white/5 shadow-sm flex flex-col gap-1 shrink-0">
                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 shrink-0">✅ Explanation</h3>
-                    <div class="explanation-fixed-area h-32 overflow-hidden flex items-center">
-                        <p class="explanation-text-content font-sans text-white text-lg leading-snug">${rule.hinglish}</p>
+                    <div class="explanation-fixed-area h-40 overflow-hidden flex items-center justify-start">
+                        <p class="explanation-text-content font-sans text-white text-lg leading-snug w-full">${rule.hinglish}</p>
                     </div>
                 </div>
+
                 <div class="shrink-0">
                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">🎯 When to use</h3>
                     <ul class="space-y-1 pl-1">
                         ${rule.usage.slice(0,3).map(u => `<li class="flex items-start gap-2 ${subColor} text-xs font-semibold truncate"><svg class="w-3 h-3 shrink-0 mt-0.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>${u}</li>`).join('')}
                     </ul>
                 </div>
+
                 <div class="examples-fixed-area flex flex-col gap-2 flex-grow overflow-y-auto no-scrollbar">
                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide shrink-0">✨ Examples</h3>
                     ${rule.examples.slice(0,3).map(ex => `
@@ -34797,6 +34803,7 @@ function renderLingoShorts() {
                         </div>
                     `).join('')}
                 </div>
+
                 <div class="h-6 shrink-0 flex items-center justify-center opacity-30">
                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-white animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
                 </div>
@@ -34823,28 +34830,15 @@ function renderLingoShorts() {
         });
     }
 
-    // --- LOGIC: Create a Structured Feed (10 Rules -> 1 Fun Fact -> 10 Rules -> 1 Phrase) ---
+    // --- LOGIC: Create a Structured Feed ---
     function generateNextBatch() {
         const batch = [];
-        
-        // 1. Get 10 Grammar Rules (Random)
         const rules = [...grammarShortsData].sort(() => 0.5 - Math.random()).slice(0, 10);
         batch.push(...rules);
-        
-        // 2. Add 1 Fun Fact (Random)
-        if (funFactsData && funFactsData.length > 0) {
-            batch.push(funFactsData[Math.floor(Math.random() * funFactsData.length)]);
-        }
-        
-        // 3. Get 10 More Grammar Rules
+        if (funFactsData && funFactsData.length > 0) batch.push(funFactsData[Math.floor(Math.random() * funFactsData.length)]);
         const moreRules = [...grammarShortsData].sort(() => 0.5 - Math.random()).slice(0, 10);
         batch.push(...moreRules);
-        
-        // 4. Add 1 Better Phrase (Random)
-        if (betterPhrasesData && betterPhrasesData.length > 0) {
-            batch.push(betterPhrasesData[Math.floor(Math.random() * betterPhrasesData.length)]);
-        }
-        
+        if (betterPhrasesData && betterPhrasesData.length > 0) batch.push(betterPhrasesData[Math.floor(Math.random() * betterPhrasesData.length)]);
         return batch;
     }
 
@@ -34862,15 +34856,20 @@ function renderLingoShorts() {
 
 // Helper to force fit text into a fixed container
 function fitTextToContainer(textElement, containerElement) {
-    let fontSize = 18; // Start with max desired size (px equivalent of 1.125rem)
-    const minSize = 11; // Don't go smaller than this readable size
+    if (!textElement || !containerElement) return;
 
-    // Set initial size
+    // Reset styles to ensure accurate calculation
+    textElement.style.height = 'auto';
+    textElement.style.whiteSpace = 'normal'; // Allow wrapping
+    
+    // Start with a large font size (e.g., 22px)
+    let fontSize = 22; 
     textElement.style.fontSize = fontSize + 'px';
+    textElement.style.lineHeight = '1.3';
 
-    // While text height is bigger than container AND font size > min
-    // Use scrollHeight vs clientHeight to detect overflow
-    while (textElement.scrollHeight > containerElement.clientHeight && fontSize > minSize) {
+    // Loop: Shrink font size while text overflows height
+    // Min font size limit set to 11px to remains readable
+    while (textElement.scrollHeight > containerElement.clientHeight && fontSize > 11) {
         fontSize--;
         textElement.style.fontSize = fontSize + 'px';
     }
