@@ -2202,6 +2202,17 @@ body.view-shorts #main-content {
     background: linear-gradient(135deg, #dc2626 0%, #9f1239 100%); /* Red to Rose Gradient */
 }
 
+/* --- BETTER PHRASE CARD STYLES --- */
+.better-phrase-bg {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); /* Indigo to Violet */
+}
+
+.better-phrase-box {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -12451,11 +12462,2415 @@ const funFactsData = [
   { id: 97, type: 'funfact', fact: "'Lunch' originally ek snack hota tha." },
   { id: 98, type: 'funfact', fact: "'Dinner' pehle din ka biggest meal hota tha—subah ya dopeher mein." },
   { id: 99, type: 'funfact', fact: "English mein aksar silent letters sirf tradition ki wajah se bache hue hain." },
-  { id: 100, type: 'funfact', fact: "English mein har rule ka ek exception hota hi hota hai!" }
+  { id: 100, type: 'funfact', fact: "English mein har rule ka ek exception hota hi hota hai!" },
+  {
+  id: 101,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Racecar' sabse popular palindrome hai—ulta padhne par bhi bilkul same letters milte hain."
+},
+{
+  id: 102,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Level' daily life me use hota word hai, aur ek perfect palindrome bhi hai."
+},
+{
+  id: 103,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Madam' ek palindrome aur ek respectful address—dono ek word me."
+},
+{
+  id: 104,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Civic' ek unique palindrome hai jise government systems describe karne me bhi use karte hain."
+},
+{
+  id: 105,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindrome sentences bhi hote hain jaise 'Nurses run'—short but clever."
+},
+{
+  id: 106,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Rotor' engineering me bhi word hai aur ek palindrome bhi."
+},
+{
+  id: 107,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Kayak' ek palindromic word hai jo boating me bhi real object hota hai."
+},
+{
+  id: 108,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindrome banane me challenge ye hota hai ki letters ka sequence bilkul mirror jaisa hona chahiye."
+},
+{
+  id: 109,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Refer' ek palindromic verb hai jo writing me bohot common hota hai."
+},
+{
+  id: 110,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Wow' ek natural reaction bhi hai aur ek mini-palindrome bhi."
+},
+{
+  id: 111,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Longest palindromic English word 'tattarrattat' hai—James Joyce ne coin kiya."
+},
+{
+  id: 112,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Pop' ek simple aur musically meaningful palindrome hai."
+},
+{
+  id: 113,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindrome dates jaise 11-11-11 bohot rare hote hain aur log lucky mante hain."
+},
+{
+  id: 114,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Deified' ek religious-sounding palindrome hai jiska meaning bhi powerful hai."
+},
+{
+  id: 115,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Repaper' ek rarely used word hai, lekin ek long palindrome bhi."
+},
+{
+  id: 116,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindrome me punctuation aur spacing ignore ki jaati hai, sirf letters count hote hain."
+},
+{
+  id: 117,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Hannah' ek palindromic name hai jo world-wide popular hai."
+},
+{
+  id: 118,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindromes brain ko symmetry aur patterns identify karne me help karte hain."
+},
+{
+  id: 119,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Bahut se sci-fi aur mystery writers palindromes titles me use karte hain pattern-effect ke liye."
+},
+{
+  id: 120,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Malayalam' ek Indian language ka naam bhi palindrome hai."
+},
+{
+  id: 121,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Minim' ek musical term bhi hai aur ek unique palindrome bhi."
+},
+{
+  id: 122,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindromes me balance hota hai, jo unhe aesthetically pleasing banata hai."
+},
+{
+  id: 123,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Stats' ek plural form bhi hai aur bilkul palindromic bhi."
+},
+{
+  id: 124,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "Palindrome puzzles memory sharp banate hain aur pattern-recognition improve karte hain."
+},
+{
+  id: 125,
+  type: 'funfact',
+  topic: "Palindrome: Word jo ulta-seedha same padhe jaaye",
+  fact: "'Eve' ek classic short palindrome hai jo literature me bohot use hota hai."
+},
+{
+  id: 126,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Machine' ek simple isogram hai jisme koi letter repeat nahi hota."
+},
+{
+  id: 127,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Dialog' ek short aur clean isogram hai jo spelling-practice me kaam aata hai."
+},
+{
+  id: 128,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Background' 10-letter long isogram hai—rarely koi lamba word itna clean hota hai."
+},
+{
+  id: 129,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Isogram identify karne se spelling accuracy improve hoti hai."
+},
+{
+  id: 130,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hotta",
+  fact: "'Cloaked' ek rarely used isogram hai jisme letters bilkul unique hote hain."
+},
+{
+  id: 131,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Strict isogram me har letter exactly ek baar aata hai—no exceptions."
+},
+{
+  id: 132,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Subdermatoglyphic' longest known isogram hai—fingertip patterns se related."
+},
+{
+  id: 133,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Hydraulic' ko log isogram samajhte hain, but 'a' repeat hota hai."
+},
+{
+  id: 134,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Isogram words memory games me use hote hain kyunki letters cluttered nahi hote."
+},
+{
+  id: 135,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Planet' ek natural isogram hai jo astronomy me everyday use hota hai."
+},
+{
+  id: 136,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Jokingly' ek fun isogram hai jisme quirky letters j, k, g, y aate hain."
+},
+{
+  id: 137,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Flowchart' ek useful technical isogram hai jo software diagrams me milta hai."
+},
+{
+  id: 138,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Isograms reading speed ko enhance karte hain kyunki repetition se confusion nahi hoti."
+},
+{
+  id: 139,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Computer' ek near-isogram hai—sirf 'o' aur 'e' repeat nahi hote."
+},
+{
+  id: 140,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Campfire' ek outdoor-themed isogram hai jo spelling-bee me kaam aata hai."
+},
+{
+  id: 141,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Short isograms beginner learners ke liye easy examples hote hain."
+},
+{
+  id: 142,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Bracely' uncommon isogram hai jisme letters rare hote hain."
+},
+{
+  id: 143,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Monarchy' ek interesting isogram hai jisme political meaning bhi hota hai."
+},
+{
+  id: 144,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Lumberjack' typical isogram hai jise log fun-word mante hain."
+},
+{
+  id: 145,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Isogram patterns brain ko distinct letter-recognition practice dete hain."
+},
+{
+  id: 146,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Vortex' ek isogram hai jo science aur fiction dono me use hota hai."
+},
+{
+  id: 147,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Playground' technically isogram nahi, but 'playground' ke letters bohot balanced hote hain."
+},
+{
+  id: 148,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Laptop' near-isogram hai—sirf 'a' repeated hota, baaki unique letters hai."
+},
+{
+  id: 149,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "'Sunbed' ek summer-themed isogram hai jisme letters crisp aur easy hain."
+},
+{
+  id: 150,
+  type: 'funfact',
+  topic: "Isogram: Word jisme koi letter repeat nahi hota",
+  fact: "Isogram spotting ek quick mind-exercise hai jo spelling confidence badhata hai."
+},
+{
+  id: 151,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'The quick brown fox jumps over the lazy dog' sabse famous pangram hai."
+},
+{
+  id: 152,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams originally typewriter aur keyboard test karne ke liye banaye gaye the."
+},
+{
+  id: 153,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Short pangrams banana mushkil hota hai kyunki Q, X, Z jaise letters rare hote hain."
+},
+{
+  id: 154,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Pack my box with five dozen liquor jugs' ek compact pangram hai."
+},
+{
+  id: 155,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangram writing creativity aur vocabulary dono ko test karta hai."
+},
+{
+  id: 156,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Fonts test karne ke liye designers pangrams mandatory mante hain."
+},
+{
+  id: 157,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Sphinx of black quartz, judge my vow' ek stylish pangram hai."
+},
+{
+  id: 158,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams me clarity aur creativity ka perfect balance hona chahiye."
+},
+{
+  id: 159,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'How vexingly quick daft zebras jump!' ek fun-filled pangram hai."
+},
+{
+  id: 160,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams English me letter-frequency patterns sikhne ka best tool hain."
+},
+{
+  id: 161,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Kai languages me pangrams banana English ki comparison me harder hota hai."
+},
+{
+  id: 162,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Grumpy wizards make toxic brew for the evil queen' ek fantasy-themed pangram hai."
+},
+{
+  id: 163,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangram me har letter at least ek baar hona chahiye—multiple times bhi ho sakta hai."
+},
+{
+  id: 164,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Typing tests me pangram sentences perfect speed-check tools hote hain."
+},
+{
+  id: 165,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams vocabulary stretch karne me help karte hain, especially rare letters ke saath."
+},
+{
+  id: 166,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Jackdaws love my big sphinx of quartz' bihari-style pangram lagta hai."
+},
+{
+  id: 167,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangram creation ek popular word-game ban chuka hai worldwide."
+},
+{
+  id: 168,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Designers UI testing me pangrams ko default test-text mante hain."
+},
+{
+  id: 169,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'The five boxing wizards jump quickly' ek rhythmic pangram hai jo yaad reh jata."
+},
+{
+  id: 170,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Crazy Fredrick bought many very exquisite opal jewels' ek elegant pangram hai."
+},
+{
+  id: 171,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams ke through alphabet learning interesting ho jata hai."
+},
+{
+  id: 172,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Experts kehte hai good pangram me unnecessary words kam aur creativity zyada hoti hai."
+},
+{
+  id: 173,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "'Waltz, bad nymph, for quick jigs vex!' ek short aur dramatic pangram hai."
+},
+{
+  id: 174,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Aaj bhi new pangrams create karna ek popular hobby hai English lovers ke beech."
+},
+{
+  id: 175,
+  type: 'funfact',
+  topic: "Pangram: Sentence jisme A–Z ke saare letters use hote hain",
+  fact: "Pangrams me har letter ka balanced placement ek creative challenge hota hai."
+},
+{
+  id: 176,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Desserts' ka ulta 'stressed' hota hai—meaning bhi opposite aur fun fact bhi!"
+},
+{
+  id: 177,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Live' ka reverse 'evil' hota hai—dono ka meaning dramatic tareeke se different."
+},
+{
+  id: 178,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Stop' ka ulta 'pots' hota hai—simple aur smart semordnilap."
+},
+{
+  id: 179,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Gateman' ka reverse 'nametag' banta hai—bohot clever example."
+},
+{
+  id: 180,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "Semordnilap palindrome se opposite logic follow karta hai—ulta padhne par new word."
+},
+{
+  id: 181,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Reward' ka ulta 'drawer' hota hai—home furniture aur achievement dono ek connection me."
+},
+{
+  id: 182,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'God' ka ulta 'dog' hota hai—English me dono words iconic hain."
+},
+{
+  id: 183,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Tips' ka reverse 'spit' hota hai—sound similar but meanings far apart."
+},
+{
+  id: 184,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Star' ka ulta 'rats' hota hai—dono words completely different context me."
+},
+{
+  id: 185,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Drawer' ka reverse 'reward' hota hai—dual-meaning pair."
+},
+{
+  id: 186,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Mood' ka ulta 'doom' hota hai—interesting emotional contrast."
+},
+{
+  id: 187,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Diaper' ka reverse 'repaid' hota hai—funny coincidence!"
+},
+{
+  id: 188,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Time' ka ulta 'emit' hota hai—science aur daily life ka combo."
+},
+{
+  id: 189,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Loop' ka ulta 'pool' hota hai—sound similar, meaning different."
+},
+{
+  id: 190,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Evil' ka reverse 'live' hota hai—dual-emotional meaning."
+},
+{
+  id: 191,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Room' ka ulta 'moor' hota hai—rarely used but meaningful."
+},
+{
+  id: 192,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Lived' ka reverse 'devil' hota hai—spooky pairing!"
+},
+{
+  id: 193,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Tide' ka ulta 'edit' hota hai—school aur nature dono word ek line me."
+},
+{
+  id: 194,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Now' ka reverse 'won' hota hai—daily conversation words."
+},
+{
+  id: 195,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Drawer' aur 'reward' pair English me sabse famous semordnilaps me se hai."
+},
+{
+  id: 196,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "Semordnilap English vocabulary ka creative side show karta hai."
+},
+{
+  id: 197,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Part' ka reverse 'trap' hota hai—dono ka everyday meaning hota hai."
+},
+{
+  id: 198,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Tips' aur 'spit' ek perfect semordnilap pair hai jise log notice nahi karte."
+},
+{
+  id: 199,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "Semordnilaps opposite-world effect create karte hain, jo unhe interesting banata hai."
+},
+{
+  id: 200,
+  type: 'funfact',
+  topic: "Semordnilap: Word jo ulta karne par naya meaningful word ban jaaye",
+  fact: "'Leaf' ka ulta 'fael' hota hai jo English word nahi, isliye semordnilap banane me dictionary important hoti hai."
+}
 ];
 
-// COMBINE DATA: Merge Grammar Rules + Fun Facts for the feed
-const allShortsData = [...grammarShortsData, ...funFactsData];
+const betterPhrasesData = [
+    {
+        id: 1,
+        type: 'betterphrase',
+        common: "I can't do it",
+        better: "It's not my cup of tea"
+    },
+    {
+        id: 2,
+        type: 'betterphrase',
+        common: "I'm very happy",
+        better: "I'm over the moon"
+    },
+    {
+        id: 3,
+        type: 'betterphrase',
+        common: "I'm very busy",
+        better: "I'm swamped"
+    },
+    {
+        id: 4,
+        type: 'betterphrase',
+        common: "I'm very hungry",
+        better: "I'm starving"
+    },
+    {
+        id: 5,
+        type: 'betterphrase',
+        common: "I don't know",
+        better: "Beats me"
+    },
+    {
+        id: 6,
+        type: 'betterphrase',
+        common: "It's very expensive",
+        better: "It costs an arm and a leg"
+    },
+    {
+        id: 7,
+        type: 'betterphrase',
+        common: "I'm listening",
+        better: "I'm all ears"
+    },
+    {
+        id: 8,
+        type: 'betterphrase',
+        common: "I made a big mistake",
+        better: "I screwed up"
+    },
+    {
+        id: 9,
+        type: 'betterphrase',
+        common: "I'm going to sleep",
+        better: "I'm going to hit the sack"
+    },
+    {
+        id: 10,
+        type: 'betterphrase',
+        common: "Good luck",
+        better: "Break a leg"
+    },
+    {
+        id: 11,
+        type: 'betterphrase',
+        common: "Stop wasting time",
+        better: "Stop faffing around"
+    },
+    {
+        id: 12,
+        type: 'betterphrase',
+        common: "You are correct",
+        better: "You hit the nail on the head"
+    },
+    {
+        id: 13,
+        type: 'betterphrase',
+        common: "It's very easy",
+        better: "It's a piece of cake"
+    },
+    {
+        id: 14,
+        type: 'betterphrase',
+        common: "I'm very tired",
+        better: "I'm worn out"
+    },
+    {
+        id: 15,
+        type: 'betterphrase',
+        common: "Keep it a secret",
+        better: "Keep it under wraps"
+    },
+    {
+        id: 16,
+        type: 'betterphrase',
+        common: "I'm rarely available",
+        better: "Once in a blue moon"
+    },
+    {
+        id: 17,
+        type: 'betterphrase',
+        common: "Don't give up",
+        better: "Hang in there"
+    },
+    {
+        id: 18,
+        type: 'betterphrase',
+        common: "It's not complicated",
+        better: "It's not rocket science"
+    },
+    {
+        id: 19,
+        type: 'betterphrase',
+        common: "I agree with you",
+        better: "We see eye to eye"
+    },
+    {
+        id: 20,
+        type: 'betterphrase',
+        common: "I'm sick",
+        better: "I'm under the weather"
+    },
+    {
+        id: 21,
+        type: 'betterphrase',
+        common: "Wait a moment",
+        better: "Hold your horses"
+    },
+    {
+        id: 22,
+        type: 'betterphrase',
+        common: "To study hard",
+        better: "To hit the books"
+    },
+    {
+        id: 23,
+        type: 'betterphrase',
+        common: "Tell me the secret",
+        better: "Spill the beans"
+    },
+    {
+        id: 24,
+        type: 'betterphrase',
+        common: "It's raining heavily",
+        better: "It's pouring buckets"
+    },
+    {
+        id: 25,
+        type: 'betterphrase',
+        common: "I'm undecided",
+        better: "I'm on the fence"
+    },
+    {
+        id: 26,
+        type: 'betterphrase',
+        common: "He is lazy",
+        better: "He is a couch potato"
+    },
+    {
+        id: 27,
+        type: 'betterphrase',
+        common: "I'm fit and healthy",
+        better: "I'm fit as a fiddle"
+    },
+    {
+        id: 28,
+        type: 'betterphrase',
+        common: "It's too late now",
+        better: "That ship has sailed"
+    },
+    {
+        id: 29,
+        type: 'betterphrase',
+        common: "Stop annoying me",
+        better: "Get off my back"
+    },
+    {
+        id: 30,
+        type: 'betterphrase',
+        common: "I'm very angry",
+        better: "I'm fuming"
+    },
+    {
+        id: 31,
+        type: 'betterphrase',
+        common: "Let's meet today",
+        better: "Let's catch up today"
+    },
+    {
+        id: 32,
+        type: 'betterphrase',
+        common: "I'm very interested",
+        better: "I'm hooked"
+    },
+    {
+        id: 33,
+        type: 'betterphrase',
+        common: "I'm joking",
+        better: "I'm pulling your leg"
+    },
+    {
+        id: 34,
+        type: 'betterphrase',
+        common: "Make a decision",
+        better: "Make up your mind"
+    },
+    {
+        id: 35,
+        type: 'betterphrase',
+        common: "I understand",
+        better: "I get it"
+    },
+    {
+        id: 36,
+        type: 'betterphrase',
+        common: "Don't touch",
+        better: "Hands off"
+    },
+    {
+        id: 37,
+        type: 'betterphrase',
+        common: "I'll pay the bill",
+        better: "It's on me"
+    },
+    {
+        id: 38,
+        type: 'betterphrase',
+        common: "I made a mistake",
+        better: "My bad"
+    },
+    {
+        id: 39,
+        type: 'betterphrase',
+        common: "Send me a message",
+        better: "Hit me up"
+    },
+    {
+        id: 40,
+        type: 'betterphrase',
+        common: "I haven't seen you in ages",
+        better: "Long time no see"
+    },
+    {
+        id: 41,
+        type: 'betterphrase',
+        common: "I'm leaving",
+        better: "I'm off"
+    },
+    {
+        id: 42,
+        type: 'betterphrase',
+        common: "Keep quiet",
+        better: "Zip your lip"
+    },
+    {
+        id: 43,
+        type: 'betterphrase',
+        common: "I'm scared",
+        better: "I have cold feet"
+    },
+    {
+        id: 44,
+        type: 'betterphrase',
+        common: "Watch carefully",
+        better: "Keep an eye on it"
+    },
+    {
+        id: 45,
+        type: 'betterphrase',
+        common: "Do it slowly",
+        better: "Take your time"
+    },
+    {
+        id: 46,
+        type: 'betterphrase',
+        common: "Go away",
+        better: "Get lost"
+    },
+    {
+        id: 47,
+        type: 'betterphrase',
+        common: "Hurry up",
+        better: "Chop chop"
+    },
+    {
+        id: 48,
+        type: 'betterphrase',
+        common: "It's time to study",
+        better: "It's time to hit the books"
+    },
+    {
+        id: 49,
+        type: 'betterphrase',
+        common: "I'm very happy",
+        better: "I'm on cloud nine"
+    },
+    {
+        id: 50,
+        type: 'betterphrase',
+        common: "I'm nervous",
+        better: "I have butterflies in my stomach"
+    },
+    {
+        id: 51,
+        type: 'betterphrase',
+        common: "It's very cold",
+        better: "It's freezing"
+    },
+    {
+        id: 52,
+        type: 'betterphrase',
+        common: "Can I come?",
+        better: "Can I drop by?"
+    },
+    {
+        id: 53,
+        type: 'betterphrase',
+        common: "I'm exhausted",
+        better: "I'm beat"
+    },
+    {
+        id: 54,
+        type: 'betterphrase',
+        common: "I'm confused",
+        better: "I'm mixed up"
+    },
+    {
+        id: 55,
+        type: 'betterphrase',
+        common: "He is intelligent",
+        better: "He is sharp"
+    },
+    {
+        id: 56,
+        type: 'betterphrase',
+        common: "She is beautiful",
+        better: "She is drop-dead gorgeous"
+    },
+    {
+        id: 57,
+        type: 'betterphrase',
+        common: "It's useless",
+        better: "It's pointless"
+    },
+    {
+        id: 58,
+        type: 'betterphrase',
+        common: "I'm not sure",
+        better: "I'm in two minds"
+    },
+    {
+        id: 59,
+        type: 'betterphrase',
+        common: "Good job",
+        better: "Way to go"
+    },
+    {
+        id: 60,
+        type: 'betterphrase',
+        common: "Let's start",
+        better: "Let's get the ball rolling"
+    },
+    {
+        id: 61,
+        type: 'betterphrase',
+        common: "I'm broke",
+        better: "I'm short on cash"
+    },
+    {
+        id: 62,
+        type: 'betterphrase',
+        common: "Be careful",
+        better: "Watch out"
+    },
+    {
+        id: 63,
+        type: 'betterphrase',
+        common: "I don't believe it",
+        better: "I don't buy it"
+    },
+    {
+        id: 64,
+        type: 'betterphrase',
+        common: "Relax",
+        better: "Chill out"
+    },
+    {
+        id: 65,
+        type: 'betterphrase',
+        common: "I'm disappointed",
+        better: "I'm bummed out"
+    },
+    {
+        id: 66,
+        type: 'betterphrase',
+        common: "I'm ignoring you",
+        better: "I'm giving you the cold shoulder"
+    },
+    {
+        id: 67,
+        type: 'betterphrase',
+        common: "It's disgusting",
+        better: "It's gross"
+    },
+    {
+        id: 68,
+        type: 'betterphrase',
+        common: "I'm surprised",
+        better: "I'm taken aback"
+    },
+    {
+        id: 69,
+        type: 'betterphrase',
+        common: "Leave me alone",
+        better: "Give me a break"
+    },
+    {
+        id: 70,
+        type: 'betterphrase',
+        common: "I promise",
+        better: "You have my word"
+    },
+    {
+        id: 71,
+        type: 'betterphrase',
+        common: "It's easy",
+        better: "It's a breeze"
+    },
+    {
+        id: 72,
+        type: 'betterphrase',
+        common: "I'm watching you",
+        better: "I've got my eyes on you"
+    },
+    {
+        id: 73,
+        type: 'betterphrase',
+        common: "Start over",
+        better: "Back to square one"
+    },
+    {
+        id: 74,
+        type: 'betterphrase',
+        common: "I'm excited",
+        better: "I'm pumped"
+    },
+    {
+        id: 75,
+        type: 'betterphrase',
+        common: "Text me",
+        better: "Drop me a line"
+    },
+    {
+        id: 76,
+        type: 'betterphrase',
+        common: "I'm obsessed",
+        better: "I'm addicted"
+    },
+    {
+        id: 77,
+        type: 'betterphrase',
+        common: "It's amazing",
+        better: "It's mind-blowing"
+    },
+    {
+        id: 78,
+        type: 'betterphrase',
+        common: "Don't be stupid",
+        better: "Don't be a jerk"
+    },
+    {
+        id: 79,
+        type: 'betterphrase',
+        common: "I'm leaving now",
+        better: "I'm heading out"
+    },
+    {
+        id: 80,
+        type: 'betterphrase',
+        common: "Let's stop working",
+        better: "Let's call it a day"
+    },
+    {
+        id: 81,
+        type: 'betterphrase',
+        common: "I'm sad",
+        better: "I feel blue"
+    },
+    {
+        id: 82,
+        type: 'betterphrase',
+        common: "Think about it",
+        better: "Sleep on it"
+    },
+    {
+        id: 83,
+        type: 'betterphrase',
+        common: "It's exact",
+        better: "It's spot on"
+    },
+    {
+        id: 84,
+        type: 'betterphrase',
+        common: "Control your emotions",
+        better: "Pull yourself together"
+    },
+    {
+        id: 85,
+        type: 'betterphrase',
+        common: "I'm suspicious",
+        better: "I smell a rat"
+    },
+    {
+        id: 86,
+        type: 'betterphrase',
+        common: "Don't touch that",
+        better: "Keep your hands off"
+    },
+    {
+        id: 87,
+        type: 'betterphrase',
+        common: "He's crazy",
+        better: "He's nuts"
+    },
+    {
+        id: 88,
+        type: 'betterphrase',
+        common: "It's obvious",
+        better: "It's a no-brainer"
+    },
+    {
+        id: 89,
+        type: 'betterphrase',
+        common: "I'm lucky",
+        better: "I lucked out"
+    },
+    {
+        id: 90,
+        type: 'betterphrase',
+        common: "It's finished",
+        better: "It's over"
+    },
+    {
+        id: 91,
+        type: 'betterphrase',
+        common: "I'm jealous",
+        better: "I'm green with envy"
+    },
+    {
+        id: 92,
+        type: 'betterphrase',
+        common: "Stop talking",
+        better: "Put a sock in it"
+    },
+    {
+        id: 93,
+        type: 'betterphrase',
+        common: "I'm deeply asleep",
+        better: "I'm out like a light"
+    },
+    {
+        id: 94,
+        type: 'betterphrase',
+        common: "You are annoying",
+        better: "You are a pain in the neck"
+    },
+    {
+        id: 95,
+        type: 'betterphrase',
+        common: "I'm available",
+        better: "I'm free"
+    },
+    {
+        id: 96,
+        type: 'betterphrase',
+        common: "Try it",
+        better: "Give it a shot"
+    },
+    {
+        id: 97,
+        type: 'betterphrase',
+        common: "I'm embarrassed",
+        better: "I wanted the ground to swallow me up"
+    },
+    {
+        id: 98,
+        type: 'betterphrase',
+        common: "It's up to you",
+        better: "The ball is in your court"
+    },
+    {
+        id: 99,
+        type: 'betterphrase',
+        common: "Don't worry",
+        better: "No sweat"
+    },
+    {
+        id: 100,
+        type: 'betterphrase',
+        common: "I have no money",
+        better: "I'm flat broke"
+    },
+{
+        id: 101,
+        type: 'betterphrase',
+        common: "I'm very happy",
+        better: "I'm on top of the world"
+    },
+    {
+        id: 102,
+        type: 'betterphrase',
+        common: "It's very easy",
+        better: "It's a walk in the park"
+    },
+    {
+        id: 103,
+        type: 'betterphrase',
+        common: "Be quiet",
+        better: "Keep it down"
+    },
+    {
+        id: 104,
+        type: 'betterphrase',
+        common: "I agree completely",
+        better: "You can say that again"
+    },
+    {
+        id: 105,
+        type: 'betterphrase',
+        common: "I'm very sad",
+        better: "I'm down in the dumps"
+    },
+    {
+        id: 106,
+        type: 'betterphrase',
+        common: "It's a rip-off",
+        better: "It's daylight robbery"
+    },
+    {
+        id: 107,
+        type: 'betterphrase',
+        common: "He is rich",
+        better: "He is loaded"
+    },
+    {
+        id: 108,
+        type: 'betterphrase',
+        common: "She is pregnant",
+        better: "She is expecting"
+    },
+    {
+        id: 109,
+        type: 'betterphrase',
+        common: "Don't tell anyone",
+        better: "Mum's the word"
+    },
+    {
+        id: 110,
+        type: 'betterphrase',
+        common: "I'm very hungry",
+        better: "I could eat a horse"
+    },
+    {
+        id: 111,
+        type: 'betterphrase',
+        common: "Go to bed",
+        better: "Turn in"
+    },
+    {
+        id: 112,
+        type: 'betterphrase',
+        common: "Wait a minute",
+        better: "Hang on"
+    },
+    {
+        id: 113,
+        type: 'betterphrase',
+        common: "I don't know anything",
+        better: "I'm in the dark"
+    },
+    {
+        id: 114,
+        type: 'betterphrase',
+        common: "It happened suddenly",
+        better: "It came out of the blue"
+    },
+    {
+        id: 115,
+        type: 'betterphrase',
+        common: "I feel sick",
+        better: "I feel off"
+    },
+    {
+        id: 116,
+        type: 'betterphrase',
+        common: "They got married",
+        better: "They tied the knot"
+    },
+    {
+        id: 117,
+        type: 'betterphrase',
+        common: "I'm nervous",
+        better: "I'm on edge"
+    },
+    {
+        id: 118,
+        type: 'betterphrase',
+        common: "It looks suspicious",
+        better: "It looks fishy"
+    },
+    {
+        id: 119,
+        type: 'betterphrase',
+        common: "It's very simple",
+        better: "It's child's play"
+    },
+    {
+        id: 120,
+        type: 'betterphrase',
+        common: "Stop delaying",
+        better: "Stop stalling"
+    },
+    {
+        id: 121,
+        type: 'betterphrase',
+        common: "He is crazy",
+        better: "He is bananas"
+    },
+    {
+        id: 122,
+        type: 'betterphrase',
+        common: "It is delicious",
+        better: "It is mouth-watering"
+    },
+    {
+        id: 123,
+        type: 'betterphrase',
+        common: "She is very beautiful",
+        better: "She is stunning"
+    },
+    {
+        id: 124,
+        type: 'betterphrase',
+        common: "It is very big",
+        better: "It is massive"
+    },
+    {
+        id: 125,
+        type: 'betterphrase',
+        common: "It is very small",
+        better: "It is tiny"
+    },
+    {
+        id: 126,
+        type: 'betterphrase',
+        common: "He is smart",
+        better: "He is bright"
+    },
+    {
+        id: 127,
+        type: 'betterphrase',
+        common: "He is stupid",
+        better: "He is dim"
+    },
+    {
+        id: 128,
+        type: 'betterphrase',
+        common: "It is very old",
+        better: "It is ancient"
+    },
+    {
+        id: 129,
+        type: 'betterphrase',
+        common: "I'm working late",
+        better: "I'm burning the midnight oil"
+    },
+    {
+        id: 130,
+        type: 'betterphrase',
+        common: "We are late",
+        better: "We are behind schedule"
+    },
+    {
+        id: 131,
+        type: 'betterphrase',
+        common: "We are early",
+        better: "We are ahead of time"
+    },
+    {
+        id: 132,
+        type: 'betterphrase',
+        common: "You are in danger",
+        better: "You are on thin ice"
+    },
+    {
+        id: 133,
+        type: 'betterphrase',
+        common: "He is safe",
+        better: "He is safe and sound"
+    },
+    {
+        id: 134,
+        type: 'betterphrase',
+        common: "Help me",
+        better: "Lend me a hand"
+    },
+    {
+        id: 135,
+        type: 'betterphrase',
+        common: "It is very clean",
+        better: "It is spotless"
+    },
+    {
+        id: 136,
+        type: 'betterphrase',
+        common: "It is very dirty",
+        better: "It is filthy"
+    },
+    {
+        id: 137,
+        type: 'betterphrase',
+        common: "I am very wet",
+        better: "I am soaked"
+    },
+    {
+        id: 138,
+        type: 'betterphrase',
+        common: "It is very dry",
+        better: "It is parched"
+    },
+    {
+        id: 139,
+        type: 'betterphrase',
+        common: "It is very hot",
+        better: "It is boiling"
+    },
+    {
+        id: 140,
+        type: 'betterphrase',
+        common: "It is very cold",
+        better: "It is nippy"
+    },
+    {
+        id: 141,
+        type: 'betterphrase',
+        common: "He is my friend",
+        better: "He is my buddy"
+    },
+    {
+        id: 142,
+        type: 'betterphrase',
+        common: "It is strange",
+        better: "It is bizarre"
+    },
+    {
+        id: 143,
+        type: 'betterphrase',
+        common: "It is very funny",
+        better: "It is hilarious"
+    },
+    {
+        id: 144,
+        type: 'betterphrase',
+        common: "It is boring",
+        better: "It is dull"
+    },
+    {
+        id: 145,
+        type: 'betterphrase',
+        common: "It is scary",
+        better: "It is spooky"
+    },
+    {
+        id: 146,
+        type: 'betterphrase',
+        common: "I am surprised",
+        better: "I am flabbergasted"
+    },
+    {
+        id: 147,
+        type: 'betterphrase',
+        common: "I am confused",
+        better: "I am baffled"
+    },
+    {
+        id: 148,
+        type: 'betterphrase',
+        common: "I am very tired",
+        better: "I am drained"
+    },
+    {
+        id: 149,
+        type: 'betterphrase',
+        common: "I have lots of energy",
+        better: "I am full of beans"
+    },
+    {
+        id: 150,
+        type: 'betterphrase',
+        common: "It was a success",
+        better: "It was a smash hit"
+    },
+    {
+        id: 151,
+        type: 'betterphrase',
+        common: "It was a failure",
+        better: "It was a flop"
+    },
+    {
+        id: 152,
+        type: 'betterphrase',
+        common: "Small problem",
+        better: "A hiccup"
+    },
+    {
+        id: 153,
+        type: 'betterphrase',
+        common: "Start the meeting",
+        better: "Kick off the meeting"
+    },
+    {
+        id: 154,
+        type: 'betterphrase',
+        common: "Stop doing that",
+        better: "Knock it off"
+    },
+    {
+        id: 155,
+        type: 'betterphrase',
+        common: "Improve your skills",
+        better: "Brush up on your skills"
+    },
+    {
+        id: 156,
+        type: 'betterphrase',
+        common: "It's getting worse",
+        better: "It's going downhill"
+    },
+    {
+        id: 157,
+        type: 'betterphrase',
+        common: "Take a risk",
+        better: "Go out on a limb"
+    },
+    {
+        id: 158,
+        type: 'betterphrase',
+        common: "It's an easy job",
+        better: "It's a cushy job"
+    },
+    {
+        id: 159,
+        type: 'betterphrase',
+        common: "It's a difficult problem",
+        better: "It's a hard nut to crack"
+    },
+    {
+        id: 160,
+        type: 'betterphrase',
+        common: "You are exactly right",
+        better: "You are bang on"
+    },
+    {
+        id: 161,
+        type: 'betterphrase',
+        common: "You are totally wrong",
+        better: "You are way off"
+    },
+    {
+        id: 162,
+        type: 'betterphrase',
+        common: "They are very similar",
+        better: "Like two peas in a pod"
+    },
+    {
+        id: 163,
+        type: 'betterphrase',
+        common: "They are very different",
+        better: "Like chalk and cheese"
+    },
+    {
+        id: 164,
+        type: 'betterphrase',
+        common: "It's very close",
+        better: "It's a stone's throw away"
+    },
+    {
+        id: 165,
+        type: 'betterphrase',
+        common: "It's very far",
+        better: "It's in the middle of nowhere"
+    },
+    {
+        id: 166,
+        type: 'betterphrase',
+        common: "I am listening carefully",
+        better: "I am hanging on your every word"
+    },
+    {
+        id: 167,
+        type: 'betterphrase',
+        common: "It happened very fast",
+        better: "In the blink of an eye"
+    },
+    {
+        id: 168,
+        type: 'betterphrase',
+        common: "Don't touch me",
+        better: "Get your hands off me"
+    },
+    {
+        id: 169,
+        type: 'betterphrase',
+        common: "I'm staying home",
+        better: "I'm staying put"
+    },
+    {
+        id: 170,
+        type: 'betterphrase',
+        common: "It's not true",
+        better: "It's a load of rubbish"
+    },
+    {
+        id: 171,
+        type: 'betterphrase',
+        common: "Stop panicking",
+        better: "Get a grip"
+    },
+    {
+        id: 172,
+        type: 'betterphrase',
+        common: "I forgot",
+        better: "It slipped my mind"
+    },
+    {
+        id: 173,
+        type: 'betterphrase',
+        common: "Let's share the bill",
+        better: "Let's go Dutch"
+    },
+    {
+        id: 174,
+        type: 'betterphrase',
+        common: "I'm very healthy",
+        better: "I'm in the pink of health"
+    },
+    {
+        id: 175,
+        type: 'betterphrase',
+        common: "He talks too much",
+        better: "He has a big mouth"
+    },
+    {
+        id: 176,
+        type: 'betterphrase',
+        common: "Don't be rude",
+        better: "Mind your manners"
+    },
+    {
+        id: 177,
+        type: 'betterphrase',
+        common: "I'm very busy",
+        better: "I'm tied up"
+    },
+    {
+        id: 178,
+        type: 'betterphrase',
+        common: "It's a rare event",
+        better: "It's a rarity"
+    },
+    {
+        id: 179,
+        type: 'betterphrase',
+        common: "He died",
+        better: "He passed away"
+    },
+    {
+        id: 180,
+        type: 'betterphrase',
+        common: "I'm annoyed",
+        better: "I'm ticked off"
+    },
+    {
+        id: 181,
+        type: 'betterphrase',
+        common: "I agree",
+        better: "I second that"
+    },
+    {
+        id: 182,
+        type: 'betterphrase',
+        common: "Be positive",
+        better: "Look on the bright side"
+    },
+    {
+        id: 183,
+        type: 'betterphrase',
+        common: "I'm very thirsty",
+        better: "I'm parched"
+    },
+    {
+        id: 184,
+        type: 'betterphrase',
+        common: "It makes me angry",
+        better: "It drives me up the wall"
+    },
+    {
+        id: 185,
+        type: 'betterphrase',
+        common: "He is clumsy",
+        better: "He is all thumbs"
+    },
+    {
+        id: 186,
+        type: 'betterphrase',
+        common: "It's raining slightly",
+        better: "It's drizzling"
+    },
+    {
+        id: 187,
+        type: 'betterphrase',
+        common: "I made a mistake",
+        better: "I messed up"
+    },
+    {
+        id: 188,
+        type: 'betterphrase',
+        common: "I am broke",
+        better: "I am skint"
+    },
+    {
+        id: 189,
+        type: 'betterphrase',
+        common: "It is expensive",
+        better: "It is pricey"
+    },
+    {
+        id: 190,
+        type: 'betterphrase',
+        common: "I'm going to bed",
+        better: "I'm turning in"
+    },
+    {
+        id: 191,
+        type: 'betterphrase',
+        common: "Don't be sad",
+        better: "Chin up"
+    },
+    {
+        id: 192,
+        type: 'betterphrase',
+        common: "It's a secret",
+        better: "It's hush-hush"
+    },
+    {
+        id: 193,
+        type: 'betterphrase',
+        common: "I'm very scared",
+        better: "I'm terrified"
+    },
+    {
+        id: 194,
+        type: 'betterphrase',
+        common: "Just barely",
+        better: "By the skin of my teeth"
+    },
+    {
+        id: 195,
+        type: 'betterphrase',
+        common: "It's messy",
+        better: "It's a pigsty"
+    },
+    {
+        id: 196,
+        type: 'betterphrase',
+        common: "I'm well prepared",
+        better: "I'm on the ball"
+    },
+    {
+        id: 197,
+        type: 'betterphrase',
+        common: "Stop interfering",
+        better: "Butt out"
+    },
+    {
+        id: 198,
+        type: 'betterphrase',
+        common: "I'm studying",
+        better: "I'm hitting the books"
+    },
+    {
+        id: 199,
+        type: 'betterphrase',
+        common: "He is drunk",
+        better: "He is tipsy"
+    },
+    {
+        id: 200,
+        type: 'betterphrase',
+        common: "It is perfect",
+        better: "It is flawless"
+    },
+    {
+        id: 201,
+        type: 'betterphrase',
+        common: "I am very happy",
+        better: "I am thrilled to bits"
+    },
+    {
+        id: 202,
+        type: 'betterphrase',
+        common: "It is very expensive",
+        better: "It costs a pretty penny"
+    },
+    {
+        id: 203,
+        type: 'betterphrase',
+        common: "I am very busy",
+        better: "I am snowed under"
+    },
+    {
+        id: 204,
+        type: 'betterphrase',
+        common: "I am very tired",
+        better: "I am knackered"
+    },
+    {
+        id: 205,
+        type: 'betterphrase',
+        common: "It is raining heavily",
+        better: "It is coming down in buckets"
+    },
+    {
+        id: 206,
+        type: 'betterphrase',
+        common: "Stop wasting time",
+        better: "Stop dragging your feet"
+    },
+    {
+        id: 207,
+        type: 'betterphrase',
+        common: "I am very hungry",
+        better: "I am famished"
+    },
+    {
+        id: 208,
+        type: 'betterphrase',
+        common: "He is very rich",
+        better: "He is rolling in money"
+    },
+    {
+        id: 209,
+        type: 'betterphrase',
+        common: "It is very easy",
+        better: "It's as easy as ABC"
+    },
+    {
+        id: 210,
+        type: 'betterphrase',
+        common: "I don't know",
+        better: "I haven't a clue"
+    },
+    {
+        id: 211,
+        type: 'betterphrase',
+        common: "It is very cold",
+        better: "It is bone-chilling"
+    },
+    {
+        id: 212,
+        type: 'betterphrase',
+        common: "It is very hot",
+        better: "It is scorching"
+    },
+    {
+        id: 213,
+        type: 'betterphrase',
+        common: "Hurry up",
+        better: "Shake a leg"
+    },
+    {
+        id: 214,
+        type: 'betterphrase',
+        common: "Good luck",
+        better: "Fingers crossed"
+    },
+    {
+        id: 215,
+        type: 'betterphrase',
+        common: "I am listening",
+        better: "I am all attention"
+    },
+    {
+        id: 216,
+        type: 'betterphrase',
+        common: "Stop it",
+        better: "Cut it out"
+    },
+    {
+        id: 217,
+        type: 'betterphrase',
+        common: "I agree",
+        better: "I couldn't agree more"
+    },
+    {
+        id: 218,
+        type: 'betterphrase',
+        common: "It is rarely seen",
+        better: "It is few and far between"
+    },
+    {
+        id: 219,
+        type: 'betterphrase',
+        common: "It will never happen",
+        better: "When pigs fly"
+    },
+    {
+        id: 220,
+        type: 'betterphrase',
+        common: "He is very angry",
+        better: "He is seeing red"
+    },
+    {
+        id: 221,
+        type: 'betterphrase',
+        common: "I made a mistake",
+        better: "I made a blunder"
+    },
+    {
+        id: 222,
+        type: 'betterphrase',
+        common: "I forgot",
+        better: "My mind went blank"
+    },
+    {
+        id: 223,
+        type: 'betterphrase',
+        common: "He is crazy",
+        better: "He is out of his mind"
+    },
+    {
+        id: 224,
+        type: 'betterphrase',
+        common: "It is very funny",
+        better: "It is side-splitting"
+    },
+    {
+        id: 225,
+        type: 'betterphrase',
+        common: "It is boring",
+        better: "It is like watching paint dry"
+    },
+    {
+        id: 226,
+        type: 'betterphrase',
+        common: "Wait",
+        better: "Sit tight"
+    },
+    {
+        id: 227,
+        type: 'betterphrase',
+        common: "He is smart",
+        better: "He is quick-witted"
+    },
+    {
+        id: 228,
+        type: 'betterphrase',
+        common: "He is stupid",
+        better: "He is not the sharpest tool in the shed"
+    },
+    {
+        id: 229,
+        type: 'betterphrase',
+        common: "I am full",
+        better: "I am stuffed"
+    },
+    {
+        id: 230,
+        type: 'betterphrase',
+        common: "I am going to sleep",
+        better: "I am going to catch some Zs"
+    },
+    {
+        id: 231,
+        type: 'betterphrase',
+        common: "It is very clean",
+        better: "It is spick and span"
+    },
+    {
+        id: 232,
+        type: 'betterphrase',
+        common: "It is old",
+        better: "It is over the hill"
+    },
+    {
+        id: 233,
+        type: 'betterphrase',
+        common: "It is new",
+        better: "It is state-of-the-art"
+    },
+    {
+        id: 234,
+        type: 'betterphrase',
+        common: "I have no money",
+        better: "I am penniless"
+    },
+    {
+        id: 235,
+        type: 'betterphrase',
+        common: "Don't touch",
+        better: "Hands off"
+    },
+    {
+        id: 236,
+        type: 'betterphrase',
+        common: "Be careful",
+        better: "Keep your eyes peeled"
+    },
+    {
+        id: 237,
+        type: 'betterphrase',
+        common: "It is perfect",
+        better: "It is spot on"
+    },
+    {
+        id: 238,
+        type: 'betterphrase',
+        common: "I am nervous",
+        better: "I am a bundle of nerves"
+    },
+    {
+        id: 239,
+        type: 'betterphrase',
+        common: "I am sad",
+        better: "I feel low"
+    },
+    {
+        id: 240,
+        type: 'betterphrase',
+        common: "Think about it",
+        better: "Give it some thought"
+    },
+    {
+        id: 241,
+        type: 'betterphrase',
+        common: "Start working",
+        better: "Get cracking"
+    },
+    {
+        id: 242,
+        type: 'betterphrase',
+        common: "Leave me alone",
+        better: "Get out of my hair"
+    },
+    {
+        id: 243,
+        type: 'betterphrase',
+        common: "It is obvious",
+        better: "It is plain as day"
+    },
+    {
+        id: 244,
+        type: 'betterphrase',
+        common: "I am undecided",
+        better: "I am torn"
+    },
+    {
+        id: 245,
+        type: 'betterphrase',
+        common: "He is lazy",
+        better: "He is bone idle"
+    },
+    {
+        id: 246,
+        type: 'betterphrase',
+        common: "Don't give up",
+        better: "Stick with it"
+    },
+    {
+        id: 247,
+        type: 'betterphrase',
+        common: "It is dangerous",
+        better: "It is risky business"
+    },
+    {
+        id: 248,
+        type: 'betterphrase',
+        common: "I am surprised",
+        better: "I am blown away"
+    },
+    {
+        id: 249,
+        type: 'betterphrase',
+        common: "I am confused",
+        better: "I am at a loss"
+    },
+    {
+        id: 250,
+        type: 'betterphrase',
+        common: "I am annoyed",
+        better: "I am cheesed off"
+    },
+    {
+        id: 251,
+        type: 'betterphrase',
+        common: "He is drunk",
+        better: "He is hammered"
+    },
+    {
+        id: 252,
+        type: 'betterphrase',
+        common: "It is cheap",
+        better: "It is dirt cheap"
+    },
+    {
+        id: 253,
+        type: 'betterphrase',
+        common: "I am excited",
+        better: "I am hyped"
+    },
+    {
+        id: 254,
+        type: 'betterphrase',
+        common: "It is useless",
+        better: "It is good for nothing"
+    },
+    {
+        id: 255,
+        type: 'betterphrase',
+        common: "She is beautiful",
+        better: "She is breathtaking"
+    },
+    {
+        id: 256,
+        type: 'betterphrase',
+        common: "It is messy",
+        better: "It is a disaster area"
+    },
+    {
+        id: 257,
+        type: 'betterphrase',
+        common: "I am lucky",
+        better: "I struck gold"
+    },
+    {
+        id: 258,
+        type: 'betterphrase',
+        common: "It is a secret",
+        better: "It is under your hat"
+    },
+    {
+        id: 259,
+        type: 'betterphrase',
+        common: "I promise",
+        better: "I cross my heart"
+    },
+    {
+        id: 260,
+        type: 'betterphrase',
+        common: "Relax",
+        better: "Take a load off"
+    },
+    {
+        id: 261,
+        type: 'betterphrase',
+        common: "I am jealous",
+        better: "I am eating my heart out"
+    },
+    {
+        id: 262,
+        type: 'betterphrase',
+        common: "Stop talking",
+        better: "Button your lip"
+    },
+    {
+        id: 263,
+        type: 'betterphrase',
+        common: "Try hard",
+        better: "Go the extra mile"
+    },
+    {
+        id: 264,
+        type: 'betterphrase',
+        common: "It is fast",
+        better: "It is lightning fast"
+    },
+    {
+        id: 265,
+        type: 'betterphrase',
+        common: "It is slow",
+        better: "It is at a snail's pace"
+    },
+    {
+        id: 266,
+        type: 'betterphrase',
+        common: "It is important",
+        better: "It is a big deal"
+    },
+    {
+        id: 267,
+        type: 'betterphrase',
+        common: "It is unimportant",
+        better: "It is small potatoes"
+    },
+    {
+        id: 268,
+        type: 'betterphrase',
+        common: "I am sick",
+        better: "I am feeling rotten"
+    },
+    {
+        id: 269,
+        type: 'betterphrase',
+        common: "I am available",
+        better: "I am open"
+    },
+    {
+        id: 270,
+        type: 'betterphrase',
+        common: "I am busy",
+        better: "I have a lot on my plate"
+    },
+    {
+        id: 271,
+        type: 'betterphrase',
+        common: "It is finished",
+        better: "It is done and dusted"
+    },
+    {
+        id: 272,
+        type: 'betterphrase',
+        common: "It is delicious",
+        better: "It is finger-licking good"
+    },
+    {
+        id: 273,
+        type: 'betterphrase',
+        common: "It is bad",
+        better: "It is lousy"
+    },
+    {
+        id: 274,
+        type: 'betterphrase',
+        common: "He is dishonest",
+        better: "He is shady"
+    },
+    {
+        id: 275,
+        type: 'betterphrase',
+        common: "I am scared",
+        better: "I am shaking like a leaf"
+    },
+    {
+        id: 276,
+        type: 'betterphrase',
+        common: "I am happy",
+        better: "I am grinning from ear to ear"
+    },
+    {
+        id: 277,
+        type: 'betterphrase',
+        common: "It is difficult",
+        better: "It is an uphill battle"
+    },
+    {
+        id: 278,
+        type: 'betterphrase',
+        common: "Don't worry",
+        better: "Don't sweat it"
+    },
+    {
+        id: 279,
+        type: 'betterphrase',
+        common: "I am obsessed",
+        better: "I am mad about it"
+    },
+    {
+        id: 280,
+        type: 'betterphrase',
+        common: "It is true",
+        better: "It is the real deal"
+    },
+    {
+        id: 281,
+        type: 'betterphrase',
+        common: "It is fake",
+        better: "It is a knock-off"
+    },
+    {
+        id: 282,
+        type: 'betterphrase',
+        common: "He died",
+        better: "He kicked the bucket"
+    },
+    {
+        id: 283,
+        type: 'betterphrase',
+        common: "I understand",
+        better: "I catch on"
+    },
+    {
+        id: 284,
+        type: 'betterphrase',
+        common: "Pay the bill",
+        better: "Foot the bill"
+    },
+    {
+        id: 285,
+        type: 'betterphrase',
+        common: "Spend money freely",
+        better: "Splurge"
+    },
+    {
+        id: 286,
+        type: 'betterphrase',
+        common: "Save money",
+        better: "Stash away money"
+    },
+    {
+        id: 287,
+        type: 'betterphrase',
+        common: "I am tired",
+        better: "I am dead on my feet"
+    },
+    {
+        id: 288,
+        type: 'betterphrase',
+        common: "Work hard",
+        better: "Keep your nose to the grindstone"
+    },
+    {
+        id: 289,
+        type: 'betterphrase',
+        common: "Study hard",
+        better: "Burn the candle at both ends"
+    },
+    {
+        id: 290,
+        type: 'betterphrase',
+        common: "Go away",
+        better: "Beat it"
+    },
+    {
+        id: 291,
+        type: 'betterphrase',
+        common: "Start over",
+        better: "Wipe the slate clean"
+    },
+    {
+        id: 292,
+        type: 'betterphrase',
+        common: "Be quiet",
+        better: "Pipe down"
+    },
+    {
+        id: 293,
+        type: 'betterphrase',
+        common: "Stop annoying me",
+        better: "Stop bugging me"
+    },
+    {
+        id: 294,
+        type: 'betterphrase',
+        common: "I am disappointed",
+        better: "I am let down"
+    },
+    {
+        id: 295,
+        type: 'betterphrase',
+        common: "It is easy",
+        better: "It is a cinch"
+    },
+    {
+        id: 296,
+        type: 'betterphrase',
+        common: "It is hard",
+        better: "It is a tough nut to crack"
+    },
+    {
+        id: 297,
+        type: 'betterphrase',
+        common: "I am alone",
+        better: "I am flying solo"
+    },
+    {
+        id: 298,
+        type: 'betterphrase',
+        common: "I am undecided",
+        better: "I am in a quandary"
+    },
+    {
+        id: 299,
+        type: 'betterphrase',
+        common: "He is famous",
+        better: "He is a household name"
+    },
+    {
+        id: 300,
+        type: 'betterphrase',
+        common: "It is shocking",
+        better: "It is jaw-dropping"
+    }
+];
+
+// UPDATE: Merge all three types (Grammar + Fun Facts + Better Phrases)
+// Make sure 'grammarShortsData' and 'funFactsData' are defined above this line
+const allShortsData = [...grammarShortsData, ...funFactsData, ...betterPhrasesData];
         // --- PASTE THIS NEAR THE TOP OF YOUR SCRIPT VARIABLES ---
 
 const simpleSynonyms = [
@@ -32235,7 +34650,16 @@ function renderLingoShorts() {
     
     // --- EVENT DELEGATION ---
     container.addEventListener('click', (e) => {
-        // Favorite Logic (Works for Grammar Cards Only)
+        // Speak Button (Grammar & Better Phrases)
+        const speakBtn = e.target.closest('.speak-btn-short');
+        if (speakBtn) {
+            e.stopPropagation();
+            vibrate(10);
+            speakText(speakBtn.dataset.text, speakBtn);
+            return;
+        }
+
+        // Favorite Button
         const favBtn = e.target.closest('.short-fav-btn');
         if (favBtn) {
             e.stopPropagation();
@@ -32269,22 +34693,29 @@ function renderLingoShorts() {
     // --- HELPER: Generate HTML string for a card ---
     function createCardHTML(item) {
         
-        // --- 1. FUN FACT CARD RENDERER ---
+        // --- TYPE 1: FUN FACT CARD (RED) ---
         if (item.type === 'funfact') {
             return `
-            <div class="short-card w-full h-full fun-fact-card-bg text-yellow-300 flex flex-col justify-center items-center p-8 gap-8 relative shrink-0 text-center">
+            <div class="short-card w-full h-full fun-fact-card-bg text-yellow-300 flex flex-col justify-center items-center p-8 gap-6 relative shrink-0 text-center">
                 
                 <div class="relative z-10">
                     <h2 class="text-6xl font-black uppercase tracking-tighter text-white fun-fact-glow animate-pulse">Fun<br>Fact!</h2>
                 </div>
                 
-                <div class="p-6 border-4 border-yellow-400/40 rounded-3xl bg-black/20 backdrop-blur-sm shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 max-w-sm">
-                    <p class="text-2xl sm:text-3xl font-bold leading-relaxed text-white drop-shadow-md font-sans">
+                <div class="p-6 border-4 border-yellow-400/40 rounded-3xl bg-black/20 backdrop-blur-sm shadow-2xl transform -rotate-1 hover:rotate-0 transition-transform duration-500 max-w-sm w-full">
+                    
+                    ${item.topic ? `
+                    <div class="mb-4 pb-3 border-b-2 border-white/20">
+                        <span class="block text-xs font-bold text-white uppercase tracking-widest opacity-80 mb-1">Topic</span>
+                        <h3 class="text-3xl font-black text-yellow-300 uppercase tracking-wide drop-shadow-sm">${item.topic}</h3>
+                    </div>` : ''}
+                    
+                    <p class="text-xl sm:text-2xl font-bold leading-relaxed text-white drop-shadow-md font-sans">
                         "${item.fact}"
                     </p>
                 </div>
 
-                <div class="text-7xl animate-bounce mt-4 filter drop-shadow-lg">💡</div>
+                <div class="text-7xl animate-bounce mt-2 filter drop-shadow-lg">💡</div>
                 
                 <div class="absolute bottom-6 text-center w-full opacity-60">
                      <span class="text-xs font-bold text-white uppercase tracking-widest border border-white/30 px-3 py-1 rounded-full">
@@ -32298,8 +34729,40 @@ function renderLingoShorts() {
             </div>`;
         }
 
-        // --- 2. STANDARD GRAMMAR CARD RENDERER ---
-        const rule = item; // Alias for clarity
+        // --- TYPE 2: BETTER PHRASE CARD (PURPLE) ---
+        if (item.type === 'betterphrase') {
+            const isFav = favorites.some(f => f.word === item.better);
+            return `
+            <div class="short-card w-full h-full better-phrase-bg text-white flex flex-col justify-center items-center p-6 gap-4 relative shrink-0 text-center">
+                <button class="short-fav-btn ${isFav ? 'active text-pink-500' : 'text-slate-200'} absolute top-5 right-5 p-2 bg-black/20 rounded-full z-20" data-title="${item.better}" data-desc="Better way to say: ${item.common}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+                <div class="w-full max-w-sm flex flex-col gap-6">
+                    <div class="flex flex-col items-center opacity-80">
+                        <span class="text-xs font-bold uppercase tracking-widest mb-2 bg-black/20 px-3 py-1 rounded-full text-slate-200">Instead of Saying...</span>
+                        <div class="text-2xl font-bold text-slate-300 line-through decoration-red-400 decoration-4 decoration-wavy">"${item.common}"</div>
+                        <div class="mt-4 text-red-300 text-4xl">❌</div>
+                    </div>
+                    <div class="text-white/50 animate-bounce">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                    </div>
+                    <div class="better-phrase-box p-6 rounded-3xl relative overflow-hidden group">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-green-400"></div>
+                        <span class="text-xs font-black uppercase tracking-widest text-green-300 mb-2 block">Say This Instead!</span>
+                        <h2 class="text-3xl sm:text-4xl font-black text-white leading-tight drop-shadow-md">"${item.better}"</h2>
+                        <button class="speak-btn-short mt-4 p-3 rounded-full bg-white text-indigo-600 hover:scale-110 transition-transform shadow-lg" data-text="${item.better}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute bottom-1 left-0 right-0 text-center animate-bounce opacity-50 text-white">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+                </div>
+            </div>`;
+        }
+
+        // --- TYPE 3: STANDARD GRAMMAR CARD (DARK) ---
+        const rule = item; 
         const accentColor = 'text-amber-400';
         const subColor = 'text-slate-300';
         const boxBg = 'bg-white/10'; 
@@ -32307,32 +34770,25 @@ function renderLingoShorts() {
         
         return `
             <div class="short-card w-full h-full bg-slate-900 text-white flex flex-col justify-start p-6 pt-14 gap-4 relative shrink-0">
-                
                 <button class="short-fav-btn ${isFav ? 'active text-pink-500' : 'text-slate-300'} absolute top-5 right-5 p-2 bg-white/10 rounded-full z-20 transition-transform active:scale-90" data-title="${rule.title}" data-desc="${rule.hinglish}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
                 </button>
-
                 <div class="mt-4">
                     <span class="text-[10px] font-black ${accentColor} uppercase tracking-widest border border-current px-2 py-0.5 rounded-md">Rule #${rule.id}</span>
                     <h2 class="text-2xl font-black mt-2 leading-tight tracking-tight text-white drop-shadow-md">${rule.title}</h2>
                 </div>
-
                 <div class="p-4 rounded-2xl ${boxBg} border border-white/5 shadow-sm flex flex-col gap-2 shrink-0">
-                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 shrink-0">
-                        ✅ Explanation
-                    </h3>
+                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1 shrink-0">✅ Explanation</h3>
                     <div class="explanation-fixed-area h-32 overflow-hidden flex items-center">
                         <p class="explanation-text-content font-sans text-white text-lg leading-snug">${rule.hinglish}</p>
                     </div>
                 </div>
-
                 <div class="shrink-0">
                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">🎯 When to use</h3>
                     <ul class="space-y-1 pl-1">
                         ${rule.usage.slice(0,3).map(u => `<li class="flex items-start gap-2 ${subColor} text-xs font-semibold truncate"><svg class="w-3 h-3 shrink-0 mt-0.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>${u}</li>`).join('')}
                     </ul>
                 </div>
-
                 <div class="examples-fixed-area flex flex-col gap-2 flex-grow overflow-y-auto no-scrollbar">
                     <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-wide shrink-0">✨ Examples</h3>
                     ${rule.examples.slice(0,3).map(ex => `
@@ -32341,7 +34797,6 @@ function renderLingoShorts() {
                         </div>
                     `).join('')}
                 </div>
-
                 <div class="h-6 shrink-0 flex items-center justify-center opacity-30">
                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="text-white animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
                 </div>
@@ -32353,14 +34808,12 @@ function renderLingoShorts() {
     function appendBatch(data) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = data.map(item => createCardHTML(item)).join('');
-        
         const cards = Array.from(tempDiv.children);
 
         cards.forEach(card => {
             container.appendChild(card);
-            
             // Resize text logic (Only for Grammar Cards)
-            if (!card.classList.contains('fun-fact-card-bg')) {
+            if (!card.classList.contains('fun-fact-card-bg') && !card.classList.contains('better-phrase-bg')) {
                 setTimeout(() => {
                      const textEl = card.querySelector('.explanation-text-content');
                      const containerEl = card.querySelector('.explanation-fixed-area');
@@ -32370,18 +34823,39 @@ function renderLingoShorts() {
         });
     }
 
+    // --- LOGIC: Create a Structured Feed (10 Rules -> 1 Fun Fact -> 10 Rules -> 1 Phrase) ---
+    function generateNextBatch() {
+        const batch = [];
+        
+        // 1. Get 10 Grammar Rules (Random)
+        const rules = [...grammarShortsData].sort(() => 0.5 - Math.random()).slice(0, 10);
+        batch.push(...rules);
+        
+        // 2. Add 1 Fun Fact (Random)
+        if (funFactsData && funFactsData.length > 0) {
+            batch.push(funFactsData[Math.floor(Math.random() * funFactsData.length)]);
+        }
+        
+        // 3. Get 10 More Grammar Rules
+        const moreRules = [...grammarShortsData].sort(() => 0.5 - Math.random()).slice(0, 10);
+        batch.push(...moreRules);
+        
+        // 4. Add 1 Better Phrase (Random)
+        if (betterPhrasesData && betterPhrasesData.length > 0) {
+            batch.push(betterPhrasesData[Math.floor(Math.random() * betterPhrasesData.length)]);
+        }
+        
+        return batch;
+    }
+
     // --- INITIAL RENDER ---
-    // Mix and Shuffle the data
-    // NOTE: Make sure 'allShortsData' is defined (see Step 2 above) or replace with your combined array variable
-    const initialQueue = [...allShortsData].sort(() => 0.5 - Math.random());
-    appendBatch(initialQueue);
+    appendBatch(generateNextBatch());
     mainContent.appendChild(container);
 
     // --- INFINITE SCROLL LOGIC ---
     container.addEventListener('scroll', () => {
         if (container.scrollTop + container.clientHeight >= container.scrollHeight - 300) {
-            const nextBatch = [...allShortsData].sort(() => 0.5 - Math.random());
-            appendBatch(nextBatch);
+            appendBatch(generateNextBatch());
         }
     });
 }
