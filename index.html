@@ -2318,14 +2318,16 @@ body.view-shorts #main-content {
         </div>
     </div>
     
-    <header id="top-nav" class="fixed top-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-md h-[56px] flex items-center justify-center border-b border-white/5 transition-all duration-300">
-    <div class="w-full max-w-2xl lg:max-w-5xl px-4 grid grid-cols-[40px_1fr_auto] items-center gap-2 h-full">
+    <header id="top-nav" class="fixed top-0 left-0 right-0 z-[100] bg-slate-900/90 backdrop-blur-md h-[56px] border-b border-white/5 transition-all duration-300">
+    <div class="max-w-5xl mx-auto h-full px-3 flex items-center justify-between w-full">
         
-        <div id="top-nav-left" class="flex items-center justify-start shrink-0"></div>
+        <div id="top-nav-left" class="flex items-center gap-1 shrink-0 z-20"></div>
         
-        <div id="top-nav-title" class="text-lg font-bold text-white text-center truncate min-w-0 px-1"></div>
+        <div class="absolute left-0 right-0 flex justify-center items-center pointer-events-none px-12">
+            <div id="top-nav-title" class="text-base font-black text-white text-center pointer-events-auto opacity-0"></div>
+        </div>
         
-        <div id="top-nav-right" class="flex items-center justify-end gap-3 shrink-0 min-w-[40px]"></div>
+        <div id="top-nav-right" class="flex items-center gap-1 shrink-0 z-20"></div>
         
     </div>
 </header>
@@ -35207,64 +35209,102 @@ const storyLibrary = {
     const topNavTitle = document.getElementById('top-nav-title');
     const topNavRight = document.getElementById('top-nav-right');
 
+    // 1. Reset Content
     topNavLeft.innerHTML = '';
-    topNavTitle.textContent = title;
     topNavRight.innerHTML = '';
+    
+    // 2. Handle Title (For inner pages)
+    if (title) {
+        topNavTitle.textContent = title;
+        topNavTitle.classList.remove('opacity-0');
+        // Compact title for inner pages
+        topNavTitle.className = 'text-sm sm:text-lg font-black text-white text-center pointer-events-auto transition-all max-w-[60vw] leading-tight';
 
-    // 1. Setup Actions (Search, About, AND FAVORITES)
+        if (theme && typeof theme === 'object') {
+            topNavTitle.className = `px-3 py-1 rounded-full text-xs sm:text-sm shadow-sm border border-white/20 text-white ${theme.bg || ''} ${theme.text || ''}`;
+        } else if (gradClass) {
+            topNavTitle.className = `${gradClass} px-4 py-1 rounded-full text-white text-xs sm:text-sm shadow-md`;
+        }
+    } else {
+        topNavTitle.textContent = '';
+        topNavTitle.classList.add('opacity-0');
+    }
+
+    // Scroll to top on click
+    topNavTitle.onclick = () => { vibrate(10); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+    // 3. Left Section (Back or Logo)
+    if (showBack) {
+        const backBtn = document.createElement('button');
+        backBtn.className = 'p-2 rounded-full bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-all shrink-0';
+        backBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
+        backBtn.onclick = () => { vibrate(); goBack(); };
+        topNavLeft.appendChild(backBtn);
+    } else if (showLogo) {
+        // --- LOGO RESTORED: DUAL COLOR & LARGER SIZE ---
+        const logoContainer = document.createElement('div');
+        logoContainer.className = "flex items-center tracking-tighter leading-none shrink-0 cursor-pointer";
+        logoContainer.onclick = () => { vibrate(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        
+        // "Lingo" - Blue/Indigo
+        const part1 = document.createElement('span');
+        part1.className = "text-xl sm:text-2xl font-black text-indigo-600";
+        part1.textContent = "Lingo";
+        
+        // "Quest" - Pink
+        const part2 = document.createElement('span');
+        part2.className = "text-xl sm:text-2xl font-black text-pink-500";
+        part2.textContent = "Quest";
+
+        logoContainer.appendChild(part1);
+        logoContainer.appendChild(part2);
+        topNavLeft.appendChild(logoContainer);
+    }
+
+    // 4. Right Section (Actions)
     if (showActions) {
-        // Inject Favorites Button FIRST
+        // A. Favorite Button
         const favBtn = document.createElement('button');
-        favBtn.className = "p-2 rounded-full text-slate-400 hover:bg-white/10 hover:text-pink-500 transition-colors mr-1";
+        favBtn.className = "p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-pink-500 hover:bg-white/5 transition-colors active:scale-95 shrink-0";
         favBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>`;
         favBtn.onclick = () => { vibrate(); switchView('favorites'); };
         topNavRight.appendChild(favBtn);
 
-        // Then Inject Standard Template (Search/About)
+        // B. Search & Info
         const actionsTemplate = document.getElementById('top-nav-actions-template');
-        topNavRight.appendChild(actionsTemplate.content.cloneNode(true));
-        
-        const icons = topNavRight.querySelectorAll('svg');
-        // Keep colors specific to elements to avoid overwriting the pink heart hover
-        
-        topNavRight.querySelector('#about-btn').addEventListener('click', () => { vibrate(); document.getElementById('about-modal').classList.remove('hidden'); });
-        topNavRight.querySelector('#search-btn').addEventListener('click', () => {
-            vibrate();
-            const suggestions = document.getElementById('search-modal-suggestions');
-            const bar = document.getElementById('search-modal-bar');
-            if(suggestions) suggestions.innerHTML = '';
-            if(bar) { bar.value = ''; bar.focus(); }
-            document.getElementById('search-overlay').classList.remove('hidden');
-        });
-    }
+        if (actionsTemplate) {
+            const clone = actionsTemplate.content.cloneNode(true);
+            
+            // Adjust buttons spacing/sizing
+            const buttons = clone.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.className = "p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 transition-colors active:scale-95 shrink-0";
+                const svg = btn.querySelector('svg');
+                if(svg) {
+                    svg.setAttribute('width', '22'); // Restored icon size slightly
+                    svg.setAttribute('height', '22');
+                }
+            });
 
-    // 2. Interactive Title
-    topNavTitle.className = 'text-lg font-black text-slate-800 w-full text-center truncate px-4 cursor-pointer active:scale-95 transition-transform duration-200 select-none';
-    topNavTitle.onclick = () => { vibrate(10); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            // Re-attach listeners
+            const searchBtn = clone.querySelector('#search-btn');
+            if(searchBtn) searchBtn.onclick = () => {
+                vibrate();
+                const suggestions = document.getElementById('search-modal-suggestions');
+                const bar = document.getElementById('search-modal-bar');
+                if(suggestions) suggestions.innerHTML = '';
+                if(bar) { bar.value = ''; bar.focus(); }
+                document.getElementById('search-overlay').classList.remove('hidden');
+            };
 
-    // 3. Theme Styling
-    if (theme && typeof theme === 'object') {
-        topNavTitle.classList.remove('text-lg', 'text-slate-800');
-        topNavTitle.className += ` px-6 py-2 rounded-full text-sm shadow-md border border-white/20 text-white ${theme.bg || ''} ${theme.text || ''}`;
-        if (!theme.bg.includes('bg-white') && !theme.bg.includes('bg-slate')) {
-             topNavTitle.classList.remove('text-slate-800');
-             topNavTitle.classList.add('text-white'); 
+            const aboutBtn = clone.querySelector('#about-btn');
+            if(aboutBtn) aboutBtn.onclick = () => { 
+                vibrate(); 
+                document.getElementById('about-modal').classList.remove('hidden'); 
+            };
+            
+            topNavRight.appendChild(clone);
         }
-    } else if (gradClass) {
-        topNavTitle.classList.remove('text-lg', 'text-slate-800');
-        topNavTitle.classList.add(gradClass, 'px-6', 'py-2', 'rounded-full', 'text-white', 'text-sm', 'shadow-md');
-    }
-
-    // 4. Left Side (Back or Logo)
-    if (showBack) {
-        const backButtonTemplate = document.getElementById('back-button-template');
-        topNavLeft.appendChild(backButtonTemplate.content.cloneNode(true));
-        const backBtn = topNavLeft.querySelector('#back-btn');
-        backBtn.className = 'p-2 rounded-full bg-white shadow-sm border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors';
-        backBtn.addEventListener('click', () => { vibrate(); goBack(); });
-    } else if (showLogo) {
-        const logoTemplate = document.getElementById('logo-template');
-        topNavLeft.appendChild(logoTemplate.content.cloneNode(true));
     }
 }
             
