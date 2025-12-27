@@ -37194,29 +37194,53 @@ function showGameModeModal(gameType, gameTitle, difficulty, gradClass) {
 }
 
 function showPlayerCountModal(callback) {
-    const modalHTML = `
-    <div class="fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="glass-ui p-6 rounded-2xl w-full max-w-sm pop-in text-center">
-            <h3 class="text-xl font-bold text-white mb-4">How many players?</h3>
-            <div class="grid grid-cols-5 gap-2 mb-4">
-                ${[2,3,4,5,6].map(n => `<button class="p-3 bg-white/10 hover:bg-white/20 rounded-lg text-white font-bold player-cnt-btn" data-n="${n}">${n}</button>`).join('')}
-            </div>
-            <button id="cancel-player-cnt" class="text-slate-400">Cancel</button>
-        </div>
-    </div>`;
-    
-    const div = document.createElement('div');
-    div.innerHTML = modalHTML;
-    document.body.appendChild(div);
+    vibrate(); // Add haptic feedback
 
-    div.querySelectorAll('.player-cnt-btn').forEach(btn => {
+    // 1. Create Overlay
+    const overlay = document.createElement('div');
+    overlay.className = "fixed inset-0 z-[160] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm pop-in";
+    
+    // 2. Define HTML content (White Card Design)
+    overlay.innerHTML = `
+        <div class="bg-white p-6 rounded-3xl w-full max-w-xs text-center shadow-2xl relative overflow-hidden">
+            <h3 class="text-xl font-black text-slate-800 mb-2">How many players?</h3>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mb-6">Select Count</p>
+            
+            <div class="grid grid-cols-5 gap-3 mb-6">
+                ${[2,3,4,5,6].map(n => `
+                    <button class="player-cnt-btn w-10 h-12 rounded-xl bg-indigo-50 border-2 border-indigo-100 text-indigo-600 font-black text-lg hover:bg-indigo-500 hover:text-white hover:border-indigo-500 hover:scale-110 active:scale-90 transition-all shadow-sm" data-n="${n}">
+                        ${n}
+                    </button>
+                `).join('')}
+            </div>
+            
+            <button id="cancel-player-cnt" class="py-2 px-6 rounded-full text-slate-400 font-bold text-sm hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                Cancel
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // 3. Add Event Listeners
+    
+    // Number Buttons
+    overlay.querySelectorAll('.player-cnt-btn').forEach(btn => {
         btn.onclick = () => {
-            div.remove();
-            callback(parseInt(btn.dataset.n));
+            vibrate();
+            overlay.remove();
+            if (callback) callback(parseInt(btn.dataset.n));
         };
     });
     
-    document.getElementById('cancel-player-cnt').onclick = () => div.remove();
+    // Cancel Button
+    const cancelBtn = overlay.querySelector('#cancel-player-cnt');
+    if(cancelBtn) {
+        cancelBtn.onclick = () => {
+            vibrate();
+            overlay.remove();
+        };
+    }
 }
 // END: REPLACE renderGameDifficultySelectView
             
@@ -42401,44 +42425,70 @@ function startStoryMode(levelId, startChapter = 0) {
     const data = storyLibrary[levelId];
     if (!data) return;
 
+    // 1. Prepare UI
     const topNav = document.getElementById('top-nav');
     const bottomNav = document.getElementById('bottom-nav');
     if (topNav) topNav.classList.remove('hidden');
     if (bottomNav) bottomNav.classList.remove('hidden');
 
-    updateTopNav({ title: data.title, showBack: true, gradClass: "grad-2" });
+    // 2. Reset Header using Standard Function first
+    updateTopNav({ title: "", showBack: false, showActions: false });
 
-    // Inject Exit Button
+    // 3. Inject Custom "EXIT" Button (Left)
     const navLeft = document.getElementById('top-nav-left');
-    navLeft.innerHTML = `<button id="story-exit-btn" class="p-2 rounded-full bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition-colors flex items-center gap-1 px-3"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span class="text-xs font-bold">Exit</span></button>`;
+    navLeft.className = "flex items-center gap-1 shrink-0 z-20"; // Ensure it doesn't shrink to zero
+    navLeft.innerHTML = `
+        <button id="story-exit-btn" class="p-1.5 pr-3 rounded-full bg-red-500/10 border border-red-500/50 text-red-400 hover:bg-red-500/20 transition-all flex items-center gap-1.5 active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <span class="text-xs font-bold uppercase tracking-wider">Exit</span>
+        </button>
+    `;
+    
     document.getElementById('story-exit-btn').onclick = () => {
         vibrate();
         stopStoryAudio();
-        switchView('categoryList', { isSubView: true, from: { view: 'home' }, categories: storyLibrary, title: "Story Lab", subtitle: "Select a Story", gradClass: "grad-2", forceRender: true });
+        // Return to Category List view properly
+        switchView('categoryList', { 
+            isSubView: true, 
+            from: { view: 'home' }, 
+            categories: storyLibrary, 
+            title: "Story Lab", 
+            subtitle: "Select a Story", 
+            gradClass: "grad-2", 
+            forceRender: true 
+        });
     };
 
+    // 4. Inject Title (Center) - FIXED COLORS & LAYOUT
     const navTitle = document.getElementById('top-nav-title');
-    navTitle.className = "flex-grow text-center text-sm font-black text-slate-800 uppercase tracking-wide truncate px-2";
+    navTitle.classList.remove('opacity-0', 'pointer-events-none');
+    navTitle.className = "text-sm sm:text-base font-black text-white text-center truncate max-w-[50vw] leading-tight pointer-events-auto px-2";
     navTitle.textContent = data.title;
 
+    // 5. Inject Info Button (Right)
     const navRight = document.getElementById('top-nav-right');
-    navRight.innerHTML = `<button id="story-manual-info" class="p-2 rounded-full text-indigo-500 bg-indigo-50 hover:bg-indigo-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>`;
+    navRight.innerHTML = `
+        <button id="story-manual-info" class="p-2 rounded-full text-indigo-300 hover:text-white hover:bg-white/10 transition-colors shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+    `;
     document.getElementById('story-manual-info').onclick = () => { vibrate(); showStoryGrammarInfo(levelId); };
 
-    // Load Template
+    // 6. Load Reader Template
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('story-reader-template').content.cloneNode(true));
 
+    // 7. Initialize State
     currentStory = data;
     currentChapterIndex = startChapter;
     currentSentenceIndex = 0;
     isStoryPlaying = false;
-    storyPlaybackRate = 1.0; // Reset speed
+    storyPlaybackRate = 1.0; 
 
-    // Controls
+    // 8. Bind Controls
     document.getElementById('play-pause-story-btn').onclick = () => { vibrate(); toggleStoryAudio(); };
     
-    // Previous Sentence (Smart Rewind)
+    // Rewind Logic
     document.getElementById('prev-sentence-btn').onclick = () => {
         vibrate();
         stopStoryAudio();
@@ -42446,6 +42496,7 @@ function startStoryMode(levelId, startChapter = 0) {
             currentSentenceIndex--;
         }
         highlightSentence(currentSentenceIndex);
+        // Auto-replay slightly after rewinding for smooth UX
         setTimeout(() => {
             isStoryPlaying = true;
             updatePlayPauseIcon();
@@ -42455,7 +42506,7 @@ function startStoryMode(levelId, startChapter = 0) {
 
     document.getElementById('next-chapter-btn').onclick = () => { vibrate(); handleNextClick(); };
     
-    // Speed Toggle Logic
+    // Speed Toggle
     const speedBtn = document.getElementById('story-speed-btn');
     speedBtn.onclick = () => {
         vibrate();
@@ -42465,7 +42516,6 @@ function startStoryMode(levelId, startChapter = 0) {
         
         speedBtn.textContent = `${storyPlaybackRate}x`;
         
-        // Apply new speed immediately if playing
         if (isStoryPlaying) {
             stopStoryAudio();
             isStoryPlaying = true;
@@ -42476,7 +42526,178 @@ function startStoryMode(levelId, startChapter = 0) {
 
     document.getElementById('close-translation').onclick = () => document.getElementById('translation-popup').classList.add('hidden');
 
+    // Start
     renderChapter();
+}
+
+// --- STORY MODE QUIZ ENGINE ---
+function startStoryModeQuiz(chapterData, onPassCallback) {
+    vibrate();
+    
+    // 1. Get Questions from the current chapter data
+    // Expecting structure: chapterData.quiz = [{ question: "...", options: ["A","B"], answer: "A", hint: "..." }]
+    const questions = chapterData.quiz; 
+    
+    // Safety check: If no quiz exists, just pass immediately
+    if (!questions || questions.length === 0) {
+        if(onPassCallback) onPassCallback();
+        return;
+    }
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // 2. Create Dark Overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'story-quiz-overlay';
+    overlay.className = "fixed inset-0 z-[200] bg-slate-900 flex flex-col items-center justify-center p-6 pop-in";
+    document.body.appendChild(overlay);
+
+    // 3. Render Question UI
+    function renderQuestion() {
+        const q = questions[currentQuestionIndex];
+        
+        overlay.innerHTML = `
+            <div class="w-full max-w-md flex justify-between items-center mb-8 text-slate-400 text-sm font-bold">
+                <span>Checkpoint Quiz</span>
+                <span>${currentQuestionIndex + 1} / ${questions.length}</span>
+            </div>
+
+            <h2 class="text-2xl font-black text-white text-center mb-3 leading-tight">${q.question}</h2>
+            
+            ${q.hint ? `<p class="text-slate-500 text-xs mb-8 text-center font-medium">Hint: ${q.hint}</p>` : '<div class="mb-8"></div>'}
+
+            <div class="w-full max-w-md flex flex-col gap-3" id="quiz-options-container"></div>
+
+            <button id="quit-quiz-btn" class="mt-8 text-slate-500 text-xs font-bold hover:text-white transition-colors">
+                EXIT QUIZ
+            </button>
+        `;
+
+        const container = overlay.querySelector('#quiz-options-container');
+
+        // Render Options
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = "w-full p-4 rounded-xl bg-white/10 text-white font-bold text-lg text-left hover:bg-white/20 transition-all active:scale-95 border-2 border-transparent";
+            btn.textContent = opt;
+            
+            // Handle Click
+            btn.onclick = () => handleAnswer(btn, opt, q.answer, container);
+            
+            container.appendChild(btn);
+        });
+
+        // Exit Handler
+        overlay.querySelector('#quit-quiz-btn').onclick = () => {
+            vibrate();
+            if(confirm("Exit quiz? Progress will be lost.")) {
+                document.body.removeChild(overlay);
+            }
+        };
+    }
+
+    // 4. Handle Answer Selection
+    function handleAnswer(selectedBtn, selectedText, correctText, container) {
+        vibrate();
+        
+        // Disable all buttons so user can't click twice
+        const allBtns = container.querySelectorAll('button');
+        allBtns.forEach(b => b.disabled = true);
+
+        const isCorrect = selectedText === correctText;
+
+        if (isCorrect) {
+            score++;
+            // turn GREEN
+            selectedBtn.classList.remove('bg-white/10', 'hover:bg-white/20');
+            selectedBtn.classList.add('bg-emerald-500', 'border-emerald-400', 'shadow-lg');
+        } else {
+            // turn RED
+            selectedBtn.classList.remove('bg-white/10', 'hover:bg-white/20');
+            selectedBtn.classList.add('bg-rose-500', 'border-rose-400');
+
+            // Highlight the CORRECT one in Green so they learn
+            allBtns.forEach(btn => {
+                if (btn.textContent === correctText) {
+                    btn.classList.remove('bg-white/10');
+                    btn.classList.add('bg-emerald-500', 'opacity-70'); 
+                }
+            });
+        }
+
+        // Wait 1.5 seconds then move on
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }, 1500);
+    }
+
+    // 5. Show Results & Enforce 70%
+    function showResults() {
+        const percentage = Math.round((score / questions.length) * 100);
+        const passed = percentage >= 70; // COMPULSORY 70%
+
+        overlay.innerHTML = `
+            <div class="bg-white p-8 rounded-3xl text-center max-w-sm w-full pop-in relative overflow-hidden shadow-2xl">
+                <div class="absolute top-0 left-0 right-0 h-2 ${passed ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
+                
+                <div class="text-6xl mb-4 mt-2">${passed ? '🎉' : '🔒'}</div>
+                
+                <h2 class="text-2xl font-black text-slate-800 mb-1">
+                    ${passed ? 'Chapter Complete!' : 'Locked'}
+                </h2>
+                
+                <p class="text-slate-500 mb-6 font-medium">
+                    You scored <strong class="${passed ? 'text-emerald-600' : 'text-rose-600'} text-lg">${percentage}%</strong>
+                    <br><span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">70% Required to pass</span>
+                </p>
+
+                ${passed ? `
+                    <button id="quiz-pass-btn" class="w-full py-4 rounded-xl bg-emerald-500 text-white font-black text-lg shadow-lg shadow-emerald-200 hover:bg-emerald-600 transition-transform active:scale-95">
+                        CONTINUE STORY →
+                    </button>
+                ` : `
+                    <div class="flex flex-col gap-3">
+                        <button id="quiz-retry-btn" class="w-full py-3 rounded-xl bg-rose-500 text-white font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 transition-transform active:scale-95">
+                            Try Again
+                        </button>
+                        <button id="quiz-review-btn" class="w-full py-3 rounded-xl bg-slate-100 text-slate-500 font-bold hover:bg-slate-200 transition-colors">
+                            Review Chapter
+                        </button>
+                    </div>
+                `}
+            </div>
+        `;
+
+        if (passed) {
+            if(window.showConfetti) window.showConfetti();
+            document.getElementById('quiz-pass-btn').onclick = () => {
+                vibrate();
+                document.body.removeChild(overlay);
+                if (onPassCallback) onPassCallback(); // Move to next chapter
+            };
+        } else {
+            // Retry: Restart the function
+            document.getElementById('quiz-retry-btn').onclick = () => {
+                vibrate();
+                document.body.removeChild(overlay);
+                startStoryModeQuiz(chapterData, onPassCallback); 
+            };
+            // Review: Just close modal, let them read again
+            document.getElementById('quiz-review-btn').onclick = () => {
+                vibrate();
+                document.body.removeChild(overlay);
+            };
+        }
+    }
+
+    // Start the loop
+    renderQuestion();
 }
 
 function playSentence(index) {
@@ -42573,36 +42794,48 @@ function showStoryGrammarInfo(levelId) {
     
     if (levelId === 'level1') {
         grammarPoints = [
-            { title: "Ta hai / Te hain", desc: "Simple Present (Routine/Habit)", ex: "I wake up..." },
-            { title: "Raha hai / Rahi hai", desc: "Present Continuous (Now)", ex: "I am walking..." },
-            { title: "Aa / Ee / Ay", desc: "Simple Past (Completed Action)", ex: "I went..." },
-            { title: "Ta tha / Ti thi", desc: "Used to (Past Habit)", ex: "I used to sleep..." },
-            { title: "Raha tha", desc: "Past Continuous", ex: "I was thinking..." },
-            { title: "Ga / Ge / Gi", desc: "Future (Will)", ex: "I will go..." },
-            { title: "Raha hoga", desc: "Future Continuous", ex: "I will be working..." }
+            { title: "ता है / ती है", desc: "Simple Present (Routine/Habit)", ex: "I wake up..." },
+            { title: "रहा है / रही है", desc: "Present Continuous (Now)", ex: "I am walking..." },
+            { title: "आ था", desc: "Simple Past (Completed Action)", ex: "I went..." },
+            { title: "ता था / ती थी", desc: "Used to (Past Habit)", ex: "I used to sleep..." },
+            { title: "रहा था / रही थी", desc: "Past Continuous", ex: "I was thinking..." },
+            { title: "गा / गे / गी", desc: "Future (Will)", ex: "I will go..." },
+            { title: "रहा होगा", desc: "Future Continuous", ex: "I will be working..." }
         ];
     } else if (levelId === 'level2') {
         grammarPoints = [
-            { title: "Na hai (Has/Have to)", desc: "Present Compulsion", ex: "I have to go." },
-            { title: "Padta hai (Has/Have got to)", desc: "Strong Compulsion", ex: "You have got to work." },
-            { title: "Na tha (Had to)", desc: "Past Compulsion", ex: "I had to eat." },
-            { title: "Padta tha (Had got to)", desc: "Strong Past Compulsion", ex: "We had got to leave." },
-            { title: "Padega (Will have to)", desc: "Future Compulsion", ex: "You will have to study." }
+            { title: "ना है (Has/Have to)", desc: "Present Compulsion", ex: "I have to go." },
+            { title: "पड़ता है (Has/Have got to)", desc: "Strong Compulsion", ex: "You have got to work." },
+            { title: "ना था (Had to)", desc: "Past Compulsion", ex: "I had to eat." },
+            { title: "पड़ता था (Had got to)", desc: "Strong Past Compulsion", ex: "We had got to leave." },
+            { title: "पड़ेगा (Will have to)", desc: "Future Compulsion", ex: "You will have to study." }
         ];
     } else if (levelId === 'level3') {
         grammarPoints = [
-            { title: "Wala hai (About to)", desc: "Immediate Future Intent", ex: "The bus is about to leave." },
-            { title: "Wala tha (Was about to)", desc: "Past Intent", ex: "I was about to call." },
-            { title: "Chuka hai (Has/Have + 3rd)", desc: "Present Perfect (Completion)", ex: "He has arrived." },
-            { title: "Chuka tha (Had + 3rd)", desc: "Past Perfect (Completed before another)", ex: "The train had left." },
-            { title: "Chuka hoga (Will have + 3rd)", desc: "Future Perfect", ex: "By noon, he will have reached." }
+            { title: "वाला है (About to)", desc: "Immediate Future Intent", ex: "The bus is about to leave." },
+            { title: "वाला था (Was about to)", desc: "Past Intent", ex: "I was about to call." },
+            { title: "चुका है (Has/Have + 3rd)", desc: "Present Perfect (Completion)", ex: "He has arrived." },
+            { title: "चुका था (Had + 3rd)", desc: "Past Perfect (Completed before another)", ex: "The train had left." },
+            { title: "चुका होगा (Will have + 3rd)", desc: "Future Perfect", ex: "By noon, he will have reached." }
         ];
     } else if (levelId === 'level4') {
         grammarPoints = [
-            { title: "Sakta hai (Can)", desc: "Ability / Possibility", ex: "I can swim." },
-            { title: "Saka (Could)", desc: "Past Ability", ex: "I could not run fast." },
-            { title: "Chahiye (Should)", desc: "Advice / Duty", ex: "You should study." },
-            { title: "Sakega (Will be able to)", desc: "Future Capacity", ex: "We will be able to win." }
+            { title: "सकता है (Can)", desc: "Ability / Possibility", ex: "I can swim." },
+            { title: "सका (Could)", desc: "Past Ability", ex: "I could not run fast." },
+            { title: "चाहिए (Should)", desc: "Advice / Duty", ex: "You should study." },
+            { title: "सकेगा (Will be able to)", desc: "Future Capacity", ex: "We will be able to win." }
+        ];
+    } else if (levelId === 'level5') {
+        grammarPoints = [
+            { title: "सकता था (Could have + Verb 3rd Form)", desc: "Past Possibility / Missed Opp.", ex: "I could have won." },
+            { title: "चाहिए था (Should have + Verb 3rd Form)", desc: "Past Regret / Advice", ex: "You should have listened." },
+            { title: "रहा है + समय (Has/Have been + Ing + Time)", desc: "Present Perfect Continuous", ex: "I have been waiting for 2 hours." },
+            { title: "रहा था + समय (Had been + Ing + Time)", desc: "Past Perfect Continuous", ex: "He had been working since 9 AM." },
+            { title: "रहा होगा + समय (Will have been + Ing + Time)", desc: "Future Perfect Continuous", ex: "She will have been sleeping." }
+        ];
+    } else if (levelId === 'level6') {
+        grammarPoints = [
+            { title: "All 30 Helping Verbs", desc: "", ex: "" },
         ];
     }
 
