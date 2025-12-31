@@ -35213,11 +35213,10 @@ const storyLibrary = {
     topNavLeft.innerHTML = '';
     topNavRight.innerHTML = '';
     
-    // 2. Handle Title (For inner pages)
+    // 2. Handle Title
     if (title) {
         topNavTitle.textContent = title;
         topNavTitle.classList.remove('opacity-0');
-        // Compact title for inner pages
         topNavTitle.className = 'text-sm sm:text-lg font-black text-white text-center pointer-events-auto transition-all max-w-[60vw] leading-tight';
 
         if (theme && typeof theme === 'object') {
@@ -35236,22 +35235,24 @@ const storyLibrary = {
     // 3. Left Section (Back or Logo)
     if (showBack) {
         const backBtn = document.createElement('button');
-        backBtn.className = 'p-2 rounded-full bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-all shrink-0';
+        
+        // --- FIXED: BLUE + PINK GRADIENT BACKGROUND ---
+        backBtn.className = 'p-2 rounded-full bg-gradient-to-br from-indigo-500 to-pink-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all shrink-0';
+        
         backBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>`;
         backBtn.onclick = () => { vibrate(); goBack(); };
         topNavLeft.appendChild(backBtn);
+        
     } else if (showLogo) {
-        // --- LOGO RESTORED: DUAL COLOR & LARGER SIZE ---
+        // Logo (Blue "Lingo" + Pink "Quest")
         const logoContainer = document.createElement('div');
         logoContainer.className = "flex items-center tracking-tighter leading-none shrink-0 cursor-pointer";
         logoContainer.onclick = () => { vibrate(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
         
-        // "Lingo" - Blue/Indigo
         const part1 = document.createElement('span');
         part1.className = "text-xl sm:text-2xl font-black text-indigo-600";
         part1.textContent = "Lingo";
         
-        // "Quest" - Pink
         const part2 = document.createElement('span');
         part2.className = "text-xl sm:text-2xl font-black text-pink-500";
         part2.textContent = "Quest";
@@ -35275,18 +35276,16 @@ const storyLibrary = {
         if (actionsTemplate) {
             const clone = actionsTemplate.content.cloneNode(true);
             
-            // Adjust buttons spacing/sizing
             const buttons = clone.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.className = "p-1.5 sm:p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 transition-colors active:scale-95 shrink-0";
                 const svg = btn.querySelector('svg');
                 if(svg) {
-                    svg.setAttribute('width', '22'); // Restored icon size slightly
+                    svg.setAttribute('width', '22'); 
                     svg.setAttribute('height', '22');
                 }
             });
 
-            // Re-attach listeners
             const searchBtn = clone.querySelector('#search-btn');
             if(searchBtn) searchBtn.onclick = () => {
                 vibrate();
@@ -37450,6 +37449,7 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
             <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-amber-600/20 rounded-full blur-[100px] animate-pulse"></div>
             <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-orange-600/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         </div>
+
         <div class="sticky top-0 z-50 shrink-0 flex justify-between items-center p-4 pt-6 bg-slate-900/95 backdrop-blur-md border-b border-white/10 shadow-md">
             <div class="flex items-center gap-4">
                 <div class="bg-white/10 px-3 py-1.5 rounded-lg flex flex-col items-center border border-white/5">
@@ -37468,14 +37468,24 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                 </button>
             </div>
         </div>
+
         <div class="flex-1 overflow-y-auto w-full relative">
             <div class="min-h-full flex flex-col p-4 pt-2">
                 <div class="mt-auto"></div>
                 <div id="jumbled-game-board" class="w-full max-w-md mx-auto relative z-10 -mt-10">
+                    
                     <div id="jumbled-word-display" class="text-3xl sm:text-4xl font-black text-center text-white mb-2 tracking-[0.2em] drop-shadow-lg break-all"></div>
                     <p id="jumbled-word-clue" class="text-sm text-amber-300 italic text-center mb-4 hidden"></p>
-                    <input type="text" id="jumbled-answer-input" placeholder="YOUR ANSWER..." autocomplete="off" autocapitalize="off" class="w-full bg-white/10 text-white placeholder-white/30 border-2 border-white/20 focus:border-amber-500 rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4">
+                    
+                    <input type="text" id="jumbled-answer-input" 
+                        placeholder="YOUR ANSWER..." 
+                        autocomplete="off" 
+                        autocapitalize="off" 
+                        style="color: #1e1b4b !important;" 
+                        class="w-full bg-slate-100 text-indigo-950 placeholder-slate-400 border-2 border-indigo-100 focus:border-indigo-500 focus:bg-white rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4">
+                    
                     <div id="jumbled-feedback" class="text-center h-8 font-bold mb-4"></div>
+                    
                     <div class="grid grid-cols-3 gap-3">
                         <button id="hint-word-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><span class="text-xs uppercase tracking-wide">Hint</span></button>
                         <button id="skip-word-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-bold py-3 px-2 rounded-xl shadow-lg transition-transform active:scale-95 flex flex-col items-center justify-center gap-1"><span class="text-xs uppercase tracking-wide">Skip</span></button>
@@ -37486,17 +37496,25 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
                 <div class="h-48 shrink-0 w-full"></div> 
             </div>
         </div>
-        <div id="jumbled-over-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-6 bg-black/90 backdrop-blur-md">
-            <div class="glass-ui p-8 rounded-3xl text-center pop-in max-w-sm w-full border border-white/20">
-                <div id="jumbled-over-icon" class="text-7xl mb-4 animate-bounce">🎉</div>
-                <h2 class="text-3xl font-black text-white mb-2" id="jumbled-over-title">You Won!</h2>
-                <div class="bg-white/5 rounded-xl p-4 mb-6">
-                     <p class="text-xs text-slate-400 uppercase tracking-wider mb-1">Final Score</p>
-                     <p class="text-lg text-slate-200"><strong id="final-score-jumbled" class="text-4xl text-white">0</strong> / 20</p>
+
+        <div id="jumbled-over-modal" class="hidden fixed inset-0 z-[250] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm">
+            <div class="bg-white p-8 rounded-3xl text-center pop-in max-w-sm w-full shadow-2xl relative overflow-hidden">
+                <div id="modal-top-bar" class="absolute top-0 left-0 right-0 h-2 bg-indigo-500"></div>
+
+                <div id="jumbled-over-icon" class="text-7xl mb-4 animate-bounce mt-4">🎉</div>
+                
+                <h2 class="text-3xl font-black text-slate-800 mb-2" id="jumbled-over-title">You Won!</h2>
+                
+                <div class="bg-indigo-50 rounded-xl p-4 mb-6 border border-indigo-100">
+                     <p class="text-xs text-indigo-400 uppercase font-bold tracking-wider mb-1">Final Score</p>
+                     <p class="text-lg text-indigo-900 font-medium">
+                        <strong id="final-score-jumbled" class="text-5xl font-black text-indigo-600">0</strong> / 20
+                     </p>
                 </div>
+                
                 <div class="grid grid-cols-2 gap-3">
-                    <button id="exit-jumbled-btn" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl transition-colors">Exit</button>
-                    <button id="restart-game-btn-jumbled" class="grad-nav text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Play Again</button>
+                    <button id="exit-jumbled-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-4 rounded-xl transition-colors">Exit</button>
+                    <button id="restart-game-btn-jumbled" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">Play Again</button>
                 </div>
             </div>
         </div>
@@ -37504,6 +37522,7 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     `;
     mainContent.innerHTML = templateHTML;
 
+    // --- VARIABLES & REFERENCES ---
     const wordDisplay = document.getElementById('jumbled-word-display');
     const clueDisplay = document.getElementById('jumbled-word-clue');
     const answerInput = document.getElementById('jumbled-answer-input');
@@ -37511,16 +37530,21 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
     const scoreEl = document.getElementById('game-score');
     const timerEl = document.getElementById('game-timer');
     const livesEl = document.getElementById('jumbled-lives');
+    
+    // Buttons
     const skipBtn = document.getElementById('skip-word-btn');
     const submitBtn = document.getElementById('submit-word-btn');
     const hintBtn = document.getElementById('hint-word-btn');
+    const restartBtn = document.getElementById('restart-game-btn-jumbled');
+    const exitBtn = document.getElementById('exit-jumbled-btn');
+    const quitBtn = document.getElementById('quit-game-btn');
+
+    // Modal Refs
     const modal = document.getElementById('jumbled-over-modal');
     const modalTitle = document.getElementById('jumbled-over-title');
     const finalScoreEl = document.getElementById('final-score-jumbled');
-    const restartBtn = document.getElementById('restart-game-btn-jumbled');
-    const exitBtn = document.getElementById('exit-jumbled-btn');
     const gameOverIcon = document.getElementById('jumbled-over-icon');
-    const quitBtn = document.getElementById('quit-game-btn');
+    const modalTopBar = document.getElementById('modal-top-bar');
 
     const TOTAL_QUESTIONS = 20;
     let gameQueue = [];
@@ -37563,7 +37587,10 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         else { clueDisplay.classList.add('hidden'); }
 
         answerInput.value = '';
-        answerInput.classList.remove('border-red-500', 'bg-red-500/20', 'border-green-500', 'bg-green-500/20');
+        // FORCE RESET CLASSES & COLOR
+        answerInput.className = "w-full bg-slate-100 text-indigo-950 placeholder-slate-400 border-2 border-indigo-100 focus:border-indigo-500 focus:bg-white rounded-2xl py-4 px-6 text-center text-xl font-bold uppercase outline-none transition-all shadow-lg mb-4";
+        answerInput.style.color = "#1e1b4b"; // Enforce Dark Blue
+        
         feedbackEl.innerHTML = '';
         answerInput.disabled = false; submitBtn.disabled = false; skipBtn.disabled = false; hintUsed = false; hintBtn.disabled = false;
         setTimeout(() => answerInput.focus(), 100);
@@ -37576,18 +37603,24 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         answerInput.disabled = true; submitBtn.disabled = true; skipBtn.disabled = true; hintBtn.disabled = true;
         const currentWordData = gameQueue[currentQuestionIndex];
         const correctAnswer = currentWordData.word.toUpperCase();
+        
         if (userAnswer && userAnswer.trim().toUpperCase() === correctAnswer) {
             if(navigator.vibrate) navigator.vibrate(50);
             score++;
-            answerInput.classList.add('border-green-500', 'bg-green-500/20');
+            answerInput.classList.remove('border-indigo-100', 'bg-slate-100');
+            answerInput.classList.add('border-green-500', 'bg-green-100', 'text-green-800'); // Green Text
+            answerInput.style.color = ""; // Let class control color
             feedbackEl.innerHTML = `<p class="text-green-400 font-bold text-lg">Correct!</p>`;
         } else {
             if(navigator.vibrate) navigator.vibrate(200);
             lives--; updateLives();
-            answerInput.classList.add('border-red-500', 'bg-red-500/20');
+            answerInput.classList.remove('border-indigo-100', 'bg-slate-100');
+            answerInput.classList.add('border-red-500', 'bg-red-100', 'text-red-800'); // Red Text
+            answerInput.style.color = ""; // Let class control color
             const msg = userAnswer === null ? "Time's Up!" : (userAnswer === 'SKIP' ? "Skipped!" : "Wrong!");
             feedbackEl.innerHTML = `<p class="text-red-400 font-bold text-sm">${msg} Answer: <span class="text-white">${correctAnswer}</span></p>`;
         }
+        
         if (lives <= 0) setTimeout(() => displayJumbledResults(false), 1500);
         else setTimeout(() => { currentQuestionIndex++; displayQuestion(); }, 1500);
     }
@@ -37599,23 +37632,30 @@ function startJumbledWordGame(selectedWords, originalTitle, gradClass, difficult
         // --- CHALLENGE LOGIC ---
         if (challengeOptions && challengeOptions.isChallenge) {
             if(quitBtn) quitBtn.style.display = 'none';
-            // Win: Time Taken (seconds). Lose: 9999
             const timeTaken = Math.floor((Date.now() - gameStartTime) / 1000);
             const finalScore = win ? timeTaken : 9999;
             saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
             return; 
         }
-        // -----------------------
         
         if(typeof addQuizResult === 'function') addQuizResult(`${originalTitle} (Unscramble)`, score, TOTAL_QUESTIONS);
         finalScoreEl.textContent = score;
+        
+        // --- UPDATE MODAL STYLES BASED ON WIN/LOSE ---
         if (win) {
             checkDailyGoal('game', 'jumbled-word');
-            modalTitle.textContent = "You Won!"; gameOverIcon.textContent = '🏆';
+            modalTitle.textContent = "You Won!";
+            modalTitle.className = "text-3xl font-black text-emerald-600 mb-2";
+            modalTopBar.className = "absolute top-0 left-0 right-0 h-2 bg-emerald-500";
+            gameOverIcon.textContent = '🏆';
             if(typeof showConfetti === 'function') showConfetti();
         } else {
-            modalTitle.textContent = "Game Over"; gameOverIcon.textContent = '💔';
+            modalTitle.textContent = "Game Over";
+            modalTitle.className = "text-3xl font-black text-rose-600 mb-2";
+            modalTopBar.className = "absolute top-0 left-0 right-0 h-2 bg-rose-500";
+            gameOverIcon.textContent = '💔';
         }
+
         modal.classList.remove('hidden');
         quitBtn.style.display = 'none';
     }
@@ -38209,6 +38249,29 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
     mainContent.innerHTML = '';
     mainContent.appendChild(document.getElementById('swipe-game-template').content.cloneNode(true));
 
+    // --- FIX: FORCE LIGHT THEME COLORS ---
+    const gameView = mainContent.firstElementChild;
+    if (gameView) {
+        // Change Background to White
+        gameView.classList.remove('bg-slate-900', 'text-white');
+        gameView.classList.add('bg-white', 'text-slate-900');
+        
+        // Fix Top Bar (Light Background + Dark Text)
+        const topBar = gameView.querySelector('.sticky');
+        if(topBar) {
+            topBar.classList.remove('bg-slate-900/95', 'border-white/10');
+            topBar.classList.add('bg-white/90', 'backdrop-blur-md', 'border-slate-200', 'text-slate-900', 'shadow-sm');
+        }
+        
+        // Fix Score Text Color
+        const scoreTxt = document.getElementById('swipe-score');
+        if(scoreTxt) {
+            scoreTxt.classList.remove('text-white');
+            scoreTxt.classList.add('text-slate-900');
+        }
+    }
+    // -------------------------------------
+
     const stackContainer = document.getElementById('card-stack');
     const scoreEl = document.getElementById('swipe-score');
     const livesEl = document.getElementById('swipe-lives');
@@ -38230,6 +38293,7 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
     if (difficulty === 'hard') timePerCard = 3;
 
     function generateDeck() {
+        // (Assuming simpleSynonyms and vocabularyData exist globally)
         const synSource = simpleSynonyms.slice(0, 13); 
         const validSynonyms = synSource.map(item => ({
             main: item.word,
@@ -38263,23 +38327,28 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
             return;
         }
         stackContainer.innerHTML = '';
+        
+        // Render Next Card (Background Stack)
         if (cardQueue.length > 1) {
             const nextCard = document.createElement('div');
             nextCard.className = 'swipe-card next-card';
-            nextCard.innerHTML = `<div class="w-full h-full bg-slate-100 rounded-xl"></div>`;
+            // Off-white placeholder
+            nextCard.innerHTML = `<div class="w-full h-full bg-slate-100 rounded-xl border border-slate-200"></div>`;
             stackContainer.appendChild(nextCard);
         }
 
         const cardData = cardQueue[0];
         const card = document.createElement('div');
-        card.className = 'swipe-card active-card';
+        
+        // --- FIX: CARD COLORS (Off-White BG, Dark Text) ---
+        card.className = 'swipe-card active-card bg-slate-50 text-slate-800 border border-slate-200 shadow-xl';
         
         card.innerHTML = `
-            <div class="swipe-stamp stamp-nope">ANTONYM</div>
-            <div class="swipe-stamp stamp-like">SYNONYM</div>
-            <div class="swipe-word-main">${cardData.main}</div>
-            <div class="swipe-divider"></div>
-            <div class="swipe-word-sub">${cardData.target}</div>
+            <div class="swipe-stamp stamp-nope border-rose-500 text-rose-500">ANTONYM</div>
+            <div class="swipe-stamp stamp-like border-emerald-500 text-emerald-500">SYNONYM</div>
+            <div class="swipe-word-main font-black text-3xl mb-2">${cardData.main}</div>
+            <div class="swipe-divider bg-slate-200 my-2 h-px w-3/4 mx-auto"></div>
+            <div class="swipe-word-sub text-xl text-slate-500">${cardData.target}</div>
         `;
         
         stackContainer.appendChild(card);
@@ -38332,13 +38401,11 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
             card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
 
             if (currentX > 0) {
-                indRight.style.opacity = 1;
-                indRight.style.transform = 'translateY(-50%) scale(1.2)';
+                if(indRight) { indRight.style.opacity = 1; indRight.style.transform = 'translateY(-50%) scale(1.2)'; }
                 stampLike.style.opacity = Math.min(currentX / 100, 1);
                 card.style.borderColor = `rgba(34, 197, 94, ${Math.min(currentX / 200, 1)})`;
             } else {
-                indLeft.style.opacity = 1;
-                indLeft.style.transform = 'translateY(-50%) scale(1.2) rotate(180deg)';
+                if(indLeft) { indLeft.style.opacity = 1; indLeft.style.transform = 'translateY(-50%) scale(1.2) rotate(180deg)'; }
                 stampNope.style.opacity = Math.min(Math.abs(currentX) / 100, 1);
                 card.style.borderColor = `rgba(239, 68, 68, ${Math.min(Math.abs(currentX) / 200, 1)})`;
             }
@@ -38347,9 +38414,8 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
         const onEnd = () => {
             if (!isDragging) return;
             isDragging = false;
-            indLeft.style.opacity = 0.3; indRight.style.opacity = 0.3;
-            indLeft.style.transform = 'translateY(-50%) rotate(180deg)'; 
-            indRight.style.transform = 'translateY(-50%)';
+            if(indLeft) { indLeft.style.opacity = 0.3; indLeft.style.transform = 'translateY(-50%) rotate(180deg)'; }
+            if(indRight) { indRight.style.opacity = 0.3; indRight.style.transform = 'translateY(-50%)'; }
             const threshold = 80;
 
             if (currentX > threshold) {
@@ -38363,7 +38429,7 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
             } else {
                 card.style.transition = 'transform 0.3s ease-out';
                 card.style.transform = 'translateX(0) rotate(0)';
-                card.style.borderColor = 'white';
+                card.style.borderColor = '#e2e8f0'; // Reset to slate-200
                 stampLike.style.opacity = 0;
                 stampNope.style.opacity = 0;
             }
@@ -38409,17 +38475,14 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
         isGameOver = true;
         clearInterval(timerInterval);
         
-        // --- CHALLENGE LOGIC ---
         if (challengeOptions && challengeOptions.isChallenge) {
             const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
             const timeBonus = win ? Math.max(0, 300 - timeTakenSec) : 0;
             const finalScore = score + timeBonus;
-            
             if(headerQuitBtn) headerQuitBtn.style.display = 'none';
             saveChallengeScore(challengeOptions.challengeId, challengeOptions.playerId, finalScore);
             return; 
         }
-        // -----------------------
 
         if(headerQuitBtn) headerQuitBtn.style.display = 'none';
         const timeTakenSec = Math.floor((Date.now() - gameStartTime) / 1000);
@@ -38434,25 +38497,35 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
 
         let starHTML = '';
         for(let i=1; i<=3; i++) {
-            starHTML += `<span class="text-5xl ${i <= stars ? 'text-amber-400 animate-bounce' : 'text-slate-600'}" style="animation-delay: ${i*0.2}s">★</span>`;
+            starHTML += `<span class="text-5xl ${i <= stars ? 'text-amber-400 animate-bounce' : 'text-slate-300'}" style="animation-delay: ${i*0.2}s">★</span>`;
         }
+
+        // Fix Modal Colors (White BG, Dark Text)
+        modal.firstElementChild.className = "bg-white p-8 rounded-3xl text-center pop-in max-w-sm w-full shadow-2xl border border-slate-100";
 
         const modalContent = win 
             ? `<div class="text-6xl mb-4 animate-bounce">🏆</div>
-               <h2 class="text-3xl font-black text-white mb-2">You Won!</h2>
+               <h2 class="text-3xl font-black text-slate-800 mb-2">You Won!</h2>
                <div class="flex justify-center gap-2 mb-4">${starHTML}</div>
-               <p class="text-sm text-slate-300 mb-6">Cleared in ${timeTakenSec} seconds!</p>
-               <p class="text-lg font-bold text-white">Score: ${score}</p>`
+               <p class="text-sm text-slate-500 mb-6">Cleared in ${timeTakenSec} seconds!</p>
+               <p class="text-lg font-bold text-slate-800">Score: ${score}</p>`
             : `<div class="text-6xl mb-4">💔</div>
-               <h2 class="text-3xl font-black text-white mb-2">Game Over</h2>
-               <p class="text-lg text-slate-200 mb-6">Final Score: ${score}</p>`;
+               <h2 class="text-3xl font-black text-slate-800 mb-2">Game Over</h2>
+               <p class="text-lg text-slate-500 mb-6">Final Score: ${score}</p>`;
 
-        const modalInner = modal.querySelector('.glass-ui');
-        const buttonsHTML = modalInner.querySelector('.grid').outerHTML;
-        modalInner.innerHTML = modalContent + buttonsHTML;
+        // Re-inject buttons but style them
+        const buttonsHTML = `
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <button id="exit-swipe-btn-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-3 px-4 rounded-xl transition-colors">Exit</button>
+                <button id="restart-swipe-btn-modal" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-transform hover:scale-105">Play Again</button>
+            </div>
+        `;
 
-        document.getElementById('exit-swipe-btn').onclick = cleanup;
-        document.getElementById('restart-swipe-btn').onclick = () => {
+        modal.firstElementChild.innerHTML = modalContent + buttonsHTML;
+
+        // Re-attach listeners to new buttons
+        document.getElementById('exit-swipe-btn-modal').onclick = cleanup;
+        document.getElementById('restart-swipe-btn-modal').onclick = () => {
             modal.classList.add('hidden');
             startSwipeGame(difficulty, originalTitle, gradClass);
         };
@@ -38476,7 +38549,8 @@ function startSwipeGame(difficulty, originalTitle = "Swipe Word", gradClass, cha
     if(headerQuitBtn) {
         headerQuitBtn.onclick = () => { if(confirm("Quit Swipe Game?")) cleanup(); };
     }
-    document.getElementById('exit-swipe-btn').onclick = cleanup;
+    const exitBtnInitial = document.getElementById('exit-swipe-btn');
+    if(exitBtnInitial) exitBtnInitial.onclick = cleanup;
 
     updateLives();
     renderCard();
